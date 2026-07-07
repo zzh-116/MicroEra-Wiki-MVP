@@ -1,43 +1,44 @@
-import React from 'react';
-import { Lock, ArrowRight, Home } from 'lucide-react';
+import { ShieldAlert, Lock, ArrowRight } from 'lucide-react';
 
 interface UnauthorizedProps {
-  onGoToLogin: () => void;
-  onGoToHome: () => void;
+  onLoginRedirect: () => void;
+  requiredRole?: string;
 }
 
-export const Unauthorized: React.FC<UnauthorizedProps> = ({ onGoToLogin, onGoToHome }) => {
+export default function Unauthorized({ onLoginRedirect, requiredRole = 'internal' }: UnauthorizedProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-4 text-center max-w-md mx-auto" id="unauthorized-container">
-      <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center border border-amber-200 text-amber-600 mb-6 animate-pulse">
-        <Lock className="w-8 h-8" />
+    <div
+      className="max-w-md mx-auto my-12 bg-white border border-red-150 rounded-xl p-6 text-center shadow-md flex flex-col items-center space-y-4"
+      id="unauthorized-container"
+    >
+      <div className="bg-red-50 p-4 rounded-full border border-red-100 animate-bounce">
+        <Lock className="w-8 h-8 text-[#DB5F5B]" />
       </div>
-      
-      <h2 className="text-xl font-semibold text-gray-900 mb-2 font-sans tracking-tight">
-        该内容仅内部人员可见
-      </h2>
-      <p className="text-sm text-gray-500 mb-8 max-w-sm leading-relaxed">
-        您当前处于未登录状态（访客/客户视图），此条目被标记为内部机密 (internal)。请使用内部员工账号登录后继续查看。
-      </p>
 
-      <div className="flex flex-col sm:flex-row gap-3 w-full justify-center">
-        <button
-          onClick={onGoToLogin}
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-lg text-sm transition-colors shadow-sm"
-          id="btn-unauthorized-login"
-        >
-          立即登录
-          <ArrowRight className="w-4 h-4" />
-        </button>
-        <button
-          onClick={onGoToHome}
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-medium rounded-lg text-sm border border-gray-300 transition-colors shadow-xs"
-          id="btn-unauthorized-home"
-        >
-          <Home className="w-4 h-4" />
-          返回公开首页
-        </button>
+      <div className="space-y-1.5">
+        <h3 className="text-sm font-bold text-gray-800 flex items-center justify-center space-x-1.5 uppercase tracking-wide">
+          <ShieldAlert className="w-4 h-4 text-[#DB5F5B]" />
+          <span>访问权限受限 (Internal Directory Only)</span>
+        </h3>
+        <p className="text-xs text-gray-500 leading-relaxed max-w-sm">
+          您当前作为 **未登录访客 (Guest)** 访问。本条目包含微观纪元内部专有的 
+          Sandbox 项目计算细节、原始白皮书及商业敏感数据。
+        </p>
       </div>
+
+      <div className="bg-gray-50 p-3 rounded-lg text-left text-[11px] text-gray-500 w-full border border-gray-150 space-y-1">
+        <div className="font-bold text-[#2B3150] mb-1">🔐 访问规则说明：</div>
+        <div>• <strong>公开内容 (Public)</strong>：任何人均可免密查阅。</div>
+        <div>• <strong>内部档案 (Internal)</strong>：仅供登录后的微观纪元员工或研究员查阅。</div>
+      </div>
+
+      <button
+        onClick={onLoginRedirect}
+        className="w-full py-2 bg-[#2B3150] hover:bg-[#2B3150]/95 text-white font-bold rounded-lg text-xs transition-all flex items-center justify-center space-x-1.5"
+      >
+        <span>前往企业登录控制台</span>
+        <ArrowRight className="w-4 h-4 text-[#F2D760]" />
+      </button>
     </div>
   );
-};
+}

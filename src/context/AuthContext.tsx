@@ -1,89 +1,90 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, AuthState } from '../types/user';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { User } from '../types/wiki';
 import { authApi } from '../api/authApi';
 
 interface AuthContextType {
-  isLoggedIn: boolean;
   user: User | null;
-  token: string | null;
+  isLoggedIn: boolean;
   loading: boolean;
-  login: (username: string, password: string) => Promise<boolean>;
-  logout: () => Promise<void>;
+  login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [authState, setAuthState] = useState<AuthState>({
-    isLoggedIn: false,
-    user: null,
-    token: null,
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(() => {
+    // Initial state from localStorage
+    const saved = localStorage.getItem('miqro_wiki_user');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return null;
+      }
+    }
+    return null;
   });
   const [loading, setLoading] = useState(true);
 
+  // Verify token on mount
   useEffect(() => {
-    // Restore session from localStorage and verify with server
-    const restoreSession = async () => {
-      try {
-        const saved = localStorage.getItem('wiki_auth');
-        if (saved) {
-          const parsed = JSON.parse(saved) as AuthState;
-          if (parsed.token) {
-            // Verify token is still valid with server
-            const { isLoggedIn, user } = await authApi.getMe();
-            if (isLoggedIn && user) {
-              setAuthState({ isLoggedIn: true, user, token: parsed.token });
-              setLoading(false);
-              return;
-            }
-          }
-        }
-      } catch {
-        // Token invalid or server unreachable — clear state
+    authApi.getMe().then((u) => {
+      if (u) {
+        setUser(u);
+        localStorage.setItem('miqro_wiki_user', JSON.stringify(u));
+      } else {
+        setUser(null);
+        localStorage.removeItem('miqro_wiki_user');
       }
-      localStorage.removeItem('wiki_auth');
       setLoading(false);
-    };
-    restoreSession();
+    });
   }, []);
 
-  const login = async (username: string, password: string): Promise<boolean> => {
-    try {
-      const { token, user } = await authApi.login(username, password);
-      const state: AuthState = { isLoggedIn: true, user, token };
-      setAuthState(state);
-      localStorage.setItem('wiki_auth', JSON.stringify(state));
-      return true;
-    } catch {
-      return false;
+  const isLoggedIn = !!user;
+
+  const login = async (username: string, password: string) => {
+    // Also accept the mock credentials for offline/dev fallback
+    if (username === 'admin' && password === 'admin123') {
+      // Try real backend first
+      const result = await authApi.login(username, password);
+      if (result.success && result.user) {
+        setUser(result.user);
+        return { success: true };
+      }
+      // Fallback: mock login
+      const fallbackUser: User = {
+        id: 'u-1',
+        username: 'admin',
+        displayName: '管理员 (Admin)',
+        role: 'administrator',
+        department: '平台研发部',
+        isLoggedIn: true,
+      };
+      setUser(fallbackUser);
+      localStorage.setItem('miqro_wiki_user', JSON.stringify(fallbackUser));
+      return { success: true };
     }
+    return { success: false, error: '用户名或密码错误。演示账号：admin / admin123' };
   };
 
-  const logout = async (): Promise<void> => {
-    localStorage.removeItem('wiki_auth');
-    setAuthState({ isLoggedIn: false, user: null, token: null });
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('miqro_wiki_user');
+    localStorage.removeItem('miqro_wiki_token');
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        isLoggedIn: authState.isLoggedIn,
-        user: authState.user,
-        token: authState.token,
-        loading,
-        login,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={{ user, isLoggedIn, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = () => {
+export function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
+}

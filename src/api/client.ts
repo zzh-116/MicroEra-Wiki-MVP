@@ -1,57 +1,82 @@
+/**
+ * Unified API HTTP client.
+ *
+ * Talks to the Express backend (dev: proxied by Vite to localhost:3001;
+ * production: same origin). Manages JWT token in localStorage under
+ * the key 'miqro_wiki_token'.
+ */
 const API_BASE = '/api';
+const TOKEN_KEY = 'miqro_wiki_token';
 
-function getAuthHeaders(): Record<string, string> {
+export function getToken(): string | null {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+export function setToken(token: string): void {
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+export function clearToken(): void {
+  localStorage.removeItem(TOKEN_KEY);
+}
+
+/** Build headers with optional auth */
+export function getAuthHeaders(): Record<string, string> {
   const headers: Record<string, string> = {};
-  try {
-    const auth = localStorage.getItem('wiki_auth');
-    if (auth) {
-      const parsed = JSON.parse(auth);
-      if (parsed?.token) {
-        headers['Authorization'] = `Bearer ${parsed.token}`;
-      }
-    }
-  } catch {
-    // ignore parse errors
+  const token = getToken();
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
   }
   return headers;
 }
 
-export async function apiFetch<T>(
+/** Low-level fetch wrapper — all API calls go through this */
+export async function request<T>(
   url: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<T> {
-  const fullUrl = `${API_BASE}${url}`;
-
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...getAuthHeaders(),
     ...((options.headers as Record<string, string>) || {}),
   };
 
-  const response = await fetch(fullUrl, {
+  const response = await fetch(`${API_BASE}${url}`, {
     ...options,
     headers,
   });
 
   if (!response.ok) {
-    const errorBody = await response.json().catch(() => ({}));
-    const message = errorBody?.message || errorBody?.error || response.statusText;
+    const body = await response.json().catch(() => ({}));
+    const message = body?.message || body?.error || response.statusText;
     throw new Error(message);
   }
 
   return response.json() as Promise<T>;
 }
 
-/** Check if user has internal access based on localStorage auth state */
-export function hasInternalAccess(): boolean {
-  try {
-    const auth = localStorage.getItem('wiki_auth');
-    if (auth) {
-      const parsed = JSON.parse(auth);
-      return !!(parsed?.token);
-    }
-  } catch {
-    // ignore
-  }
-  return false;
+/** Convenience: GET */
+export function get<T>(url: string): Promise<T> {
+  return request<T>(url);
+}
+
+/** Convenience: POST */
+export function post<T>(url: string, body?: unknown): Promise<T> {
+  return request<T>(url, {
+    method: 'POST',
+    body: body ? JSON.stringify(body) : undefined,
+  });
+}
+
+/** Convenience: PUT */
+export function put<T>(url: string, body?: unknown): Promise<T> {
+  return request<T>(url, {
+    method: 'PUT',
+    body: body ? JSON.stringify(body) : undefined,
+  });
+}
+
+/** Convenience: DELETE */
+export function del<T>(url: string): Promise<T> {
+  return request<T>(url, { method: 'DELETE' });
 }

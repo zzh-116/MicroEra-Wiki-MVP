@@ -17,6 +17,8 @@ import { dataItemsRouter } from './routes/dataItems.js';
 import { aiRouter } from './routes/ai.js';
 import { searchRouter } from './routes/search.js';
 import { pipelineRouter } from './routes/pipeline.js';
+import { graphRouter } from './routes/graph.js';
+import { spacesRouter } from './routes/spaces.js';
 
 const app = express();
 const PORT = config.port;
@@ -41,6 +43,8 @@ app.use('/api/data-items', dataItemsRouter);
 app.use('/api/search', searchRouter);
 app.use('/api/ai', aiRouter);
 app.use('/api/pipeline', pipelineRouter);
+app.use('/api/graph', graphRouter);
+app.use('/api/spaces', spacesRouter);
 
 // Swagger UI
 const swaggerDir = path.resolve(import.meta.dirname, '..', 'backend', 'swagger');

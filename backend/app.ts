@@ -57,6 +57,8 @@ export async function createApp(options: AppOptions = {}) {
   const { aiRouter } = await import('../server/routes/ai.js');
   const { searchRouter } = await import('../server/routes/search.js');
   const { pipelineRouter } = await import('../server/routes/pipeline.js');
+  const { graphRouter } = await import('../server/routes/graph.js');
+  const { spacesRouter } = await import('../server/routes/spaces.js');
 
   app.use('/api/auth', authRouter);
   app.use('/api/categories', categoriesRouter);
@@ -67,6 +69,8 @@ export async function createApp(options: AppOptions = {}) {
   app.use('/api/search', searchRouter);
   app.use('/api/ai', aiRouter);
   app.use('/api/pipeline', pipelineRouter);
+  app.use('/api/graph', graphRouter);
+  app.use('/api/spaces', spacesRouter);
 
   // Mount any extra routes
   for (const { path: routePath, router } of extraRoutes) {
@@ -105,6 +109,8 @@ export async function createApp(options: AppOptions = {}) {
             dataItems: '/api/data-items',
             ai: '/api/ai',
             pipeline: '/api/pipeline',
+            graph: '/api/graph',
+            spaces: '/api/spaces',
           },
         });
       }
