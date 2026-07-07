@@ -94,15 +94,15 @@ function tryLoadModule(name: string): any {
 }
 
 async function parsePdf(filePath: string, warnings: string[]): Promise<string> {
-  const pdfParse = tryLoadModule('pdf-parse');
-  if (!pdfParse) {
+  const pdfParseFn = tryLoadModule('pdf-parse');
+  if (!pdfParseFn) {
     warnings.push('pdf-parse not installed; reading PDF as raw text. Install: npm install pdf-parse');
     const raw = fs.readFileSync(filePath, 'utf-8');
     return extractReadableText(raw);
   }
 
   const buffer = fs.readFileSync(filePath);
-  const data = await pdfParse(buffer);
+  const data = await pdfParseFn(buffer);
   const text = data.text || '';
 
   // Build a structured markdown from PDF content
