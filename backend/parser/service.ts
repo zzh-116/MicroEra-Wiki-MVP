@@ -79,24 +79,26 @@ function mimeTypeFor(format: InputFormat): string {
 
 // ---- Parser implementations ----
 
-async function tryLoadModule(name: string): Promise<any> {
+import { createRequire } from 'node:module';
+
+function tryLoadModule(name: string): any {
   try {
-    return await import(name);
+    // Use createRequire for CJS modules to avoid ESM interop issues
+    const req = createRequire(import.meta.url);
+    return req(name);
   } catch {
     return null;
   }
 }
 
 async function parsePdf(filePath: string, warnings: string[]): Promise<string> {
-  const mod = await tryLoadModule('pdf-parse');
-  if (!mod) {
+  const pdfParse = tryLoadModule('pdf-parse');
+  if (!pdfParse) {
     warnings.push('pdf-parse not installed; reading PDF as raw text. Install: npm install pdf-parse');
     const raw = fs.readFileSync(filePath, 'utf-8');
     return extractReadableText(raw);
   }
 
-  // pdf-parse may export as default, PDFParse, or the module itself
-  const pdfParse = mod.default || mod.PDFParse || mod;
   const buffer = fs.readFileSync(filePath);
   const data = await pdfParse(buffer);
   const text = data.text || '';
@@ -110,14 +112,13 @@ async function parsePdf(filePath: string, warnings: string[]): Promise<string> {
 }
 
 async function parseDocx(filePath: string, warnings: string[]): Promise<string> {
-  const mod = await tryLoadModule('mammoth');
-  if (!mod) {
+  const mammoth = tryLoadModule('mammoth');
+  if (!mammoth) {
     warnings.push('mammoth not installed; reading DOCX as raw text. Install: npm install mammoth');
     const raw = fs.readFileSync(filePath, 'utf-8');
     return extractReadableText(raw);
   }
 
-  const mammoth = mod.default || mod;
   const buffer = fs.readFileSync(filePath);
   const result = await mammoth.convertToMarkdown({ buffer });
   if (result.messages.length > 0) {
