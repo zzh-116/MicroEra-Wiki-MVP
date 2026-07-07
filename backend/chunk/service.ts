@@ -22,8 +22,8 @@ export interface ChunkResult {
 
 const DEFAULT_CONFIG: ChunkConfig = {
   strategy: 'markdown',
-  chunkSize: 512,
-  overlap: 64,
+  chunkSize: 1024,
+  overlap: 128,
   minChunkSize: 50,
 };
 

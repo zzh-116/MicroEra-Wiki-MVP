@@ -199,6 +199,7 @@ class DataImportService {
 
           // ---- Step 5: Vector Store ----
           const records = chunks.map((c, i) => ({
+            chunk_id: c.id,  // e.g. "entry_9_chunk_3"
             entry_id: entry.id,
             embedding: vectors[i] || [],
           }));

@@ -91,13 +91,14 @@ export interface EmbeddingResult {
 // ---- Vector ----
 
 export interface VectorRecord {
-  id: number;
+  chunk_id: string;
   entry_id: number;
   embedding: number[];
 }
 
 export interface VectorSearchResult {
   entry_id: number;
+  chunk_id: string;
   score: number;
 }
 
@@ -106,6 +107,8 @@ export interface VectorSearchResult {
 export interface RetrievalResult {
   entry: Entry;
   score: number;
+  chunkId?: string;
+  chunkText?: string;
   chunks?: DocumentChunk[];
 }
 
