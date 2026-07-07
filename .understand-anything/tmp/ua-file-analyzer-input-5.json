@@ -1,0 +1,19 @@
+{
+  "projectRoot": "C:/Users/Intership004/zzh/company-wiki-mvp_v0.0.2",
+  "batchFiles": [
+    {"path": ".env.example", "language": "config", "sizeLines": 23, "fileCategory": "config"},
+    {"path": "README.md", "language": "markdown", "sizeLines": 354, "fileCategory": "docs"},
+    {"path": "index.html", "language": "html", "sizeLines": 13, "fileCategory": "markup"},
+    {"path": "metadata.json", "language": "json", "sizeLines": 6, "fileCategory": "config"},
+    {"path": "package.json", "language": "json", "sizeLines": 41, "fileCategory": "config"},
+    {"path": "tsconfig.json", "language": "json", "sizeLines": 26, "fileCategory": "config"}
+  ],
+  "batchImportData": {
+    ".env.example": [],
+    "README.md": [],
+    "index.html": [],
+    "metadata.json": [],
+    "package.json": [],
+    "tsconfig.json": []
+  }
+}

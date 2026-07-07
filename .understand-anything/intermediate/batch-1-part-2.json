@@ -1,0 +1,784 @@
+{
+  "nodes": [
+    {
+      "id": "file:backend/types.ts",
+      "type": "file",
+      "name": "types.ts",
+      "filePath": "backend/types.ts",
+      "summary": "后端核心类型定义模块，声明了百科词条、分类、标签、文件、数据项以及解析器和导入相关的所有 TypeScript 接口。",
+      "tags": ["type-definition", "interface", "data-model", "shared"],
+      "complexity": "moderate",
+      "languageNotes": "使用 TypeScript 接口和类型别名集中定义了项目全部数据结构，无运行时逻辑，被所有后端模块依赖。"
+    },
+    {
+      "id": "file:backend/vector/memory.ts",
+      "type": "file",
+      "name": "memory.ts",
+      "filePath": "backend/vector/memory.ts",
+      "summary": "内存向量存储实现，使用余弦相似度进行本地向量检索，支持数据持久化到 JSON 文件。",
+      "tags": ["vector-store", "memory", "cosine-similarity", "embedding"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:backend/vector/memory.ts:MemoryVectorStore",
+      "type": "class",
+      "name": "MemoryVectorStore",
+      "filePath": "backend/vector/memory.ts",
+      "lineRange": [18, 70],
+      "summary": "内存向量存储类，提供向量插入、余弦相似度搜索和数据持久化功能，作为 Milvus 的本地轻量替代方案。",
+      "tags": ["vector-store", "memory", "cosine-similarity", "persistence"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/vector/memory.ts:cosineSimilarity",
+      "type": "function",
+      "name": "cosineSimilarity",
+      "filePath": "backend/vector/memory.ts",
+      "lineRange": [72, 82],
+      "summary": "余弦相似度计算函数，通过向量点积与模长之比衡量两个向量的语义相似程度。",
+      "tags": ["math", "cosine-similarity", "vector", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/vector/milvus.ts",
+      "type": "file",
+      "name": "milvus.ts",
+      "filePath": "backend/vector/milvus.ts",
+      "summary": "Milvus 向量数据库客户端，封装 Collection 创建、索引管理、向量插入和搜索的完整操作流程。",
+      "tags": ["vector-store", "milvus", "database", "embedding"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/vector/milvus.ts:loadSDK",
+      "type": "function",
+      "name": "loadSDK",
+      "filePath": "backend/vector/milvus.ts",
+      "lineRange": [7, 18],
+      "summary": "Milvus SDK 动态加载函数，通过 ESM 动态导入加载 @zilliz/milvus2-sdk-node，实现可选依赖。",
+      "tags": ["milvus", "dynamic-import", "sdk"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:backend/vector/milvus.ts:MilvusClient",
+      "type": "class",
+      "name": "MilvusClient",
+      "filePath": "backend/vector/milvus.ts",
+      "lineRange": [30, 134],
+      "summary": "Milvus 客户端类，管理连接、Collection 创建与索引、向量批量插入和 ANN 搜索，支持动态 SDK 加载。",
+      "tags": ["milvus", "vector-store", "client", "ann-search"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:server/index.ts",
+      "type": "file",
+      "name": "index.ts",
+      "filePath": "server/index.ts",
+      "summary": "服务端启动入口，负责初始化元数据种子、连接向量存储，并启动 HTTP 服务器监听请求。",
+      "tags": ["entry-point", "server", "bootstrap", "express"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:server/index.ts:bootstrap",
+      "type": "function",
+      "name": "bootstrap",
+      "filePath": "server/index.ts",
+      "lineRange": [69, 89],
+      "summary": "服务启动引导函数，执行元数据种子初始化、连接向量数据库并启动 Express 监听。",
+      "tags": ["bootstrap", "server", "startup"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:server/middleware/auth.ts",
+      "type": "file",
+      "name": "auth.ts",
+      "filePath": "server/middleware/auth.ts",
+      "summary": "JWT 认证中间件，提供 token 签发、验证以及 requireAuth/optionalAuth 两个 Express 中间件工厂函数。",
+      "tags": ["auth", "jwt", "middleware", "security"],
+      "complexity": "moderate",
+      "languageNotes": "使用 Node.js 内置 crypto 模块实现 HMAC-SHA256 JWT 签名，无需第三方 JWT 库。"
+    },
+    {
+      "id": "function:server/middleware/auth.ts:signToken",
+      "type": "function",
+      "name": "signToken",
+      "filePath": "server/middleware/auth.ts",
+      "lineRange": [17, 30],
+      "summary": "JWT Token 签发函数，使用 HMAC-SHA256 算法对 payload 进行签名并返回 Base64URL 编码的 token。",
+      "tags": ["jwt", "auth", "security", "token"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:server/middleware/auth.ts:verifyToken",
+      "type": "function",
+      "name": "verifyToken",
+      "filePath": "server/middleware/auth.ts",
+      "lineRange": [32, 53],
+      "summary": "JWT Token 验证函数，校验签名完整性、过期时间并解码返回 payload 内容。",
+      "tags": ["jwt", "auth", "security", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:server/middleware/auth.ts:requireAuth",
+      "type": "function",
+      "name": "requireAuth",
+      "filePath": "server/middleware/auth.ts",
+      "lineRange": [66, 83],
+      "summary": "强制认证中间件，验证 Bearer Token 并将解码后的用户信息注入 req.user，未认证时返回 401。",
+      "tags": ["auth", "middleware", "express", "guard"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:server/middleware/auth.ts:optionalAuth",
+      "type": "function",
+      "name": "optionalAuth",
+      "filePath": "server/middleware/auth.ts",
+      "lineRange": [86, 100],
+      "summary": "可选认证中间件，若请求携带有效 token 则注入用户信息，否则匿名继续处理请求。",
+      "tags": ["auth", "middleware", "express", "optional"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:server/routes/ai.ts",
+      "type": "file",
+      "name": "ai.ts",
+      "filePath": "server/routes/ai.ts",
+      "summary": "AI 功能路由，暴露聊天对话、语义搜索和内容摘要三个 POST 端点，同时提供数据导入触发接口。",
+      "tags": ["api-handler", "ai", "chat", "search", "express-router"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:server/routes/auth.ts",
+      "type": "file",
+      "name": "auth.ts",
+      "filePath": "server/routes/auth.ts",
+      "summary": "认证路由，提供 POST /login 端点，使用预设账号验证用户名密码并签发 JWT token。",
+      "tags": ["api-handler", "auth", "login", "express-router"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:server/routes/categories.ts",
+      "type": "file",
+      "name": "categories.ts",
+      "filePath": "server/routes/categories.ts",
+      "summary": "分类查询路由，提供 GET /categories 端点，返回系统中所有可用的百科词条分类列表。",
+      "tags": ["api-handler", "categories", "express-router"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:server/routes/dataItems.ts",
+      "type": "file",
+      "name": "dataItems.ts",
+      "filePath": "server/routes/dataItems.ts",
+      "summary": "数据项路由，提供 GET/POST /data-items 端点，支持按词条 ID 查询和更新结构化数据项，部分接口需认证。",
+      "tags": ["api-handler", "data-items", "express-router"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:server/routes/entries.ts",
+      "type": "file",
+      "name": "entries.ts",
+      "filePath": "server/routes/entries.ts",
+      "summary": "词条路由，提供 GET/POST/PUT/DELETE /entries 端点，实现词条的完整 CRUD 操作，写操作需认证。",
+      "tags": ["api-handler", "entries", "crud", "express-router"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:server/routes/files.ts",
+      "type": "file",
+      "name": "files.ts",
+      "filePath": "server/routes/files.ts",
+      "summary": "文件管理路由，提供 GET/POST/DELETE /files 端点，支持文件上传、查询和删除操作。",
+      "tags": ["api-handler", "files", "upload", "express-router"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:server/routes/pipeline.ts",
+      "type": "file",
+      "name": "pipeline.ts",
+      "filePath": "server/routes/pipeline.ts",
+      "summary": "数据导入流水线路由，暴露分块、嵌入、搜索和完整导入流水线的调试与测试端点，是后端能力的综合集成入口。",
+      "tags": ["api-handler", "pipeline", "import", "embedding", "express-router"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:server/routes/search.ts",
+      "type": "file",
+      "name": "search.ts",
+      "filePath": "server/routes/search.ts",
+      "summary": "搜索路由，提供 GET /search 端点，调用 AI 服务执行语义搜索并返回结果。",
+      "tags": ["api-handler", "search", "semantic-search", "express-router"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:server/routes/tags.ts",
+      "type": "file",
+      "name": "tags.ts",
+      "filePath": "server/routes/tags.ts",
+      "summary": "标签查询路由，提供 GET /tags 端点，返回系统中所有已注册的标签列表。",
+      "tags": ["api-handler", "tags", "express-router"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:backend/vector/memory.ts",
+      "target": "class:backend/vector/memory.ts:MemoryVectorStore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/vector/memory.ts",
+      "target": "function:backend/vector/memory.ts:cosineSimilarity",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/vector/memory.ts",
+      "target": "class:backend/vector/memory.ts:MemoryVectorStore",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/vector/memory.ts",
+      "target": "file:backend/config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "class:backend/vector/memory.ts:MemoryVectorStore",
+      "target": "function:backend/vector/memory.ts:cosineSimilarity",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/vector/milvus.ts",
+      "target": "function:backend/vector/milvus.ts:loadSDK",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/vector/milvus.ts",
+      "target": "class:backend/vector/milvus.ts:MilvusClient",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/vector/milvus.ts",
+      "target": "class:backend/vector/milvus.ts:MilvusClient",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/vector/milvus.ts",
+      "target": "file:backend/config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "class:backend/vector/milvus.ts:MilvusClient",
+      "target": "function:backend/vector/milvus.ts:loadSDK",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/index.ts",
+      "target": "function:server/index.ts:bootstrap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/index.ts",
+      "target": "file:backend/config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/index.ts",
+      "target": "file:backend/metadata/store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/index.ts",
+      "target": "file:backend/vector/memory.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/index.ts",
+      "target": "file:backend/vector/milvus.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/index.ts",
+      "target": "file:server/routes/ai.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/index.ts",
+      "target": "file:server/routes/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/index.ts",
+      "target": "file:server/routes/categories.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/index.ts",
+      "target": "file:server/routes/dataItems.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/index.ts",
+      "target": "file:server/routes/entries.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/index.ts",
+      "target": "file:server/routes/files.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/index.ts",
+      "target": "file:server/routes/pipeline.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/index.ts",
+      "target": "file:server/routes/search.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/index.ts",
+      "target": "file:server/routes/tags.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/index.ts",
+      "target": "function:backend/metadata/store.ts:seedMetadata",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/index.ts",
+      "target": "class:backend/vector/milvus.ts:MilvusClient",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/index.ts",
+      "target": "class:backend/vector/memory.ts:MemoryVectorStore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/middleware/auth.ts",
+      "target": "function:server/middleware/auth.ts:signToken",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/middleware/auth.ts",
+      "target": "function:server/middleware/auth.ts:verifyToken",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/middleware/auth.ts",
+      "target": "function:server/middleware/auth.ts:requireAuth",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/middleware/auth.ts",
+      "target": "function:server/middleware/auth.ts:optionalAuth",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/middleware/auth.ts",
+      "target": "function:server/middleware/auth.ts:signToken",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/middleware/auth.ts",
+      "target": "function:server/middleware/auth.ts:verifyToken",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/middleware/auth.ts",
+      "target": "function:server/middleware/auth.ts:requireAuth",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/middleware/auth.ts",
+      "target": "function:server/middleware/auth.ts:optionalAuth",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/middleware/auth.ts:requireAuth",
+      "target": "function:server/middleware/auth.ts:verifyToken",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/middleware/auth.ts:optionalAuth",
+      "target": "function:server/middleware/auth.ts:verifyToken",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/routes/ai.ts",
+      "target": "file:backend/ai/service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/ai.ts",
+      "target": "file:backend/config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/ai.ts",
+      "target": "file:backend/metadata/importJob.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/ai.ts",
+      "target": "file:backend/metadata/store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/ai.ts",
+      "target": "file:backend/vector/memory.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/ai.ts",
+      "target": "class:backend/ai/service.ts:AiService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/routes/ai.ts",
+      "target": "class:backend/metadata/importJob.ts:ImportJob",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/routes/auth.ts",
+      "target": "file:server/middleware/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/auth.ts",
+      "target": "function:server/middleware/auth.ts:signToken",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/routes/categories.ts",
+      "target": "file:backend/metadata/store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/categories.ts",
+      "target": "class:backend/metadata/store.ts:MetadataStore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/routes/dataItems.ts",
+      "target": "file:backend/metadata/store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/dataItems.ts",
+      "target": "file:server/middleware/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/dataItems.ts",
+      "target": "function:server/middleware/auth.ts:requireAuth",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/routes/dataItems.ts",
+      "target": "class:backend/metadata/store.ts:MetadataStore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/routes/entries.ts",
+      "target": "file:backend/metadata/store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/entries.ts",
+      "target": "file:server/middleware/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/entries.ts",
+      "target": "function:server/middleware/auth.ts:requireAuth",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/routes/entries.ts",
+      "target": "function:server/middleware/auth.ts:optionalAuth",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/routes/entries.ts",
+      "target": "class:backend/metadata/store.ts:MetadataStore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/routes/files.ts",
+      "target": "file:backend/metadata/store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/files.ts",
+      "target": "file:server/middleware/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/files.ts",
+      "target": "class:backend/metadata/store.ts:MetadataStore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/routes/pipeline.ts",
+      "target": "file:backend/chunk/service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/pipeline.ts",
+      "target": "file:backend/config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/pipeline.ts",
+      "target": "file:backend/embedding/ollama.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/pipeline.ts",
+      "target": "file:backend/import/service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/pipeline.ts",
+      "target": "file:backend/metadata/store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/pipeline.ts",
+      "target": "file:backend/parser/service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/pipeline.ts",
+      "target": "file:backend/retrieval/search.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/pipeline.ts",
+      "target": "file:backend/vector/memory.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/pipeline.ts",
+      "target": "file:backend/vector/milvus.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/pipeline.ts",
+      "target": "class:backend/chunk/service.ts:ChunkService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/routes/pipeline.ts",
+      "target": "class:backend/embedding/ollama.ts:OllamaEmbedder",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/routes/pipeline.ts",
+      "target": "class:backend/import/service.ts:DataImportService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/routes/pipeline.ts",
+      "target": "class:backend/parser/service.ts:ParserService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/routes/pipeline.ts",
+      "target": "class:backend/retrieval/search.ts:SemanticSearch",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/routes/pipeline.ts",
+      "target": "class:backend/vector/memory.ts:MemoryVectorStore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/routes/pipeline.ts",
+      "target": "class:backend/vector/milvus.ts:MilvusClient",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/routes/search.ts",
+      "target": "file:backend/ai/service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/search.ts",
+      "target": "class:backend/ai/service.ts:AiService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/routes/tags.ts",
+      "target": "file:backend/metadata/store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/routes/tags.ts",
+      "target": "class:backend/metadata/store.ts:MetadataStore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

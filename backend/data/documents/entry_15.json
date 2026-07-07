@@ -1,0 +1,306 @@
+[
+  {
+    "id": "15_E11",
+    "entryId": 15,
+    "text": "[E11] 响应值 / 灵敏度\nResponse / Sensitivity\n符号: S / ΔR/R₀\n定义: 传感器暴露于目标分析物时的信号变化比例\n单位: **%**\n其他单位: — (比值)\n值域: 半导体气敏: 1~10³\n方法: 气敏测试系统 / 电化学工作站\n备注: S = (R_g - R_0)/R_0（电阻型）或 ΔI/I₀（电流型）",
+    "metadata": {
+      "code": "E11",
+      "section": "传感性质",
+      "category": "experimental",
+      "nameZh": "响应值 / 灵敏度",
+      "nameEn": "Response / Sensitivity",
+      "symbol": "S / ΔR/R₀",
+      "definition": "传感器暴露于目标分析物时的信号变化比例",
+      "preferredUnit": "**%**",
+      "methods": "气敏测试系统 / 电化学工作站"
+    }
+  },
+  {
+    "id": "15_E12",
+    "entryId": 15,
+    "text": "[E12] 响应时间\nResponse Time\n符号: t_res / τ_res\n定义: 传感器信号达到稳态值 90% 所需的时间\n单位: **s**\n其他单位: min\n值域: 半导体: 1~100 s\n方法: 气敏测试系统\n备注: —",
+    "metadata": {
+      "code": "E12",
+      "section": "传感性质",
+      "category": "experimental",
+      "nameZh": "响应时间",
+      "nameEn": "Response Time",
+      "symbol": "t_res / τ_res",
+      "definition": "传感器信号达到稳态值 90% 所需的时间",
+      "preferredUnit": "**s**",
+      "methods": "气敏测试系统"
+    }
+  },
+  {
+    "id": "15_E13",
+    "entryId": 15,
+    "text": "[E13] 恢复时间\nRecovery Time\n符号: t_rec / τ_rec\n定义: 移除分析物后信号恢复至基线 90% 所需的时间\n单位: **s**\n其他单位: min\n值域: 半导体: 5~500 s\n方法: 气敏测试系统\n备注: —",
+    "metadata": {
+      "code": "E13",
+      "section": "传感性质",
+      "category": "experimental",
+      "nameZh": "恢复时间",
+      "nameEn": "Recovery Time",
+      "symbol": "t_rec / τ_rec",
+      "definition": "移除分析物后信号恢复至基线 90% 所需的时间",
+      "preferredUnit": "**s**",
+      "methods": "气敏测试系统"
+    }
+  },
+  {
+    "id": "15_E14",
+    "entryId": 15,
+    "text": "[E14] 基线电阻\nBaseline Resistance\n符号: R₀ / R_baseline\n定义: 洁净载气中传感器的初始电阻/阻抗\n单位: **Ω**\n其他单位: kΩ, MΩ\n值域: —\n方法: 电化学工作站 / 源表\n备注: 电阻型传感器",
+    "metadata": {
+      "code": "E14",
+      "section": "传感性质",
+      "category": "experimental",
+      "nameZh": "基线电阻",
+      "nameEn": "Baseline Resistance",
+      "symbol": "R₀ / R_baseline",
+      "definition": "洁净载气中传感器的初始电阻/阻抗",
+      "preferredUnit": "**Ω**",
+      "methods": "电化学工作站 / 源表"
+    }
+  },
+  {
+    "id": "15_E15",
+    "entryId": 15,
+    "text": "[E15] 阻抗值\nImpedance\n符号: Z\n定义: 交流激励下传感器的复数阻抗\n单位: **Ω**\n其他单位: kΩ, MΩ\n值域: —\n方法: EIS（电化学阻抗谱）\n备注: —",
+    "metadata": {
+      "code": "E15",
+      "section": "传感性质",
+      "category": "experimental",
+      "nameZh": "阻抗值",
+      "nameEn": "Impedance",
+      "symbol": "Z",
+      "definition": "交流激励下传感器的复数阻抗",
+      "preferredUnit": "**Ω**",
+      "methods": "EIS（电化学阻抗谱）"
+    }
+  },
+  {
+    "id": "15_E16",
+    "entryId": 15,
+    "text": "[E16] 电荷转移阻抗\nCharge Transfer Resistance\n符号: R_ct\n定义: 电极/电解质界面的电荷转移阻力\n单位: **Ω**\n其他单位: kΩ\n值域: —\n方法: EIS Nyquist 图拟合\n备注: TTF@UTSA-74 传感的核心指标",
+    "metadata": {
+      "code": "E16",
+      "section": "传感性质",
+      "category": "experimental",
+      "nameZh": "电荷转移阻抗",
+      "nameEn": "Charge Transfer Resistance",
+      "symbol": "R_ct",
+      "definition": "电极/电解质界面的电荷转移阻力",
+      "preferredUnit": "**Ω**",
+      "methods": "EIS Nyquist 图拟合"
+    }
+  },
+  {
+    "id": "15_E17",
+    "entryId": 15,
+    "text": "[E17] 阻抗模值变化率\n\\\n符号: Z\\\n定义: Change Ratio\n单位: Δ\\\n其他单位: Z\\\n值域: /\\\n方法: Z\\\n备注: ₀",
+    "metadata": {
+      "code": "E17",
+      "section": "传感性质",
+      "category": "experimental",
+      "nameZh": "阻抗模值变化率",
+      "nameEn": "\\",
+      "symbol": "Z\\",
+      "definition": "Change Ratio",
+      "preferredUnit": "Δ\\",
+      "methods": "Z\\"
+    }
+  },
+  {
+    "id": "15_E18",
+    "entryId": 15,
+    "text": "[E18] 检测限\nLimit of Detection\n符号: LOD\n定义: 能可靠检出目标分析物的最低浓度 (S/N ≥ 3)\n单位: **ppm** / **ppb**\n其他单位: mg/m³, μg/m³, vol%\n值域: 乙炔传感: 1~100 ppm\n方法: 气敏测试系统\n备注: 标注 S/N 定义",
+    "metadata": {
+      "code": "E18",
+      "section": "传感性质",
+      "category": "experimental",
+      "nameZh": "检测限",
+      "nameEn": "Limit of Detection",
+      "symbol": "LOD",
+      "definition": "能可靠检出目标分析物的最低浓度 (S/N ≥ 3)",
+      "preferredUnit": "**ppm** / **ppb**",
+      "methods": "气敏测试系统"
+    }
+  },
+  {
+    "id": "15_E19",
+    "entryId": 15,
+    "text": "[E19] 定量限\nLimit of Quantification\n符号: LOQ\n定义: 能可靠定量的最低浓度 (S/N ≥ 10)\n单位: **ppm** / **ppb**\n其他单位: —\n值域: —\n方法: 气敏测试系统\n备注: —",
+    "metadata": {
+      "code": "E19",
+      "section": "传感性质",
+      "category": "experimental",
+      "nameZh": "定量限",
+      "nameEn": "Limit of Quantification",
+      "symbol": "LOQ",
+      "definition": "能可靠定量的最低浓度 (S/N ≥ 10)",
+      "preferredUnit": "**ppm** / **ppb**",
+      "methods": "气敏测试系统"
+    }
+  },
+  {
+    "id": "15_E20",
+    "entryId": 15,
+    "text": "[E20] 线性范围\nLinear Range\n符号: —\n定义: 传感器响应与分析物浓度呈线性关系的范围\n单位: **ppm ~ ppm**\n其他单位: mg/m³\n值域: —\n方法: 多点浓度校准\n备注: —",
+    "metadata": {
+      "code": "E20",
+      "section": "传感性质",
+      "category": "experimental",
+      "nameZh": "线性范围",
+      "nameEn": "Linear Range",
+      "symbol": "—",
+      "definition": "传感器响应与分析物浓度呈线性关系的范围",
+      "preferredUnit": "**ppm ~ ppm**",
+      "methods": "多点浓度校准"
+    }
+  },
+  {
+    "id": "15_E21",
+    "entryId": 15,
+    "text": "[E21] 灵敏度/斜率\nSensitivity Slope\n符号: k_sens\n定义: 线性区间内响应值对浓度的斜率\n单位: **%/ppm** / **Ω/ppm**\n其他单位: 因传感类型而异\n值域: —\n方法: 线性拟合\n备注: —",
+    "metadata": {
+      "code": "E21",
+      "section": "传感性质",
+      "category": "experimental",
+      "nameZh": "灵敏度/斜率",
+      "nameEn": "Sensitivity Slope",
+      "symbol": "k_sens",
+      "definition": "线性区间内响应值对浓度的斜率",
+      "preferredUnit": "**%/ppm** / **Ω/ppm**",
+      "methods": "线性拟合"
+    }
+  },
+  {
+    "id": "15_E22",
+    "entryId": 15,
+    "text": "[E22] 传感选择性\nSensing Selectivity\n符号: S_sel\n定义: 传感器在相同浓度下对目标气体相对干扰气体的响应比值\n单位: **—** (比值)\n其他单位: —\n值域: —\n方法: 多气体对比测试\n备注: S_sel = S_target / S_interferent",
+    "metadata": {
+      "code": "E22",
+      "section": "传感性质",
+      "category": "experimental",
+      "nameZh": "传感选择性",
+      "nameEn": "Sensing Selectivity",
+      "symbol": "S_sel",
+      "definition": "传感器在相同浓度下对目标气体相对干扰气体的响应比值",
+      "preferredUnit": "**—** (比值)",
+      "methods": "多气体对比测试"
+    }
+  },
+  {
+    "id": "15_E23",
+    "entryId": 15,
+    "text": "[E23] 交叉灵敏度\nCross-Sensitivity\n符号: —\n定义: 传感器对非目标气体的响应程度\n单位: **%**（相对目标响应）\n其他单位: —\n值域: —\n方法: 多气体测试\n备注: —",
+    "metadata": {
+      "code": "E23",
+      "section": "传感性质",
+      "category": "experimental",
+      "nameZh": "交叉灵敏度",
+      "nameEn": "Cross-Sensitivity",
+      "symbol": "—",
+      "definition": "传感器对非目标气体的响应程度",
+      "preferredUnit": "**%**（相对目标响应）",
+      "methods": "多气体测试"
+    }
+  },
+  {
+    "id": "15_E24",
+    "entryId": 15,
+    "text": "[E24] 长期漂移\nLong-term Drift\n符号: D_long\n定义: 传感器基线信号在较长时间内的偏移量\n单位: **%/月** / **mV/天**\n其他单位: %/天\n值域: —\n方法: 长期连续监测\n备注: —",
+    "metadata": {
+      "code": "E24",
+      "section": "传感性质",
+      "category": "experimental",
+      "nameZh": "长期漂移",
+      "nameEn": "Long-term Drift",
+      "symbol": "D_long",
+      "definition": "传感器基线信号在较长时间内的偏移量",
+      "preferredUnit": "**%/月** / **mV/天**",
+      "methods": "长期连续监测"
+    }
+  },
+  {
+    "id": "15_E25",
+    "entryId": 15,
+    "text": "[E25] 循环稳定性\nCycling Stability\n符号: —\n定义: 多次吸附-脱附/传感循环后性能的保持率\n单位: **%**（保持率） / 循环次数\n其他单位: —\n值域: —\n方法: 多次循环测试\n备注: 记录循环数和条件",
+    "metadata": {
+      "code": "E25",
+      "section": "传感性质",
+      "category": "experimental",
+      "nameZh": "循环稳定性",
+      "nameEn": "Cycling Stability",
+      "symbol": "—",
+      "definition": "多次吸附-脱附/传感循环后性能的保持率",
+      "preferredUnit": "**%**（保持率） / 循环次数",
+      "methods": "多次循环测试"
+    }
+  },
+  {
+    "id": "15_E26",
+    "entryId": 15,
+    "text": "[E26] 重复性\nRepeatability\n符号: RSD\n定义: 同一传感器多次测量结果的相对标准偏差\n单位: **%RSD**\n其他单位: —\n值域: <5% 为良好\n方法: 重复测量 (n≥5)\n备注: —",
+    "metadata": {
+      "code": "E26",
+      "section": "传感性质",
+      "category": "experimental",
+      "nameZh": "重复性",
+      "nameEn": "Repeatability",
+      "symbol": "RSD",
+      "definition": "同一传感器多次测量结果的相对标准偏差",
+      "preferredUnit": "**%RSD**",
+      "methods": "重复测量 (n≥5)"
+    }
+  },
+  {
+    "id": "15_E27",
+    "entryId": 15,
+    "text": "[E27] 再现性\nReproducibility\n符号: —\n定义: 不同批次传感器之间测量结果的一致性\n单位: **%RSD**\n其他单位: —\n值域: —\n方法: 多批次测量\n备注: —",
+    "metadata": {
+      "code": "E27",
+      "section": "传感性质",
+      "category": "experimental",
+      "nameZh": "再现性",
+      "nameEn": "Reproducibility",
+      "symbol": "—",
+      "definition": "不同批次传感器之间测量结果的一致性",
+      "preferredUnit": "**%RSD**",
+      "methods": "多批次测量"
+    }
+  },
+  {
+    "id": "15_E28",
+    "entryId": 15,
+    "text": "[E28] 抗湿干扰性\nHumidity Interference\n符号: —\n定义: 传感器在不同湿度环境中响应的稳定性\n单位: **定性** / **% 偏移**\n其他单位: —\n值域: —\n方法: 不同 %RH 条件测试\n备注: 乙炔/VOC 传感器关键指标",
+    "metadata": {
+      "code": "E28",
+      "section": "传感性质",
+      "category": "experimental",
+      "nameZh": "抗湿干扰性",
+      "nameEn": "Humidity Interference",
+      "symbol": "—",
+      "definition": "传感器在不同湿度环境中响应的稳定性",
+      "preferredUnit": "**定性** / **% 偏移**",
+      "methods": "不同 %RH 条件测试"
+    }
+  },
+  {
+    "id": "15_E29",
+    "entryId": 15,
+    "text": "[E29] 操作温度范围\nOperating Temperature Range\n符号: —\n定义: 传感器保持正常响应的温度区间\n单位: **°C** / **K**\n其他单位: —\n值域: —\n方法: 变温测试\n备注: —",
+    "metadata": {
+      "code": "E29",
+      "section": "传感性质",
+      "category": "experimental",
+      "nameZh": "操作温度范围",
+      "nameEn": "Operating Temperature Range",
+      "symbol": "—",
+      "definition": "传感器保持正常响应的温度区间",
+      "preferredUnit": "**°C** / **K**",
+      "methods": "变温测试"
+    }
+  }
+]

@@ -1,0 +1,84 @@
+[
+  {
+    "order": 1,
+    "title": "项目概览",
+    "description": "README.md 是项目的全景地图，涵盖企业数据管道架构（导入→解析→分块→嵌入→向量存储→检索→RAG 问答）、技术栈总览（React 19 + Express 4 + Vite 6 + Ollama + Milvus）、完整 API 端点文档和三级降级检索策略。阅读本文档可以建立对项目目标和整体架构的高层理解，为后续深入各个模块提供上下文。",
+    "nodeIds": ["document:README.md"]
+  },
+  {
+    "order": 2,
+    "title": "前端应用入口",
+    "description": "src/main.tsx 负责将 React 应用挂载到 DOM，外层包裹 StrictMode 进行开发期检查。src/App.tsx 是应用的根组件，按 LanguageThemeProvider → AuthProvider → AiProvider 三层嵌套组织全局 Context，内部的 AppContent 组件通过 switch/case 实现基于状态的客户端路由视图切换。理解了这两个文件，就掌握了前端的骨架结构。",
+    "nodeIds": ["file:src/main.tsx", "file:src/App.tsx"],
+    "languageLesson": "React Context Provider 嵌套的顺序决定了依赖层级——外层 Provider 的状态可被内层组件消费，但反之不行。此处 LanguageThemeProvider 在最外层，因为认证和 AI 模块都可能需要读取语言/主题配置。"
+  },
+  {
+    "order": 3,
+    "title": "核心领域类型系统",
+    "description": "类型系统定义了整个 Wiki 平台的领域模型。Entry 是核心实体，支持五种条目类型（asset/product/tech/patent/data_item）和两种可见性级别（public/internal）。Category 提供分类导航骨架，WikiFile 管理附件元数据，DataItem 承载结构化研发数据，User 支撑认证模块。这些类型是前端组件、API 客户端和后端存储的共同"语言"。",
+    "nodeIds": ["file:src/types/entry.ts", "file:src/types/category.ts", "file:src/types/file.ts", "file:src/types/dataItem.ts", "file:src/utils/labelMapper.ts"],
+    "languageLesson": "TypeScript 的联合类型（union type，如 EntryType = 'asset' | 'product' | ...）在此处用于约束条目分类，保证类型安全——编译器会在编译期检查所有 switch/case 分支是否穷举，防止遗漏新增类型。"
+  },
+  {
+    "order": 4,
+    "title": "前端 API 客户端层",
+    "description": "api/client.ts 中的 apiFetch 泛型函数是整个前端的数据通道：自动拼接 /api 前缀、从 localStorage 注入 JWT Bearer token、统一处理 JSON 响应和错误。entriesApi.ts 基于 apiFetch 封装了条目 CRUD 操作（getEntries/getEntryById/createEntry/updateEntry/deleteEntry）和多维度查询过滤（关键词、类型、可见性、分类、标签）。这个薄封装层让页面组件只需关心业务逻辑，无需处理底层 HTTP 细节。",
+    "nodeIds": ["file:src/api/client.ts", "file:src/api/entriesApi.ts"],
+    "languageLesson": "TypeScript 泛型函数（generic function，如 apiFetch<T>）让调用方在编译期获得准确的返回类型推断——调用 apiFetch<Entry[]>(...) 后，返回值自动具有 Entry[] 类型，无需手动类型断言。"
+  },
+  {
+    "order": 5,
+    "title": "全局状态管理 Context 层",
+    "description": "LanguageThemeContext 管理语言（中/英切换）和主题（浅/深色），提供 80+ 个翻译键的 t() 翻译函数，状态通过 localStorage 持久化。AuthContext 在挂载时从 localStorage 恢复会话并通过 /auth/me 验证 token 有效性，暴露 login/logout 方法和 isLoggedIn 状态。AiContext 封装三大 AI 能力——语义搜索、对话聊天和条目摘要——均通过 apiFetch 调用后端端点。这三个 Context 构成了前端的状态"大脑"。",
+    "nodeIds": ["file:src/context/LanguageThemeContext.tsx", "file:src/context/AuthContext.tsx", "file:src/context/AiContext.tsx"],
+    "languageLesson": "React Context 的 useMemo 优化模式——将 value 对象用 useMemo 包裹（依赖项为内部状态），避免每次父组件重渲染时创建新对象引用而导致所有消费者不必要的重渲染。"
+  },
+  {
+    "order": 6,
+    "title": "核心页面",
+    "description": "EntryListPage 是系统核心浏览入口，集成 FilterBar 过滤（关键词/分类/可见性/类型/标签）、AI 语义搜索开关（AiSearchToggle）、网格/表格视图切换（EntryCard/EntryTable），展现在 Step 4 的 API 层和 Step 5 的 Context 层之上。EntryDetailPage 是阅读视图，展示完整 Markdown 正文、附件文件列表、标签云、元数据，并对 internal 内容实施未授权拦截。这两个页面体现了前端分层架构的最终聚合效果。",
+    "nodeIds": ["file:src/pages/EntryListPage.tsx", "file:src/pages/EntryDetailPage.tsx"]
+  },
+  {
+    "order": 7,
+    "title": "服务端入口与 JWT 认证",
+    "description": "server/index.ts 的 bootstrap 函数依次执行元数据种子初始化、连接向量数据库、加载 app.ts 返回的 Express 实例并启动监听。server/middleware/auth.ts 提供基于 HMAC-SHA256 的 JWT 工具函数——signToken 签发 token、verifyToken 校验签名和过期时间、requireAuth 强制认证（未登录返回 401）、optionalAuth 可选认证（匿名放行）——这两个中间件被路由层按需挂载，实现接口级权限控制。",
+    "nodeIds": ["file:server/index.ts", "file:server/middleware/auth.ts"],
+    "languageLesson": "JWT（JSON Web Token）的 Bearer 认证模式：客户端在 Authorization 头中携带 `Bearer <token>`，服务端中间件解析后注入 req.user，实现无状态的会话管理——服务端无需存储 session，只需验证签名即可信任 token 内容。"
+  },
+  {
+    "order": 8,
+    "title": "后端核心架构",
+    "description": "backend/config.ts 从环境变量集中读取 Ollama、Milvus 和服务器端口配置。backend/types.ts 定义后端侧的所有 TypeScript 接口（Entry、Category、Tag、File、DataItem 及解析器相关类型），与 Step 3 的前端类型形成镜像。backend/app.ts 的 createApp 函数是 Express 应用工厂——配置 CORS 和 JSON 解析、挂载所有路由模块、设置静态文件服务和 SPA 回退路由；runBootstrap 在启动时执行种子数据和向量存储初始化。这三个文件构成了后端可测试、可组合的基础设施骨架。",
+    "nodeIds": ["file:backend/config.ts", "file:backend/types.ts", "file:backend/app.ts"],
+    "languageLesson": "Express 应用工厂模式（app factory pattern）——将 app 创建封装为可导出函数而非立即启动监听，使得测试代码可以创建独立的 Express 实例进行集成测试，也方便 server/index.ts 和 backend/main.ts 两个入口共用同一份应用逻辑。"
+  },
+  {
+    "order": 9,
+    "title": "元数据存储层",
+    "description": "backend/metadata/store.ts 的 MetadataStore 类以 JSON 文件系统为基础，提供词条、分类、标签、文件和数据项的完整 CRUD 操作，支持关键词搜索和标签自动同步。seedMetadata 函数在首次运行时创建默认分类（6 个顶层分类）、标签（26 个标签）和示例词条。categories.json、entries.json（26 条材料科学属性定义词条）和 tags.json 作为种子数据文件，共同构成 Wiki 的初始知识底座。",
+    "nodeIds": ["file:backend/metadata/store.ts", "config:backend/data/metadata/categories.json", "config:backend/data/metadata/entries.json", "config:backend/data/metadata/tags.json"],
+    "languageLesson": "JSON 文件作为轻量级数据库的方案（file-based storage）适用于 MVP 阶段——无需外部数据库依赖，序列化/反序列化开销小，数据可直接版本控制。但需注意并发写入的原子性问题，适合单进程场景。"
+  },
+  {
+    "order": 10,
+    "title": "AI 智能服务",
+    "description": "backend/ai/prompts.ts 定义了三套提示词模板：buildChatSystemPrompt（构建 RAG 对话系统提示词，将检索到的词条注入上下文）、buildSummarizeMessages（将词条内容格式化为摘要请求）、buildSearchMessages（组合多条词条和查询语句构造语义搜索请求）。backend/ai/service.ts 的 AiService 类封装了 Ollama 聊天 API 调用，提供 chat（RAG 对话）、search（语义搜索增强）和 summarize（智能摘要）三个核心方法。这一层是 AI 能力的中枢，向下依赖数据管道层（Step 11）提供检索结果，向上为路由层（Step 7）和前端 AI Context（Step 5）提供服务。",
+    "nodeIds": ["file:backend/ai/service.ts", "file:backend/ai/prompts.ts"],
+    "languageLesson": "提示词工程（prompt engineering）中的上下文注入模式——将检索到的相关文档片段通过系统提示词注入 LLM 对话，使模型能够基于私有知识库作答（RAG，检索增强生成），而无需微调模型本身。"
+  },
+  {
+    "order": 11,
+    "title": "企业数据管道：从文件到语义检索",
+    "description": "这是项目的核心技术链路，实现「导入→解析→分块→嵌入→向量存储→检索」六阶段流水线。DataImportService 编排完整流程；ParserService 支持 PDF/DOCX/Markdown/图片多格式解析，MarkdownParser 专门提取材料科学属性表格；ChunkService 提供四种分块策略（fixed/paragraph/sentence/markdown），可配置大小和重叠量；OllamaEmbedder 调用 BGE-M3 模型生成 1024 维向量；MemoryVectorStore（余弦相似度）和 MilvusClient 提供双级向量存储；SemanticSearch 组合向量搜索和关键词匹配，支持中英文混合分词。整个管道实现了将非结构化文档转化为可语义检索的知识库。",
+    "nodeIds": ["file:backend/import/service.ts", "file:backend/parser/markdown.ts", "file:backend/chunk/service.ts", "file:backend/embedding/ollama.ts", "file:backend/retrieval/search.ts"],
+    "languageLesson": "文本分块（chunking）是 RAG 质量的关键——chunk 太大会稀释语义精度，太小会丢失上下文。本项目默认 512 字符配 64 字符重叠量，确保相邻 chunk 间有足够的语义衔接。四种策略应对不同文档结构：Markdown 按标题层级切分、paragraph 按段落边界、sentence 按句子、fixed 按固定字符数。"
+  },
+  {
+    "order": 12,
+    "title": "基础设施与配置",
+    "description": "package.json 定义 9 个 npm 脚本和完整依赖清单（React 19、Express 4、Tailwind CSS 4、Milvus SDK）。.env.example 作为环境变量模板，配置 Ollama 模型（DeepSeek-R1:8b/Qwen2.5:7b/BGE-M3）、Milvus 连接和 JWT 密钥。vite.config.ts 集成 React 和 Tailwind CSS 插件，配置 /api 代理转发到后端 3001 端口。OpenAPI 3.0 规范文档定义了 20 个 API 端点，覆盖 Pipeline、AI、Entries、Auth 四大分组，是前后端契约的权威参考。这些文件构成了项目的工程基础设施。",
+    "nodeIds": ["config:package.json", "config:.env.example", "config:vite.config.ts", "config:backend/swagger/openapi.json"],
+    "languageLesson": "Vite 的代理配置（server.proxy）在开发环境下将 /api 请求透明转发到后端服务，解决了前后端不同域名的跨域问题——浏览器请求 localhost:5173/api/* 被 Vite 开发服务器代理到 localhost:3001/api/*，无需后端额外配置 CORS。"
+  }
+]

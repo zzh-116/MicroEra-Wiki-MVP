@@ -1,0 +1,34 @@
+[
+  {
+    "id": "13_C33",
+    "entryId": 13,
+    "text": "[C33] 是否存在开放金属位点\nHas Open Metal Site\n符号: Has_OMS\n定义: 描述材料中是否存在未饱和金属配位位点\n单位: **Yes/No**\n其他单位: Boolean\n值域: True / False\n方法: 晶体结构分析；配位环境分析；文献标注\n备注: 不同文献对 OMS 的定义可能存在差异；通常指活化后仍暴露的未饱和金属位点",
+    "metadata": {
+      "code": "C33",
+      "section": "开放金属位点",
+      "category": "computational",
+      "nameZh": "是否存在开放金属位点",
+      "nameEn": "Has Open Metal Site",
+      "symbol": "Has_OMS",
+      "definition": "描述材料中是否存在未饱和金属配位位点",
+      "preferredUnit": "**Yes/No**",
+      "methods": "晶体结构分析；配位环境分析；文献标注"
+    }
+  },
+  {
+    "id": "13_C34",
+    "entryId": 13,
+    "text": "[C34] 开放金属位点数量\nOpen Metal Site Count\n符号: N_OMS\n定义: 单位晶胞或结构单元中的开放金属位点数量\n单位: **sites/unit cell**\n其他单位: sites/cluster\n值域: 0~几十\n方法: CIF 配位分析；结构拓扑统计\n备注: 通常基于晶体结构统计，不代表实际可接近 OMS 数量",
+    "metadata": {
+      "code": "C34",
+      "section": "开放金属位点",
+      "category": "computational",
+      "nameZh": "开放金属位点数量",
+      "nameEn": "Open Metal Site Count",
+      "symbol": "N_OMS",
+      "definition": "单位晶胞或结构单元中的开放金属位点数量",
+      "preferredUnit": "**sites/unit cell**",
+      "methods": "CIF 配位分析；结构拓扑统计"
+    }
+  }
+]

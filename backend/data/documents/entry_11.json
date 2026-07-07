@@ -1,0 +1,130 @@
+[
+  {
+    "id": "11_C21",
+    "entryId": 11,
+    "text": "[C21] 吸附能\nAdsorption Energy\n符号: E_ads\n定义: 气体分子在材料表面/孔道中吸附释放的能量\n单位: **kJ/mol**\n其他单位: eV, kcal/mol\n值域: 物理吸附: 5~50 kJ/mol; 化学吸附: 50~200+ kJ/mol\n方法: DFT / GCMC / 量热法\n备注: E_ads = E_system - (E_substrate + E_gas)；负值表示放热",
+    "metadata": {
+      "code": "C21",
+      "section": "能量与相互作用",
+      "category": "computational",
+      "nameZh": "吸附能",
+      "nameEn": "Adsorption Energy",
+      "symbol": "E_ads",
+      "definition": "气体分子在材料表面/孔道中吸附释放的能量",
+      "preferredUnit": "**kJ/mol**",
+      "methods": "DFT / GCMC / 量热法"
+    }
+  },
+  {
+    "id": "11_C22",
+    "entryId": 11,
+    "text": "[C22] 扩散能垒\nDiffusion Barrier\n符号: E_diff / E_a_diff\n定义: 分子沿孔道扩散所需克服的能量势垒\n单位: **kJ/mol**\n其他单位: eV\n值域: 小分子 MOF 扩散: 1~20 kJ/mol\n方法: DFT-NEB / MD 过渡态\n备注: —",
+    "metadata": {
+      "code": "C22",
+      "section": "能量与相互作用",
+      "category": "computational",
+      "nameZh": "扩散能垒",
+      "nameEn": "Diffusion Barrier",
+      "symbol": "E_diff / E_a_diff",
+      "definition": "分子沿孔道扩散所需克服的能量势垒",
+      "preferredUnit": "**kJ/mol**",
+      "methods": "DFT-NEB / MD 过渡态"
+    }
+  },
+  {
+    "id": "11_C23",
+    "entryId": 11,
+    "text": "[C23] 形成能\nFormation Energy\n符号: E_form / ΔH_f\n定义: 由组成元素形成该材料的能量变化\n单位: **kJ/mol**\n其他单位: eV/atom, eV/f.u.\n值域: —\n方法: DFT\n备注: —",
+    "metadata": {
+      "code": "C23",
+      "section": "能量与相互作用",
+      "category": "computational",
+      "nameZh": "形成能",
+      "nameEn": "Formation Energy",
+      "symbol": "E_form / ΔH_f",
+      "definition": "由组成元素形成该材料的能量变化",
+      "preferredUnit": "**kJ/mol**",
+      "methods": "DFT"
+    }
+  },
+  {
+    "id": "11_C24",
+    "entryId": 11,
+    "text": "[C24] 内聚能\nCohesive Energy\n符号: E_coh\n定义: 将材料分解为孤立原子/分子所需的能量\n单位: **kJ/mol**\n其他单位: eV/atom\n值域: —\n方法: DFT\n备注: —",
+    "metadata": {
+      "code": "C24",
+      "section": "能量与相互作用",
+      "category": "computational",
+      "nameZh": "内聚能",
+      "nameEn": "Cohesive Energy",
+      "symbol": "E_coh",
+      "definition": "将材料分解为孤立原子/分子所需的能量",
+      "preferredUnit": "**kJ/mol**",
+      "methods": "DFT"
+    }
+  },
+  {
+    "id": "11_C25",
+    "entryId": 11,
+    "text": "[C25] 表面能\nSurface Energy\n符号: γ\n定义: 形成单位面积新表面所需的能量\n单位: **J/m²**\n其他单位: eV/Å², mJ/m²\n值域: —\n方法: DFT 平板模型 / 接触角法\n备注: —",
+    "metadata": {
+      "code": "C25",
+      "section": "能量与相互作用",
+      "category": "computational",
+      "nameZh": "表面能",
+      "nameEn": "Surface Energy",
+      "symbol": "γ",
+      "definition": "形成单位面积新表面所需的能量",
+      "preferredUnit": "**J/m²**",
+      "methods": "DFT 平板模型 / 接触角法"
+    }
+  },
+  {
+    "id": "11_C26",
+    "entryId": 11,
+    "text": "[C26] 溶剂化能\nSolvation Energy\n符号: E_solv\n定义: 溶质分子从气相转移到溶剂中的能量变化\n单位: **kJ/mol**\n其他单位: eV, kcal/mol\n值域: —\n方法: DFT (隐式溶剂) / 量热\n备注: `[确认]`",
+    "metadata": {
+      "code": "C26",
+      "section": "能量与相互作用",
+      "category": "computational",
+      "nameZh": "溶剂化能",
+      "nameEn": "Solvation Energy",
+      "symbol": "E_solv",
+      "definition": "溶质分子从气相转移到溶剂中的能量变化",
+      "preferredUnit": "**kJ/mol**",
+      "methods": "DFT (隐式溶剂) / 量热"
+    }
+  },
+  {
+    "id": "11_C27",
+    "entryId": 11,
+    "text": "[C27] 缺陷形成能\nDefect Formation Energy\n符号: E_defect\n定义: 形成点缺陷/空位/取代所需的能量\n单位: **eV**\n其他单位: kJ/mol\n值域: —\n方法: DFT\n备注: —",
+    "metadata": {
+      "code": "C27",
+      "section": "能量与相互作用",
+      "category": "computational",
+      "nameZh": "缺陷形成能",
+      "nameEn": "Defect Formation Energy",
+      "symbol": "E_defect",
+      "definition": "形成点缺陷/空位/取代所需的能量",
+      "preferredUnit": "**eV**",
+      "methods": "DFT"
+    }
+  },
+  {
+    "id": "11_C28",
+    "entryId": 11,
+    "text": "[C28] 配位键能\nCoordination Bond Energy\n符号: E_coord\n定义: 金属-配体配位键的强度\n单位: **kJ/mol**\n其他单位: eV\n值域: MOF 中 M-O/N: 100~300 kJ/mol\n方法: DFT / EXAFS / 量热\n备注: `[确认]`",
+    "metadata": {
+      "code": "C28",
+      "section": "能量与相互作用",
+      "category": "computational",
+      "nameZh": "配位键能",
+      "nameEn": "Coordination Bond Energy",
+      "symbol": "E_coord",
+      "definition": "金属-配体配位键的强度",
+      "preferredUnit": "**kJ/mol**",
+      "methods": "DFT / EXAFS / 量热"
+    }
+  }
+]

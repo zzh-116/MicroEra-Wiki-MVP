@@ -1,0 +1,98 @@
+[
+  {
+    "id": "22_X23",
+    "entryId": 22,
+    "text": "[X23] UV-Vis 吸收边 / 吸收峰\nUV-Vis Absorption Edge / Peak\n符号: λ_abs\n定义: 材料的紫外-可见光吸收特性\n单位: **nm**\n其他单位: eV, cm⁻¹\n值域: —\n方法: UV-Vis DRS / 分光光度计\n备注: `[实验]` 用于带隙估算 (Tauc plot)",
+    "metadata": {
+      "code": "X23",
+      "section": "光谱性质",
+      "category": "cross",
+      "nameZh": "UV-Vis 吸收边 / 吸收峰",
+      "nameEn": "UV-Vis Absorption Edge / Peak",
+      "symbol": "λ_abs",
+      "definition": "材料的紫外-可见光吸收特性",
+      "preferredUnit": "**nm**",
+      "methods": "UV-Vis DRS / 分光光度计"
+    }
+  },
+  {
+    "id": "22_X24",
+    "entryId": 22,
+    "text": "[X24] 红外振动频率\nIR Vibrational Frequency\n符号: ν_IR\n定义: 化学键/官能团的特征红外吸收\n单位: **cm⁻¹**\n其他单位: μm\n值域: 400~4000 cm⁻¹\n方法: FTIR\n备注: `[实验]`",
+    "metadata": {
+      "code": "X24",
+      "section": "光谱性质",
+      "category": "cross",
+      "nameZh": "红外振动频率",
+      "nameEn": "IR Vibrational Frequency",
+      "symbol": "ν_IR",
+      "definition": "化学键/官能团的特征红外吸收",
+      "preferredUnit": "**cm⁻¹**",
+      "methods": "FTIR"
+    }
+  },
+  {
+    "id": "22_X25",
+    "entryId": 22,
+    "text": "[X25] Raman 位移\nRaman Shift\n符号: Δν_Raman\n定义: 非弹性散射光的频率位移\n单位: **cm⁻¹**\n其他单位: —\n值域: 50~3500 cm⁻¹\n方法: Raman 光谱\n备注: `[实验]`",
+    "metadata": {
+      "code": "X25",
+      "section": "光谱性质",
+      "category": "cross",
+      "nameZh": "Raman 位移",
+      "nameEn": "Raman Shift",
+      "symbol": "Δν_Raman",
+      "definition": "非弹性散射光的频率位移",
+      "preferredUnit": "**cm⁻¹**",
+      "methods": "Raman 光谱"
+    }
+  },
+  {
+    "id": "22_X26",
+    "entryId": 22,
+    "text": "[X26] XPS 结合能\nXPS Binding Energy\n符号: E_XPS\n定义: 特定元素内壳层电子的结合能\n单位: **eV**\n其他单位: —\n值域: —\n方法: XPS\n备注: `[实验]` 元素化学态鉴定",
+    "metadata": {
+      "code": "X26",
+      "section": "光谱性质",
+      "category": "cross",
+      "nameZh": "XPS 结合能",
+      "nameEn": "XPS Binding Energy",
+      "symbol": "E_XPS",
+      "definition": "特定元素内壳层电子的结合能",
+      "preferredUnit": "**eV**",
+      "methods": "XPS"
+    }
+  },
+  {
+    "id": "22_X27",
+    "entryId": 22,
+    "text": "[X27] 荧光发射波长\nPhotoluminescence Emission Wavelength\n符号: λ_em\n定义: 材料光致发光的发射峰位置\n单位: **nm**\n其他单位: eV\n值域: —\n方法: PL 光谱 / 荧光分光光度计\n备注: `[实验]`",
+    "metadata": {
+      "code": "X27",
+      "section": "光谱性质",
+      "category": "cross",
+      "nameZh": "荧光发射波长",
+      "nameEn": "Photoluminescence Emission Wavelength",
+      "symbol": "λ_em",
+      "definition": "材料光致发光的发射峰位置",
+      "preferredUnit": "**nm**",
+      "methods": "PL 光谱 / 荧光分光光度计"
+    }
+  },
+  {
+    "id": "22_X28",
+    "entryId": 22,
+    "text": "[X28] 荧光量子产率\nPhotoluminescence Quantum Yield\n符号: Φ_PL / QY\n定义: 发射光子数与吸收光子数之比\n单位: **%** (0~100)\n其他单位: — (0~1)\n值域: —\n方法: 积分球 + 荧光光谱\n备注: `[实验]`",
+    "metadata": {
+      "code": "X28",
+      "section": "光谱性质",
+      "category": "cross",
+      "nameZh": "荧光量子产率",
+      "nameEn": "Photoluminescence Quantum Yield",
+      "symbol": "Φ_PL / QY",
+      "definition": "发射光子数与吸收光子数之比",
+      "preferredUnit": "**%** (0~100)",
+      "methods": "积分球 + 荧光光谱"
+    }
+  }
+]

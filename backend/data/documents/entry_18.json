@@ -1,0 +1,146 @@
+[
+  {
+    "id": "18_X01",
+    "entryId": 18,
+    "text": "[X01] 比表面积 (BET)\nBET Specific Surface Area\n符号: S_BET\n定义: 基于 Brunauer-Emmett-Teller 多层吸附模型计算的材料单位质量表面积\n单位: **m²/g**\n其他单位: cm²/g\n值域: MOF: 500~7000; 活性炭: 500~3000\n方法: N₂ 77K 吸附 / 比表面积分析仪\n备注: `[实验]` 最通用的比表面积指标",
+    "metadata": {
+      "code": "X01",
+      "section": "孔隙与比表面积",
+      "category": "cross",
+      "nameZh": "比表面积 (BET)",
+      "nameEn": "BET Specific Surface Area",
+      "symbol": "S_BET",
+      "definition": "基于 Brunauer-Emmett-Teller 多层吸附模型计算的材料单位质量表面积",
+      "preferredUnit": "**m²/g**",
+      "methods": "N₂ 77K 吸附 / 比表面积分析仪"
+    }
+  },
+  {
+    "id": "18_X02",
+    "entryId": 18,
+    "text": "[X02] Langmuir 比表面积\nLangmuir Surface Area\n符号: S_Lang\n定义: 基于 Langmuir 单分子层吸附模型计算的比表面积\n单位: **m²/g**\n其他单位: cm²/g\n值域: 通常略高于 BET\n方法: N₂ / Ar 吸附\n备注: `[实验]` 微孔材料中常与 BET 并列报告",
+    "metadata": {
+      "code": "X02",
+      "section": "孔隙与比表面积",
+      "category": "cross",
+      "nameZh": "Langmuir 比表面积",
+      "nameEn": "Langmuir Surface Area",
+      "symbol": "S_Lang",
+      "definition": "基于 Langmuir 单分子层吸附模型计算的比表面积",
+      "preferredUnit": "**m²/g**",
+      "methods": "N₂ / Ar 吸附"
+    }
+  },
+  {
+    "id": "18_X03",
+    "entryId": 18,
+    "text": "[X03] 总孔容\nTotal Pore Volume\n符号: V_pore / V_t\n定义: 材料中所有孔隙的总体积\n单位: **cm³/g**\n其他单位: mL/g, mm³/g\n值域: MOF: 0.2~4.0; 分子筛: 0.1~0.5\n方法: N₂ 77K 吸附 (P/P₀≈0.95)\n备注: `[实验]` 单点法或 t-plot 法",
+    "metadata": {
+      "code": "X03",
+      "section": "孔隙与比表面积",
+      "category": "cross",
+      "nameZh": "总孔容",
+      "nameEn": "Total Pore Volume",
+      "symbol": "V_pore / V_t",
+      "definition": "材料中所有孔隙的总体积",
+      "preferredUnit": "**cm³/g**",
+      "methods": "N₂ 77K 吸附 (P/P₀≈0.95)"
+    }
+  },
+  {
+    "id": "18_X04",
+    "entryId": 18,
+    "text": "[X04] 微孔孔容\nMicropore Volume\n符号: V_micro\n定义: 孔径 < 2 nm 的孔体积\n单位: **cm³/g**\n其他单位: mL/g\n值域: —\n方法: t-plot / DR / NLDFT\n备注: `[实验]`",
+    "metadata": {
+      "code": "X04",
+      "section": "孔隙与比表面积",
+      "category": "cross",
+      "nameZh": "微孔孔容",
+      "nameEn": "Micropore Volume",
+      "symbol": "V_micro",
+      "definition": "孔径 < 2 nm 的孔体积",
+      "preferredUnit": "**cm³/g**",
+      "methods": "t-plot / DR / NLDFT"
+    }
+  },
+  {
+    "id": "18_X05",
+    "entryId": 18,
+    "text": "[X05] 介孔孔容\nMesopore Volume\n符号: V_meso\n定义: 孔径 2~50 nm 的孔体积\n单位: **cm³/g**\n其他单位: mL/g\n值域: —\n方法: BJH / NLDFT\n备注: `[实验]`",
+    "metadata": {
+      "code": "X05",
+      "section": "孔隙与比表面积",
+      "category": "cross",
+      "nameZh": "介孔孔容",
+      "nameEn": "Mesopore Volume",
+      "symbol": "V_meso",
+      "definition": "孔径 2~50 nm 的孔体积",
+      "preferredUnit": "**cm³/g**",
+      "methods": "BJH / NLDFT"
+    }
+  },
+  {
+    "id": "18_X06",
+    "entryId": 18,
+    "text": "[X06] 比孔容\nSpecific Pore Volume\n符号: v_p\n定义: 同\"总孔容\"，强调单位质量\n单位: **cm³/g**\n其他单位: —\n值域: —\n方法: —\n备注: `[实验]`",
+    "metadata": {
+      "code": "X06",
+      "section": "孔隙与比表面积",
+      "category": "cross",
+      "nameZh": "比孔容",
+      "nameEn": "Specific Pore Volume",
+      "symbol": "v_p",
+      "definition": "同\"总孔容\"，强调单位质量",
+      "preferredUnit": "**cm³/g**",
+      "methods": "—"
+    }
+  },
+  {
+    "id": "18_X07",
+    "entryId": 18,
+    "text": "[X07] 孔径分布\nPore Size Distribution\n符号: PSD\n定义: 材料中不同孔径孔隙的分布函数\n单位: **Å** (主峰位置)\n其他单位: nm\n值域: MOF: 4~20 Å；主峰位置记作标量摘要字段 PSD_peak\n方法: NLDFT / GCMC 拟合\n备注: `[实验][计算]` 本质为曲线数据，须存储完整孔径和微分孔容数组；PSD_peak 作为标量摘要单独记录用于检索",
+    "metadata": {
+      "code": "X07",
+      "section": "孔隙与比表面积",
+      "category": "cross",
+      "nameZh": "孔径分布",
+      "nameEn": "Pore Size Distribution",
+      "symbol": "PSD",
+      "definition": "材料中不同孔径孔隙的分布函数",
+      "preferredUnit": "**Å** (主峰位置)",
+      "methods": "NLDFT / GCMC 拟合"
+    }
+  },
+  {
+    "id": "18_X08",
+    "entryId": 18,
+    "text": "[X08] 平均孔径\nAverage Pore Diameter\n符号: d_p_avg\n定义: 孔隙的平均直径\n单位: **Å**\n其他单位: nm\n值域: —\n方法: 4V/A (BET)\n备注: `[实验]`",
+    "metadata": {
+      "code": "X08",
+      "section": "孔隙与比表面积",
+      "category": "cross",
+      "nameZh": "平均孔径",
+      "nameEn": "Average Pore Diameter",
+      "symbol": "d_p_avg",
+      "definition": "孔隙的平均直径",
+      "preferredUnit": "**Å**",
+      "methods": "4V/A (BET)"
+    }
+  },
+  {
+    "id": "18_X09",
+    "entryId": 18,
+    "text": "[X09] 孔隙率\nPorosity / Void Fraction\n符号: ϕ / ε\n定义: 孔体积占材料总体积的比例\n单位: **—** (无量纲)\n其他单位: %\n值域: MOF: 0.4~0.9\n方法: 骨架密度vs晶体密度法 / 吸附法\n备注: `[实验][计算]` 有时直接以 AV_frac 或 POAV_frac 近似",
+    "metadata": {
+      "code": "X09",
+      "section": "孔隙与比表面积",
+      "category": "cross",
+      "nameZh": "孔隙率",
+      "nameEn": "Porosity / Void Fraction",
+      "symbol": "ϕ / ε",
+      "definition": "孔体积占材料总体积的比例",
+      "preferredUnit": "**—** (无量纲)",
+      "methods": "骨架密度vs晶体密度法 / 吸附法"
+    }
+  }
+]

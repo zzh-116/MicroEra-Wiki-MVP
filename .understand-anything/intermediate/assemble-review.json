@@ -1,0 +1,142 @@
+{
+  "review": {
+    "summary": "已对组装图进行审查。共 204 节点、628 条边。合并脚本已自动修复 70 处问题，剩余 5 处需人工审查。审查结论：3 处问题可在组装图中直接修复（边重定向），1 处为上游批处理分类错误需修正，1 处为复杂度评级建议调整。",
+    "total_nodes": 204,
+    "total_edges": 628,
+    "node_types": {
+      "file": 95,
+      "function": 63,
+      "class": 20,
+      "concept": 7,
+      "module": 1,
+      "config": 15,
+      "document": 2,
+      "data": 1
+    },
+    "edge_types": {
+      "contains": 69,
+      "exports": 44,
+      "imports": 222,
+      "calls": 127,
+      "defines_schema": 39,
+      "related": 50,
+      "depends_on": 11,
+      "configures": 11,
+      "documents": 8,
+      "stored_by": 17,
+      "processed_by": 17,
+      "uses": 1,
+      "configured_by": 5,
+      "references": 6,
+      "imported_by": 1
+    }
+  },
+
+  "merge_report_corrections_confirmed": {
+    "total_fixed": 70,
+    "summary": "合并脚本自动修复的 70 处问题经审查均合理，无需额外处理。包括：1 个裸路径补全为 file: 前缀、4 个 high 复杂度标准化为 complex、2 条边引用在 ID 规范化后重写、63 个重复节点 ID 移除（保留最后出现的版本）。"
+  },
+
+  "issues": [
+    {
+      "id": "review-001",
+      "severity": "high",
+      "category": "missing_edges",
+      "title": "3 条边因 vite.config.ts 节点 ID 前缀不匹配被丢弃，需恢复",
+      "description": "合并脚本报告丢弃了 3 条引用 file:vite.config.ts 的边，因为目标节点 file:vite.config.ts 在组装图中不存在。实际上该节点存在但使用了不同的 ID 前缀——节点在 batch-8 中被正确归类为 config 类型，ID 为 config:vite.config.ts。batch-5 中的文件分析器错误地将其标记为 file 类型（file:vite.config.ts），导致这 3 条边在合并时因目标节点不存在而被丢弃。",
+      "affected_edges": [
+        {
+          "source": "config:.env.example",
+          "original_target": "file:vite.config.ts",
+          "corrected_target": "config:vite.config.ts",
+          "type": "configures",
+          "direction": "forward",
+          "weight": 0.6,
+          "rationale": ".env.example 中定义了 Vite 相关环境变量（前端开发服务器地址），确实配置了 vite.config.ts 的行为"
+        },
+        {
+          "source": "file:index.html",
+          "original_target": "file:vite.config.ts",
+          "corrected_target": "config:vite.config.ts",
+          "type": "related",
+          "direction": "forward",
+          "weight": 0.5,
+          "rationale": "index.html 是 Vite SPA 入口 HTML，与 Vite 构建配置关系紧密"
+        },
+        {
+          "source": "config:package.json",
+          "original_target": "file:vite.config.ts",
+          "corrected_target": "config:vite.config.ts",
+          "type": "configures",
+          "direction": "forward",
+          "weight": 0.6,
+          "rationale": "package.json 中的脚本定义（dev/build 等）直接调用 Vite，其依赖声明（vite、@vitejs/plugin-react）也在 package.json 中"
+        }
+      ],
+      "recommended_action": "将以上 3 条边的 target 从 file:vite.config.ts 改为 config:vite.config.ts 后添加到组装图的 edges 数组中。这些边的语义关系均合理有效，不应丢弃。"
+    },
+    {
+      "id": "review-002",
+      "severity": "medium",
+      "category": "wrong_node_type",
+      "title": "节点 file:data:backend/data/vectors.json 的类型为未知类型 'data'，且 ID 格式异常",
+      "description": "该节点在 batch-8 中被错误分类：原本 ID 为 data:backend/data/vectors.json，类型设为 data。合并脚本的'裸路径补全'逻辑将其前缀改为 file:data:...（保留了原来的 data: 前缀作为路径的一部分），但类型仍为 data。已知 schema 不支持 data 类型，该节点应归类为 file 类型。问题根源在于上游 batch-8 的 file-analyzer 误将文件路径中的 data/ 目录名当作类型推断依据。",
+      "current_state": {
+        "id": "file:data:backend/data/vectors.json",
+        "type": "data",
+        "filePath": "backend/data/vectors.json",
+        "complexity": "simple"
+      },
+      "recommended_state": {
+        "id": "file:backend/data/vectors.json",
+        "type": "file",
+        "filePath": "backend/data/vectors.json",
+        "complexity": "simple"
+      },
+      "rationale": "vectors.json 是一个 JSON 数据文件（向量嵌入缓存），功能上与其他 file 类型节点一致。它是 768 维 BGE-M3 嵌入向量的持久化存储，作为 Milvus 不可用时的内存降级方案，文件属性（非运行时结构、非配置定义）符合 file 类型定义。",
+      "recommended_action": "修改该节点的 id 为 file:backend/data/vectors.json，type 改为 file。同时需要更新所有引用此节点的边（当前有 2 条边：source 为 file:data:backend/data/vectors.json 在行 7991，target 为 file:data:backend/data/vectors.json 在行 7999），将引用中的旧 ID 替换为新 ID。如果上游 batch-8 的 file-analyzer 可以重新运行，建议在源头修复。"
+    },
+    {
+      "id": "review-003",
+      "severity": "low",
+      "category": "complexity_mismatch",
+      "title": "节点 config:backend/data/metadata/entries.json 复杂度从 'substantial' 被默认为 'moderate'，建议应为 'complex'",
+      "description": "该节点在 batch-7 中原始复杂度评级为 substantial（非标准值），合并脚本将其默认降级为 moderate。但根据节点内容分析，entries.json 包含 26 条记录、跨越多领域（计算化学、传感、催化、吸附分离等），每条记录以 Markdown 表格定义标准化属性元数据，具有多层嵌套结构（category 分类 + tags 标签 + file 附件关联），是该项目的核心数据资产之一。moderate 严重低估了其实际复杂度。",
+      "affected_node": "config:backend/data/metadata/entries.json",
+      "current_complexity": "moderate",
+      "recommended_complexity": "complex",
+      "evidence": "节点包含 26 条记录，总结文本约 500 字，覆盖计算/实验/交叉/条件 4 大类别，涉及材料信息学元数据字典定义，每条记录关联分类和标签体系，另有 1 条关联 PDF 附件文件。",
+      "recommended_action": "将该节点的 complexity 字段从 moderate 改为 complex。"
+    }
+  ],
+
+  "additional_observations": [
+    {
+      "observation": "无悬空节点或悬空边",
+      "detail": "合并后所有边的 source 和 target 均能在 nodes 中找到对应节点，图结构完整性良好。合并脚本的 63 个重复节点去重和边重写工作质量很高。",
+      "severity": "info"
+    },
+    {
+      "observation": "节点类型分布合理",
+      "detail": "file(95) + function(63) + class(20) 构成主体，config(15) 和 document(2) 作为辅助层，concept(7) 提供抽象概念锚点。整体结构反映了前端的 React 组件体系（function/class 为主）和后端的数据/配置层（config 为主）。",
+      "severity": "info"
+    },
+    {
+      "observation": "边关系类型丰富",
+      "detail": "15 种边关系类型覆盖了代码结构（contains/exports/imports/calls）、数据流（stored_by/processed_by/configured_by）、语义关联（related/references/documents）和 schema 定义（defines_schema）。关系表达较为全面。",
+      "severity": "info"
+    },
+    {
+      "observation": "中文输出质量良好",
+      "detail": "节点 summary 和 languageNotes 字段均使用中文输出，内容详实且专业术语使用准确（如 BGE-M3、Ollama、Milvus、RAG 等），符合 config.json 中 outputLanguage=zh 的配置要求。",
+      "severity": "info"
+    }
+  ],
+
+  "verdict": {
+    "overall_quality": "good",
+    "actionable_issues": 3,
+    "blocking_issues": 0,
+    "recommendation": "组装图整体质量良好。3 个问题中 review-001（3 条边恢复）应在组装图中直接修复；review-002（data 类型节点）建议在组装图中修复并标记上游 batch-8 需重新分析；review-003（复杂度评级）为低优先级优化建议。所有问题均非阻塞性问题，修复后图可进入下一阶段。"
+  }
+}

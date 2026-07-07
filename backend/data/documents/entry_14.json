@@ -1,0 +1,162 @@
+[
+  {
+    "id": "14_E01",
+    "entryId": 14,
+    "text": "[E01] 晶粒尺寸\nCrystallite Size\n符号: d_XRD\n定义: 由 XRD 衍射峰展宽 (Scherrer 公式) 估算的晶粒尺寸\n单位: **nm**\n其他单位: Å\n值域: 10~200 nm\n方法: XRD (Scherrer)\n备注: 注意与 SEM 颗粒尺寸的区别",
+    "metadata": {
+      "code": "E01",
+      "section": "表征与稳定性",
+      "category": "experimental",
+      "nameZh": "晶粒尺寸",
+      "nameEn": "Crystallite Size",
+      "symbol": "d_XRD",
+      "definition": "由 XRD 衍射峰展宽 (Scherrer 公式) 估算的晶粒尺寸",
+      "preferredUnit": "**nm**",
+      "methods": "XRD (Scherrer)"
+    }
+  },
+  {
+    "id": "14_E02",
+    "entryId": 14,
+    "text": "[E02] 颗粒尺寸\nParticle Size\n符号: d_particle\n定义: 由显微镜 / 动态光散射测得的颗粒尺寸\n单位: **nm** / **μm**\n其他单位: —\n值域: 50 nm~50 μm\n方法: SEM / TEM / DLS\n备注: —",
+    "metadata": {
+      "code": "E02",
+      "section": "表征与稳定性",
+      "category": "experimental",
+      "nameZh": "颗粒尺寸",
+      "nameEn": "Particle Size",
+      "symbol": "d_particle",
+      "definition": "由显微镜 / 动态光散射测得的颗粒尺寸",
+      "preferredUnit": "**nm** / **μm**",
+      "methods": "SEM / TEM / DLS"
+    }
+  },
+  {
+    "id": "14_E03",
+    "entryId": 14,
+    "text": "[E03] 金属含量\nMetal Content\n符号: w_M\n定义: 材料中金属元素的质量分数\n单位: **wt%**\n其他单位: at%, mg/g\n值域: —\n方法: ICP-OES / ICP-MS / XPS\n备注: `[确认]`",
+    "metadata": {
+      "code": "E03",
+      "section": "表征与稳定性",
+      "category": "experimental",
+      "nameZh": "金属含量",
+      "nameEn": "Metal Content",
+      "symbol": "w_M",
+      "definition": "材料中金属元素的质量分数",
+      "preferredUnit": "**wt%**",
+      "methods": "ICP-OES / ICP-MS / XPS"
+    }
+  },
+  {
+    "id": "14_E04",
+    "entryId": 14,
+    "text": "[E04] 热分解温度\nThermal Decomposition Temperature\n符号: T_d / T_dec\n定义: 材料在惰性或氧化气氛下发生结构分解的温度\n单位: **°C**\n其他单位: K\n值域: MOF: 250~550°C\n方法: TGA / DSC\n备注: 以 5% 或 onset 失重为准",
+    "metadata": {
+      "code": "E04",
+      "section": "表征与稳定性",
+      "category": "experimental",
+      "nameZh": "热分解温度",
+      "nameEn": "Thermal Decomposition Temperature",
+      "symbol": "T_d / T_dec",
+      "definition": "材料在惰性或氧化气氛下发生结构分解的温度",
+      "preferredUnit": "**°C**",
+      "methods": "TGA / DSC"
+    }
+  },
+  {
+    "id": "14_E05",
+    "entryId": 14,
+    "text": "[E05] 水热稳定性\nHydrothermal Stability\n符号: —\n定义: 材料在水蒸气/热水环境中保持结构完整的能力\n单位: **°C** + **%RH** 条件描述\n其他单位: —\n值域: —\n方法: 高温高湿暴露后 XRD\n备注: 定性+半定量，建议附具体条件",
+    "metadata": {
+      "code": "E05",
+      "section": "表征与稳定性",
+      "category": "experimental",
+      "nameZh": "水热稳定性",
+      "nameEn": "Hydrothermal Stability",
+      "symbol": "—",
+      "definition": "材料在水蒸气/热水环境中保持结构完整的能力",
+      "preferredUnit": "**°C** + **%RH** 条件描述",
+      "methods": "高温高湿暴露后 XRD"
+    }
+  },
+  {
+    "id": "14_E06",
+    "entryId": 14,
+    "text": "[E06] 化学稳定性 (pH)\nChemical Stability (pH range)\n符号: —\n定义: 材料在酸碱溶液中保持结构完整的 pH 范围\n单位: **pH** (范围)\n其他单位: —\n值域: MOF: pH 2~12 (差异大)\n方法: 浸泡后 XRD / BET\n备注: 建议记录溶液种类、浓度、浸泡时间",
+    "metadata": {
+      "code": "E06",
+      "section": "表征与稳定性",
+      "category": "experimental",
+      "nameZh": "化学稳定性 (pH)",
+      "nameEn": "Chemical Stability (pH range)",
+      "symbol": "—",
+      "definition": "材料在酸碱溶液中保持结构完整的 pH 范围",
+      "preferredUnit": "**pH** (范围)",
+      "methods": "浸泡后 XRD / BET"
+    }
+  },
+  {
+    "id": "14_E07",
+    "entryId": 14,
+    "text": "[E07] 溶剂稳定性\nSolvent Stability\n符号: —\n定义: 材料在常见有机溶剂中保持结构的能力\n单位: **定性** (稳定/部分溶胀/溶解)\n其他单位: —\n值域: —\n方法: 溶剂浸泡后 XRD\n备注: 建议记录溶剂和温度",
+    "metadata": {
+      "code": "E07",
+      "section": "表征与稳定性",
+      "category": "experimental",
+      "nameZh": "溶剂稳定性",
+      "nameEn": "Solvent Stability",
+      "symbol": "—",
+      "definition": "材料在常见有机溶剂中保持结构的能力",
+      "preferredUnit": "**定性** (稳定/部分溶胀/溶解)",
+      "methods": "溶剂浸泡后 XRD"
+    }
+  },
+  {
+    "id": "14_E08",
+    "entryId": 14,
+    "text": "[E08] 机械稳定性\nMechanical Stability\n符号: —\n定义: 材料在压力/研磨下保持结构的能力\n单位: **GPa** (杨氏模量)\n其他单位: MPa (压缩强度)\n值域: MOF: 1~30 GPa\n方法: 纳米压痕 / 高压 XRD / 计算\n备注: `[确认]` 若需量化机械参数，建议统一使用 E49~E53 的工程力学参数",
+    "metadata": {
+      "code": "E08",
+      "section": "表征与稳定性",
+      "category": "experimental",
+      "nameZh": "机械稳定性",
+      "nameEn": "Mechanical Stability",
+      "symbol": "—",
+      "definition": "材料在压力/研磨下保持结构的能力",
+      "preferredUnit": "**GPa** (杨氏模量)",
+      "methods": "纳米压痕 / 高压 XRD / 计算"
+    }
+  },
+  {
+    "id": "14_E09",
+    "entryId": 14,
+    "text": "[E09] 湿度稳定性\nMoisture Stability\n符号: —\n定义: 材料在一定湿度下保持结构的能力\n单位: **%RH** + 暴露时间\n其他单位: —\n值域: —\n方法: 恒湿暴露后 XRD / BET\n备注: —",
+    "metadata": {
+      "code": "E09",
+      "section": "表征与稳定性",
+      "category": "experimental",
+      "nameZh": "湿度稳定性",
+      "nameEn": "Moisture Stability",
+      "symbol": "—",
+      "definition": "材料在一定湿度下保持结构的能力",
+      "preferredUnit": "**%RH** + 暴露时间",
+      "methods": "恒湿暴露后 XRD / BET"
+    }
+  },
+  {
+    "id": "14_E10",
+    "entryId": 14,
+    "text": "[E10] 光稳定性\nPhotostability\n符号: —\n定义: 材料在光照下保持结构和性质的能力\n单位: **定性** (波长 + 光强 + 时间)\n其他单位: —\n值域: —\n方法: UV-Vis 光照后表征\n备注: 光催化材料重点关注",
+    "metadata": {
+      "code": "E10",
+      "section": "表征与稳定性",
+      "category": "experimental",
+      "nameZh": "光稳定性",
+      "nameEn": "Photostability",
+      "symbol": "—",
+      "definition": "材料在光照下保持结构和性质的能力",
+      "preferredUnit": "**定性** (波长 + 光强 + 时间)",
+      "methods": "UV-Vis 光照后表征"
+    }
+  }
+]

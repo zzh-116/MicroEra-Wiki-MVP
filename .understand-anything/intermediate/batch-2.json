@@ -1,0 +1,2223 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/api/categoriesApi.ts",
+      "type": "file",
+      "name": "Categories API",
+      "filePath": "src/api/categoriesApi.ts",
+      "summary": "分类 API 模块，封装获取企业知识分类目录的 HTTP 请求，仅暴露 getCategories 方法从后端 /categories 端点获取全部分类列表。",
+      "tags": ["api", "categories", "http-client", "typescript"],
+      "complexity": "simple",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["import", "export const", "async function"],
+        "patterns": ["API module pattern", "Promise-based async"]
+      }
+    },
+    {
+      "id": "file:src/api/dataItemsApi.ts",
+      "type": "file",
+      "name": "Data Items API",
+      "filePath": "src/api/dataItemsApi.ts",
+      "summary": "数据条目 API 模块，提供研发数据字典的完整 CRUD 操作，包括获取全部数据条目、按条目 ID 查询、保存（新增/更新）和删除功能。",
+      "tags": ["api", "data-items", "crud", "r&d-data", "typescript"],
+      "complexity": "moderate",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["import", "export const", "async function", "try-catch"],
+        "patterns": ["API module pattern", "CRUD operations", "null-safety return"]
+      }
+    },
+    {
+      "id": "file:src/api/entriesApi.ts",
+      "type": "file",
+      "name": "Entries API",
+      "filePath": "src/api/entriesApi.ts",
+      "summary": "条目 API 核心模块，封装 Wiki 条目的完整 CRUD 操作与查询过滤功能。定义 EntryQueryParams 接口用于构建多维度查询参数（关键词、类型、可见性、分类、标签），并通过 URLSearchParams 动态拼接查询字符串。",
+      "tags": ["api", "entries", "crud", "query-params", "search", "typescript"],
+      "complexity": "moderate",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["import", "export interface", "export const", "async function", "URLSearchParams"],
+        "patterns": ["API module pattern", "Query builder pattern", "CRUD operations", "Error handling"]
+      }
+    },
+    {
+      "id": "file:src/api/filesApi.ts",
+      "type": "file",
+      "name": "Files API",
+      "filePath": "src/api/filesApi.ts",
+      "summary": "文件附件 API 模块，提供 Wiki 附件的获取、上传和删除功能。上传支持 base64 数据编码、条目关联和用途类型，删除直接移除物理/逻辑索引中的附件记录。",
+      "tags": ["api", "files", "upload", "attachments", "typescript"],
+      "complexity": "simple",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["import", "export const", "async function"],
+        "patterns": ["API module pattern", "File upload pattern", "CRUD operations"]
+      }
+    },
+    {
+      "id": "file:src/components/AiSearchResults.tsx",
+      "type": "file",
+      "name": "AI Search Results Component",
+      "filePath": "src/components/AiSearchResults.tsx",
+      "summary": "AI 搜索结果展示组件，根据加载状态展示三种视图：加载中的旋转动画、空结果的占位提示、以及基于 viewMode 切换的表格或网格卡片布局。支持标注 AI 语义搜索来源和关键词回退模式。",
+      "tags": ["react", "component", "ai-search", "results-display", "grid-table", "typescript"],
+      "complexity": "moderate",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["React.FC", "interface", "export const", "conditional rendering", "hooks"],
+        "patterns": ["React functional component", "Loading/Empty/Data state pattern", "View mode switching"]
+      }
+    },
+    {
+      "id": "file:src/components/AiSearchToggle.tsx",
+      "type": "file",
+      "name": "AI Search Toggle Component",
+      "filePath": "src/components/AiSearchToggle.tsx",
+      "summary": "AI 语义搜索开关按钮组件。通过二态切换控制 AI 搜索功能的启用/禁用，启用时显示火花图标和品牌黄色高亮，禁用时回退到普通搜索图标样式。",
+      "tags": ["react", "component", "ai-search", "toggle", "typescript"],
+      "complexity": "simple",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["React.FC", "interface", "export const", "onClick handler"],
+        "patterns": ["React functional component", "Boolean toggle pattern", "Conditional styling"]
+      }
+    },
+    {
+      "id": "file:src/components/AssetCard.tsx",
+      "type": "file",
+      "name": "Asset Card Component",
+      "filePath": "src/components/AssetCard.tsx",
+      "summary": "素材展示卡片组件，专为宣发素材库设计。包含 SVG 示意图渲染（业务流程图、产品分子渲染图、工厂车间图）、可见度徽章、文件大小格式化、附件下载按钮和用途类型标签。支持中英文双语切换。",
+      "tags": ["react", "component", "asset-library", "svg-graphics", "download", "typescript"],
+      "complexity": "complex",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["React.FC", "interface", "export const", "SVG inline", "formatting helper"],
+        "patterns": ["React functional component", "Conditional rendering by filename", "Inline SVG graphics", "Unit formatting utility"]
+      }
+    },
+    {
+      "id": "file:src/components/EntryCard.tsx",
+      "type": "file",
+      "name": "Entry Card Component",
+      "filePath": "src/components/EntryCard.tsx",
+      "summary": "Wiki 条目卡片组件，以网格卡片形式展示条目概览信息，包括类型徽章、可见度标签、分类名称、标题、摘要、标签、更新日期，以及详情查看、编辑、删除操作按钮。支持中英文双语显示。",
+      "tags": ["react", "component", "entry-card", "grid-display", "typescript"],
+      "complexity": "moderate",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["React.FC", "interface", "export const", "localized helpers", "event handlers"],
+        "patterns": ["React functional component", "Card UI pattern", "Date formatting", "Conditional rendering for auth state"]
+      }
+    },
+    {
+      "id": "file:src/components/EntryTable.tsx",
+      "type": "file",
+      "name": "Entry Table Component",
+      "filePath": "src/components/EntryTable.tsx",
+      "summary": "条目表格视图组件，以表格式布局展示 Wiki 条目列表。包括列标题（条目名称与摘要、类型、可见范围、业务分类、更新时间、操作），支持内联筛选、查看/编辑/删除操作，并显示标签云。",
+      "tags": ["react", "component", "entry-table", "table-display", "typescript"],
+      "complexity": "moderate",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["React.FC", "interface", "export const", "table elements", "map rendering"],
+        "patterns": ["React functional component", "Table layout pattern", "Inline action buttons", "Tag cloud display"]
+      }
+    },
+    {
+      "id": "file:src/components/FileList.tsx",
+      "type": "file",
+      "name": "File List Component",
+      "filePath": "src/components/FileList.tsx",
+      "summary": "附件文件列表组件，展示与条目关联的 Wiki 附件集合。每个文件项显示文件名、大小、MIME 类型、用途标签，并提供下载和删除按钮。支持空列表占位提示和中英文双语。",
+      "tags": ["react", "component", "file-list", "attachments", "typescript"],
+      "complexity": "simple",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["React.FC", "interface", "export const", "formatting helper"],
+        "patterns": ["React functional component", "List rendering pattern", "File metadata display", "Conditional empty state"]
+      }
+    },
+    {
+      "id": "file:src/components/FileUpload.tsx",
+      "type": "file",
+      "name": "File Upload Component",
+      "filePath": "src/components/FileUpload.tsx",
+      "summary": "文件上传组件，提供拖拽或浏览选择文件上传的交互界面。包含用途类型选择器（PPT素材、宣发素材、客户展示、研发资料、产品资料、内部归档），模拟上传进度状态（空闲/上传中/成功/错误），支持文件类型过滤和重置。",
+      "tags": ["react", "component", "file-upload", "drag-drop", "mock-upload", "typescript"],
+      "complexity": "moderate",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["React.FC", "interface", "useState", "useRef", "drag handlers", "conditional rendering"],
+        "patterns": ["React functional component", "Drag and drop pattern", "File input pattern", "State machine (idle/uploading/success/error)"]
+      }
+    },
+    {
+      "id": "file:src/components/FilterBar.tsx",
+      "type": "file",
+      "name": "Filter Bar Component",
+      "filePath": "src/components/FilterBar.tsx",
+      "summary": "过滤搜索栏组件，提供多维度的 Wiki 条目检索界面。集成了关键词输入框、分类下拉选择器、可见性过滤（含访客受限提示）、条目类型药丸按钮组、以及可用标签云切换。支持中英文双语和登录状态感知。",
+      "tags": ["react", "component", "filter-bar", "search", "multi-filter", "typescript"],
+      "complexity": "complex",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["React.FC", "interface", "export const", "event handlers", "localized labels"],
+        "patterns": ["React functional component", "Filter/search pattern", "Controlled form inputs", "Auth-aware UI state"]
+      }
+    },
+    {
+      "id": "file:src/components/Unauthorized.tsx",
+      "type": "file",
+      "name": "Unauthorized Component",
+      "filePath": "src/components/Unauthorized.tsx",
+      "summary": "未授权访问提示组件，当未登录用户尝试查看内部机密内容时显示的拦截页面。包含锁定图标、中文提示文案、“立即登录”和“返回公开首页”两个操作按钮。",
+      "tags": ["react", "component", "unauthorized", "access-control", "typescript"],
+      "complexity": "simple",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["React.FC", "interface", "export const"],
+        "patterns": ["React functional component", "Access control gate pattern"]
+      }
+    },
+    {
+      "id": "file:src/components/VisibilityBadge.tsx",
+      "type": "file",
+      "name": "Visibility Badge Component",
+      "filePath": "src/components/VisibilityBadge.tsx",
+      "summary": "可见性徽章组件，通过眼睛图标（公开）或盾牌图标（内部机密）直观展示条目的可见范围。支持中英文标签切换和深浅色主题样式适配。",
+      "tags": ["react", "component", "visibility-badge", "access-control", "typescript"],
+      "complexity": "simple",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["React.FC", "interface", "export const", "lucide-react icons"],
+        "patterns": ["React functional component", "Conditional rendering by prop", "Bilingual label pattern"]
+      }
+    },
+    {
+      "id": "file:src/context/LanguageThemeContext.tsx",
+      "type": "file",
+      "name": "Language & Theme Context",
+      "filePath": "src/context/LanguageThemeContext.tsx",
+      "summary": "语言和主题上下文模块，是前端国际化和主题系统的核心。提供完整的翻译字典（translations 对象，含中英文双语对照，覆盖导航、首页、目录、详情、编辑器、登录、管理后台和 AI 功能等全部页面文案），通过 React Context 暴露 LanguageThemeProvider 和 useLanguageTheme hook，支持浅色/深色主题切换和中/英语言切换，状态持久化到 localStorage。",
+      "tags": ["react", "context", "i18n", "theme", "localization", "typescript"],
+      "complexity": "complex",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["createContext", "React.FC Provider", "export const", "useState", "useEffect", "localStorage"],
+        "patterns": ["React Context Provider pattern", "Custom hook pattern", "Theme toggle pattern", "i18n translation map", "localStorage persistence"]
+      }
+    },
+    {
+      "id": "file:src/pages/AdminMockPage.tsx",
+      "type": "file",
+      "name": "Admin Mock Page",
+      "filePath": "src/pages/AdminMockPage.tsx",
+      "summary": "系统管理员专区页面，提供 Mock 数据库监控仪表板和 SQLite/PostgreSQL 物理表结构白皮书。展示统计卡片（运行账户、条目总数、附件数量、公开/机密分布）、分类知识档案分布图表，以及完整的四张核心表（users、entries、files、data_items）的字段定义文档。",
+      "tags": ["react", "page", "admin", "dashboard", "database-schema", "sqlite", "typescript"],
+      "complexity": "complex",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["React.FC", "useState", "useEffect", "data fetching", "chart rendering"],
+        "patterns": ["Dashboard pattern", "Statistical visualization", "Schema documentation pattern", "Bilingual data presentation"]
+      }
+    },
+    {
+      "id": "file:src/pages/AssetLibraryPage.tsx",
+      "type": "file",
+      "name": "Asset Library Page",
+      "filePath": "src/pages/AssetLibraryPage.tsx",
+      "summary": "宣发素材库页面，为老板和市场部提供可视化素材检索和下载界面。集成关键词搜索、用途分类过滤（PPT素材/宣发素材/客户展示/内部归档）、标签过滤三重筛选，使用 AssetCard 网格展示素材。包含访客安全提示横幅，引导未登录用户登录解锁完整库。",
+      "tags": ["react", "page", "asset-library", "media", "filtering", "download", "typescript"],
+      "complexity": "complex",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["React.FC", "useState", "useEffect", "Array.filter", "data fetching"],
+        "patterns": ["Page component pattern", "Multi-filter pattern", "Grid gallery layout", "Auth-gated content", "Mock download"]
+      }
+    },
+    {
+      "id": "file:src/pages/DataItemPage.tsx",
+      "type": "file",
+      "name": "Data Item Page",
+      "filePath": "src/pages/DataItemPage.tsx",
+      "summary": "研发组协作数据条目对准表页面，仅供内部登录用户访问。以表格形式展示研发数据字典索引，包括关联 Wiki 条目、数据键名、交换格式（cif/json/sql/excel/csv）、Schema 版本、负责人和同步日期。支持关键词搜索和文件格式过滤，未登录时显示安全锁定拦截页。",
+      "tags": ["react", "page", "data-items", "r&d", "table", "access-control", "typescript"],
+      "complexity": "moderate",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["React.FC", "useState", "useEffect", "data fetching", "client-side filtering"],
+        "patterns": ["Auth-gated page pattern", "Table list layout", "Search and filter pattern", "Locked guard pattern"]
+      }
+    },
+    {
+      "id": "file:src/pages/EntryDetailPage.tsx",
+      "type": "file",
+      "name": "Entry Detail Page",
+      "filePath": "src/pages/EntryDetailPage.tsx",
+      "summary": "Wiki 条目详情页面，是系统的核心阅读视图。展示条目标题、摘要引用框、完整 Markdown 正文、元数据（类型/可见性/分类/时间/发布人），右侧边栏展示附件文件列表、标签云和沙盒提示。支持未授权拦截（内部机密内容对访客隐藏）、AI 摘要按钮、编辑跳转，以及为 asset 和 data_item 类型提供专用的可视化扩展面板（SVG 图表和数据字典详情）。",
+      "tags": ["react", "page", "entry-detail", "reading-view", "markdown", "attachments", "typescript"],
+      "complexity": "complex",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["React.FC", "useState", "useEffect", "conditional rendering", "SVG inline"],
+        "patterns": ["Detail page pattern", "Sidebar layout", "Unauthorized guard", "Type-specific rendering", "Multi-API data fetching"]
+      }
+    },
+    {
+      "id": "file:src/pages/EntryEditorPage.tsx",
+      "type": "file",
+      "name": "Entry Editor Page",
+      "filePath": "src/pages/EntryEditorPage.tsx",
+      "summary": "Wiki 条目编辑器页面，提供创建和编辑条目的完整表单界面。左侧主面板包含标题输入、类型选择器、可见性控制、摘要文本框、正文 Markdown 编辑器以及 data_item 类型的专用 Schema 扩展字段（数据键名、交换格式、负责人、Schema 版本、字段映射、存储路径）。右侧边栏包含业务分类选择、标签输入、FileUpload 附件上传组件和安全提交面板。支持编辑模式回填已有数据。",
+      "tags": ["react", "page", "editor", "form", "crud", "markdown-editor", "typescript"],
+      "complexity": "complex",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["React.FC", "useState", "useEffect", "form handling", "conditional rendering"],
+        "patterns": ["Form pattern", "Sidebar layout", "Conditional sub-forms (data_item)", "Edit/Create mode switching", "Mock file upload integration"]
+      }
+    },
+    {
+      "id": "file:src/pages/EntryListPage.tsx",
+      "type": "file",
+      "name": "Entry List Page",
+      "filePath": "src/pages/EntryListPage.tsx",
+      "summary": "Wiki 条目目录列表页，是系统的核心浏览和检索入口。集成了 FilterBar 过滤组件、AI 语义搜索开关（AiSearchToggle）和结果展示（AiSearchResults）、网格/表格视图切换（使用 EntryCard 和 EntryTable）、新建条目按钮以及多维度筛选（类型、可见性、分类、标签、关键词）。支持从 Navbar 传入初始筛选参数进行预过滤。",
+      "tags": ["react", "page", "entry-list", "catalog", "search", "filtering", "typescript"],
+      "complexity": "complex",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["React.FC", "useState", "useEffect", "Promise.all", "data fetching", "event delegation"],
+        "patterns": ["List page pattern", "Multi-component orchestration", "AI search integration", "View mode switching", "Filter state management"]
+      }
+    },
+    {
+      "id": "file:src/pages/PublicHome.tsx",
+      "type": "file",
+      "name": "Public Home Page",
+      "filePath": "src/pages/PublicHome.tsx",
+      "summary": "公开首页（着陆页），面向未登录访客和客户的展示页面。包含品牌 Hero 区域（带探索和登录按钮）、核心业务维度统计卡片网格（产品业务、技术优势、专利成果、研发协作数据）、最新公开条目展示和 MVP 场景说明指南区域。所有公开条目仅展示 public 可见性的内容。",
+      "tags": ["react", "page", "home", "landing", "public", "stats", "typescript"],
+      "complexity": "moderate",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["React.FC", "useState", "useEffect", "Promise.all", "stat card config array"],
+        "patterns": ["Landing page pattern", "Hero section", "Stat card grid", "Content preview pattern", "Config-driven card generation"]
+      }
+    },
+    {
+      "id": "file:src/types/category.ts",
+      "type": "file",
+      "name": "Category Type Definition",
+      "filePath": "src/types/category.ts",
+      "summary": "Category 类型定义文件，定义业务分类的数据结构，包含 id、name、可选 description 和 sort_order 排序字段。",
+      "tags": ["typescript", "type", "interface", "category", "data-model"],
+      "complexity": "simple",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["export interface"],
+        "patterns": ["Type definition", "Domain model"]
+      }
+    },
+    {
+      "id": "file:src/types/dataItem.ts",
+      "type": "file",
+      "name": "DataItem Type Definition",
+      "filePath": "src/types/dataItem.ts",
+      "summary": "DataItem 类型定义文件，定义研发数据条目的数据结构，包括 entry_id 关联、data_name、data_definition、data_format（支持 csv/json/sql/cif/excel/txt）、storage_description、schema_description、schema_version、responsible_person 和 updated_at 字段。",
+      "tags": ["typescript", "type", "interface", "data-item", "r&d", "data-model"],
+      "complexity": "simple",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["export interface"],
+        "patterns": ["Type definition", "Domain model", "Foreign key reference"]
+      }
+    },
+    {
+      "id": "file:src/types/entry.ts",
+      "type": "file",
+      "name": "Entry Type Definition",
+      "filePath": "src/types/entry.ts",
+      "summary": "Entry 核心类型定义文件，定义 Wiki 条目的完整数据结构。包含 EntryType 联合类型（asset/product/tech/patent/data_item）、VisibilityType（public/internal）以及 Entry 接口（含 id、title、entry_type、summary、content、visibility、category_id、时间戳和 tags 数组）。",
+      "tags": ["typescript", "type", "interface", "entry", "core-model", "visibility"],
+      "complexity": "simple",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["export type", "export interface"],
+        "patterns": ["Union type", "Domain model", "Visibility enum pattern"]
+      }
+    },
+    {
+      "id": "file:src/types/file.ts",
+      "type": "file",
+      "name": "File Type Definition",
+      "filePath": "src/types/file.ts",
+      "summary": "WikiFile 类型定义文件，定义附件/素材文件的元数据结构。包含 UsageType 联合类型（PPT素材/宣发素材/客户展示/研发资料/产品资料/内部归档）和 WikiFile 接口（含 entry_id 关联、原始文件名、存储文件名、MIME 类型、文件大小、存储路径、用途类型和时间戳）。",
+      "tags": ["typescript", "type", "interface", "file", "attachments", "usage-type", "data-model"],
+      "complexity": "simple",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["export type", "export interface"],
+        "patterns": ["Union type with Chinese labels", "Domain model", "File metadata pattern"]
+      }
+    },
+    {
+      "id": "file:src/utils/labelMapper.ts",
+      "type": "file",
+      "name": "Label Mapper Utility",
+      "filePath": "src/utils/labelMapper.ts",
+      "summary": "标签映射工具模块，提供条目类型到中文标签的映射（ENTRY_TYPE_LABELS）和对应的 Tailwind CSS 颜色样式映射（ENTRY_TYPE_COLORS），为五种条目类型（展示素材、产品业务、技术能力、专利成果、数据条目）提供统一的标签渲染方案。",
+      "tags": ["typescript", "utility", "label-mapping", "colors", "i18n"],
+      "complexity": "simple",
+      "languageNotes": {
+        "language": "typescript",
+        "primaryConstructs": ["export const", "Record generic type"],
+        "patterns": ["Enum label mapping pattern", "Color palette mapping", "Utility barrel"]
+      }
+    },
+    {
+      "id": "function:src/api/categoriesApi.ts:categoriesApi",
+      "type": "function",
+      "name": "categoriesApi",
+      "filePath": "src/api/categoriesApi.ts",
+      "summary": "分类 API 对象，封装 getCategories 方法以从后端 /categories 端点获取全部分类列表。",
+      "tags": ["api", "categories", "http", "export"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/api/dataItemsApi.ts:dataItemsApi",
+      "type": "function",
+      "name": "dataItemsApi",
+      "filePath": "src/api/dataItemsApi.ts",
+      "summary": "数据条目 API 对象，提供 getDataItems（获取全部）、getDataItemByEntryId（按条目ID查询）、saveDataItem（创建/更新）和 deleteDataItem（删除）四个 CRUD 方法。",
+      "tags": ["api", "data-items", "crud", "export"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/api/entriesApi.ts:entriesApi",
+      "type": "function",
+      "name": "entriesApi",
+      "filePath": "src/api/entriesApi.ts",
+      "summary": "条目 API 核心对象，提供 getEntries（多条件查询过滤）、getEntryById（按ID查询含未授权处理）、createEntry（创建新条目）、updateEntry（更新条目）和 deleteEntry（删除条目）五个方法，是前端数据获取的主入口。",
+      "tags": ["api", "entries", "crud", "search", "export"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/types/entry.ts:EntryQueryParams",
+      "type": "class",
+      "name": "EntryQueryParams",
+      "filePath": "src/api/entriesApi.ts",
+      "summary": "条目查询参数接口，定义多维过滤条件：keyword（关键词）、entry_type（条目类型/全部）、visibility（可见性/全部）、category_id（分类ID/全部）和 tag（标签名）。",
+      "tags": ["typescript", "interface", "query", "filter", "search"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/api/filesApi.ts:filesApi",
+      "type": "function",
+      "name": "filesApi",
+      "filePath": "src/api/filesApi.ts",
+      "summary": "文件附件 API 对象，提供 getFiles（按条目ID查询附件列表）、uploadFile（上传文件支持 base64 编码）和 deleteFile（删除附件）三个方法。",
+      "tags": ["api", "files", "upload", "export"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/types/category.ts:Category",
+      "type": "class",
+      "name": "Category",
+      "filePath": "src/types/category.ts",
+      "summary": "Category 接口，定义业务分类的数据结构：id（自增主键）、name（分类名称）、description（可选描述）、sort_order（排序权重）。",
+      "tags": ["typescript", "interface", "category", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/types/dataItem.ts:DataItem",
+      "type": "class",
+      "name": "DataItem",
+      "filePath": "src/types/dataItem.ts",
+      "summary": "DataItem 接口，定义研发数据条目的完整字段结构，包括 entry_id 外键关联、数据名称、定义、格式、存储描述、Schema 描述、版本号、负责人和更新时间。",
+      "tags": ["typescript", "interface", "data-item", "r&d", "data-model"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/types/entry.ts:Entry",
+      "type": "class",
+      "name": "Entry",
+      "filePath": "src/types/entry.ts",
+      "summary": "Entry 核心接口，定义 Wiki 知识条目的完整数据结构：id、title、entry_type（五种类型之一）、summary、content（Markdown 正文）、visibility（public/internal）、category_id（可选分类外键）、时间戳和 tags 标签数组。",
+      "tags": ["typescript", "interface", "entry", "core-model", "domain"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/types/entry.ts:EntryType",
+      "type": "class",
+      "name": "EntryType",
+      "filePath": "src/types/entry.ts",
+      "summary": "条目类型联合类型定义，限定条目分类为 asset（展示素材）、product（产品业务）、tech（技术能力）、patent（专利成果）或 data_item（数据条目）。",
+      "tags": ["typescript", "type", "union", "enum"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/types/entry.ts:VisibilityType",
+      "type": "class",
+      "name": "VisibilityType",
+      "filePath": "src/types/entry.ts",
+      "summary": "可见性类型定义，限定条目的访问控制级别为 public（公开可读）或 internal（内部机密）。用于权限隔离和过滤逻辑。",
+      "tags": ["typescript", "type", "visibility", "access-control"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/types/file.ts:WikiFile",
+      "type": "class",
+      "name": "WikiFile",
+      "filePath": "src/types/file.ts",
+      "summary": "WikiFile 接口，定义附件文件的元数据结构：id、entry_id（外键）、original_filename、stored_filename（UUID 存储名）、file_type（MIME）、file_size（字节数）、storage_path（磁盘路径）和 usage_type（用途分类）。",
+      "tags": ["typescript", "interface", "file", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/types/file.ts:UsageType",
+      "type": "class",
+      "name": "UsageType",
+      "filePath": "src/types/file.ts",
+      "summary": "附件用途类型联合定义，用中文标识六种用途场景：PPT素材、宣发素材、客户展示、研发资料、产品资料、内部归档。用于素材库和上传组件的筛选与分类。",
+      "tags": ["typescript", "type", "union", "file-usage"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/utils/labelMapper.ts:ENTRY_TYPE_LABELS",
+      "type": "function",
+      "name": "ENTRY_TYPE_LABELS",
+      "filePath": "src/utils/labelMapper.ts",
+      "summary": "条目类型中文标签映射常量，将 EntryType 五种类型映射为中文显示名称：展示素材、产品业务、技术能力、专利成果、数据条目。",
+      "tags": ["typescript", "constant", "label", "i18n", "export"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/utils/labelMapper.ts:ENTRY_TYPE_COLORS",
+      "type": "function",
+      "name": "ENTRY_TYPE_COLORS",
+      "filePath": "src/utils/labelMapper.ts",
+      "summary": "条目类型 Tailwind CSS 颜色映射常量，为每种 EntryType 配置独特的颜色组合（靛蓝/天蓝/紫色/青色/玫瑰色），支持深浅色主题自适应，确保视觉区分度。",
+      "tags": ["typescript", "constant", "colors", "tailwind", "export"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/context/LanguageThemeContext.tsx:useLanguageTheme",
+      "type": "function",
+      "name": "useLanguageTheme",
+      "filePath": "src/context/LanguageThemeContext.tsx",
+      "summary": "语言主题自定义 Hook，封装 React Context 消费逻辑，返回包含 theme（当前主题）、lang（当前语言）、toggleTheme（主题切换）、setLang（语言设置）和 t（翻译函数）的对象。在 Provider 外部调用时抛出错误。",
+      "tags": ["react", "hook", "context", "i18n", "theme"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/context/LanguageThemeContext.tsx:LanguageThemeProvider",
+      "type": "function",
+      "name": "LanguageThemeProvider",
+      "filePath": "src/context/LanguageThemeContext.tsx",
+      "summary": "语言和主题的 React Context Provider 组件。管理 theme（light/dark，与 Tailwind dark class 同步）和 lang（zh/en）状态，状态通过 localStorage 持久化，提供 t() 翻译函数从 translations 字典按 key 和当前语言取值，fallback 到中文。",
+      "tags": ["react", "provider", "context", "i18n", "theme", "localStorage"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/context/LanguageThemeContext.tsx:translations",
+      "type": "function",
+      "name": "translations",
+      "filePath": "src/context/LanguageThemeContext.tsx",
+      "summary": "多语言翻译字典对象，包含项目中所有前端文本的中英文翻译对照。覆盖导航品牌、首页、目录、详情、素材库、数据条目、编辑器、登录、管理后台和 AI 功能等全部页面模块，共 80+ 个翻译键。",
+      "tags": ["typescript", "i18n", "translations", "dictionary"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/components/AiSearchResults.tsx:AiSearchResults",
+      "type": "function",
+      "name": "AiSearchResults",
+      "filePath": "src/components/AiSearchResults.tsx",
+      "summary": "AI 搜索结果展示组件，Props 包含搜索结果数组、加载状态、来源标注、视图模式、分类映射和操作回调。内部根据加载/空结果/有效结果三种状态渲染不同 UI，结果区支持表格和网格两种视图模式。",
+      "tags": ["react", "component", "ai-search", "results"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/AiSearchToggle.tsx:AiSearchToggle",
+      "type": "function",
+      "name": "AiSearchToggle",
+      "filePath": "src/components/AiSearchToggle.tsx",
+      "summary": "AI 语义搜索开关按钮，接收 enabled 布尔值和 onToggle 回调，显示火花/Search 图标并根据启用状态切换品牌黄色高亮样式。",
+      "tags": ["react", "component", "toggle", "ai-search"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/AssetCard.tsx:AssetCard",
+      "type": "function",
+      "name": "AssetCard",
+      "filePath": "src/components/AssetCard.tsx",
+      "summary": "素材展示卡片组件，接收 entry、file、onSelect 和 onDownload 回调。包含内嵌 SVG 示意图渲染（业务流程图/分子渲染图/车间图）、可见度徽章、文件大小格式化、下载按钮和用途类型标签，支持中英文双语。",
+      "tags": ["react", "component", "asset", "card", "svg", "download"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/components/EntryCard.tsx:EntryCard",
+      "type": "function",
+      "name": "EntryCard",
+      "filePath": "src/components/EntryCard.tsx",
+      "summary": "条目卡片组件，展示 Wiki 条目的概览信息，包括类型徽章、可见度标签、分类名、标题、摘要、标签云、更新日期，并提供详情查看、编辑和删除操作按钮。支持中英文双语和登录/未登录权限差异。",
+      "tags": ["react", "component", "entry", "card", "grid"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/EntryTable.tsx:EntryTable",
+      "type": "function",
+      "name": "EntryTable",
+      "filePath": "src/components/EntryTable.tsx",
+      "summary": "表格视图组件，以 HTML table 形式展示条目列表，包含类型徽章、可见度、分类、标签、时间等列，并提供查看/编辑/删除内联操作按钮。空列表时显示占位提示。",
+      "tags": ["react", "component", "table", "entry"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/FileList.tsx:FileList",
+      "type": "function",
+      "name": "FileList",
+      "filePath": "src/components/FileList.tsx",
+      "summary": "附件文件列表组件，以列表形式展示文件集合，每项显示文件图标、名称、大小、MIME 类型、用途标签，并提供下载和删除按钮。支持空列表占位提示。",
+      "tags": ["react", "component", "file", "list", "download"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/FileUpload.tsx:FileUpload",
+      "type": "function",
+      "name": "FileUpload",
+      "filePath": "src/components/FileUpload.tsx",
+      "summary": "文件上传组件，提供拖拽区域和浏览按钮两种上传方式。包含用途类型选择器、模拟上传进度（空闲/上传中/成功三态），支持文件类型过滤，上传完成后可重置。",
+      "tags": ["react", "component", "upload", "drag-drop", "file"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/FilterBar.tsx:FilterBar",
+      "type": "function",
+      "name": "FilterBar",
+      "filePath": "src/components/FilterBar.tsx",
+      "summary": "过滤搜索栏组件，整合关键词输入、分类下拉、可见性选择（含访客受限提示）、条目类型药丸按钮组和标签云切换，所有过滤条件通过 onChange 回调向上传递更新的查询参数。",
+      "tags": ["react", "component", "filter", "search", "multi-criteria"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/components/Unauthorized.tsx:Unauthorized",
+      "type": "function",
+      "name": "Unauthorized",
+      "filePath": "src/components/Unauthorized.tsx",
+      "summary": "未授权拦截提示组件，展示锁定图标和中文提示，提供「立即登录」和「返回公开首页」两个导航按钮。用于内部机密内容的访问拦截。",
+      "tags": ["react", "component", "access-control", "guard"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/VisibilityBadge.tsx:VisibilityBadge",
+      "type": "function",
+      "name": "VisibilityBadge",
+      "filePath": "src/components/VisibilityBadge.tsx",
+      "summary": "可见性徽章组件，通过眼睛（公开）或盾牌（内部）图标展示条目可见范围，支持中英文标签和深浅色主题。",
+      "tags": ["react", "component", "badge", "visibility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pages/AdminMockPage.tsx:AdminMockPage",
+      "type": "function",
+      "name": "AdminMockPage",
+      "filePath": "src/pages/AdminMockPage.tsx",
+      "summary": "管理员专区页面组件，展示 Mock 数据库监控仪表板（统计卡片、类型分布图表）和 SQLite 物理表结构文档（users/entries/files/data_items 四表字段详述），支持中英文切换。",
+      "tags": ["react", "page", "admin", "dashboard", "database-schema"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pages/AssetLibraryPage.tsx:AssetLibraryPage",
+      "type": "function",
+      "name": "AssetLibraryPage",
+      "filePath": "src/pages/AssetLibraryPage.tsx",
+      "summary": "宣发素材库页面组件，集成关键词搜索、用途过滤、标签过滤三重筛选，使用 AssetCard 网格展示素材。未登录时显示安全横幅引导登录。",
+      "tags": ["react", "page", "asset-library", "gallery", "media"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pages/DataItemPage.tsx:DataItemPage",
+      "type": "function",
+      "name": "DataItemPage",
+      "filePath": "src/pages/DataItemPage.tsx",
+      "summary": "研发数据条目页面组件，以表格形式展示数据字典索引，支持关键词搜索和格式过滤，未登录时显示安全锁定拦截页。",
+      "tags": ["react", "page", "data-items", "r&d", "table", "access-control"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pages/EntryDetailPage.tsx:EntryDetailPage",
+      "type": "function",
+      "name": "EntryDetailPage",
+      "filePath": "src/pages/EntryDetailPage.tsx",
+      "summary": "条目详情页面组件，展示完整 Wiki 内容：标题、摘要、Markdown 正文、附件列表、标签云、元数据，并为 asset 和 data_item 类型提供专用可视化面板。包含未授权拦截逻辑。",
+      "tags": ["react", "page", "detail", "reading-view", "markdown"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pages/EntryEditorPage.tsx:EntryEditorPage",
+      "type": "function",
+      "name": "EntryEditorPage",
+      "filePath": "src/pages/EntryEditorPage.tsx",
+      "summary": "条目编辑器页面组件，提供创建和编辑 Wiki 条目的完整表单，支持标题/类型/可见性/摘要/正文输入、data_item 专用 Schema 扩展字段、附件上传、分类选择和标签编辑。支持创建和编辑双模式。",
+      "tags": ["react", "page", "editor", "form", "crud"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pages/EntryListPage.tsx:EntryListPage",
+      "type": "function",
+      "name": "EntryListPage",
+      "filePath": "src/pages/EntryListPage.tsx",
+      "summary": "条目目录列表页面组件，集成 FilterBar、AI 搜索、网格/表格视图切换，支持多维度过滤和初始筛选参数传入。是系统的核心浏览入口。",
+      "tags": ["react", "page", "catalog", "list", "search", "orchestrator"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pages/PublicHome.tsx:PublicHome",
+      "type": "function",
+      "name": "PublicHome",
+      "filePath": "src/pages/PublicHome.tsx",
+      "summary": "公开首页组件，包含品牌 Hero 区域、核心业务统计卡片网格、最新公开条目预览和 MVP 场景说明指南。所有内容仅展示 public 可见性。",
+      "tags": ["react", "page", "home", "landing", "public"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "concept:visibility-access-control",
+      "type": "concept",
+      "name": "可见性访问控制",
+      "filePath": null,
+      "summary": "系统中贯穿前后端的核心安全机制，通过 VisibilityType（public/internal）对条目进行访问隔离。前端通过 VisibilityBadge 可视化展示、FilterBar 过滤、Unauthorized 组件拦截，后端通过路由中间件验证登录状态后动态过滤 internal 内容。",
+      "tags": ["concept", "access-control", "visibility", "security", "auth"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "concept:entry-crud-flow",
+      "type": "concept",
+      "name": "条目 CRUD 数据流",
+      "filePath": null,
+      "summary": "Wiki 知识条目的完整增删改查数据流。API 层（entriesApi/filesApi/dataItemsApi）通过 apiFetch 调用后端 REST 端点，页面层（EntryListPage/EntryDetailPage/EntryEditorPage）通过调用 API 方法实现条目的创建、查询、过滤、更新和删除，数据在 localStorage/Mock 存储中持久化。",
+      "tags": ["concept", "data-flow", "crud", "architecture"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "concept:ai-semantic-search",
+      "type": "concept",
+      "name": "AI 语义搜索功能",
+      "filePath": null,
+      "summary": "基于 Ollama AI 的语义搜索功能模块，通过 AiSearchToggle 开关控制启用，AiSearchResults 展示结果，AiContext 管理 AI 调用状态。支持自然语言查询，fallback 到关键词匹配，在 EntryListPage 中与 FilterBar 互斥显示。",
+      "tags": ["concept", "ai", "semantic-search", "ollama", "rag"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/api/categoriesApi.ts",
+      "target": "file:src/api/client.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/api/categoriesApi.ts",
+      "target": "file:src/types/category.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/api/categoriesApi.ts",
+      "target": "class:src/types/category.ts:Category",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/api/categoriesApi.ts",
+      "target": "function:src/api/categoriesApi.ts:categoriesApi",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/api/dataItemsApi.ts",
+      "target": "file:src/api/client.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/api/dataItemsApi.ts",
+      "target": "file:src/types/dataItem.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/api/dataItemsApi.ts",
+      "target": "class:src/types/dataItem.ts:DataItem",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/api/dataItemsApi.ts",
+      "target": "function:src/api/dataItemsApi.ts:dataItemsApi",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/api/entriesApi.ts",
+      "target": "file:src/api/client.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/api/entriesApi.ts",
+      "target": "file:src/types/entry.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/api/entriesApi.ts",
+      "target": "class:src/types/entry.ts:Entry",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/api/entriesApi.ts",
+      "target": "class:src/types/entry.ts:EntryType",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/api/entriesApi.ts",
+      "target": "class:src/types/entry.ts:VisibilityType",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/api/entriesApi.ts",
+      "target": "function:src/api/entriesApi.ts:entriesApi",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/api/entriesApi.ts",
+      "target": "class:src/types/entry.ts:EntryQueryParams",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/api/filesApi.ts",
+      "target": "file:src/api/client.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/api/filesApi.ts",
+      "target": "file:src/types/file.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/api/filesApi.ts",
+      "target": "class:src/types/file.ts:WikiFile",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/api/filesApi.ts",
+      "target": "class:src/types/file.ts:UsageType",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/api/filesApi.ts",
+      "target": "function:src/api/filesApi.ts:filesApi",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/AiSearchResults.tsx",
+      "target": "file:src/components/EntryCard.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/AiSearchResults.tsx",
+      "target": "file:src/components/EntryTable.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/AiSearchResults.tsx",
+      "target": "file:src/context/LanguageThemeContext.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/AiSearchResults.tsx",
+      "target": "file:src/types/entry.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/AiSearchResults.tsx",
+      "target": "class:src/types/entry.ts:Entry",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/AiSearchResults.tsx",
+      "target": "function:src/components/AiSearchResults.tsx:AiSearchResults",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/AiSearchResults.tsx",
+      "target": "function:src/components/EntryCard.tsx:EntryCard",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/AiSearchResults.tsx",
+      "target": "function:src/components/EntryTable.tsx:EntryTable",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/AiSearchResults.tsx",
+      "target": "function:src/context/LanguageThemeContext.tsx:useLanguageTheme",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/AiSearchToggle.tsx",
+      "target": "file:src/context/LanguageThemeContext.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/AiSearchToggle.tsx",
+      "target": "function:src/components/AiSearchToggle.tsx:AiSearchToggle",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/AiSearchToggle.tsx",
+      "target": "function:src/context/LanguageThemeContext.tsx:useLanguageTheme",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/AssetCard.tsx",
+      "target": "file:src/components/VisibilityBadge.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/AssetCard.tsx",
+      "target": "file:src/context/LanguageThemeContext.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/AssetCard.tsx",
+      "target": "file:src/types/entry.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/AssetCard.tsx",
+      "target": "file:src/types/file.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/AssetCard.tsx",
+      "target": "class:src/types/entry.ts:Entry",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/AssetCard.tsx",
+      "target": "class:src/types/file.ts:WikiFile",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/AssetCard.tsx",
+      "target": "function:src/components/AssetCard.tsx:AssetCard",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/AssetCard.tsx",
+      "target": "function:src/components/VisibilityBadge.tsx:VisibilityBadge",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/AssetCard.tsx",
+      "target": "function:src/context/LanguageThemeContext.tsx:useLanguageTheme",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/EntryCard.tsx",
+      "target": "file:src/components/VisibilityBadge.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/EntryCard.tsx",
+      "target": "file:src/context/LanguageThemeContext.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/EntryCard.tsx",
+      "target": "file:src/types/entry.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/EntryCard.tsx",
+      "target": "file:src/utils/labelMapper.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/EntryCard.tsx",
+      "target": "class:src/types/entry.ts:Entry",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/EntryCard.tsx",
+      "target": "function:src/components/EntryCard.tsx:EntryCard",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/EntryCard.tsx",
+      "target": "function:src/components/VisibilityBadge.tsx:VisibilityBadge",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/EntryCard.tsx",
+      "target": "function:src/context/LanguageThemeContext.tsx:useLanguageTheme",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/EntryCard.tsx",
+      "target": "function:src/utils/labelMapper.ts:ENTRY_TYPE_LABELS",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/EntryCard.tsx",
+      "target": "function:src/utils/labelMapper.ts:ENTRY_TYPE_COLORS",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/EntryTable.tsx",
+      "target": "file:src/components/VisibilityBadge.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/EntryTable.tsx",
+      "target": "file:src/types/entry.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/EntryTable.tsx",
+      "target": "file:src/utils/labelMapper.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/EntryTable.tsx",
+      "target": "class:src/types/entry.ts:Entry",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/EntryTable.tsx",
+      "target": "function:src/components/EntryTable.tsx:EntryTable",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/EntryTable.tsx",
+      "target": "function:src/components/VisibilityBadge.tsx:VisibilityBadge",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/EntryTable.tsx",
+      "target": "function:src/utils/labelMapper.ts:ENTRY_TYPE_LABELS",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/EntryTable.tsx",
+      "target": "function:src/utils/labelMapper.ts:ENTRY_TYPE_COLORS",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/FileList.tsx",
+      "target": "file:src/context/LanguageThemeContext.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/FileList.tsx",
+      "target": "file:src/types/file.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/FileList.tsx",
+      "target": "class:src/types/file.ts:WikiFile",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/FileList.tsx",
+      "target": "function:src/components/FileList.tsx:FileList",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/FileList.tsx",
+      "target": "function:src/context/LanguageThemeContext.tsx:useLanguageTheme",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/FileUpload.tsx",
+      "target": "file:src/types/file.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/FileUpload.tsx",
+      "target": "class:src/types/file.ts:UsageType",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/FileUpload.tsx",
+      "target": "function:src/components/FileUpload.tsx:FileUpload",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/FilterBar.tsx",
+      "target": "file:src/api/entriesApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/FilterBar.tsx",
+      "target": "file:src/context/LanguageThemeContext.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/FilterBar.tsx",
+      "target": "file:src/types/category.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/FilterBar.tsx",
+      "target": "file:src/types/entry.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/FilterBar.tsx",
+      "target": "file:src/utils/labelMapper.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/FilterBar.tsx",
+      "target": "class:src/types/entry.ts:EntryQueryParams",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/FilterBar.tsx",
+      "target": "class:src/types/entry.ts:EntryType",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/FilterBar.tsx",
+      "target": "class:src/types/entry.ts:VisibilityType",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/FilterBar.tsx",
+      "target": "class:src/types/category.ts:Category",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/FilterBar.tsx",
+      "target": "function:src/components/FilterBar.tsx:FilterBar",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/FilterBar.tsx",
+      "target": "function:src/context/LanguageThemeContext.tsx:useLanguageTheme",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/FilterBar.tsx",
+      "target": "function:src/utils/labelMapper.ts:ENTRY_TYPE_LABELS",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/Unauthorized.tsx",
+      "target": "function:src/components/Unauthorized.tsx:Unauthorized",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/Unauthorized.tsx",
+      "target": "concept:visibility-access-control",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/components/VisibilityBadge.tsx",
+      "target": "file:src/context/LanguageThemeContext.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/VisibilityBadge.tsx",
+      "target": "file:src/types/entry.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/VisibilityBadge.tsx",
+      "target": "class:src/types/entry.ts:VisibilityType",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/VisibilityBadge.tsx",
+      "target": "function:src/components/VisibilityBadge.tsx:VisibilityBadge",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/components/VisibilityBadge.tsx",
+      "target": "function:src/context/LanguageThemeContext.tsx:useLanguageTheme",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/VisibilityBadge.tsx",
+      "target": "concept:visibility-access-control",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/context/LanguageThemeContext.tsx",
+      "target": "function:src/context/LanguageThemeContext.tsx:translations",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/context/LanguageThemeContext.tsx",
+      "target": "function:src/context/LanguageThemeContext.tsx:LanguageThemeProvider",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/context/LanguageThemeContext.tsx",
+      "target": "function:src/context/LanguageThemeContext.tsx:useLanguageTheme",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "function:src/context/LanguageThemeContext.tsx:LanguageThemeProvider",
+      "target": "function:src/context/LanguageThemeContext.tsx:translations",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/context/LanguageThemeContext.tsx:useLanguageTheme",
+      "target": "function:src/context/LanguageThemeContext.tsx:translations",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/AdminMockPage.tsx",
+      "target": "file:src/api/dataItemsApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/AdminMockPage.tsx",
+      "target": "file:src/api/entriesApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/AdminMockPage.tsx",
+      "target": "file:src/api/filesApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/AdminMockPage.tsx",
+      "target": "file:src/context/LanguageThemeContext.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/AdminMockPage.tsx",
+      "target": "file:src/types/dataItem.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/AdminMockPage.tsx",
+      "target": "file:src/types/entry.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/AdminMockPage.tsx",
+      "target": "file:src/types/file.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/AdminMockPage.tsx",
+      "target": "class:src/types/entry.ts:Entry",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/AdminMockPage.tsx",
+      "target": "class:src/types/file.ts:WikiFile",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/AdminMockPage.tsx",
+      "target": "class:src/types/dataItem.ts:DataItem",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/AdminMockPage.tsx",
+      "target": "function:src/pages/AdminMockPage.tsx:AdminMockPage",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pages/AdminMockPage.tsx",
+      "target": "function:src/context/LanguageThemeContext.tsx:useLanguageTheme",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/AdminMockPage.tsx",
+      "target": "function:src/api/entriesApi.ts:entriesApi",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/AdminMockPage.tsx",
+      "target": "function:src/api/filesApi.ts:filesApi",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/AdminMockPage.tsx",
+      "target": "function:src/api/dataItemsApi.ts:dataItemsApi",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/AssetLibraryPage.tsx",
+      "target": "file:src/api/entriesApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/AssetLibraryPage.tsx",
+      "target": "file:src/api/filesApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/AssetLibraryPage.tsx",
+      "target": "file:src/components/AssetCard.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/AssetLibraryPage.tsx",
+      "target": "file:src/context/LanguageThemeContext.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/AssetLibraryPage.tsx",
+      "target": "file:src/types/entry.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/AssetLibraryPage.tsx",
+      "target": "file:src/types/file.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/AssetLibraryPage.tsx",
+      "target": "class:src/types/entry.ts:Entry",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/AssetLibraryPage.tsx",
+      "target": "class:src/types/file.ts:WikiFile",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/AssetLibraryPage.tsx",
+      "target": "class:src/types/file.ts:UsageType",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/AssetLibraryPage.tsx",
+      "target": "function:src/pages/AssetLibraryPage.tsx:AssetLibraryPage",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pages/AssetLibraryPage.tsx",
+      "target": "function:src/context/LanguageThemeContext.tsx:useLanguageTheme",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/AssetLibraryPage.tsx",
+      "target": "function:src/api/entriesApi.ts:entriesApi",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/AssetLibraryPage.tsx",
+      "target": "function:src/api/filesApi.ts:filesApi",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/AssetLibraryPage.tsx",
+      "target": "function:src/components/AssetCard.tsx:AssetCard",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/DataItemPage.tsx",
+      "target": "file:src/api/dataItemsApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/DataItemPage.tsx",
+      "target": "file:src/api/entriesApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/DataItemPage.tsx",
+      "target": "file:src/context/LanguageThemeContext.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/DataItemPage.tsx",
+      "target": "file:src/types/dataItem.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/DataItemPage.tsx",
+      "target": "file:src/types/entry.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/DataItemPage.tsx",
+      "target": "class:src/types/entry.ts:Entry",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/DataItemPage.tsx",
+      "target": "class:src/types/dataItem.ts:DataItem",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/DataItemPage.tsx",
+      "target": "function:src/pages/DataItemPage.tsx:DataItemPage",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pages/DataItemPage.tsx",
+      "target": "function:src/context/LanguageThemeContext.tsx:useLanguageTheme",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/DataItemPage.tsx",
+      "target": "function:src/api/entriesApi.ts:entriesApi",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/DataItemPage.tsx",
+      "target": "function:src/api/dataItemsApi.ts:dataItemsApi",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/DataItemPage.tsx",
+      "target": "concept:visibility-access-control",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "file:src/api/categoriesApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "file:src/api/dataItemsApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "file:src/api/entriesApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "file:src/api/filesApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "file:src/components/AiSummarizeButton.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "file:src/components/FileList.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "file:src/components/Unauthorized.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "file:src/components/VisibilityBadge.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "file:src/context/LanguageThemeContext.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "file:src/types/category.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "file:src/types/dataItem.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "file:src/types/entry.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "file:src/types/file.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "file:src/utils/labelMapper.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "class:src/types/entry.ts:Entry",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "class:src/types/category.ts:Category",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "class:src/types/file.ts:WikiFile",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "class:src/types/dataItem.ts:DataItem",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "function:src/pages/EntryDetailPage.tsx:EntryDetailPage",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "function:src/context/LanguageThemeContext.tsx:useLanguageTheme",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "function:src/api/entriesApi.ts:entriesApi",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "function:src/api/categoriesApi.ts:categoriesApi",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "function:src/api/filesApi.ts:filesApi",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "function:src/api/dataItemsApi.ts:dataItemsApi",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "function:src/components/VisibilityBadge.tsx:VisibilityBadge",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "function:src/components/FileList.tsx:FileList",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "function:src/components/Unauthorized.tsx:Unauthorized",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "function:src/utils/labelMapper.ts:ENTRY_TYPE_LABELS",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "function:src/utils/labelMapper.ts:ENTRY_TYPE_COLORS",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "concept:visibility-access-control",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "file:src/api/categoriesApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "file:src/api/dataItemsApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "file:src/api/entriesApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "file:src/api/filesApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "file:src/components/FileUpload.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "file:src/context/LanguageThemeContext.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "file:src/types/category.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "file:src/types/entry.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "file:src/types/file.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "class:src/types/entry.ts:Entry",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "class:src/types/category.ts:Category",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "class:src/types/file.ts:UsageType",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "class:src/types/entry.ts:EntryType",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "class:src/types/entry.ts:VisibilityType",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "function:src/pages/EntryEditorPage.tsx:EntryEditorPage",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "function:src/context/LanguageThemeContext.tsx:useLanguageTheme",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "function:src/api/entriesApi.ts:entriesApi",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "function:src/api/categoriesApi.ts:categoriesApi",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "function:src/api/filesApi.ts:filesApi",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "function:src/api/dataItemsApi.ts:dataItemsApi",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "function:src/components/FileUpload.tsx:FileUpload",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryEditorPage.tsx",
+      "target": "concept:entry-crud-flow",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "file:src/api/categoriesApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "file:src/api/entriesApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "file:src/api/tagsApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "file:src/components/AiSearchResults.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "file:src/components/AiSearchToggle.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "file:src/components/EntryCard.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "file:src/components/EntryTable.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "file:src/components/FilterBar.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "file:src/context/AiContext.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "file:src/context/LanguageThemeContext.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "file:src/types/category.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "file:src/types/entry.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "file:src/types/tag.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "class:src/types/entry.ts:Entry",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "class:src/types/category.ts:Category",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "class:src/types/entry.ts:EntryQueryParams",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "function:src/pages/EntryListPage.tsx:EntryListPage",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "function:src/context/LanguageThemeContext.tsx:useLanguageTheme",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "function:src/api/entriesApi.ts:entriesApi",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "function:src/api/categoriesApi.ts:categoriesApi",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "function:src/components/FilterBar.tsx:FilterBar",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "function:src/components/EntryCard.tsx:EntryCard",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "function:src/components/EntryTable.tsx:EntryTable",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "function:src/components/AiSearchToggle.tsx:AiSearchToggle",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "function:src/components/AiSearchResults.tsx:AiSearchResults",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "concept:ai-semantic-search",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pages/EntryListPage.tsx",
+      "target": "concept:entry-crud-flow",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pages/PublicHome.tsx",
+      "target": "file:src/api/categoriesApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/PublicHome.tsx",
+      "target": "file:src/api/entriesApi.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/PublicHome.tsx",
+      "target": "file:src/components/EntryCard.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/PublicHome.tsx",
+      "target": "file:src/context/LanguageThemeContext.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/PublicHome.tsx",
+      "target": "file:src/types/category.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/PublicHome.tsx",
+      "target": "file:src/types/entry.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pages/PublicHome.tsx",
+      "target": "class:src/types/entry.ts:Entry",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/PublicHome.tsx",
+      "target": "class:src/types/category.ts:Category",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/PublicHome.tsx",
+      "target": "function:src/pages/PublicHome.tsx:PublicHome",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pages/PublicHome.tsx",
+      "target": "function:src/context/LanguageThemeContext.tsx:useLanguageTheme",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/PublicHome.tsx",
+      "target": "function:src/api/entriesApi.ts:entriesApi",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/PublicHome.tsx",
+      "target": "function:src/api/categoriesApi.ts:categoriesApi",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pages/PublicHome.tsx",
+      "target": "function:src/components/EntryCard.tsx:EntryCard",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/utils/labelMapper.ts",
+      "target": "file:src/types/entry.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/utils/labelMapper.ts",
+      "target": "class:src/types/entry.ts:EntryType",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/utils/labelMapper.ts",
+      "target": "function:src/utils/labelMapper.ts:ENTRY_TYPE_LABELS",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/utils/labelMapper.ts",
+      "target": "function:src/utils/labelMapper.ts:ENTRY_TYPE_COLORS",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "concept:entry-crud-flow",
+      "target": "file:src/api/entriesApi.ts",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "concept:entry-crud-flow",
+      "target": "file:src/api/filesApi.ts",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "concept:entry-crud-flow",
+      "target": "file:src/api/dataItemsApi.ts",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "concept:entry-crud-flow",
+      "target": "file:src/pages/EntryEditorPage.tsx",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "concept:entry-crud-flow",
+      "target": "file:src/pages/EntryListPage.tsx",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "concept:ai-semantic-search",
+      "target": "file:src/components/AiSearchToggle.tsx",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "concept:ai-semantic-search",
+      "target": "file:src/components/AiSearchResults.tsx",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "concept:visibility-access-control",
+      "target": "file:src/components/VisibilityBadge.tsx",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "concept:visibility-access-control",
+      "target": "file:src/components/Unauthorized.tsx",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "concept:visibility-access-control",
+      "target": "file:src/components/FilterBar.tsx",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "concept:visibility-access-control",
+      "target": "file:src/pages/DataItemPage.tsx",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "concept:visibility-access-control",
+      "target": "file:src/pages/EntryDetailPage.tsx",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "concept:visibility-access-control",
+      "target": "class:src/types/entry.ts:VisibilityType",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/components/VisibilityBadge.tsx",
+      "target": "file:src/context/LanguageThemeContext.tsx",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/FilterBar.tsx",
+      "target": "concept:visibility-access-control",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pages/EntryDetailPage.tsx",
+      "target": "concept:entry-crud-flow",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/components/EntryCard.tsx",
+      "target": "concept:visibility-access-control",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/components/AssetCard.tsx",
+      "target": "concept:visibility-access-control",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "function:src/pages/EntryListPage.tsx:EntryListPage",
+      "target": "concept:entry-crud-flow",
+      "type": "depends_on",
+      "weight": 0.6
+    },
+    {
+      "source": "function:src/pages/EntryEditorPage.tsx:EntryEditorPage",
+      "target": "concept:entry-crud-flow",
+      "type": "depends_on",
+      "weight": 0.6
+    },
+    {
+      "source": "function:src/pages/EntryDetailPage.tsx:EntryDetailPage",
+      "target": "concept:entry-crud-flow",
+      "type": "depends_on",
+      "weight": 0.6
+    },
+    {
+      "source": "function:src/pages/EntryListPage.tsx:EntryListPage",
+      "target": "concept:ai-semantic-search",
+      "type": "depends_on",
+      "weight": 0.6
+    }
+  ]
+}

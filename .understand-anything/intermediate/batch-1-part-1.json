@@ -1,0 +1,1170 @@
+{
+  "nodes": [
+    {
+      "id": "file:backend/ai/prompts.ts",
+      "type": "file",
+      "name": "prompts.ts",
+      "filePath": "backend/ai/prompts.ts",
+      "summary": "定义 AI 对话的系统提示词和消息构建函数，为 Ollama 聊天模型提供格式化的上下文消息模板。",
+      "tags": ["ai", "prompt-engineering", "template", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/ai/prompts.ts:buildChatSystemPrompt",
+      "type": "function",
+      "name": "buildChatSystemPrompt",
+      "filePath": "backend/ai/prompts.ts",
+      "lineRange": [11, 22],
+      "summary": "构建聊天系统提示词，将词条列表格式化为助手角色可用的上下文信息。",
+      "tags": ["ai", "prompt", "chat", "system-prompt"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/ai/prompts.ts:buildSummarizeMessages",
+      "type": "function",
+      "name": "buildSummarizeMessages",
+      "filePath": "backend/ai/prompts.ts",
+      "lineRange": [25, 36],
+      "summary": "构建摘要请求消息，将单个词条内容格式化为适合 AI 摘要的消息结构。",
+      "tags": ["ai", "summarization", "prompt"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/ai/prompts.ts:buildSearchMessages",
+      "type": "function",
+      "name": "buildSearchMessages",
+      "filePath": "backend/ai/prompts.ts",
+      "lineRange": [39, 54],
+      "summary": "构建语义搜索消息，将多个词条和查询语句组合成 AI 搜索请求的消息体。",
+      "tags": ["ai", "search", "semantic-search", "prompt"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/ai/service.ts",
+      "type": "file",
+      "name": "service.ts",
+      "filePath": "backend/ai/service.ts",
+      "summary": "AI 服务核心模块，封装了 Ollama 聊天 API 调用、语义搜索增强、智能摘要和结果解析功能。",
+      "tags": ["ai", "service", "ollama", "chat", "rag"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:backend/ai/service.ts:AiService",
+      "type": "class",
+      "name": "AiService",
+      "filePath": "backend/ai/service.ts",
+      "lineRange": [7, 82],
+      "summary": "AI 服务类，提供聊天对话、语义搜索增强和内容摘要功能，封装了 Ollama 调用和结果解析逻辑。",
+      "tags": ["ai", "service", "ollama", "rag", "singleton"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/app.ts",
+      "type": "file",
+      "name": "app.ts",
+      "filePath": "backend/app.ts",
+      "summary": "Express 应用工厂，负责创建和配置后端服务实例，挂载各个路由模块，并处理种子数据的向量化初始化。",
+      "tags": ["express", "application", "entry-point", "middleware", "bootstrap"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/app.ts:createApp",
+      "type": "function",
+      "name": "createApp",
+      "filePath": "backend/app.ts",
+      "lineRange": [30, 120],
+      "summary": "Express 应用工厂函数，配置 CORS、JSON 解析中间件，挂载所有 API 路由并设置静态文件服务和 SPA 回退路由。",
+      "tags": ["express", "factory", "middleware", "routing", "spa"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:backend/app.ts:runBootstrap",
+      "type": "function",
+      "name": "runBootstrap",
+      "filePath": "backend/app.ts",
+      "lineRange": [125, 144],
+      "summary": "应用启动引导函数，执行种子元数据初始化、向量存储连接和已有词条嵌入处理。",
+      "tags": ["bootstrap", "initialization", "vector-store"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/app.ts:embedSeedEntries",
+      "type": "function",
+      "name": "embedSeedEntries",
+      "filePath": "backend/app.ts",
+      "lineRange": [151, 184],
+      "summary": "将数据库中已有的种子词条内容通过 Ollama 向量化后插入向量存储，为语义搜索建立索引基础。",
+      "tags": ["embedding", "vector-store", "seed-data", "initialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/chunk/service.ts",
+      "type": "file",
+      "name": "service.ts",
+      "filePath": "backend/chunk/service.ts",
+      "summary": "文本分块服务，提供固定大小、段落、句子和 Markdown 四种分块策略，用于将长文档拆分为适合向量化的片段。",
+      "tags": ["chunking", "text-processing", "nlp", "service"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:backend/chunk/service.ts:ChunkService",
+      "type": "class",
+      "name": "ChunkService",
+      "filePath": "backend/chunk/service.ts",
+      "lineRange": [30, 276],
+      "summary": "文本分块服务类，支持 fixed、paragraph、sentence 和 markdown 四种分块模式，并提供块数估算功能。",
+      "tags": ["chunking", "text-processing", "nlp", "service"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/config.ts",
+      "type": "file",
+      "name": "config.ts",
+      "filePath": "backend/config.ts",
+      "summary": "后端全局配置模块，从环境变量读取 Ollama 连接参数、Milvus 向量数据库地址和服务器端口等核心配置。",
+      "tags": ["configuration", "environment", "settings"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/document/store.ts",
+      "type": "file",
+      "name": "store.ts",
+      "filePath": "backend/document/store.ts",
+      "summary": "文档存储服务，负责将解析后的文档（含属性和向量元数据）以 JSON 文件形式持久化到磁盘。",
+      "tags": ["storage", "document", "json", "file-system"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:backend/document/store.ts:DocumentStore",
+      "type": "class",
+      "name": "DocumentStore",
+      "filePath": "backend/document/store.ts",
+      "lineRange": [17, 74],
+      "summary": "文档存储类，提供文档的保存、加载和批量读取功能，并构建属性搜索文本用于全文检索。",
+      "tags": ["storage", "document", "persistence", "crud"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/embedding/ollama.ts",
+      "type": "file",
+      "name": "ollama.ts",
+      "filePath": "backend/embedding/ollama.ts",
+      "summary": "Ollama 向量嵌入器，通过 HTTP API 调用 Ollama 的 embedding 模型将文本转换为向量表示。",
+      "tags": ["embedding", "ollama", "vector", "ai"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:backend/embedding/ollama.ts:OllamaEmbedder",
+      "type": "class",
+      "name": "OllamaEmbedder",
+      "filePath": "backend/embedding/ollama.ts",
+      "lineRange": [3, 41],
+      "summary": "Ollama 嵌入器类，封装单文本嵌入和批量嵌入功能，通过 HTTP 请求调用 Ollama embedding API。",
+      "tags": ["embedding", "ollama", "vector", "http-client"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/import/service.ts",
+      "type": "file",
+      "name": "service.ts",
+      "filePath": "backend/import/service.ts",
+      "summary": "数据导入服务，提供从文件、缓冲区、字符串以及批量目录导入外部数据并自动向量化的完整流水线。",
+      "tags": ["import", "data-import", "pipeline", "vectorization"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:backend/import/service.ts:DataImportService",
+      "type": "class",
+      "name": "DataImportService",
+      "filePath": "backend/import/service.ts",
+      "lineRange": [102, 450],
+      "summary": "数据导入服务类，编排解析、分块、嵌入、元数据存储和向量存储的完整导入流水线，支持单文件和批量处理。",
+      "tags": ["import", "pipeline", "orchestration", "batch-processing"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/main.ts",
+      "type": "file",
+      "name": "main.ts",
+      "filePath": "backend/main.ts",
+      "summary": "后端服务入口文件，创建 Express 应用并启动 HTTP 服务器，输出运行环境和配置信息。",
+      "tags": ["entry-point", "server", "express"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/main.ts:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "backend/main.ts",
+      "lineRange": [14, 44],
+      "summary": "主启动函数，调用 createApp 创建 Express 实例并监听端口，打印服务运行状态和 Ollama 配置信息。",
+      "tags": ["entry-point", "server", "startup"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/metadata/importJob.ts",
+      "type": "file",
+      "name": "importJob.ts",
+      "filePath": "backend/metadata/importJob.ts",
+      "summary": "元数据导入任务，负责解析 Markdown 格式的专家知识文件，提取属性表并创建词条及向量索引。",
+      "tags": ["import", "metadata", "markdown-parsing", "job"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:backend/metadata/importJob.ts:ImportJob",
+      "type": "class",
+      "name": "ImportJob",
+      "filePath": "backend/metadata/importJob.ts",
+      "lineRange": [10, 117],
+      "summary": "导入任务类，支持从文件和字符串导入 Markdown 内容，自动分组、提取标签并创建词条与向量存储。",
+      "tags": ["import", "markdown", "metadata", "batch"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/metadata/store.ts",
+      "type": "file",
+      "name": "store.ts",
+      "filePath": "backend/metadata/store.ts",
+      "summary": "元数据存储核心模块，以 JSON 文件系统为基础提供词条、分类、标签、文件和数据项的完整 CRUD 操作。",
+      "tags": ["metadata", "storage", "crud", "json", "file-system"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:backend/metadata/store.ts:seedMetadata",
+      "type": "function",
+      "name": "seedMetadata",
+      "filePath": "backend/metadata/store.ts",
+      "lineRange": [33, 126],
+      "summary": "种子数据初始化函数，在首次运行时创建默认分类、标签和示例词条，确保系统在空数据库时可用。",
+      "tags": ["seed-data", "initialization", "metadata", "bootstrap"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:backend/metadata/store.ts:MetadataStore",
+      "type": "class",
+      "name": "MetadataStore",
+      "filePath": "backend/metadata/store.ts",
+      "lineRange": [128, 285],
+      "summary": "元数据存储类，提供词条、分类、标签、文件和数据项的完整增删改查接口，支持关键词搜索和标签同步。",
+      "tags": ["metadata", "storage", "crud", "search"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:backend/metadata/store.ts:loadFile",
+      "type": "function",
+      "name": "loadFile",
+      "filePath": "backend/metadata/store.ts",
+      "lineRange": [12, 21],
+      "summary": "通用 JSON 文件加载函数，从磁盘读取并解析指定名称的数据文件，支持默认值回退。",
+      "tags": ["utility", "json", "file-io"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/parser/markdown.ts",
+      "type": "file",
+      "name": "markdown.ts",
+      "filePath": "backend/parser/markdown.ts",
+      "summary": "Markdown 解析器，专门解析包含属性表格的 Markdown 文档，提取结构化数据字段和分类信息。",
+      "tags": ["parser", "markdown", "table-parsing", "data-extraction"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:backend/parser/markdown.ts:MarkdownParser",
+      "type": "class",
+      "name": "MarkdownParser",
+      "filePath": "backend/parser/markdown.ts",
+      "lineRange": [10, 144],
+      "summary": "Markdown 解析器类，解析 Markdown 表格行、推断分类、构建标题，并生成适合向量化的嵌入文本。",
+      "tags": ["parser", "markdown", "table-parsing", "data-extraction"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/parser/service.ts",
+      "type": "file",
+      "name": "service.ts",
+      "filePath": "backend/parser/service.ts",
+      "summary": "通用文档解析服务，支持 PDF、DOCX、Markdown、图片和纯文本等多种格式的解析，统一为结构化数据输出。",
+      "tags": ["parser", "document", "multi-format", "service"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:backend/parser/service.ts:detectFormat",
+      "type": "function",
+      "name": "detectFormat",
+      "filePath": "backend/parser/service.ts",
+      "lineRange": [48, 63],
+      "summary": "文件格式检测函数，根据文件扩展名推断文档类型（pdf、docx、md、txt、png、jpg 等）。",
+      "tags": ["utility", "format-detection", "file-type"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/parser/service.ts:mimeTypeFor",
+      "type": "function",
+      "name": "mimeTypeFor",
+      "filePath": "backend/parser/service.ts",
+      "lineRange": [65, 78],
+      "summary": "MIME 类型映射函数，根据解析格式返回对应的 HTTP MIME 类型字符串。",
+      "tags": ["utility", "mime-type", "format-mapping"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/parser/service.ts:parsePdf",
+      "type": "function",
+      "name": "parsePdf",
+      "filePath": "backend/parser/service.ts",
+      "lineRange": [90, 109],
+      "summary": "PDF 文件解析函数，尝试加载 pdf-parse 库提取文本内容，异常时回退到缓冲区原始文本提取。",
+      "tags": ["parser", "pdf", "document"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/parser/service.ts:parseDocx",
+      "type": "function",
+      "name": "parseDocx",
+      "filePath": "backend/parser/service.ts",
+      "lineRange": [111, 127],
+      "summary": "DOCX 文件解析函数，尝试使用 mammoth 库将 Word 文档转换为 Markdown 格式。",
+      "tags": ["parser", "docx", "document", "word"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/parser/service.ts:parseImage",
+      "type": "function",
+      "name": "parseImage",
+      "filePath": "backend/parser/service.ts",
+      "lineRange": [141, 159],
+      "summary": "图片文件解析函数，读取图片元数据（格式、尺寸）并将二进制内容以 Base64 编码嵌入输出。",
+      "tags": ["parser", "image", "metadata", "base64"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:backend/parser/service.ts:ParserService",
+      "type": "class",
+      "name": "ParserService",
+      "filePath": "backend/parser/service.ts",
+      "lineRange": [184, 331],
+      "summary": "解析服务类，提供统一的 parseFile、parseString 和 parseBuffer 接口，根据格式自动路由到对应的解析器。",
+      "tags": ["parser", "service", "orchestration", "multi-format"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/retrieval/search.ts",
+      "type": "file",
+      "name": "search.ts",
+      "filePath": "backend/retrieval/search.ts",
+      "summary": "语义搜索引擎，结合向量相似度搜索和关键词匹配，支持中英文混合分词和双语检索。",
+      "tags": ["search", "semantic-search", "keyword-search", "retrieval"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:backend/retrieval/search.ts:SemanticSearch",
+      "type": "class",
+      "name": "SemanticSearch",
+      "filePath": "backend/retrieval/search.ts",
+      "lineRange": [7, 88],
+      "summary": "语义搜索类，组合向量搜索和关键词搜索两种策略，提供中英文分词和停用词过滤功能。",
+      "tags": ["search", "semantic", "keyword", "tokenization"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:backend/ai/prompts.ts",
+      "target": "function:backend/ai/prompts.ts:buildChatSystemPrompt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/ai/prompts.ts",
+      "target": "function:backend/ai/prompts.ts:buildSummarizeMessages",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/ai/prompts.ts",
+      "target": "function:backend/ai/prompts.ts:buildSearchMessages",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/ai/prompts.ts",
+      "target": "function:backend/ai/prompts.ts:buildChatSystemPrompt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/ai/prompts.ts",
+      "target": "function:backend/ai/prompts.ts:buildSummarizeMessages",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/ai/prompts.ts",
+      "target": "function:backend/ai/prompts.ts:buildSearchMessages",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/ai/prompts.ts",
+      "target": "file:backend/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/ai/service.ts",
+      "target": "class:backend/ai/service.ts:AiService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/ai/service.ts",
+      "target": "file:backend/ai/prompts.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/ai/service.ts",
+      "target": "file:backend/config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/ai/service.ts",
+      "target": "file:backend/metadata/store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/ai/service.ts",
+      "target": "file:backend/retrieval/search.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/ai/service.ts",
+      "target": "file:backend/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/ai/service.ts",
+      "target": "class:backend/retrieval/search.ts:SemanticSearch",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/ai/service.ts",
+      "target": "class:backend/metadata/store.ts:MetadataStore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/ai/service.ts",
+      "target": "function:backend/ai/prompts.ts:buildSearchMessages",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/ai/service.ts",
+      "target": "function:backend/ai/prompts.ts:buildChatSystemPrompt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/ai/service.ts",
+      "target": "function:backend/ai/prompts.ts:buildSummarizeMessages",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/app.ts",
+      "target": "function:backend/app.ts:createApp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/app.ts",
+      "target": "function:backend/app.ts:runBootstrap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/app.ts",
+      "target": "function:backend/app.ts:embedSeedEntries",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/app.ts",
+      "target": "function:backend/app.ts:createApp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/app.ts",
+      "target": "function:backend/app.ts:runBootstrap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/app.ts",
+      "target": "file:backend/config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/app.ts",
+      "target": "file:backend/embedding/ollama.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/app.ts",
+      "target": "file:backend/metadata/store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/app.ts",
+      "target": "file:backend/vector/memory.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/app.ts",
+      "target": "file:backend/vector/milvus.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/app.ts",
+      "target": "function:backend/metadata/store.ts:seedMetadata",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/app.ts",
+      "target": "class:backend/vector/milvus.ts:MilvusClient",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/app.ts",
+      "target": "class:backend/vector/memory.ts:MemoryVectorStore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/app.ts",
+      "target": "class:backend/embedding/ollama.ts:OllamaEmbedder",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/app.ts",
+      "target": "class:backend/metadata/store.ts:MetadataStore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/chunk/service.ts",
+      "target": "class:backend/chunk/service.ts:ChunkService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/chunk/service.ts",
+      "target": "class:backend/chunk/service.ts:ChunkService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/document/store.ts",
+      "target": "class:backend/document/store.ts:DocumentStore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/document/store.ts",
+      "target": "class:backend/document/store.ts:DocumentStore",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/document/store.ts",
+      "target": "file:backend/config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/document/store.ts",
+      "target": "file:backend/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/embedding/ollama.ts",
+      "target": "class:backend/embedding/ollama.ts:OllamaEmbedder",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/embedding/ollama.ts",
+      "target": "class:backend/embedding/ollama.ts:OllamaEmbedder",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/embedding/ollama.ts",
+      "target": "file:backend/config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/import/service.ts",
+      "target": "class:backend/import/service.ts:DataImportService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/import/service.ts",
+      "target": "file:backend/chunk/service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/import/service.ts",
+      "target": "file:backend/config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/import/service.ts",
+      "target": "file:backend/document/store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/import/service.ts",
+      "target": "file:backend/embedding/ollama.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/import/service.ts",
+      "target": "file:backend/metadata/store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/import/service.ts",
+      "target": "file:backend/parser/markdown.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/import/service.ts",
+      "target": "file:backend/parser/service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/import/service.ts",
+      "target": "file:backend/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/import/service.ts",
+      "target": "file:backend/vector/memory.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/import/service.ts",
+      "target": "file:backend/vector/milvus.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/import/service.ts",
+      "target": "class:backend/parser/service.ts:ParserService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/import/service.ts",
+      "target": "class:backend/chunk/service.ts:ChunkService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/import/service.ts",
+      "target": "class:backend/embedding/ollama.ts:OllamaEmbedder",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/import/service.ts",
+      "target": "class:backend/document/store.ts:DocumentStore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/import/service.ts",
+      "target": "class:backend/metadata/store.ts:MetadataStore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/import/service.ts",
+      "target": "class:backend/vector/milvus.ts:MilvusClient",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/import/service.ts",
+      "target": "class:backend/vector/memory.ts:MemoryVectorStore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/main.ts",
+      "target": "function:backend/main.ts:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/main.ts",
+      "target": "file:backend/app.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/main.ts",
+      "target": "file:backend/config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/main.ts",
+      "target": "function:backend/app.ts:createApp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/metadata/importJob.ts",
+      "target": "class:backend/metadata/importJob.ts:ImportJob",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/metadata/importJob.ts",
+      "target": "class:backend/metadata/importJob.ts:ImportJob",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/metadata/importJob.ts",
+      "target": "file:backend/document/store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/metadata/importJob.ts",
+      "target": "file:backend/embedding/ollama.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/metadata/importJob.ts",
+      "target": "file:backend/metadata/store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/metadata/importJob.ts",
+      "target": "file:backend/parser/markdown.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/metadata/importJob.ts",
+      "target": "file:backend/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/metadata/importJob.ts",
+      "target": "file:backend/vector/memory.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/metadata/importJob.ts",
+      "target": "file:backend/vector/milvus.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/metadata/importJob.ts",
+      "target": "class:backend/parser/markdown.ts:MarkdownParser",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/metadata/importJob.ts",
+      "target": "class:backend/metadata/store.ts:MetadataStore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/metadata/importJob.ts",
+      "target": "class:backend/document/store.ts:DocumentStore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/metadata/importJob.ts",
+      "target": "class:backend/embedding/ollama.ts:OllamaEmbedder",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/metadata/importJob.ts",
+      "target": "class:backend/vector/milvus.ts:MilvusClient",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/metadata/store.ts",
+      "target": "function:backend/metadata/store.ts:seedMetadata",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/metadata/store.ts",
+      "target": "function:backend/metadata/store.ts:loadFile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/metadata/store.ts",
+      "target": "class:backend/metadata/store.ts:MetadataStore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/metadata/store.ts",
+      "target": "function:backend/metadata/store.ts:seedMetadata",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/metadata/store.ts",
+      "target": "class:backend/metadata/store.ts:MetadataStore",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/metadata/store.ts",
+      "target": "file:backend/config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/metadata/store.ts",
+      "target": "file:backend/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/parser/markdown.ts",
+      "target": "class:backend/parser/markdown.ts:MarkdownParser",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/parser/markdown.ts",
+      "target": "class:backend/parser/markdown.ts:MarkdownParser",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/parser/markdown.ts",
+      "target": "file:backend/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/parser/service.ts",
+      "target": "function:backend/parser/service.ts:detectFormat",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/parser/service.ts",
+      "target": "function:backend/parser/service.ts:mimeTypeFor",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/parser/service.ts",
+      "target": "function:backend/parser/service.ts:parsePdf",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/parser/service.ts",
+      "target": "function:backend/parser/service.ts:parseDocx",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/parser/service.ts",
+      "target": "function:backend/parser/service.ts:parseImage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/parser/service.ts",
+      "target": "class:backend/parser/service.ts:ParserService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/parser/service.ts",
+      "target": "class:backend/parser/service.ts:ParserService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/parser/service.ts",
+      "target": "file:backend/parser/markdown.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/parser/service.ts",
+      "target": "file:backend/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/parser/service.ts",
+      "target": "class:backend/parser/markdown.ts:MarkdownParser",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/parser/service.ts",
+      "target": "function:backend/parser/service.ts:detectFormat",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/parser/service.ts",
+      "target": "function:backend/parser/service.ts:parsePdf",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/parser/service.ts",
+      "target": "function:backend/parser/service.ts:parseDocx",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/parser/service.ts",
+      "target": "function:backend/parser/service.ts:parseImage",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/parser/service.ts",
+      "target": "function:backend/parser/service.ts:mimeTypeFor",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/retrieval/search.ts",
+      "target": "class:backend/retrieval/search.ts:SemanticSearch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/retrieval/search.ts",
+      "target": "class:backend/retrieval/search.ts:SemanticSearch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/retrieval/search.ts",
+      "target": "file:backend/embedding/ollama.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/retrieval/search.ts",
+      "target": "file:backend/metadata/store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/retrieval/search.ts",
+      "target": "file:backend/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/retrieval/search.ts",
+      "target": "file:backend/vector/memory.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/retrieval/search.ts",
+      "target": "file:backend/vector/milvus.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/retrieval/search.ts",
+      "target": "class:backend/embedding/ollama.ts:OllamaEmbedder",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/retrieval/search.ts",
+      "target": "class:backend/vector/milvus.ts:MilvusClient",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/retrieval/search.ts",
+      "target": "class:backend/vector/memory.ts:MemoryVectorStore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/retrieval/search.ts",
+      "target": "class:backend/metadata/store.ts:MetadataStore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

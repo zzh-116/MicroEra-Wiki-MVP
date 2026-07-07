@@ -1,0 +1,218 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/index.css",
+      "type": "file",
+      "name": "index.css",
+      "filePath": "src/index.css",
+      "summary": "Tailwind CSS v4 全局主题样式文件，通过 @theme 指令定义品牌色板（brand-yellow #F2D760、brand-coral #DB5F5B、brand-indigo #2B3150、brand-charcoal #333333、brand-sand #F5F6E5）和语义化主题色（theme-bg/text/card/muted/border），使用 CSS 自定义属性实现 :root 浅色模式和 .dark 深色模式双主题切换。引入 Google Fonts（Plus Jakarta Sans + JetBrains Mono）作为字体栈，配备自定义 Webkit 滚动条样式。",
+      "tags": ["stylesheet", "tailwind", "theme", "design-tokens", "dark-mode", "brand-colors"],
+      "complexity": "simple",
+      "languageNotes": "使用 Tailwind CSS v4 的 @theme 指令和 CSS 变量级联实现主题切换，基于 CSS 自定义属性（--theme-*）桥接 Tailwind 的 color 系统。body 的 transition 实现主题切换时的平滑过渡动画。"
+    },
+    {
+      "id": "config:vite.config.ts",
+      "type": "config",
+      "name": "vite.config.ts",
+      "filePath": "vite.config.ts",
+      "summary": "Vite 6 构建工具配置文件，集成 @vitejs/plugin-react 和 @tailwindcss/vite 两个插件，配置 @ 路径别名映射到项目根目录。开发服务器支持 HMR（受 DISABLE_HMR 环境变量控制，用于 AI Studio 环境中禁用文件监听），配置 /api 代理转发到 http://localhost:3001 后端服务。",
+      "tags": ["configuration", "build-system", "vite", "proxy", "tailwind", "react"],
+      "complexity": "simple",
+      "languageNotes": "defineConfig 使用工厂函数返回配置对象以支持运行时条件。DISABLE_HMR 环境变量控制 HMR 和文件监听开关——当设为 true 时完全禁用文件监听以节省 AI 编辑场景下的 CPU 资源。watch 为 null 时禁用文件监听，为空对象时使用默认值。"
+    },
+    {
+      "id": "config:server/tsconfig.json",
+      "type": "config",
+      "name": "server/tsconfig.json",
+      "filePath": "server/tsconfig.json",
+      "summary": "服务端 TypeScript 编译配置，target ES2022、module ESNext、moduleResolution bundler，启用 strict 严格模式、esModuleInterop、resolveJsonModule 和 skipLibCheck。rootDir 为当前目录，outDir 为 ./dist，包含 server 目录下所有 .ts 文件。",
+      "tags": ["configuration", "typescript", "server", "compiler-options"],
+      "complexity": "simple",
+      "languageNotes": "moduleResolution 使用 'bundler' 模式（TypeScript 5.x 新特性），兼容 ESM 和 CJS 混合导入。allowSyntheticDefaultImports 允许从无默认导出的模块进行默认导入。"
+    },
+    {
+      "id": "config:backend/swagger/openapi.json",
+      "type": "config",
+      "name": "openapi.json",
+      "filePath": "backend/swagger/openapi.json",
+      "summary": "OpenAPI 3.0.3 规范的 MicroEra Wiki MVP 企业数据管道 API 文档，定义 4 大标签分组（Pipeline 管道处理、AI 智能服务、Entries 条目管理、Auth 认证）下的 20 个 API 端点。Pipeline 端点覆盖完整的导入管道（health/formats/status → parse/chunk/embed → import/string/batch → search），AI 端点提供搜索/聊天 RAG/摘要/导入/重置功能，Entries 端点实现标准 CRUD，Auth 端点提供 JWT Bearer 认证登录和用户信息获取。",
+      "tags": ["configuration", "api-documentation", "openapi", "swagger", "rest-api", "pipeline"],
+      "complexity": "moderate",
+      "languageNotes": "使用 OpenAPI 3.0.3 规范，通过 multipart/form-data 和 application/json 双内容类型支持文件上传和字符串导入。securitySchemes 定义 bearerAuth（JWT），对 Entries 的 POST/PUT/DELETE 和 Auth 的 /me 端点施加安全要求。examples 包含 Markdown 解析和语义搜索的示范请求。"
+    },
+    {
+      "id": "file:backend/swagger/swagger.html",
+      "type": "file",
+      "name": "swagger.html",
+      "filePath": "backend/swagger/swagger.html",
+      "summary": "Swagger UI 可视化 API 文档页面，通过 CDN 加载 swagger-ui-dist@5 的 CSS 和 JS 资源，初始化时从 ./openapi.json 加载 API 规范并渲染交互式文档。页面顶部展示深色渐变 Pipeline 流程横幅（Upload → Parse → Document → Chunk → Embed → Vector → Retrieve → LLM），配置 docExpansion=list、filter=true、tryItOutEnabled=true 等交互选项。",
+      "tags": ["ui", "api-documentation", "swagger-ui", "developer-tools"],
+      "complexity": "simple",
+      "languageNotes": "使用 SwaggerUIBundle 全局变量（CDN 注入）初始化 UI，plugins 包含 DownloadUrl 以实现规格下载功能。StandaloneLayout 布局模式不显示顶栏（.topbar { display: none }）和方案选择器（.scheme-container { display: none }），保持界面简洁。"
+    },
+    {
+      "id": "config:backend/postman/Enterprise-Data-Pipeline.postman_collection.json",
+      "type": "config",
+      "name": "Enterprise-Data-Pipeline.postman_collection.json",
+      "filePath": "backend/postman/Enterprise-Data-Pipeline.postman_collection.json",
+      "summary": "Postman v2.1.0 API 集合文件，按功能分组为 4 个文件夹：Auth（登录 + 获取当前用户，含自动 token 提取的 test 脚本）、Pipeline（8 个请求覆盖完整管道流程：健康检查/格式/状态 → 解析/分块/嵌入 → 字符串导入/批量导入/语义搜索）、AI（5 个请求：AI 搜索/RAG 对话/摘要/材料元数据导入/重置重导）、Entries（4 个请求：公开列表/全部列表/按 ID 获取/创建条目）。使用 {{base_url}} 和 {{jwt_token}} 集合变量实现环境切换和自动认证。",
+      "tags": ["configuration", "api-testing", "postman", "collection", "integration-test"],
+      "complexity": "moderate",
+      "languageNotes": "Login 请求的 test 脚本自动从响应中提取 token 并通过 pm.collectionVariables.set 写入集合变量，实现全自动认证流程。每个 Pipeline 请求的 raw body 包含完整的中文测试数据（材料性质表格、产品介绍 Markdown），覆盖真实业务场景。Batch Import 请求引用 ./backend/data 目录下的 *.md 文件。"
+    },
+    {
+      "id": "document:backend/data/materials-metadata.md",
+      "type": "document",
+      "name": "materials-metadata.md",
+      "filePath": "backend/data/materials-metadata.md",
+      "summary": "材料性质数据元信息规范文档（v0.2），面向 MOF/COF/分子筛/多孔材料领域，将材料性质按产出场景拆分为三大板块：计算数据（几何结构、电子结构、能量与相互作用、扩散与传质、开放金属位点）、实验数据（表征与稳定性、传感性质、催化性质、工艺与工程性质）、交叉数据（孔隙与比表面积、密度、晶体结构、能量与相互作用、光谱性质、吸附分离性质）。每个性质定义包含中英文名称、符号、首选单位、值域参考和常用方法/仪器。第 4 节定义通用和计算专属条件参数元数据（温度、压力、探针分子、软件/泛函等）。附录包含按应用场景的性质快速索引和 14 条变更记录。",
+      "tags": ["documentation", "domain-knowledge", "materials-science", "metadata-standard", "mof", "data-schema"],
+      "complexity": "moderate",
+      "languageNotes": "采用 C/E/X/P 前缀编号系统（C=计算、E=实验、X=交叉、P=条件参数）。表格结构包含 9 列统一字段。约定说明中明确首选单位用粗体标记、值域为典型参考范围而非硬性限制。标注 [确认] 的属性需研究员补充修正。v0.2 变更由张瑞麒（计算研究员）和来总（实验负责人）共同驱动，体现跨团队协作。"
+    },
+    {
+      "id": "data:backend/data/vectors.json",
+      "type": "data",
+      "name": "vectors.json",
+      "filePath": "backend/data/vectors.json",
+      "summary": "内存向量存储数据文件，包含 36 条向量记录，每条记录含 entry_id（关联的条目 ID）和 embedding（768 维浮点数向量数组）。文件为单行 JSON 数组格式（约 547KB），由管道嵌入步骤（/api/pipeline/embed）生成，供语义搜索（/api/pipeline/search）和 RAG 问答（/api/ai/chat）使用，作为 Milvus 向量数据库不可用时的内存降级方案。",
+      "tags": ["data", "vector-store", "embeddings", "machine-learning", "semantic-search", "rag"],
+      "complexity": "simple",
+      "languageNotes": "768 维向量对应 BGE-M3 嵌入模型的输出维度。文件采用紧凑的单行 JSON 格式（无缩进换行）以节省存储空间。entry_id=999 为测试数据入口。向量数据直接参与余弦相似度计算以检索语义相关条目。"
+    },
+    {
+      "id": "config:.understand-anything/config.json",
+      "type": "config",
+      "name": "config.json",
+      "filePath": ".understand-anything/config.json",
+      "summary": "Understand-Anything 分析工具配置文件，设置 outputLanguage 为 zh（中文），控制知识图谱节点和边的文本内容输出语言。",
+      "tags": ["configuration", "dev-tools", "understand-anything", "i18n"],
+      "complexity": "simple",
+      "languageNotes": "单键配置对象，outputLanguage 值 'zh' 指示所有分析的文本输出使用中文。此配置影响整个 understand-anything 管道的文本生成阶段。"
+    },
+    {
+      "id": "config:.understand-anything/.understandignore",
+      "type": "config",
+      "name": ".understandignore",
+      "filePath": ".understand-anything/.understandignore",
+      "summary": "Understand-Anything 分析忽略规则文件，采用 .gitignore 兼容的 glob 语法。内置默认排除 node_modules/、.git/、dist/、build/、obj/、*.lock 和 *.min.js。注释区预置了常见忽略模式模板（测试文件 *.test.*、*.spec.*、各种语言测试目录），以及从 .gitignore 同步的环境变量忽略规则（.env* 排除但 .env.example 保留）。当前所有用户规则均处于注释状态。",
+      "tags": ["configuration", "dev-tools", "ignore-file", "understand-anything"],
+      "complexity": "simple",
+      "languageNotes": "语法完全兼容 .gitignore，支持 glob 模式、# 注释、! 取反前缀和 / 结尾的目录匹配。注释状态的行均以 # 开头。内置默认排除策略在工具内部实现，用户无需重复声明。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/index.css",
+      "target": "file:src/main.tsx",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:vite.config.ts",
+      "target": "file:src/index.css",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "config:server/tsconfig.json",
+      "target": "config:tsconfig.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:backend/swagger/swagger.html",
+      "target": "config:backend/swagger/openapi.json",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "config:backend/postman/Enterprise-Data-Pipeline.postman_collection.json",
+      "target": "config:backend/swagger/openapi.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "config:backend/swagger/openapi.json",
+      "target": "config:backend/postman/Enterprise-Data-Pipeline.postman_collection.json",
+      "type": "related",
+      "direction": "backward",
+      "weight": 0.7
+    },
+    {
+      "source": "document:backend/data/materials-metadata.md",
+      "target": "config:backend/swagger/openapi.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:backend/data/materials-metadata.md",
+      "target": "config:backend/postman/Enterprise-Data-Pipeline.postman_collection.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:backend/postman/Enterprise-Data-Pipeline.postman_collection.json",
+      "target": "document:backend/data/materials-metadata.md",
+      "type": "references",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "data:backend/data/vectors.json",
+      "target": "config:backend/swagger/openapi.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:backend/data/materials-metadata.md",
+      "target": "data:backend/data/vectors.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:vite.config.ts",
+      "target": "config:backend/swagger/openapi.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:backend/swagger/swagger.html",
+      "target": "config:backend/postman/Enterprise-Data-Pipeline.postman_collection.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:.understand-anything/config.json",
+      "target": "config:.understand-anything/.understandignore",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:.understand-anything/.understandignore",
+      "target": "file:src/index.css",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.3
+    },
+    {
+      "source": "config:.understand-anything/.understandignore",
+      "target": "config:vite.config.ts",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.3
+    }
+  ]
+}

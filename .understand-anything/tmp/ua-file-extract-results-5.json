@@ -1,0 +1,339 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 6,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": ".env.example",
+      "language": "config",
+      "fileCategory": "config",
+      "totalLines": 23,
+      "nonEmptyLines": 18,
+      "definitions": [
+        {
+          "name": "PORT",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 2,
+          "endLine": 2
+        },
+        {
+          "name": "JWT_SECRET",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 3,
+          "endLine": 3
+        },
+        {
+          "name": "OLLAMA_URL",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 6,
+          "endLine": 6
+        },
+        {
+          "name": "OLLAMA_MODEL",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 7,
+          "endLine": 7
+        },
+        {
+          "name": "OLLAMA_CHAT_MODEL",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 8,
+          "endLine": 8
+        },
+        {
+          "name": "OLLAMA_EMBED_MODEL",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 9,
+          "endLine": 9
+        },
+        {
+          "name": "MILVUS_HOST",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 12,
+          "endLine": 12
+        },
+        {
+          "name": "MILVUS_PORT",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 13,
+          "endLine": 13
+        },
+        {
+          "name": "MILVUS_COLLECTION",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 14,
+          "endLine": 14
+        },
+        {
+          "name": "EMBEDDING_DIM",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 15,
+          "endLine": 15
+        },
+        {
+          "name": "VITE_API_BASE_URL",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 18,
+          "endLine": 18
+        },
+        {
+          "name": "DATA_DIR",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 21,
+          "endLine": 21
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 12
+      }
+    },
+    {
+      "path": "README.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 354,
+      "nonEmptyLines": 302,
+      "sections": [
+        {
+          "heading": "微观纪元 Wiki (MicroEra Wiki MVP)",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "企业数据源架构",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "技术栈",
+          "level": 2,
+          "line": 51
+        },
+        {
+          "heading": "功能",
+          "level": 2,
+          "line": 64
+        },
+        {
+          "heading": "平台功能",
+          "level": 3,
+          "line": 66
+        },
+        {
+          "heading": "企业数据管道",
+          "level": 3,
+          "line": 76
+        },
+        {
+          "heading": "AI 功能",
+          "level": 3,
+          "line": 89
+        },
+        {
+          "heading": "前置条件",
+          "level": 2,
+          "line": 98
+        },
+        {
+          "heading": "快速开始",
+          "level": 2,
+          "line": 122
+        },
+        {
+          "heading": "生产构建",
+          "level": 2,
+          "line": 154
+        },
+        {
+          "heading": "测试账号",
+          "level": 2,
+          "line": 162
+        },
+        {
+          "heading": "API 端点",
+          "level": 2,
+          "line": 170
+        },
+        {
+          "heading": "📊 Pipeline（企业数据管道）",
+          "level": 3,
+          "line": 172
+        },
+        {
+          "heading": "🤖 AI",
+          "level": 3,
+          "line": 187
+        },
+        {
+          "heading": "🔐 Auth",
+          "level": 3,
+          "line": 197
+        },
+        {
+          "heading": "📝 Entries / Categories / Tags / Files / DataItems",
+          "level": 3,
+          "line": 204
+        },
+        {
+          "heading": "API 文档",
+          "level": 2,
+          "line": 215
+        },
+        {
+          "heading": "项目结构",
+          "level": 2,
+          "line": 221
+        },
+        {
+          "heading": "管道三级降级策略",
+          "level": 2,
+          "line": 316
+        },
+        {
+          "heading": "环境变量",
+          "level": 2,
+          "line": 330
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 20
+      }
+    },
+    {
+      "path": "index.html",
+      "language": "html",
+      "fileCategory": "markup",
+      "totalLines": 13,
+      "nonEmptyLines": 13,
+      "metrics": {}
+    },
+    {
+      "path": "metadata.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 6,
+      "nonEmptyLines": 6,
+      "sections": [
+        {
+          "heading": "name",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "description",
+          "level": 1,
+          "line": 3
+        },
+        {
+          "heading": "requestFramePermissions",
+          "level": 1,
+          "line": 4
+        },
+        {
+          "heading": "majorCapabilities",
+          "level": 1,
+          "line": 5
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 4
+      }
+    },
+    {
+      "path": "package.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 41,
+      "nonEmptyLines": 41,
+      "sections": [
+        {
+          "heading": "name",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "private",
+          "level": 1,
+          "line": 3
+        },
+        {
+          "heading": "version",
+          "level": 1,
+          "line": 4
+        },
+        {
+          "heading": "type",
+          "level": 1,
+          "line": 5
+        },
+        {
+          "heading": "scripts",
+          "level": 1,
+          "line": 6
+        },
+        {
+          "heading": "dependencies",
+          "level": 1,
+          "line": 17
+        },
+        {
+          "heading": "devDependencies",
+          "level": 1,
+          "line": 30
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 7
+      }
+    },
+    {
+      "path": "tsconfig.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 26,
+      "nonEmptyLines": 26,
+      "sections": [
+        {
+          "heading": "compilerOptions",
+          "level": 1,
+          "line": 2
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 1
+      }
+    }
+  ]
+}
