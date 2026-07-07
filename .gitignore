@@ -6,3 +6,10 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Runtime data
+backend/data/uploads/
+backend/data/tmp/
+backend/data/vectors.json
+backend/data/documents/
+backend/data/metadata/
