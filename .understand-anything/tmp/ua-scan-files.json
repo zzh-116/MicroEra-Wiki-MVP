@@ -1,0 +1,704 @@
+{
+  "scriptCompleted": true,
+  "files": [
+    {
+      "path": ".env.example",
+      "language": "config",
+      "sizeLines": 23,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/.understandignore",
+      "language": "unknown",
+      "sizeLines": 33,
+      "fileCategory": "code"
+    },
+    {
+      "path": ".understand-anything/config.json",
+      "language": "json",
+      "sizeLines": 1,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/ai/prompts.ts",
+      "language": "typescript",
+      "sizeLines": 54,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/ai/service.ts",
+      "language": "typescript",
+      "sizeLines": 84,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/app.ts",
+      "language": "typescript",
+      "sizeLines": 184,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/chunk/service.ts",
+      "language": "typescript",
+      "sizeLines": 278,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/config.ts",
+      "language": "typescript",
+      "sizeLines": 23,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/data/documents/entry_10.json",
+      "language": "json",
+      "sizeLines": 193,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/documents/entry_11.json",
+      "language": "json",
+      "sizeLines": 129,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/documents/entry_12.json",
+      "language": "json",
+      "sizeLines": 65,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/documents/entry_13.json",
+      "language": "json",
+      "sizeLines": 33,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/documents/entry_14.json",
+      "language": "json",
+      "sizeLines": 161,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/documents/entry_15.json",
+      "language": "json",
+      "sizeLines": 305,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/documents/entry_16.json",
+      "language": "json",
+      "sizeLines": 273,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/documents/entry_17.json",
+      "language": "json",
+      "sizeLines": 321,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/documents/entry_18.json",
+      "language": "json",
+      "sizeLines": 145,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/documents/entry_19.json",
+      "language": "json",
+      "sizeLines": 49,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/documents/entry_20.json",
+      "language": "json",
+      "sizeLines": 97,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/documents/entry_21.json",
+      "language": "json",
+      "sizeLines": 65,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/documents/entry_22.json",
+      "language": "json",
+      "sizeLines": 97,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/documents/entry_23.json",
+      "language": "json",
+      "sizeLines": 337,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/documents/entry_24.json",
+      "language": "json",
+      "sizeLines": 225,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/documents/entry_25.json",
+      "language": "json",
+      "sizeLines": 97,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/documents/entry_9.json",
+      "language": "json",
+      "sizeLines": 129,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/materials-metadata.md",
+      "language": "markdown",
+      "sizeLines": 409,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "backend/data/metadata/categories.json",
+      "language": "json",
+      "sizeLines": 37,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/metadata/data_items.json",
+      "language": "json",
+      "sizeLines": 0,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/metadata/entries.json",
+      "language": "json",
+      "sizeLines": 412,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/metadata/files.json",
+      "language": "json",
+      "sizeLines": 12,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/metadata/tags.json",
+      "language": "json",
+      "sizeLines": 105,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/data/vectors.json",
+      "language": "json",
+      "sizeLines": 0,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/document/store.ts",
+      "language": "typescript",
+      "sizeLines": 76,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/embedding/ollama.ts",
+      "language": "typescript",
+      "sizeLines": 43,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/import/service.ts",
+      "language": "typescript",
+      "sizeLines": 452,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/main.ts",
+      "language": "typescript",
+      "sizeLines": 49,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/metadata/importJob.ts",
+      "language": "typescript",
+      "sizeLines": 119,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/metadata/store.ts",
+      "language": "typescript",
+      "sizeLines": 287,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/parser/markdown.ts",
+      "language": "typescript",
+      "sizeLines": 146,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/parser/service.ts",
+      "language": "typescript",
+      "sizeLines": 333,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/postman/Enterprise-Data-Pipeline.postman_collection.json",
+      "language": "json",
+      "sizeLines": 350,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/retrieval/search.ts",
+      "language": "typescript",
+      "sizeLines": 90,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/swagger/openapi.json",
+      "language": "json",
+      "sizeLines": 669,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/swagger/swagger.html",
+      "language": "html",
+      "sizeLines": 57,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "backend/types.ts",
+      "language": "typescript",
+      "sizeLines": 117,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/vector/memory.ts",
+      "language": "typescript",
+      "sizeLines": 84,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/vector/milvus.ts",
+      "language": "typescript",
+      "sizeLines": 136,
+      "fileCategory": "code"
+    },
+    {
+      "path": "index.html",
+      "language": "html",
+      "sizeLines": 13,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "metadata.json",
+      "language": "json",
+      "sizeLines": 6,
+      "fileCategory": "config"
+    },
+    {
+      "path": "package.json",
+      "language": "json",
+      "sizeLines": 41,
+      "fileCategory": "config"
+    },
+    {
+      "path": "README.md",
+      "language": "markdown",
+      "sizeLines": 354,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "server/index.ts",
+      "language": "typescript",
+      "sizeLines": 93,
+      "fileCategory": "code"
+    },
+    {
+      "path": "server/middleware/auth.ts",
+      "language": "typescript",
+      "sizeLines": 100,
+      "fileCategory": "code"
+    },
+    {
+      "path": "server/routes/ai.ts",
+      "language": "typescript",
+      "sizeLines": 84,
+      "fileCategory": "code"
+    },
+    {
+      "path": "server/routes/auth.ts",
+      "language": "typescript",
+      "sizeLines": 41,
+      "fileCategory": "code"
+    },
+    {
+      "path": "server/routes/categories.ts",
+      "language": "typescript",
+      "sizeLines": 8,
+      "fileCategory": "code"
+    },
+    {
+      "path": "server/routes/dataItems.ts",
+      "language": "typescript",
+      "sizeLines": 24,
+      "fileCategory": "code"
+    },
+    {
+      "path": "server/routes/entries.ts",
+      "language": "typescript",
+      "sizeLines": 36,
+      "fileCategory": "code"
+    },
+    {
+      "path": "server/routes/files.ts",
+      "language": "typescript",
+      "sizeLines": 19,
+      "fileCategory": "code"
+    },
+    {
+      "path": "server/routes/pipeline.ts",
+      "language": "typescript",
+      "sizeLines": 359,
+      "fileCategory": "code"
+    },
+    {
+      "path": "server/routes/search.ts",
+      "language": "typescript",
+      "sizeLines": 16,
+      "fileCategory": "code"
+    },
+    {
+      "path": "server/routes/tags.ts",
+      "language": "typescript",
+      "sizeLines": 8,
+      "fileCategory": "code"
+    },
+    {
+      "path": "server/tsconfig.json",
+      "language": "json",
+      "sizeLines": 16,
+      "fileCategory": "config"
+    },
+    {
+      "path": "src/api/authApi.ts",
+      "language": "typescript",
+      "sizeLines": 30,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/api/categoriesApi.ts",
+      "language": "typescript",
+      "sizeLines": 8,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/api/client.ts",
+      "language": "typescript",
+      "sizeLines": 57,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/api/dataItemsApi.ts",
+      "language": "typescript",
+      "sizeLines": 35,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/api/entriesApi.ts",
+      "language": "typescript",
+      "sizeLines": 56,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/api/filesApi.ts",
+      "language": "typescript",
+      "sizeLines": 33,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/api/storageInitializer.ts",
+      "language": "typescript",
+      "sizeLines": 51,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/api/tagsApi.ts",
+      "language": "typescript",
+      "sizeLines": 8,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/App.tsx",
+      "language": "typescript",
+      "sizeLines": 161,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/AiChatWidget.tsx",
+      "language": "typescript",
+      "sizeLines": 120,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/AiSearchResults.tsx",
+      "language": "typescript",
+      "sizeLines": 92,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/AiSearchToggle.tsx",
+      "language": "typescript",
+      "sizeLines": 36,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/AiSummarizeButton.tsx",
+      "language": "typescript",
+      "sizeLines": 65,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/AssetCard.tsx",
+      "language": "typescript",
+      "sizeLines": 228,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/EntryCard.tsx",
+      "language": "typescript",
+      "sizeLines": 143,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/EntryTable.tsx",
+      "language": "typescript",
+      "sizeLines": 151,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/FileList.tsx",
+      "language": "typescript",
+      "sizeLines": 94,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/FileUpload.tsx",
+      "language": "typescript",
+      "sizeLines": 181,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/FilterBar.tsx",
+      "language": "typescript",
+      "sizeLines": 198,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/Navbar.tsx",
+      "language": "typescript",
+      "sizeLines": 256,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/Unauthorized.tsx",
+      "language": "typescript",
+      "sizeLines": 43,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/VisibilityBadge.tsx",
+      "language": "typescript",
+      "sizeLines": 34,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/context/AiContext.tsx",
+      "language": "typescript",
+      "sizeLines": 142,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/context/AuthContext.tsx",
+      "language": "typescript",
+      "sizeLines": 89,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/context/LanguageThemeContext.tsx",
+      "language": "typescript",
+      "sizeLines": 601,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/index.css",
+      "language": "css",
+      "sizeLines": 58,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/main.tsx",
+      "language": "typescript",
+      "sizeLines": 10,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mock/mockCategories.ts",
+      "language": "typescript",
+      "sizeLines": 10,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mock/mockDataItems.ts",
+      "language": "typescript",
+      "sizeLines": 28,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mock/mockEntries.ts",
+      "language": "typescript",
+      "sizeLines": 100,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mock/mockFiles.ts",
+      "language": "typescript",
+      "sizeLines": 37,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mock/mockTags.ts",
+      "language": "typescript",
+      "sizeLines": 22,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mock/mockUsers.ts",
+      "language": "typescript",
+      "sizeLines": 10,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/pages/AdminMockPage.tsx",
+      "language": "typescript",
+      "sizeLines": 321,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/pages/AssetLibraryPage.tsx",
+      "language": "typescript",
+      "sizeLines": 215,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/pages/DataItemPage.tsx",
+      "language": "typescript",
+      "sizeLines": 265,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/pages/EntryDetailPage.tsx",
+      "language": "typescript",
+      "sizeLines": 444,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/pages/EntryEditorPage.tsx",
+      "language": "typescript",
+      "sizeLines": 517,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/pages/EntryListPage.tsx",
+      "language": "typescript",
+      "sizeLines": 296,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/pages/LoginPage.tsx",
+      "language": "typescript",
+      "sizeLines": 163,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/pages/PublicHome.tsx",
+      "language": "typescript",
+      "sizeLines": 253,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/types/category.ts",
+      "language": "typescript",
+      "sizeLines": 6,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/types/dataItem.ts",
+      "language": "typescript",
+      "sizeLines": 12,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/types/entry.ts",
+      "language": "typescript",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/types/file.ts",
+      "language": "typescript",
+      "sizeLines": 13,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/types/tag.ts",
+      "language": "typescript",
+      "sizeLines": 4,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/types/user.ts",
+      "language": "typescript",
+      "sizeLines": 12,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/utils/labelMapper.ts",
+      "language": "typescript",
+      "sizeLines": 17,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tsconfig.json",
+      "language": "json",
+      "sizeLines": 26,
+      "fileCategory": "config"
+    },
+    {
+      "path": "vite.config.ts",
+      "language": "typescript",
+      "sizeLines": 28,
+      "fileCategory": "code"
+    }
+  ],
+  "totalFiles": 113,
+  "filteredByIgnore": 0,
+  "estimatedComplexity": "moderate",
+  "stats": {
+    "filesScanned": 113,
+    "byCategory": {
+      "config": 31,
+      "code": 77,
+      "docs": 2,
+      "markup": 3
+    },
+    "byLanguage": {
+      "config": 1,
+      "unknown": 1,
+      "json": 30,
+      "typescript": 76,
+      "markdown": 2,
+      "html": 2,
+      "css": 1
+    }
+  }
+}

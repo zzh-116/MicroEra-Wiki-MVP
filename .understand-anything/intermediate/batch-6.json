@@ -1,0 +1,465 @@
+{
+  "nodes": [
+    {
+      "id": "file:backend/data/documents/entry_9.json",
+      "type": "file",
+      "name": "entry_9.json",
+      "filePath": "backend/data/documents/entry_9.json",
+      "summary": "文档分块存储 — 条目 #9 的「几何结构（计算筛分）」材料性质元数据文本块，包含 8 个 chunk（C01~C08）：可及表面积（质量/体积归一化）、限制孔径（PLD）、最大空腔直径（LCD）、可及体积分数与永久开放体积分数、通道维度、氦气可及空体积分数。全部为 computational 类别，方法涉及 Zeo++ / RASPA / PoreBlazer 计算筛分工具。",
+      "tags": ["document-chunk", "rag-pipeline", "computational", "geometric-structure", "pore-analysis"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/data/documents/entry_10.json",
+      "type": "file",
+      "name": "entry_10.json",
+      "filePath": "backend/data/documents/entry_10.json",
+      "summary": "文档分块存储 — 条目 #10 的「电子结构」材料性质元数据文本块，包含 12 个 chunk（C09~C20）：带隙（E_g）、态密度（DOS/PDOS）、功函数、电荷密度、HOMO/LUMO 能级与能隙、费米能级、电离势、电子亲和能、介电常数。全部为 computational 类别，方法涉及 DFT（HSE06/PBE0）、UPS、CV 等。",
+      "tags": ["document-chunk", "rag-pipeline", "computational", "electronic-structure", "dft"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/data/documents/entry_11.json",
+      "type": "file",
+      "name": "entry_11.json",
+      "filePath": "backend/data/documents/entry_11.json",
+      "summary": "文档分块存储 — 条目 #11 的「能量与相互作用」材料性质元数据文本块，包含 8 个 chunk（C21~C28）：吸附能、扩散能垒、形成能、内聚能、表面能、溶剂化能、缺陷形成能、配位键能。全部为 computational 类别，方法涉及 DFT / GCMC / DFT-NEB / 量热法等。",
+      "tags": ["document-chunk", "rag-pipeline", "computational", "energy-interaction", "adsorption-energy"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/data/documents/entry_12.json",
+      "type": "file",
+      "name": "entry_12.json",
+      "filePath": "backend/data/documents/entry_12.json",
+      "summary": "文档分块存储 — 条目 #12 的「扩散与传质（模拟）」材料性质元数据文本块，包含 4 个 chunk（C29~C32）：自扩散系数（D_s）、传输扩散系数（D_t）、扩散活化能（E_a_diff）、努森扩散系数（D_K）。全部为 computational 类别，方法涉及 MD 模拟 / PFG-NMR / 渗透法等。",
+      "tags": ["document-chunk", "rag-pipeline", "computational", "diffusion-mass-transfer", "molecular-dynamics"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/data/documents/entry_13.json",
+      "type": "file",
+      "name": "entry_13.json",
+      "filePath": "backend/data/documents/entry_13.json",
+      "summary": "文档分块存储 — 条目 #13 的「开放金属位点」材料性质元数据文本块，包含 2 个 chunk（C33~C34）：是否存在开放金属位点（Has_OMS，布尔型 Yes/No）及 OMS 数量（sites/unit cell）。全部为 computational 类别，方法涉及晶体结构分析和配位环境分析。",
+      "tags": ["document-chunk", "rag-pipeline", "computational", "open-metal-sites", "coordination"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/data/documents/entry_14.json",
+      "type": "file",
+      "name": "entry_14.json",
+      "filePath": "backend/data/documents/entry_14.json",
+      "summary": "文档分块存储 — 条目 #14 的「表征与稳定性」材料性质元数据文本块，包含 10 个 chunk（E01~E10）：晶粒尺寸（XRD Scherrer）、颗粒尺寸（SEM/TEM/DLS）、金属含量（ICP）、热分解温度（TGA/DSC）、水热稳定性、化学稳定性（pH 范围）、溶剂稳定性、机械稳定性、湿度稳定性、光稳定性。全部为 experimental 类别。",
+      "tags": ["document-chunk", "rag-pipeline", "experimental", "characterization", "stability"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/data/documents/entry_15.json",
+      "type": "file",
+      "name": "entry_15.json",
+      "filePath": "backend/data/documents/entry_15.json",
+      "summary": "文档分块存储 — 条目 #15 的「传感性质」材料性质元数据文本块，包含 19 个 chunk（E11~E29）：响应值/灵敏度、响应/恢复时间、基线电阻、阻抗值、电荷转移阻抗、检测限（LOD）、定量限（LOQ）、线性范围、灵敏度斜率、传感选择性、交叉灵敏度、长期漂移、循环稳定性、重复性（RSD）、再现性、抗湿干扰性、操作温度范围。全部为 experimental 类别，方法涉及气敏测试系统 / EIS / 电化学工作站。",
+      "tags": ["document-chunk", "rag-pipeline", "experimental", "sensing", "gas-sensor"],
+      "complexity": "high"
+    },
+    {
+      "id": "file:backend/data/documents/entry_16.json",
+      "type": "file",
+      "name": "entry_16.json",
+      "filePath": "backend/data/documents/entry_16.json",
+      "summary": "文档分块存储 — 条目 #16 的「催化性质」材料性质元数据文本块，包含 17 个 chunk（E30~E46）：转化率、反应速率、转换频率（TOF）、转换数（TON）、表观活化能、反应级数、速率常数、质量/面积比活性、产物选择性、副产物分布、碳平衡、收率、失活速率、再生性能、抗中毒性、积碳量。全部为 experimental 类别，方法涉及 GC/MS / 动力学实验 / TGA 等。",
+      "tags": ["document-chunk", "rag-pipeline", "experimental", "catalysis", "reaction-kinetics"],
+      "complexity": "high"
+    },
+    {
+      "id": "file:backend/data/documents/entry_17.json",
+      "type": "file",
+      "name": "entry_17.json",
+      "filePath": "backend/data/documents/entry_17.json",
+      "summary": "文档分块存储 — 条目 #17 的「工艺与工程性质」材料性质元数据文本块，包含 20 个 chunk（E47~E66）：成膜性、膜厚、机械强度（抗压）、杨氏模量、硬度、剪切/体积模量、热膨胀系数、热导率、比热容、压降、通量（LMH）、空速（GHSV/WHSV）、材料成本、操作寿命、维护周期、能耗、理论/实际产率、堆积密度。全部为 experimental 类别，涵盖工艺放大和工程应用关键参数。",
+      "tags": ["document-chunk", "rag-pipeline", "experimental", "process-engineering", "mechanical-thermal"],
+      "complexity": "high"
+    },
+    {
+      "id": "file:backend/data/documents/entry_18.json",
+      "type": "file",
+      "name": "entry_18.json",
+      "filePath": "backend/data/documents/entry_18.json",
+      "summary": "文档分块存储 — 条目 #18 的「孔隙与比表面积」材料性质元数据文本块，包含 9 个 chunk（X01~X09）：BET 比表面积、Langmuir 比表面积、总孔容、微孔/介孔孔容、比孔容、孔径分布（PSD）、平均孔径、孔隙率。全部为 cross 类别（计算与实验交叉），方法涉及 N₂ 77K 吸附 / NLDFT / BJH / t-plot 等。",
+      "tags": ["document-chunk", "rag-pipeline", "cross", "porosity", "bet-surface-area"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/data/documents/entry_19.json",
+      "type": "file",
+      "name": "entry_19.json",
+      "filePath": "backend/data/documents/entry_19.json",
+      "summary": "文档分块存储 — 条目 #19 的「密度」材料性质元数据文本块，包含 3 个 chunk（X10~X12）：骨架密度（扣除孔体积后的骨架质量密度）、晶体密度（含孔道的整体密度）、颗粒密度（含闭孔）。全部为 cross 类别，方法涉及 He 比重法 / 单晶 XRD / 压汞法等。",
+      "tags": ["document-chunk", "rag-pipeline", "cross", "density", "framework-density"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/data/documents/entry_20.json",
+      "type": "file",
+      "name": "entry_20.json",
+      "filePath": "backend/data/documents/entry_20.json",
+      "summary": "文档分块存储 — 条目 #20 的「晶体结构」材料性质元数据文本块，包含 6 个 chunk（X13~X18）：晶系（七大晶系枚举）、空间群（Hermann-Mauguin 符号）、拓扑类型（pcu/bcu/dia 等网络拓扑）、晶胞参数 a/b/c 与角度 α/β/γ、晶胞体积 V_cell。全部为 cross 类别，方法涉及 XRD / CIF 解析 / ToposPro。",
+      "tags": ["document-chunk", "rag-pipeline", "cross", "crystal-structure", "crystallography"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/data/documents/entry_21.json",
+      "type": "file",
+      "name": "entry_21.json",
+      "filePath": "backend/data/documents/entry_21.json",
+      "summary": "文档分块存储 — 条目 #21 的「能量与相互作用（cross）」材料性质元数据文本块，包含 4 个 chunk（X19~X22）：等量吸附热（Q_st）、结合能（E_bind）、零电荷点（pH_pzc）、ζ 电位。全部为 cross 类别，方法涉及吸附等温线拟合 / DFT / XPS / 电位滴定 / 电泳等。",
+      "tags": ["document-chunk", "rag-pipeline", "cross", "adsorption-energy", "surface-chemistry"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/data/documents/entry_22.json",
+      "type": "file",
+      "name": "entry_22.json",
+      "filePath": "backend/data/documents/entry_22.json",
+      "summary": "文档分块存储 — 条目 #22 的「光谱性质」材料性质元数据文本块，包含 6 个 chunk（X23~X28）：UV-Vis 吸收边/峰、红外振动频率、Raman 位移、XPS 结合能、荧光发射波长、荧光量子产率。全部为 cross 类别，方法涉及 UV-Vis DRS / FTIR / Raman / XPS / PL 光谱等。",
+      "tags": ["document-chunk", "rag-pipeline", "cross", "spectroscopy", "optical-properties"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/data/documents/entry_23.json",
+      "type": "file",
+      "name": "entry_23.json",
+      "filePath": "backend/data/documents/entry_23.json",
+      "summary": "文档分块存储 — 条目 #23 的「吸附分离性质」材料性质元数据文本块，包含 21 个 chunk（X29~X49）：吸附量、饱和吸附量、吸附等温线类型（IUPAC I~VI）、等温线方程参数（Langmuir/Freundlich/Henry）、穿透时间与半穿透时间、穿透吸附量、工作容量、选择性（IAST/Henry/理想/穿透）、扩散系数、传质系数、再生度、膜渗透率（GPU/Barrer）与膜选择性。全部为 cross 类别，是吸附分离领域最核心的属性集。",
+      "tags": ["document-chunk", "rag-pipeline", "cross", "adsorption-separation", "isotherm", "breakthrough", "membrane"],
+      "complexity": "high"
+    },
+    {
+      "id": "file:backend/data/documents/entry_24.json",
+      "type": "file",
+      "name": "entry_24.json",
+      "filePath": "backend/data/documents/entry_24.json",
+      "summary": "文档分块存储 — 条目 #24 的「通用条件（计算和实验共用）」材料性质元数据文本块，包含 14 个 chunk（P01~P14）：温度、压力、相对压力、相对湿度、气体组成、气体流速、探针分子、加热/冷却速率、吸附平衡时间、浸泡时间、pH 值、溶剂、吸附目标物、相态。全部为 condition 类别，作为其他性质属性的实验/计算条件上下文。",
+      "tags": ["document-chunk", "rag-pipeline", "condition", "experimental-parameters", "computational-parameters"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/data/documents/entry_25.json",
+      "type": "file",
+      "name": "entry_25.json",
+      "filePath": "backend/data/documents/entry_25.json",
+      "summary": "文档分块存储 — 条目 #25 的「计算专属条件」材料性质元数据文本块，包含 6 个 chunk（P15~P20）：计算软件/版本（VASP/Gaussian/Zeo++）、交换关联泛函（PBE/HSE06/B3LYP）、赝势/基组、色散校正（DFT-D3/TS/MBD）、截断能、k 点网格。全部为 condition 类别，作为 DFT 计算性质属性的方法元数据上下文。",
+      "tags": ["document-chunk", "rag-pipeline", "condition", "dft-parameters", "computational-methods"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/chunk/service.ts",
+      "type": "file",
+      "name": "chunk/service.ts",
+      "filePath": "backend/chunk/service.ts",
+      "summary": "文本分块服务（ChunkService），提供文档文本切分为可嵌入 chunk 的核心能力，支持 fixed / paragraph / sentence / markdown 四种分块策略，可配置 chunk 大小（默认 512 字符）、重叠量（默认 64 字符）和最小 chunk 长度（默认 50 字符）。为 RAG pipeline 中 parser→chunk→embed 链路的分块环节，输出格式化的 ChunkResult 数组（含唯一 id、位置索引、起始/结束字符偏移、策略元数据）。",
+      "tags": ["service", "chunking", "rag-pipeline", "text-splitter", "embedding-preparation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/document/store.ts",
+      "type": "file",
+      "name": "document/store.ts",
+      "filePath": "backend/document/store.ts",
+      "summary": "文档存储模块（DocumentStore），负责将解析后的材料性质（ParsedProperty 数组）转换为可检索的 DocumentChunk 并持久化为 JSON 文件（backend/data/documents/entry_{id}.json）。每个 chunk 包含 id（{entryId}_{code} 格式）、entryId、结构化搜索文本（buildSearchText）和完整元数据（code/section/category/中英文名/符号/定义/单位/方法），是 RAG 文档库的写入层。",
+      "tags": ["service", "document-store", "rag-pipeline", "persistence", "json-storage"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:backend/data/documents/entry_9.json",
+      "target": "file:backend/document/store.ts",
+      "type": "stored_by",
+      "label": "由 DocumentStore 生成并持久化",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/data/documents/entry_10.json",
+      "target": "file:backend/document/store.ts",
+      "type": "stored_by",
+      "label": "由 DocumentStore 生成并持久化",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/data/documents/entry_11.json",
+      "target": "file:backend/document/store.ts",
+      "type": "stored_by",
+      "label": "由 DocumentStore 生成并持久化",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/data/documents/entry_12.json",
+      "target": "file:backend/document/store.ts",
+      "type": "stored_by",
+      "label": "由 DocumentStore 生成并持久化",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/data/documents/entry_13.json",
+      "target": "file:backend/document/store.ts",
+      "type": "stored_by",
+      "label": "由 DocumentStore 生成并持久化",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/data/documents/entry_14.json",
+      "target": "file:backend/document/store.ts",
+      "type": "stored_by",
+      "label": "由 DocumentStore 生成并持久化",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/data/documents/entry_15.json",
+      "target": "file:backend/document/store.ts",
+      "type": "stored_by",
+      "label": "由 DocumentStore 生成并持久化",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/data/documents/entry_16.json",
+      "target": "file:backend/document/store.ts",
+      "type": "stored_by",
+      "label": "由 DocumentStore 生成并持久化",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/data/documents/entry_17.json",
+      "target": "file:backend/document/store.ts",
+      "type": "stored_by",
+      "label": "由 DocumentStore 生成并持久化",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/data/documents/entry_18.json",
+      "target": "file:backend/document/store.ts",
+      "type": "stored_by",
+      "label": "由 DocumentStore 生成并持久化",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/data/documents/entry_19.json",
+      "target": "file:backend/document/store.ts",
+      "type": "stored_by",
+      "label": "由 DocumentStore 生成并持久化",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/data/documents/entry_20.json",
+      "target": "file:backend/document/store.ts",
+      "type": "stored_by",
+      "label": "由 DocumentStore 生成并持久化",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/data/documents/entry_21.json",
+      "target": "file:backend/document/store.ts",
+      "type": "stored_by",
+      "label": "由 DocumentStore 生成并持久化",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/data/documents/entry_22.json",
+      "target": "file:backend/document/store.ts",
+      "type": "stored_by",
+      "label": "由 DocumentStore 生成并持久化",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/data/documents/entry_23.json",
+      "target": "file:backend/document/store.ts",
+      "type": "stored_by",
+      "label": "由 DocumentStore 生成并持久化",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/data/documents/entry_24.json",
+      "target": "file:backend/document/store.ts",
+      "type": "stored_by",
+      "label": "由 DocumentStore 生成并持久化",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/data/documents/entry_25.json",
+      "target": "file:backend/document/store.ts",
+      "type": "stored_by",
+      "label": "由 DocumentStore 生成并持久化",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/data/documents/entry_9.json",
+      "target": "file:backend/chunk/service.ts",
+      "type": "processed_by",
+      "label": "文本块由 ChunkService 定义的分块策略格式化",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/data/documents/entry_10.json",
+      "target": "file:backend/chunk/service.ts",
+      "type": "processed_by",
+      "label": "文本块由 ChunkService 定义的分块策略格式化",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/data/documents/entry_11.json",
+      "target": "file:backend/chunk/service.ts",
+      "type": "processed_by",
+      "label": "文本块由 ChunkService 定义的分块策略格式化",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/data/documents/entry_12.json",
+      "target": "file:backend/chunk/service.ts",
+      "type": "processed_by",
+      "label": "文本块由 ChunkService 定义的分块策略格式化",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/data/documents/entry_13.json",
+      "target": "file:backend/chunk/service.ts",
+      "type": "processed_by",
+      "label": "文本块由 ChunkService 定义的分块策略格式化",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/data/documents/entry_14.json",
+      "target": "file:backend/chunk/service.ts",
+      "type": "processed_by",
+      "label": "文本块由 ChunkService 定义的分块策略格式化",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/data/documents/entry_15.json",
+      "target": "file:backend/chunk/service.ts",
+      "type": "processed_by",
+      "label": "文本块由 ChunkService 定义的分块策略格式化",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/data/documents/entry_16.json",
+      "target": "file:backend/chunk/service.ts",
+      "type": "processed_by",
+      "label": "文本块由 ChunkService 定义的分块策略格式化",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/data/documents/entry_17.json",
+      "target": "file:backend/chunk/service.ts",
+      "type": "processed_by",
+      "label": "文本块由 ChunkService 定义的分块策略格式化",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/data/documents/entry_18.json",
+      "target": "file:backend/chunk/service.ts",
+      "type": "processed_by",
+      "label": "文本块由 ChunkService 定义的分块策略格式化",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/data/documents/entry_19.json",
+      "target": "file:backend/chunk/service.ts",
+      "type": "processed_by",
+      "label": "文本块由 ChunkService 定义的分块策略格式化",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/data/documents/entry_20.json",
+      "target": "file:backend/chunk/service.ts",
+      "type": "processed_by",
+      "label": "文本块由 ChunkService 定义的分块策略格式化",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/data/documents/entry_21.json",
+      "target": "file:backend/chunk/service.ts",
+      "type": "processed_by",
+      "label": "文本块由 ChunkService 定义的分块策略格式化",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/data/documents/entry_22.json",
+      "target": "file:backend/chunk/service.ts",
+      "type": "processed_by",
+      "label": "文本块由 ChunkService 定义的分块策略格式化",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/data/documents/entry_23.json",
+      "target": "file:backend/chunk/service.ts",
+      "type": "processed_by",
+      "label": "文本块由 ChunkService 定义的分块策略格式化",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/data/documents/entry_24.json",
+      "target": "file:backend/chunk/service.ts",
+      "type": "processed_by",
+      "label": "文本块由 ChunkService 定义的分块策略格式化",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/data/documents/entry_25.json",
+      "target": "file:backend/chunk/service.ts",
+      "type": "processed_by",
+      "label": "文本块由 ChunkService 定义的分块策略格式化",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/document/store.ts",
+      "target": "file:backend/chunk/service.ts",
+      "type": "depends_on",
+      "label": "DocumentStore 生成结构化搜索文本，ChunkService 负责通用文本切分 — 二者协作构成完整文档分块链路",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/document/store.ts",
+      "target": "file:backend/metadata/store.ts",
+      "type": "uses",
+      "label": "DocumentStore 依赖 MetadataStore 的 ParsedProperty 数据作为 chunk 输入源",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

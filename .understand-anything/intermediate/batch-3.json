@@ -1,0 +1,908 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/main.tsx",
+      "type": "file",
+      "name": "main.tsx",
+      "filePath": "src/main.tsx",
+      "summary": "React 应用入口文件，使用 createRoot 将 App 组件挂载到 DOM 的 root 节点，外层包裹 StrictMode 以启用开发阶段的额外检查。",
+      "tags": ["entry-point", "react", "bootstrap"],
+      "complexity": "simple",
+      "languageNotes": "使用 React 18 的 createRoot API 替代旧版 ReactDOM.render。StrictMode 在开发模式下会双重调用组件以检测副作用问题。"
+    },
+    {
+      "id": "file:src/App.tsx",
+      "type": "file",
+      "name": "App.tsx",
+      "filePath": "src/App.tsx",
+      "summary": "应用根组件，负责组装全局 Provider（LanguageThemeProvider、AuthProvider、AiProvider）、定义基于状态的路由视图切换逻辑、渲染响应式导航栏和页脚。AppContent 内部组件消费多个 Context 实现 conditional rendering。",
+      "tags": ["entry-point", "ui", "routing", "provider-composition"],
+      "complexity": "moderate",
+      "languageNotes": "使用自定义的 view-based 路由而非 React Router——通过 useState 管理 currentView 字符串并在 switch/case 中映射页面组件。这种 pattern 适合简单的 SPA 但不会更新浏览器 URL。"
+    },
+    {
+      "id": "file:src/api/client.ts",
+      "type": "file",
+      "name": "client.ts",
+      "filePath": "src/api/client.ts",
+      "summary": "通用 HTTP 客户端模块，提供 apiFetch 泛型函数封装 fetch API，自动从 localStorage 注入 Bearer token 认证头，统一处理 JSON 请求/响应和错误解析。另导出 hasInternalAccess 用于客户端权限判断。",
+      "tags": ["service", "api-client", "http", "auth"],
+      "complexity": "simple",
+      "languageNotes": "apiFetch 使用了泛型 <T> 以保持返回类型的类型安全。getAuthHeaders 内部从 localStorage 读取 wiki_auth 键并解析 JSON token——错误被静默忽略以避免阻断未登录流程。"
+    },
+    {
+      "id": "file:src/api/authApi.ts",
+      "type": "file",
+      "name": "authApi.ts",
+      "filePath": "src/api/authApi.ts",
+      "summary": "认证 API 模块，封装登录和会话验证两个接口。login 方法发送用户名/密码并获取 token；getMe 方法调用 /auth/me 验证当前会话有效性，失败时返回 isLoggedIn: false 而非抛出异常。",
+      "tags": ["service", "api", "auth", "login"],
+      "complexity": "simple",
+      "languageNotes": "LoginResponse 和 MeResponse 为局部接口定义，未被导出——体现了模块封装原则。getMe 使用 try/catch 将异常静默转换为 { isLoggedIn: false, user: null }，使调用方无需处理网络错误。"
+    },
+    {
+      "id": "file:src/context/AuthContext.tsx",
+      "type": "file",
+      "name": "AuthContext.tsx",
+      "filePath": "src/context/AuthContext.tsx",
+      "summary": "认证状态 Context Provider，管理全局登录态。AuthProvider 在挂载时从 localStorage 恢复会话并通过 getMe API 验证 token 有效性；提供 login/logout 方法、user/token/isLoggedIn/loading 状态。",
+      "tags": ["service", "state", "context", "auth", "session"],
+      "complexity": "moderate",
+      "languageNotes": "使用 React Context + useState 模式管理认证状态。useEffect 在组件挂载时执行会话恢复逻辑——先检查 localStorage 中缓存的 token，再调用 authApi.getMe() 服务端验证。token 无效时自动清除 localStorage 缓存。"
+    },
+    {
+      "id": "file:src/context/AiContext.tsx",
+      "type": "file",
+      "name": "AiContext.tsx",
+      "filePath": "src/context/AiContext.tsx",
+      "summary": "AI 功能 Context Provider，提供三大 AI 能力：语义搜索（aiSearch）、对话聊天（sendChat/clearChat/chatHistory）、条目摘要（summarize）。所有 AI 调用通过 apiFetch 统一走后端 /search、/ai/chat、/ai/summarize 端点。",
+      "tags": ["service", "state", "context", "ai", "chat", "search", "summarize"],
+      "complexity": "moderate",
+      "languageNotes": "使用 useCallback 包裹所有异步方法以避免不必要的 re-render。sendChat 方法维护本地 chatHistory 状态数组，在发送用户消息后立即更新 UI，收到回复后再追加 assistant 消息——实现了乐观更新模式。"
+    },
+    {
+      "id": "file:src/components/Navbar.tsx",
+      "type": "file",
+      "name": "Navbar.tsx",
+      "filePath": "src/components/Navbar.tsx",
+      "summary": "响应式顶部导航栏组件，根据登录态动态展示不同的导航菜单项（已登录显示内部管理入口，未登录显示公开内容筛选分类）。集成主题切换、语言切换和移动端汉堡菜单。",
+      "tags": ["ui", "navigation", "responsive", "theme", "i18n"],
+      "complexity": "moderate",
+      "languageNotes": "使用 React.FC 类型定义与 NavbarProps 接口实现 props 约束。navItems 数组在组件体内根据 isLoggedIn 动态构建——未登录态使用 viewOverride 和 filter 属性实现伪路由到 entries 视图的筛选跳转。响应式设计通过 Tailwind 的 lg: 前缀断点实现桌面/移动端布局切换。"
+    },
+    {
+      "id": "file:src/components/AiChatWidget.tsx",
+      "type": "file",
+      "name": "AiChatWidget.tsx",
+      "filePath": "src/components/AiChatWidget.tsx",
+      "summary": "浮动 AI 聊天窗口组件，提供固定定位的对话气泡按钮和可展开的聊天面板。支持发送消息、查看对话历史、自动滚动到底部。Enter 键发送（Shift+Enter 换行）。",
+      "tags": ["ui", "chat", "ai", "floating-widget"],
+      "complexity": "simple",
+      "languageNotes": "使用 useRef + useEffect 实现 chatHistory 变化时自动滚动到最新消息。聊天面板通过 isOpen 状态控制条件渲染，关闭时调用 clearChat 重置对话历史。handleKeyDown 拦截 Enter 键但允许 Shift+Enter 组合绕过。"
+    },
+    {
+      "id": "file:src/components/AiSummarizeButton.tsx",
+      "type": "file",
+      "name": "AiSummarizeButton.tsx",
+      "filePath": "src/components/AiSummarizeButton.tsx",
+      "summary": "AI 摘要按钮组件，接收 entryId 作为 props 并调用 AI 摘要服务。支持展开/收起摘要内容、加载中禁用态和错误提示。适用于在条目详情页内嵌使用。",
+      "tags": ["ui", "ai", "summarize", "button"],
+      "complexity": "simple",
+      "languageNotes": "通过 AiSummarizeButtonProps 接口定义 props 类型（只需 entryId: number）。使用三个 useState 管理独立状态：summary（结果）、expanded（展开态）、error（错误）。摘要结果通过可折叠面板展示，标题栏显示 Sparkles 图标和固定文本 'AI 摘要'。"
+    },
+    {
+      "id": "file:src/pages/LoginPage.tsx",
+      "type": "file",
+      "name": "LoginPage.tsx",
+      "filePath": "src/pages/LoginPage.tsx",
+      "summary": "登录页面组件，提供用户名/密码表单、表单验证和错误提示。登录成功后导航到内部条目列表页。包含演示环境的一键填充功能（'Quick Fill admin'）和双语 UI 支持。左侧展示品牌认证说明 Banner。",
+      "tags": ["ui", "auth", "login", "page", "i18n"],
+      "complexity": "moderate",
+      "languageNotes": "使用网格布局（grid-cols-12）实现左侧品牌 Banner + 右侧登录表单的横向分割。handleSubmit 进行客户端校验（空值检查）后调用 AuthContext 的 login 方法。handleQuickLogin 直接设置 username/password state 而非调用 fill API——符合演示场景的简化设计。"
+    },
+    {
+      "id": "file:src/types/user.ts",
+      "type": "file",
+      "name": "user.ts",
+      "filePath": "src/types/user.ts",
+      "summary": "用户相关的 TypeScript 类型定义文件，导出 User 接口（id、username、display_name、created_at）和 AuthState 接口（isLoggedIn、user、token）。是认证模块的类型基础。",
+      "tags": ["type-definition", "user", "auth"],
+      "complexity": "simple",
+      "languageNotes": "所有字段均为纯类型定义，无运行时代码。User.created_at 为可选字段（?），AuthState 的 user 和 token 均可为 null 以表示未登录状态。"
+    },
+    {
+      "id": "file:src/mock/mockUsers.ts",
+      "type": "file",
+      "name": "mockUsers.ts",
+      "filePath": "src/mock/mockUsers.ts",
+      "summary": "模拟用户数据模块，导出一个 mockUsers 数组，包含单个测试用户（admin / 内部测试用户），用于开发和演示场景的快速登录验证。",
+      "tags": ["mock", "data", "test", "user"],
+      "complexity": "simple",
+      "languageNotes": "mockUsers 数组中的 User 对象符合 ../types/user 中定义的 User 接口结构。created_at 使用 ISO 8601 格式的时间戳字符串。"
+    },
+    {
+      "id": "function:src/App.tsx:App",
+      "type": "function",
+      "name": "App",
+      "filePath": "src/App.tsx",
+      "summary": "应用的默认导出组件，按顺序嵌套 LanguageThemeProvider → AuthProvider → AiProvider，最内层渲染 AppContent。此三层 Provider 嵌套顺序决定了 Context 的依赖层级。",
+      "tags": ["entry-point", "provider", "default-export"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/App.tsx:AppContent",
+      "type": "function",
+      "name": "AppContent",
+      "filePath": "src/App.tsx",
+      "summary": "应用核心内容组件，消费 AuthContext 和 LanguageThemeContext，通过 useState 管理 currentView/viewDetails 实现基于 switch/case 的客户端路由。loading 态显示旋转加载动画。",
+      "tags": ["routing", "view-controller", "consumer"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/api/client.ts:apiFetch",
+      "type": "function",
+      "name": "apiFetch",
+      "filePath": "src/api/client.ts",
+      "summary": "泛型 HTTP 请求函数，自动拼接 /api 基础路径、注入 Bearer token 认证头、设置 Content-Type: application/json，并对非 ok 响应统一解析错误信息并抛出 Error。",
+      "tags": ["api-client", "fetch", "generic", "auth"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/api/client.ts:hasInternalAccess",
+      "type": "function",
+      "name": "hasInternalAccess",
+      "filePath": "src/api/client.ts",
+      "summary": "客户端权限判断函数，从 localStorage 读取 wiki_auth 并检查 token 是否存在，返回 boolean 表示当前用户是否持有有效内部访问凭证。",
+      "tags": ["auth", "permission-check", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/api/client.ts:getAuthHeaders",
+      "type": "function",
+      "name": "getAuthHeaders",
+      "filePath": "src/api/client.ts",
+      "summary": "内部辅助函数，从 localStorage 解析 wiki_auth 并提取 token 构造 Authorization: Bearer <token> 请求头。解析失败时静默返回空对象。",
+      "tags": ["auth", "helper", "internal"],
+      "complexity": "simple"
+    },
+    {
+      "id": "module:src/api/authApi.ts:authApi",
+      "type": "module",
+      "name": "authApi",
+      "filePath": "src/api/authApi.ts",
+      "summary": "认证 API 命名空间对象，封装 login（POST /auth/login）和 getMe（GET /auth/me）两个方法。login 返回 token 和 user；getMe 采用容错设计，失败时返回 isLoggedIn: false。",
+      "tags": ["api", "auth", "module", "login"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/Navbar.tsx:Navbar",
+      "type": "function",
+      "name": "Navbar",
+      "filePath": "src/components/Navbar.tsx",
+      "summary": "响应式导航栏 React 组件，接收 currentView 和 onNavigate props，根据登录态渲染不同的导航菜单项。集成主题切换、中英文语言切换和移动端汉堡菜单。",
+      "tags": ["ui", "navigation", "responsive", "component"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/AiChatWidget.tsx:AiChatWidget",
+      "type": "function",
+      "name": "AiChatWidget",
+      "filePath": "src/components/AiChatWidget.tsx",
+      "summary": "浮动 AI 聊天组件，提供消息气泡按钮和可展开的聊天面板。使用 useAi hook 获取 chatHistory、sendChat、clearChat 等聊天能力。",
+      "tags": ["ui", "chat", "ai", "floating-widget", "component"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/AiSummarizeButton.tsx:AiSummarizeButton",
+      "type": "function",
+      "name": "AiSummarizeButton",
+      "filePath": "src/components/AiSummarizeButton.tsx",
+      "summary": "AI 摘要按钮组件，接收 entryId props 调用 AI 摘要服务，展示可折叠的摘要结果面板，含加载和错误状态处理。",
+      "tags": ["ui", "ai", "summarize", "button", "component"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/context/AuthContext.tsx:AuthProvider",
+      "type": "function",
+      "name": "AuthProvider",
+      "filePath": "src/context/AuthContext.tsx",
+      "summary": "认证状态 Context Provider 组件，管理 isLoggedIn、user、token、loading 状态。挂载时从 localStorage 恢复会话并通过 API 验证 token；提供 login/logout 操作方法。",
+      "tags": ["context", "provider", "auth", "state"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/context/AuthContext.tsx:useAuth",
+      "type": "function",
+      "name": "useAuth",
+      "filePath": "src/context/AuthContext.tsx",
+      "summary": "认证 Context 消费 Hook，封装 useContext(AuthContext) 并包含 undefined 检查，在 Provider 外使用时抛出明确错误信息。",
+      "tags": ["hook", "context", "auth", "consumer"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/context/AiContext.tsx:AiProvider",
+      "type": "function",
+      "name": "AiProvider",
+      "filePath": "src/context/AiContext.tsx",
+      "summary": "AI 功能 Context Provider 组件，管理 AI 搜索、聊天和摘要三项能力的状态和方法。aiSearch 调用 POST /search；sendChat 调用 POST /ai/chat 并维护对话历史；summarize 调用 POST /ai/summarize。",
+      "tags": ["context", "provider", "ai", "state"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/context/AiContext.tsx:useAi",
+      "type": "function",
+      "name": "useAi",
+      "filePath": "src/context/AiContext.tsx",
+      "summary": "AI Context 消费 Hook，封装 useContext(AiContext)。提供 aiSearch、sendChat、clearChat、summarize 等方法和对应的状态（isSearching、isChatting、isSummarizing）。",
+      "tags": ["hook", "context", "ai", "consumer"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pages/LoginPage.tsx:LoginPage",
+      "type": "function",
+      "name": "LoginPage",
+      "filePath": "src/pages/LoginPage.tsx",
+      "summary": "登录页面组件，接收 onNavigate callback props。提供用户名/密码表单、登录提交、错误展示、演示快速填充、双语 UI 等完整登录流程。",
+      "tags": ["ui", "auth", "login", "page", "component"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "concept:client-side-routing",
+      "type": "concept",
+      "name": "客户端视图路由",
+      "summary": "应用使用基于 useState 的客户端视图路由模式——通过 currentView 字符串状态和 switch/case 条件渲染实现页面切换，不依赖 React Router 等第三方路由库。handleNavigate 函数统一处理视图跳转和详情参数传递。",
+      "tags": ["pattern", "routing", "spa"],
+      "complexity": "simple"
+    },
+    {
+      "id": "concept:provider-composition",
+      "type": "concept",
+      "name": "Provider 组合模式",
+      "summary": "根组件 App 采用 Provider 嵌套组合模式——LanguageThemeProvider → AuthProvider → AiProvider 三层嵌套，确保内部组件可按需消费任意 Context。此模式遵循 React Context 的标准用法：外层 Provider 的状态在内层组件中均可访问。",
+      "tags": ["pattern", "react", "context", "architecture"],
+      "complexity": "simple"
+    },
+    {
+      "id": "concept:bearer-token-auth",
+      "type": "concept",
+      "name": "Bearer Token 认证流程",
+      "summary": "应用采用基于 localStorage 的 Bearer Token 认证方案。登录成功后将 { token, user } 对象 JSON 序列化存入 localStorage 的 wiki_auth 键；apiFetch 每次请求自动从 localStorage 读取 token 并注入 Authorization 头；AuthProvider 挂载时通过 getMe API 验证 token 有效性。",
+      "tags": ["pattern", "auth", "security"],
+      "complexity": "simple"
+    },
+    {
+      "id": "concept:ai-integration",
+      "type": "concept",
+      "name": "AI 功能集成",
+      "summary": "前端通过 AiContext 统一封装三项 AI 能力——语义搜索（/search 端点返回匹配的 Entry 列表）、AI 对话（/ai/chat 端点维护对话历史并返回助手回复）、AI 摘要（/ai/summarize 端点对指定 Entry 生成摘要文本）。所有调用通过 apiFetch 统一走后端代理。",
+      "tags": ["pattern", "ai", "integration"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/main.tsx",
+      "target": "file:src/App.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "main.tsx 导入 App 组件作为根组件并通过 createRoot 渲染"
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/context/AuthContext.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "App.tsx 导入 AuthProvider 和 useAuth"
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/context/AiContext.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "App.tsx 导入 AiProvider"
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/context/LanguageThemeContext.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "App.tsx 导入 LanguageThemeProvider 和 useLanguageTheme"
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/components/Navbar.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "App.tsx 导入 Navbar 组件"
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/components/AiChatWidget.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "App.tsx 导入 AiChatWidget 浮动聊天组件"
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/pages/LoginPage.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "App.tsx 导入 LoginPage 页面组件"
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/pages/AdminMockPage.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "App.tsx 导入 AdminMockPage 管理页面"
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/pages/AssetLibraryPage.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "App.tsx 导入 AssetLibraryPage 素材库页面"
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/pages/DataItemPage.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "App.tsx 导入 DataItemPage 数据条目页面"
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/pages/EntryDetailPage.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "App.tsx 导入 EntryDetailPage 条目详情页面"
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/pages/EntryEditorPage.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "App.tsx 导入 EntryEditorPage 条目编辑页面"
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/pages/EntryListPage.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "App.tsx 导入 EntryListPage 条目列表页面"
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/pages/PublicHome.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "App.tsx 导入 PublicHome 公开首页"
+    },
+    {
+      "source": "file:src/api/authApi.ts",
+      "target": "file:src/api/client.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "authApi 导入 apiFetch 用于发送 HTTP 请求"
+    },
+    {
+      "source": "file:src/api/authApi.ts",
+      "target": "file:src/types/user.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "authApi 导入 User 类型定义"
+    },
+    {
+      "source": "file:src/context/AuthContext.tsx",
+      "target": "file:src/api/authApi.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "AuthContext 导入 authApi 用于登录和会话验证"
+    },
+    {
+      "source": "file:src/context/AuthContext.tsx",
+      "target": "file:src/types/user.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "AuthContext 导入 User 和 AuthState 类型"
+    },
+    {
+      "source": "file:src/context/AiContext.tsx",
+      "target": "file:src/api/client.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "AiContext 导入 apiFetch 用于 AI API 调用"
+    },
+    {
+      "source": "file:src/context/AiContext.tsx",
+      "target": "file:src/types/entry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "AiContext 导入 Entry 类型用于 AI 搜索结果"
+    },
+    {
+      "source": "file:src/components/Navbar.tsx",
+      "target": "file:src/context/AuthContext.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "Navbar 导入 useAuth hook 获取登录状态和用户信息"
+    },
+    {
+      "source": "file:src/components/Navbar.tsx",
+      "target": "file:src/context/LanguageThemeContext.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "Navbar 导入 useLanguageTheme hook 获取主题、语言和翻译函数"
+    },
+    {
+      "source": "file:src/components/AiChatWidget.tsx",
+      "target": "file:src/context/AiContext.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "AiChatWidget 导入 useAi hook 获取聊天能力"
+    },
+    {
+      "source": "file:src/components/AiChatWidget.tsx",
+      "target": "file:src/context/LanguageThemeContext.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "AiChatWidget 导入 useLanguageTheme hook 获取翻译文本"
+    },
+    {
+      "source": "file:src/components/AiSummarizeButton.tsx",
+      "target": "file:src/context/AiContext.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "AiSummarizeButton 导入 useAi hook 获取摘要能力"
+    },
+    {
+      "source": "file:src/components/AiSummarizeButton.tsx",
+      "target": "file:src/context/LanguageThemeContext.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "AiSummarizeButton 导入 useLanguageTheme hook 获取翻译文本"
+    },
+    {
+      "source": "file:src/pages/LoginPage.tsx",
+      "target": "file:src/context/AuthContext.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "LoginPage 导入 useAuth hook 获取 login 方法"
+    },
+    {
+      "source": "file:src/pages/LoginPage.tsx",
+      "target": "file:src/context/LanguageThemeContext.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "LoginPage 导入 useLanguageTheme hook 获取语言和翻译"
+    },
+    {
+      "source": "file:src/mock/mockUsers.ts",
+      "target": "file:src/types/user.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "mockUsers 导入 User 类型以标注数组类型"
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "function:src/App.tsx:App",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "App.tsx 默认导出 App 组件"
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "function:src/App.tsx:AppContent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0,
+      "description": "App.tsx 定义 AppContent 内部组件"
+    },
+    {
+      "source": "file:src/api/client.ts",
+      "target": "function:src/api/client.ts:apiFetch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "client.ts 导出 apiFetch 泛型请求函数"
+    },
+    {
+      "source": "file:src/api/client.ts",
+      "target": "function:src/api/client.ts:hasInternalAccess",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "client.ts 导出 hasInternalAccess 权限检查函数"
+    },
+    {
+      "source": "file:src/api/client.ts",
+      "target": "function:src/api/client.ts:getAuthHeaders",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0,
+      "description": "client.ts 定义内部辅助函数 getAuthHeaders"
+    },
+    {
+      "source": "file:src/api/authApi.ts",
+      "target": "module:src/api/authApi.ts:authApi",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "authApi.ts 导出 authApi 命名空间对象"
+    },
+    {
+      "source": "file:src/components/Navbar.tsx",
+      "target": "function:src/components/Navbar.tsx:Navbar",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "Navbar.tsx 导出 Navbar 组件"
+    },
+    {
+      "source": "file:src/components/AiChatWidget.tsx",
+      "target": "function:src/components/AiChatWidget.tsx:AiChatWidget",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "AiChatWidget.tsx 导出 AiChatWidget 组件"
+    },
+    {
+      "source": "file:src/components/AiSummarizeButton.tsx",
+      "target": "function:src/components/AiSummarizeButton.tsx:AiSummarizeButton",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "AiSummarizeButton.tsx 导出 AiSummarizeButton 组件"
+    },
+    {
+      "source": "file:src/context/AuthContext.tsx",
+      "target": "function:src/context/AuthContext.tsx:AuthProvider",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "AuthContext.tsx 导出 AuthProvider Context Provider 组件"
+    },
+    {
+      "source": "file:src/context/AuthContext.tsx",
+      "target": "function:src/context/AuthContext.tsx:useAuth",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "AuthContext.tsx 导出 useAuth 消费 Hook"
+    },
+    {
+      "source": "file:src/context/AiContext.tsx",
+      "target": "function:src/context/AiContext.tsx:AiProvider",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "AiContext.tsx 导出 AiProvider Context Provider 组件"
+    },
+    {
+      "source": "file:src/context/AiContext.tsx",
+      "target": "function:src/context/AiContext.tsx:useAi",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "AiContext.tsx 导出 useAi 消费 Hook"
+    },
+    {
+      "source": "file:src/pages/LoginPage.tsx",
+      "target": "function:src/pages/LoginPage.tsx:LoginPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "LoginPage.tsx 导出 LoginPage 页面组件"
+    },
+    {
+      "source": "function:src/api/client.ts:getAuthHeaders",
+      "target": "function:src/api/client.ts:apiFetch",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "apiFetch 调用 getAuthHeaders 获取认证请求头"
+    },
+    {
+      "source": "module:src/api/authApi.ts:authApi",
+      "target": "function:src/api/client.ts:apiFetch",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "authApi.login 和 authApi.getMe 均调用 apiFetch 发送 HTTP 请求"
+    },
+    {
+      "source": "function:src/context/AuthContext.tsx:AuthProvider",
+      "target": "module:src/api/authApi.ts:authApi",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "AuthProvider 调用 authApi.getMe() 验证会话、authApi.login() 执行登录"
+    },
+    {
+      "source": "function:src/context/AiContext.tsx:AiProvider",
+      "target": "function:src/api/client.ts:apiFetch",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "AiProvider 通过 apiFetch 调用 /search、/ai/chat、/ai/summarize 后端端点"
+    },
+    {
+      "source": "function:src/App.tsx:App",
+      "target": "function:src/App.tsx:AppContent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0,
+      "description": "App 组件在 Provider 嵌套内部渲染 AppContent"
+    },
+    {
+      "source": "function:src/App.tsx:AppContent",
+      "target": "function:src/components/Navbar.tsx:Navbar",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0,
+      "description": "AppContent 渲染 Navbar 组件并传递 currentView 和 onNavigate props"
+    },
+    {
+      "source": "function:src/App.tsx:AppContent",
+      "target": "function:src/components/AiChatWidget.tsx:AiChatWidget",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0,
+      "description": "AppContent 渲染 AiChatWidget 浮动聊天组件"
+    },
+    {
+      "source": "function:src/App.tsx:AppContent",
+      "target": "function:src/pages/LoginPage.tsx:LoginPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0,
+      "description": "AppContent 在 login 视图下条件渲染 LoginPage"
+    },
+    {
+      "source": "function:src/App.tsx:AppContent",
+      "target": "function:src/context/AuthContext.tsx:useAuth",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "AppContent 调用 useAuth() 获取 isLoggedIn、loading 状态"
+    },
+    {
+      "source": "function:src/App.tsx:AppContent",
+      "target": "concept:client-side-routing",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5,
+      "description": "AppContent 实现了客户端视图路由模式"
+    },
+    {
+      "source": "function:src/App.tsx:App",
+      "target": "concept:provider-composition",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5,
+      "description": "App 组件实现了三层 Provider 嵌套组合模式"
+    },
+    {
+      "source": "function:src/context/AuthContext.tsx:AuthProvider",
+      "target": "concept:bearer-token-auth",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5,
+      "description": "AuthProvider 实现了 Bearer Token 认证的存储、恢复和验证流程"
+    },
+    {
+      "source": "function:src/context/AiContext.tsx:AiProvider",
+      "target": "concept:ai-integration",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5,
+      "description": "AiProvider 封装了搜索、聊天和摘要三项 AI 能力的统一接口"
+    },
+    {
+      "source": "function:src/components/Navbar.tsx:Navbar",
+      "target": "function:src/context/AuthContext.tsx:useAuth",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "Navbar 调用 useAuth() 获取 isLoggedIn、user 和 logout 方法"
+    },
+    {
+      "source": "function:src/components/AiChatWidget.tsx:AiChatWidget",
+      "target": "function:src/context/AiContext.tsx:useAi",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "AiChatWidget 调用 useAi() 获取 chatHistory、sendChat、clearChat 等方法"
+    },
+    {
+      "source": "function:src/components/AiSummarizeButton.tsx:AiSummarizeButton",
+      "target": "function:src/context/AiContext.tsx:useAi",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "AiSummarizeButton 调用 useAi() 获取 summarize 和 isSummarizing"
+    },
+    {
+      "source": "function:src/pages/LoginPage.tsx:LoginPage",
+      "target": "function:src/context/AuthContext.tsx:useAuth",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8,
+      "description": "LoginPage 调用 useAuth() 获取 login 方法执行认证"
+    },
+    {
+      "source": "function:src/context/AuthContext.tsx:useAuth",
+      "target": "file:src/context/AuthContext.tsx",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6,
+      "description": "useAuth 依赖 AuthContext 的 Context 对象"
+    },
+    {
+      "source": "function:src/context/AiContext.tsx:useAi",
+      "target": "file:src/context/AiContext.tsx",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6,
+      "description": "useAi 依赖 AiContext 的 Context 对象"
+    },
+    {
+      "source": "file:src/context/AuthContext.tsx",
+      "target": "concept:bearer-token-auth",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5,
+      "description": "AuthContext 是 Bearer Token 认证流程的核心实现模块"
+    },
+    {
+      "source": "file:src/context/AiContext.tsx",
+      "target": "concept:ai-integration",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5,
+      "description": "AiContext 是 AI 功能集成的前端核心模块"
+    },
+    {
+      "source": "file:src/api/client.ts",
+      "target": "concept:bearer-token-auth",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5,
+      "description": "client.ts 实现 token 的 localStorage 读取和 Authorization 头注入"
+    },
+    {
+      "source": "file:src/types/user.ts",
+      "target": "file:src/mock/mockUsers.ts",
+      "type": "exports",
+      "direction": "backward",
+      "weight": 0.5,
+      "description": "mockUsers.ts 导入 User 类型，user.ts 是被依赖方"
+    },
+    {
+      "source": "file:src/api/client.ts",
+      "target": "file:src/api/authApi.ts",
+      "type": "exports",
+      "direction": "backward",
+      "weight": 0.5,
+      "description": "authApi.ts 导入 apiFetch，client.ts 是被依赖的基础设施模块"
+    },
+    {
+      "source": "file:src/api/client.ts",
+      "target": "file:src/context/AiContext.tsx",
+      "type": "exports",
+      "direction": "backward",
+      "weight": 0.5,
+      "description": "AiContext.tsx 导入 apiFetch，client.ts 是被依赖的基础设施模块"
+    },
+    {
+      "source": "file:src/types/user.ts",
+      "target": "file:src/context/AuthContext.tsx",
+      "type": "exports",
+      "direction": "backward",
+      "weight": 0.5,
+      "description": "AuthContext.tsx 导入 User 和 AuthState 类型"
+    },
+    {
+      "source": "file:src/types/user.ts",
+      "target": "file:src/api/authApi.ts",
+      "type": "exports",
+      "direction": "backward",
+      "weight": 0.5,
+      "description": "authApi.ts 导入 User 类型"
+    },
+    {
+      "source": "file:src/context/AuthContext.tsx",
+      "target": "file:src/components/Navbar.tsx",
+      "type": "exports",
+      "direction": "backward",
+      "weight": 0.5,
+      "description": "Navbar 导入 useAuth，AuthContext 是被依赖方"
+    },
+    {
+      "source": "file:src/context/AuthContext.tsx",
+      "target": "file:src/pages/LoginPage.tsx",
+      "type": "exports",
+      "direction": "backward",
+      "weight": 0.5,
+      "description": "LoginPage 导入 useAuth，AuthContext 是被依赖方"
+    },
+    {
+      "source": "file:src/context/AiContext.tsx",
+      "target": "file:src/components/AiChatWidget.tsx",
+      "type": "exports",
+      "direction": "backward",
+      "weight": 0.5,
+      "description": "AiChatWidget 导入 useAi，AiContext 是被依赖方"
+    },
+    {
+      "source": "file:src/context/AiContext.tsx",
+      "target": "file:src/components/AiSummarizeButton.tsx",
+      "type": "exports",
+      "direction": "backward",
+      "weight": 0.5,
+      "description": "AiSummarizeButton 导入 useAi，AiContext 是被依赖方"
+    },
+    {
+      "source": "file:src/main.tsx",
+      "target": "file:src/index.css",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "description": "main.tsx 导入全局样式 index.css"
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "concept:provider-composition",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5,
+      "description": "App.tsx 实现了 Provider 组合模式——三层嵌套 Context Provider"
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "concept:client-side-routing",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5,
+      "description": "App.tsx 实现了基于 useState 的客户端视图路由"
+    },
+    {
+      "source": "module:src/api/authApi.ts:authApi",
+      "target": "concept:bearer-token-auth",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5,
+      "description": "authApi 封装了 Bearer Token 认证的登录和验证端点调用"
+    }
+  ]
+}

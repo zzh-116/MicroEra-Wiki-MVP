@@ -1,0 +1,23 @@
+{
+  "projectRoot": "C:/Users/Intership004/zzh/company-wiki-mvp_v0.0.2",
+  "batchFiles": [
+    {"path": "src/api/storageInitializer.ts", "language": "typescript", "sizeLines": 51, "fileCategory": "code"},
+    {"path": "src/api/tagsApi.ts", "language": "typescript", "sizeLines": 8, "fileCategory": "code"},
+    {"path": "src/mock/mockCategories.ts", "language": "typescript", "sizeLines": 10, "fileCategory": "code"},
+    {"path": "src/mock/mockDataItems.ts", "language": "typescript", "sizeLines": 28, "fileCategory": "code"},
+    {"path": "src/mock/mockEntries.ts", "language": "typescript", "sizeLines": 100, "fileCategory": "code"},
+    {"path": "src/mock/mockFiles.ts", "language": "typescript", "sizeLines": 37, "fileCategory": "code"},
+    {"path": "src/mock/mockTags.ts", "language": "typescript", "sizeLines": 22, "fileCategory": "code"},
+    {"path": "src/types/tag.ts", "language": "typescript", "sizeLines": 4, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "src/api/storageInitializer.ts": ["src/mock/mockCategories.ts", "src/mock/mockDataItems.ts", "src/mock/mockEntries.ts", "src/mock/mockFiles.ts", "src/mock/mockTags.ts"],
+    "src/api/tagsApi.ts": ["src/api/client.ts", "src/types/tag.ts"],
+    "src/mock/mockCategories.ts": ["src/types/category.ts"],
+    "src/mock/mockDataItems.ts": ["src/types/dataItem.ts"],
+    "src/mock/mockEntries.ts": ["src/types/entry.ts"],
+    "src/mock/mockFiles.ts": ["src/types/file.ts"],
+    "src/mock/mockTags.ts": ["src/types/tag.ts"],
+    "src/types/tag.ts": []
+  }
+}

@@ -1,0 +1,404 @@
+{
+  "scriptCompleted": true,
+  "stats": {
+    "filesScanned": 113,
+    "filesWithImports": 62,
+    "totalEdges": 219
+  },
+  "importMap": {
+    ".env.example": [],
+    ".understand-anything/.understandignore": [],
+    ".understand-anything/config.json": [],
+    "backend/ai/prompts.ts": [
+      "backend/types.ts"
+    ],
+    "backend/ai/service.ts": [
+      "backend/ai/prompts.ts",
+      "backend/config.ts",
+      "backend/metadata/store.ts",
+      "backend/retrieval/search.ts",
+      "backend/types.ts"
+    ],
+    "backend/app.ts": [
+      "backend/config.ts",
+      "backend/embedding/ollama.ts",
+      "backend/metadata/store.ts",
+      "backend/vector/memory.ts",
+      "backend/vector/milvus.ts"
+    ],
+    "backend/chunk/service.ts": [],
+    "backend/config.ts": [],
+    "backend/data/documents/entry_10.json": [],
+    "backend/data/documents/entry_11.json": [],
+    "backend/data/documents/entry_12.json": [],
+    "backend/data/documents/entry_13.json": [],
+    "backend/data/documents/entry_14.json": [],
+    "backend/data/documents/entry_15.json": [],
+    "backend/data/documents/entry_16.json": [],
+    "backend/data/documents/entry_17.json": [],
+    "backend/data/documents/entry_18.json": [],
+    "backend/data/documents/entry_19.json": [],
+    "backend/data/documents/entry_20.json": [],
+    "backend/data/documents/entry_21.json": [],
+    "backend/data/documents/entry_22.json": [],
+    "backend/data/documents/entry_23.json": [],
+    "backend/data/documents/entry_24.json": [],
+    "backend/data/documents/entry_25.json": [],
+    "backend/data/documents/entry_9.json": [],
+    "backend/data/materials-metadata.md": [],
+    "backend/data/metadata/categories.json": [],
+    "backend/data/metadata/data_items.json": [],
+    "backend/data/metadata/entries.json": [],
+    "backend/data/metadata/files.json": [],
+    "backend/data/metadata/tags.json": [],
+    "backend/data/vectors.json": [],
+    "backend/document/store.ts": [
+      "backend/config.ts",
+      "backend/types.ts"
+    ],
+    "backend/embedding/ollama.ts": [
+      "backend/config.ts"
+    ],
+    "backend/import/service.ts": [
+      "backend/chunk/service.ts",
+      "backend/config.ts",
+      "backend/document/store.ts",
+      "backend/embedding/ollama.ts",
+      "backend/metadata/store.ts",
+      "backend/parser/markdown.ts",
+      "backend/parser/service.ts",
+      "backend/types.ts",
+      "backend/vector/memory.ts",
+      "backend/vector/milvus.ts"
+    ],
+    "backend/main.ts": [
+      "backend/app.ts",
+      "backend/config.ts"
+    ],
+    "backend/metadata/importJob.ts": [
+      "backend/document/store.ts",
+      "backend/embedding/ollama.ts",
+      "backend/metadata/store.ts",
+      "backend/parser/markdown.ts",
+      "backend/types.ts",
+      "backend/vector/memory.ts",
+      "backend/vector/milvus.ts"
+    ],
+    "backend/metadata/store.ts": [
+      "backend/config.ts",
+      "backend/types.ts"
+    ],
+    "backend/parser/markdown.ts": [
+      "backend/types.ts"
+    ],
+    "backend/parser/service.ts": [
+      "backend/parser/markdown.ts",
+      "backend/types.ts"
+    ],
+    "backend/postman/Enterprise-Data-Pipeline.postman_collection.json": [],
+    "backend/retrieval/search.ts": [
+      "backend/embedding/ollama.ts",
+      "backend/metadata/store.ts",
+      "backend/types.ts",
+      "backend/vector/memory.ts",
+      "backend/vector/milvus.ts"
+    ],
+    "backend/swagger/openapi.json": [],
+    "backend/swagger/swagger.html": [],
+    "backend/types.ts": [],
+    "backend/vector/memory.ts": [
+      "backend/config.ts"
+    ],
+    "backend/vector/milvus.ts": [
+      "backend/config.ts"
+    ],
+    "index.html": [],
+    "metadata.json": [],
+    "package.json": [],
+    "README.md": [],
+    "server/index.ts": [
+      "backend/config.ts",
+      "backend/metadata/store.ts",
+      "backend/vector/memory.ts",
+      "backend/vector/milvus.ts",
+      "server/routes/ai.ts",
+      "server/routes/auth.ts",
+      "server/routes/categories.ts",
+      "server/routes/dataItems.ts",
+      "server/routes/entries.ts",
+      "server/routes/files.ts",
+      "server/routes/pipeline.ts",
+      "server/routes/search.ts",
+      "server/routes/tags.ts"
+    ],
+    "server/middleware/auth.ts": [],
+    "server/routes/ai.ts": [
+      "backend/ai/service.ts",
+      "backend/config.ts",
+      "backend/metadata/importJob.ts",
+      "backend/metadata/store.ts",
+      "backend/vector/memory.ts"
+    ],
+    "server/routes/auth.ts": [
+      "server/middleware/auth.ts"
+    ],
+    "server/routes/categories.ts": [
+      "backend/metadata/store.ts"
+    ],
+    "server/routes/dataItems.ts": [
+      "backend/metadata/store.ts",
+      "server/middleware/auth.ts"
+    ],
+    "server/routes/entries.ts": [
+      "backend/metadata/store.ts",
+      "server/middleware/auth.ts"
+    ],
+    "server/routes/files.ts": [
+      "backend/metadata/store.ts",
+      "server/middleware/auth.ts"
+    ],
+    "server/routes/pipeline.ts": [
+      "backend/chunk/service.ts",
+      "backend/config.ts",
+      "backend/embedding/ollama.ts",
+      "backend/import/service.ts",
+      "backend/metadata/store.ts",
+      "backend/parser/service.ts",
+      "backend/retrieval/search.ts",
+      "backend/vector/memory.ts",
+      "backend/vector/milvus.ts"
+    ],
+    "server/routes/search.ts": [
+      "backend/ai/service.ts"
+    ],
+    "server/routes/tags.ts": [
+      "backend/metadata/store.ts"
+    ],
+    "server/tsconfig.json": [],
+    "src/api/authApi.ts": [
+      "src/api/client.ts",
+      "src/types/user.ts"
+    ],
+    "src/api/categoriesApi.ts": [
+      "src/api/client.ts",
+      "src/types/category.ts"
+    ],
+    "src/api/client.ts": [],
+    "src/api/dataItemsApi.ts": [
+      "src/api/client.ts",
+      "src/types/dataItem.ts"
+    ],
+    "src/api/entriesApi.ts": [
+      "src/api/client.ts",
+      "src/types/entry.ts"
+    ],
+    "src/api/filesApi.ts": [
+      "src/api/client.ts",
+      "src/types/file.ts"
+    ],
+    "src/api/storageInitializer.ts": [
+      "src/mock/mockCategories.ts",
+      "src/mock/mockDataItems.ts",
+      "src/mock/mockEntries.ts",
+      "src/mock/mockFiles.ts",
+      "src/mock/mockTags.ts"
+    ],
+    "src/api/tagsApi.ts": [
+      "src/api/client.ts",
+      "src/types/tag.ts"
+    ],
+    "src/App.tsx": [
+      "src/components/AiChatWidget.tsx",
+      "src/components/Navbar.tsx",
+      "src/context/AiContext.tsx",
+      "src/context/AuthContext.tsx",
+      "src/context/LanguageThemeContext.tsx",
+      "src/pages/AdminMockPage.tsx",
+      "src/pages/AssetLibraryPage.tsx",
+      "src/pages/DataItemPage.tsx",
+      "src/pages/EntryDetailPage.tsx",
+      "src/pages/EntryEditorPage.tsx",
+      "src/pages/EntryListPage.tsx",
+      "src/pages/LoginPage.tsx",
+      "src/pages/PublicHome.tsx"
+    ],
+    "src/components/AiChatWidget.tsx": [
+      "src/context/AiContext.tsx",
+      "src/context/LanguageThemeContext.tsx"
+    ],
+    "src/components/AiSearchResults.tsx": [
+      "src/components/EntryCard.tsx",
+      "src/components/EntryTable.tsx",
+      "src/context/LanguageThemeContext.tsx",
+      "src/types/entry.ts"
+    ],
+    "src/components/AiSearchToggle.tsx": [
+      "src/context/LanguageThemeContext.tsx"
+    ],
+    "src/components/AiSummarizeButton.tsx": [
+      "src/context/AiContext.tsx",
+      "src/context/LanguageThemeContext.tsx"
+    ],
+    "src/components/AssetCard.tsx": [
+      "src/components/VisibilityBadge.tsx",
+      "src/context/LanguageThemeContext.tsx",
+      "src/types/entry.ts",
+      "src/types/file.ts"
+    ],
+    "src/components/EntryCard.tsx": [
+      "src/components/VisibilityBadge.tsx",
+      "src/context/LanguageThemeContext.tsx",
+      "src/types/entry.ts",
+      "src/utils/labelMapper.ts"
+    ],
+    "src/components/EntryTable.tsx": [
+      "src/components/VisibilityBadge.tsx",
+      "src/types/entry.ts",
+      "src/utils/labelMapper.ts"
+    ],
+    "src/components/FileList.tsx": [
+      "src/context/LanguageThemeContext.tsx",
+      "src/types/file.ts"
+    ],
+    "src/components/FileUpload.tsx": [
+      "src/types/file.ts"
+    ],
+    "src/components/FilterBar.tsx": [
+      "src/api/entriesApi.ts",
+      "src/context/LanguageThemeContext.tsx",
+      "src/types/category.ts",
+      "src/types/entry.ts",
+      "src/utils/labelMapper.ts"
+    ],
+    "src/components/Navbar.tsx": [
+      "src/context/AuthContext.tsx",
+      "src/context/LanguageThemeContext.tsx"
+    ],
+    "src/components/Unauthorized.tsx": [],
+    "src/components/VisibilityBadge.tsx": [
+      "src/context/LanguageThemeContext.tsx",
+      "src/types/entry.ts"
+    ],
+    "src/context/AiContext.tsx": [
+      "src/api/client.ts",
+      "src/types/entry.ts"
+    ],
+    "src/context/AuthContext.tsx": [
+      "src/api/authApi.ts",
+      "src/types/user.ts"
+    ],
+    "src/context/LanguageThemeContext.tsx": [],
+    "src/index.css": [],
+    "src/main.tsx": [
+      "src/App.tsx",
+      "src/index.css"
+    ],
+    "src/mock/mockCategories.ts": [
+      "src/types/category.ts"
+    ],
+    "src/mock/mockDataItems.ts": [
+      "src/types/dataItem.ts"
+    ],
+    "src/mock/mockEntries.ts": [
+      "src/types/entry.ts"
+    ],
+    "src/mock/mockFiles.ts": [
+      "src/types/file.ts"
+    ],
+    "src/mock/mockTags.ts": [
+      "src/types/tag.ts"
+    ],
+    "src/mock/mockUsers.ts": [
+      "src/types/user.ts"
+    ],
+    "src/pages/AdminMockPage.tsx": [
+      "src/api/dataItemsApi.ts",
+      "src/api/entriesApi.ts",
+      "src/api/filesApi.ts",
+      "src/context/LanguageThemeContext.tsx",
+      "src/types/dataItem.ts",
+      "src/types/entry.ts",
+      "src/types/file.ts"
+    ],
+    "src/pages/AssetLibraryPage.tsx": [
+      "src/api/entriesApi.ts",
+      "src/api/filesApi.ts",
+      "src/components/AssetCard.tsx",
+      "src/context/LanguageThemeContext.tsx",
+      "src/types/entry.ts",
+      "src/types/file.ts"
+    ],
+    "src/pages/DataItemPage.tsx": [
+      "src/api/dataItemsApi.ts",
+      "src/api/entriesApi.ts",
+      "src/context/LanguageThemeContext.tsx",
+      "src/types/dataItem.ts",
+      "src/types/entry.ts"
+    ],
+    "src/pages/EntryDetailPage.tsx": [
+      "src/api/categoriesApi.ts",
+      "src/api/dataItemsApi.ts",
+      "src/api/entriesApi.ts",
+      "src/api/filesApi.ts",
+      "src/components/AiSummarizeButton.tsx",
+      "src/components/FileList.tsx",
+      "src/components/Unauthorized.tsx",
+      "src/components/VisibilityBadge.tsx",
+      "src/context/LanguageThemeContext.tsx",
+      "src/types/category.ts",
+      "src/types/dataItem.ts",
+      "src/types/entry.ts",
+      "src/types/file.ts",
+      "src/utils/labelMapper.ts"
+    ],
+    "src/pages/EntryEditorPage.tsx": [
+      "src/api/categoriesApi.ts",
+      "src/api/dataItemsApi.ts",
+      "src/api/entriesApi.ts",
+      "src/api/filesApi.ts",
+      "src/components/FileUpload.tsx",
+      "src/context/LanguageThemeContext.tsx",
+      "src/types/category.ts",
+      "src/types/entry.ts",
+      "src/types/file.ts"
+    ],
+    "src/pages/EntryListPage.tsx": [
+      "src/api/categoriesApi.ts",
+      "src/api/entriesApi.ts",
+      "src/api/tagsApi.ts",
+      "src/components/AiSearchResults.tsx",
+      "src/components/AiSearchToggle.tsx",
+      "src/components/EntryCard.tsx",
+      "src/components/EntryTable.tsx",
+      "src/components/FilterBar.tsx",
+      "src/context/AiContext.tsx",
+      "src/context/LanguageThemeContext.tsx",
+      "src/types/category.ts",
+      "src/types/entry.ts",
+      "src/types/tag.ts"
+    ],
+    "src/pages/LoginPage.tsx": [
+      "src/context/AuthContext.tsx",
+      "src/context/LanguageThemeContext.tsx"
+    ],
+    "src/pages/PublicHome.tsx": [
+      "src/api/categoriesApi.ts",
+      "src/api/entriesApi.ts",
+      "src/components/EntryCard.tsx",
+      "src/context/LanguageThemeContext.tsx",
+      "src/types/category.ts",
+      "src/types/entry.ts"
+    ],
+    "src/types/category.ts": [],
+    "src/types/dataItem.ts": [],
+    "src/types/entry.ts": [],
+    "src/types/file.ts": [],
+    "src/types/tag.ts": [],
+    "src/types/user.ts": [],
+    "src/utils/labelMapper.ts": [
+      "src/types/entry.ts"
+    ],
+    "tsconfig.json": [],
+    "vite.config.ts": []
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Company Wiki MVP",
+  "description": "企业知识资产目录与轻量化 Wiki 平台 MVP，支持公开和内部内容隔离展示、展示素材库、研发数据条目对齐等。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

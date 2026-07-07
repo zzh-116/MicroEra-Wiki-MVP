@@ -1,0 +1,1747 @@
+{
+  "scriptCompleted": true,
+  "entryPointCandidates": [
+    {
+      "id": "file:backend/app.ts",
+      "score": 6,
+      "name": "app.ts",
+      "summary": "Express 应用工厂，负责创建和配置后端服务实例，挂载各个路由模块，并处理种子数据的向量化初始化。",
+      "type": "file"
+    },
+    {
+      "id": "file:server/index.ts",
+      "score": 6,
+      "name": "index.ts",
+      "summary": "服务端启动入口，负责初始化元数据种子、连接向量存储，并启动 HTTP 服务器监听请求。",
+      "type": "file"
+    },
+    {
+      "id": "file:backend/main.ts",
+      "score": 5,
+      "name": "main.ts",
+      "summary": "后端服务入口文件，创建 Express 应用并启动 HTTP 服务器，输出运行环境和配置信息。",
+      "type": "file"
+    },
+    {
+      "id": "document:README.md",
+      "score": 5,
+      "name": "README.md",
+      "summary": "微观纪元 Wiki 完整项目说明文档，共 20 个章节，涵盖企业数据源管道架构（导入→解析→分块→嵌入→检索→RAG 问答）、技术栈总览（React 19 + Express 4 + Vite 6 + Ollama + Milvus）、前置环境配置、快速开始指南、完整 API 端点文档、项目目录结构及三级降级检索策略。",
+      "type": "document"
+    },
+    {
+      "id": "file:src/App.tsx",
+      "score": 3,
+      "name": "App.tsx",
+      "summary": "应用根组件，负责组装全局 Provider（LanguageThemeProvider、AuthProvider、AiProvider）、定义基于状态的路由视图切换逻辑、渲染响应式导航栏和页脚。AppContent 内部组件消费多个 Context 实现 conditional rendering。",
+      "type": "file"
+    }
+  ],
+  "fanInRanking": [
+    {
+      "id": "file:backend/chunk/service.ts",
+      "fanIn": 20,
+      "name": "chunk/service.ts"
+    },
+    {
+      "id": "file:backend/document/store.ts",
+      "fanIn": 19,
+      "name": "document/store.ts"
+    },
+    {
+      "id": "file:backend/metadata/store.ts",
+      "fanIn": 19,
+      "name": "store.ts"
+    },
+    {
+      "id": "file:src/context/LanguageThemeContext.tsx",
+      "fanIn": 19,
+      "name": "Language & Theme Context"
+    },
+    {
+      "id": "file:src/types/entry.ts",
+      "fanIn": 17,
+      "name": "Entry Type Definition"
+    },
+    {
+      "id": "function:src/context/LanguageThemeContext.tsx:useLanguageTheme",
+      "fanIn": 15,
+      "name": "useLanguageTheme"
+    },
+    {
+      "id": "file:backend/config.ts",
+      "fanIn": 14,
+      "name": "config.ts"
+    },
+    {
+      "id": "class:src/types/entry.ts:Entry",
+      "fanIn": 12,
+      "name": "Entry"
+    },
+    {
+      "id": "class:backend/metadata/store.ts:MetadataStore",
+      "fanIn": 11,
+      "name": "MetadataStore"
+    },
+    {
+      "id": "file:backend/types.ts",
+      "fanIn": 9,
+      "name": "types.ts"
+    },
+    {
+      "id": "file:src/api/entriesApi.ts",
+      "fanIn": 9,
+      "name": "Entries API"
+    },
+    {
+      "id": "file:src/types/file.ts",
+      "fanIn": 9,
+      "name": "File Type Definition"
+    },
+    {
+      "id": "function:src/api/entriesApi.ts:entriesApi",
+      "fanIn": 8,
+      "name": "entriesApi"
+    },
+    {
+      "id": "file:backend/vector/memory.ts",
+      "fanIn": 7,
+      "name": "memory.ts"
+    },
+    {
+      "id": "file:backend/vector/milvus.ts",
+      "fanIn": 7,
+      "name": "milvus.ts"
+    },
+    {
+      "id": "class:backend/vector/milvus.ts:MilvusClient",
+      "fanIn": 7,
+      "name": "MilvusClient"
+    },
+    {
+      "id": "file:src/types/category.ts",
+      "fanIn": 7,
+      "name": "Category Type Definition"
+    },
+    {
+      "id": "concept:visibility-access-control",
+      "fanIn": 7,
+      "name": "可见性访问控制"
+    },
+    {
+      "id": "file:src/api/client.ts",
+      "fanIn": 7,
+      "name": "client.ts"
+    },
+    {
+      "id": "file:backend/embedding/ollama.ts",
+      "fanIn": 6,
+      "name": "ollama.ts"
+    }
+  ],
+  "fanOutRanking": [
+    {
+      "id": "file:src/pages/EntryDetailPage.tsx",
+      "fanOut": 31,
+      "name": "Entry Detail Page"
+    },
+    {
+      "id": "file:src/pages/EntryListPage.tsx",
+      "fanOut": 27,
+      "name": "Entry List Page"
+    },
+    {
+      "id": "file:src/pages/EntryEditorPage.tsx",
+      "fanOut": 22,
+      "name": "Entry Editor Page"
+    },
+    {
+      "id": "file:backend/import/service.ts",
+      "fanOut": 18,
+      "name": "service.ts"
+    },
+    {
+      "id": "file:server/index.ts",
+      "fanOut": 17,
+      "name": "index.ts"
+    },
+    {
+      "id": "file:src/App.tsx",
+      "fanOut": 17,
+      "name": "App.tsx"
+    },
+    {
+      "id": "file:server/routes/pipeline.ts",
+      "fanOut": 16,
+      "name": "pipeline.ts"
+    },
+    {
+      "id": "file:src/pages/AdminMockPage.tsx",
+      "fanOut": 15,
+      "name": "Admin Mock Page"
+    },
+    {
+      "id": "file:src/pages/AssetLibraryPage.tsx",
+      "fanOut": 14,
+      "name": "Asset Library Page"
+    },
+    {
+      "id": "file:backend/app.ts",
+      "fanOut": 13,
+      "name": "app.ts"
+    },
+    {
+      "id": "file:backend/metadata/importJob.ts",
+      "fanOut": 13,
+      "name": "importJob.ts"
+    },
+    {
+      "id": "file:src/components/FilterBar.tsx",
+      "fanOut": 13,
+      "name": "Filter Bar Component"
+    },
+    {
+      "id": "file:src/pages/PublicHome.tsx",
+      "fanOut": 13,
+      "name": "Public Home Page"
+    },
+    {
+      "id": "file:src/pages/DataItemPage.tsx",
+      "fanOut": 12,
+      "name": "Data Item Page"
+    },
+    {
+      "id": "file:backend/ai/service.ts",
+      "fanOut": 11,
+      "name": "service.ts"
+    },
+    {
+      "id": "file:src/components/EntryCard.tsx",
+      "fanOut": 11,
+      "name": "Entry Card Component"
+    },
+    {
+      "id": "file:backend/retrieval/search.ts",
+      "fanOut": 10,
+      "name": "search.ts"
+    },
+    {
+      "id": "file:src/components/AssetCard.tsx",
+      "fanOut": 10,
+      "name": "Asset Card Component"
+    },
+    {
+      "id": "document:README.md",
+      "fanOut": 10,
+      "name": "README.md"
+    },
+    {
+      "id": "file:backend/parser/service.ts",
+      "fanOut": 9,
+      "name": "service.ts"
+    }
+  ],
+  "bfsTraversal": {
+    "startNode": "file:backend/app.ts",
+    "order": [
+      "file:backend/app.ts",
+      "function:backend/app.ts:createApp",
+      "function:backend/app.ts:runBootstrap",
+      "function:backend/app.ts:embedSeedEntries",
+      "file:backend/config.ts",
+      "file:backend/embedding/ollama.ts",
+      "file:backend/metadata/store.ts",
+      "file:backend/vector/memory.ts",
+      "file:backend/vector/milvus.ts",
+      "function:backend/metadata/store.ts:seedMetadata",
+      "class:backend/vector/milvus.ts:MilvusClient",
+      "class:backend/vector/memory.ts:MemoryVectorStore",
+      "class:backend/embedding/ollama.ts:OllamaEmbedder",
+      "class:backend/metadata/store.ts:MetadataStore",
+      "function:backend/metadata/store.ts:loadFile",
+      "file:backend/types.ts",
+      "function:backend/vector/memory.ts:cosineSimilarity",
+      "function:backend/vector/milvus.ts:loadSDK"
+    ],
+    "depthMap": {
+      "file:backend/app.ts": 0,
+      "function:backend/app.ts:createApp": 1,
+      "function:backend/app.ts:runBootstrap": 1,
+      "function:backend/app.ts:embedSeedEntries": 1,
+      "file:backend/config.ts": 1,
+      "file:backend/embedding/ollama.ts": 1,
+      "file:backend/metadata/store.ts": 1,
+      "file:backend/vector/memory.ts": 1,
+      "file:backend/vector/milvus.ts": 1,
+      "function:backend/metadata/store.ts:seedMetadata": 1,
+      "class:backend/vector/milvus.ts:MilvusClient": 1,
+      "class:backend/vector/memory.ts:MemoryVectorStore": 1,
+      "class:backend/embedding/ollama.ts:OllamaEmbedder": 1,
+      "class:backend/metadata/store.ts:MetadataStore": 1,
+      "function:backend/metadata/store.ts:loadFile": 2,
+      "file:backend/types.ts": 2,
+      "function:backend/vector/memory.ts:cosineSimilarity": 2,
+      "function:backend/vector/milvus.ts:loadSDK": 2
+    },
+    "byDepth": {
+      "0": [
+        "file:backend/app.ts"
+      ],
+      "1": [
+        "function:backend/app.ts:createApp",
+        "function:backend/app.ts:runBootstrap",
+        "function:backend/app.ts:embedSeedEntries",
+        "file:backend/config.ts",
+        "file:backend/embedding/ollama.ts",
+        "file:backend/metadata/store.ts",
+        "file:backend/vector/memory.ts",
+        "file:backend/vector/milvus.ts",
+        "function:backend/metadata/store.ts:seedMetadata",
+        "class:backend/vector/milvus.ts:MilvusClient",
+        "class:backend/vector/memory.ts:MemoryVectorStore",
+        "class:backend/embedding/ollama.ts:OllamaEmbedder",
+        "class:backend/metadata/store.ts:MetadataStore"
+      ],
+      "2": [
+        "function:backend/metadata/store.ts:loadFile",
+        "file:backend/types.ts",
+        "function:backend/vector/memory.ts:cosineSimilarity",
+        "function:backend/vector/milvus.ts:loadSDK"
+      ]
+    }
+  },
+  "nonCodeFiles": {
+    "documentation": [
+      {
+        "id": "document:README.md",
+        "name": "README.md",
+        "type": "document",
+        "summary": "微观纪元 Wiki 完整项目说明文档，共 20 个章节，涵盖企业数据源管道架构（导入→解析→分块→嵌入→检索→RAG 问答）、技术栈总览（React 19 + Express 4 + Vite 6 + Ollama + Milvus）、前置环境配置、快速开始指南、完整 API 端点文档、项目目录结构及三级降级检索策略。"
+      },
+      {
+        "id": "document:backend/data/materials-metadata.md",
+        "name": "materials-metadata.md",
+        "type": "document",
+        "summary": "材料性质数据元信息规范文档（v0.2），面向 MOF/COF/分子筛/多孔材料领域，将材料性质按产出场景拆分为三大板块：计算数据（几何结构、电子结构、能量与相互作用、扩散与传质、开放金属位点）、实验数据（表征与稳定性、传感性质、催化性质、工艺与工程性质）、交叉数据（孔隙与比表面积、密度、晶体结构、能量与相互作用、光谱性质、吸附分离性质）。每个性质定义包含中英文名称、符号、首选单位、值域参考和常用方法/仪器。第 4 节定义通用和计算专属条件参数元数据（温度、压力、探针分子、软件/泛函等）。附录包含按应用场景的性质快速索引和 14 条变更记录。"
+      }
+    ],
+    "infrastructure": [],
+    "data": [],
+    "config": [
+      {
+        "id": "config:.env.example",
+        "name": ".env.example",
+        "type": "config",
+        "summary": "环境变量配置模板，定义服务端口（PORT=3001）、JWT 密钥、Ollama AI 模型配置（DeepSeek-R1:8b / Qwen2.5:7b / BGE-M3）、Milvus 向量数据库连接参数、前端 Vite 开发服务器地址及数据目录路径。"
+      },
+      {
+        "id": "config:metadata.json",
+        "name": "metadata.json",
+        "type": "config",
+        "summary": "Google AI Studio 项目元数据配置文件，声明项目名称为 Company Wiki MVP、中文项目描述及服务端 Gemini API 能力权限标记。"
+      },
+      {
+        "id": "config:package.json",
+        "name": "package.json",
+        "type": "config",
+        "summary": "Node.js 项目清单文件，定义 9 个 npm 脚本（dev/build/server/backend/lint 等）、运行时依赖（React 19、Express 4、Vite 6、Tailwind CSS 4、Milvus SDK、Motion 动画库、Multer 文件上传）和开发依赖（TypeScript 5.8、tsx、esbuild、autoprefixer）。"
+      },
+      {
+        "id": "config:tsconfig.json",
+        "name": "tsconfig.json",
+        "type": "config",
+        "summary": "TypeScript 编译配置文件，目标 ES2022、启用 ESNext 模块系统及 bundler 模块解析、JSX react-jsx 模式、路径别名 @/* 映射到项目根目录、允许导入 .ts 扩展名、配置 noEmit 仅用于类型检查、开启 skipLibCheck 和 allowJs。"
+      },
+      {
+        "id": "config:backend/data/metadata/categories.json",
+        "name": "categories.json",
+        "type": "config",
+        "summary": "Wiki 分类体系种子数据文件，定义 6 个顶层分类：展示素材（展示素材与图解）、产品资料（产品与业务文档）、技术能力（技术研发与能力说明）、专利成果（学术与专利成果）、数据条目（研发数据对齐条目）、研发协作（研发协作与技术交流），按 sort_order 字段排序，为 Wiki 词条提供一级分类导航骨架。"
+      },
+      {
+        "id": "config:backend/data/metadata/data_items.json",
+        "name": "data_items.json",
+        "type": "config",
+        "summary": "数据条目（DataItem）种子文件，当前为空数组占位。设计用于存储与 Entry 绑定的结构化研发数据记录（如材料性质参数、实验测量值），由 MetadataStore.saveDataItem() 动态写入。文件可能在未来被自动化导入流程（importJob.ts）填充标准材料科学属性 schema 数据。"
+      },
+      {
+        "id": "config:backend/data/metadata/entries.json",
+        "name": "entries.json",
+        "type": "config",
+        "summary": "Wiki 词条主数据文件，共 26 条记录。前 8 条为初始种子数据，覆盖产品介绍（量子计算材料设计平台）、技术能力（AI 驱动实验数据分析）、专利成果（智能计算方法专利）、展示素材（业务流程图、产品效果图、厂房照片）和数据条目概述（材料结构/实验数据存储 schema）。中间 17 条（id 9-25）为材料科学领域的 computational（计算筛分、电子结构、能量与相互作用、扩散与传质、开放金属位点）、experimental（表征与稳定性、传感性质、催化性质、工艺与工程性质）和 cross（孔隙比表面积、密度、晶体结构、能量与相互作用、光谱性质、吸附分离性质）以及 condition（通用条件、计算专属条件）类别的标准化属性定义条目，每一条以 Markdown 表格形式详细定义了材料属性名、英文名、符号、首选单位和测试方法，构成材料信息学元数据字典。最后一条（id 26）为 SAGE（自进化智能体图记忆引擎）技术论文词条，属于技术能力分类，附带 PDF 文件引用。所有条目通过 category_id 关联分类、tags 数组关联标签体系。"
+      },
+      {
+        "id": "config:backend/data/metadata/files.json",
+        "name": "files.json",
+        "type": "config",
+        "summary": "Wiki 文件附件元数据存储文件，当前包含 1 条记录：关联到 entry_id=26（SAGE 论文词条）的 PDF 文件（original_filename: 2605.12061v1(翻译结果).pdf），存储为 12.2MB 的 application/pdf 类型文件，使用随机化 stored_filename（3nyfkxsr）保存于 /uploads/images/ 目录下，usage_type 标记为 PPT素材。由 MetadataStore.createFile() 写入，getFiles() 通过 entry_id 和 visibility 权限过滤查询。"
+      },
+      {
+        "id": "config:backend/data/metadata/tags.json",
+        "name": "tags.json",
+        "type": "config",
+        "summary": "Wiki 标签体系种子数据文件，定义 26 个标签。前 18 个为通用业务标签（可对外、内部资料、PPT素材、宣发素材、产品图片、流程图、厂房照片、数据格式、数据库架构、技术优势、客户展示、研发协作、产品介绍、材料计算、AI、实验数据、专利成果、技术成果），后 8 个为材料科学领域专业标签（材料性质、元数据、DFT、吸附分离、传感、催化、MOF、COF）。标签通过 entries.json 中 entries 的 tags 字段与词条多对多关联，由 MetadataStore.syncTags() 在创建/更新词条时自动同步新增标签名。"
+      },
+      {
+        "id": "config:vite.config.ts",
+        "name": "vite.config.ts",
+        "type": "config",
+        "summary": "Vite 6 构建工具配置文件，集成 @vitejs/plugin-react 和 @tailwindcss/vite 两个插件，配置 @ 路径别名映射到项目根目录。开发服务器支持 HMR（受 DISABLE_HMR 环境变量控制，用于 AI Studio 环境中禁用文件监听），配置 /api 代理转发到 http://localhost:3001 后端服务。"
+      },
+      {
+        "id": "config:server/tsconfig.json",
+        "name": "server/tsconfig.json",
+        "type": "config",
+        "summary": "服务端 TypeScript 编译配置，target ES2022、module ESNext、moduleResolution bundler，启用 strict 严格模式、esModuleInterop、resolveJsonModule 和 skipLibCheck。rootDir 为当前目录，outDir 为 ./dist，包含 server 目录下所有 .ts 文件。"
+      },
+      {
+        "id": "config:backend/swagger/openapi.json",
+        "name": "openapi.json",
+        "type": "config",
+        "summary": "OpenAPI 3.0.3 规范的 MicroEra Wiki MVP 企业数据管道 API 文档，定义 4 大标签分组（Pipeline 管道处理、AI 智能服务、Entries 条目管理、Auth 认证）下的 20 个 API 端点。Pipeline 端点覆盖完整的导入管道（health/formats/status → parse/chunk/embed → import/string/batch → search），AI 端点提供搜索/聊天 RAG/摘要/导入/重置功能，Entries 端点实现标准 CRUD，Auth 端点提供 JWT Bearer 认证登录和用户信息获取。"
+      },
+      {
+        "id": "config:backend/postman/Enterprise-Data-Pipeline.postman_collection.json",
+        "name": "Enterprise-Data-Pipeline.postman_collection.json",
+        "type": "config",
+        "summary": "Postman v2.1.0 API 集合文件，按功能分组为 4 个文件夹：Auth（登录 + 获取当前用户，含自动 token 提取的 test 脚本）、Pipeline（8 个请求覆盖完整管道流程：健康检查/格式/状态 → 解析/分块/嵌入 → 字符串导入/批量导入/语义搜索）、AI（5 个请求：AI 搜索/RAG 对话/摘要/材料元数据导入/重置重导）、Entries（4 个请求：公开列表/全部列表/按 ID 获取/创建条目）。使用 {{base_url}} 和 {{jwt_token}} 集合变量实现环境切换和自动认证。"
+      },
+      {
+        "id": "config:.understand-anything/config.json",
+        "name": "config.json",
+        "type": "config",
+        "summary": "Understand-Anything 分析工具配置文件，设置 outputLanguage 为 zh（中文），控制知识图谱节点和边的文本内容输出语言。"
+      },
+      {
+        "id": "config:.understand-anything/.understandignore",
+        "name": ".understandignore",
+        "type": "config",
+        "summary": "Understand-Anything 分析忽略规则文件，采用 .gitignore 兼容的 glob 语法。内置默认排除 node_modules/、.git/、dist/、build/、obj/、*.lock 和 *.min.js。注释区预置了常见忽略模式模板（测试文件 *.test.*、*.spec.*、各种语言测试目录），以及从 .gitignore 同步的环境变量忽略规则（.env* 排除但 .env.example 保留）。当前所有用户规则均处于注释状态。"
+      }
+    ]
+  },
+  "clusters": [
+    {
+      "nodes": [
+        "config:backend/postman/Enterprise-Data-Pipeline.postman_collection.json",
+        "config:backend/swagger/openapi.json",
+        "document:backend/data/materials-metadata.md",
+        "file:backend/swagger/swagger.html",
+        "file:data:backend/data/vectors.json"
+      ],
+      "edgeCount": 9
+    },
+    {
+      "nodes": [
+        "file:src/pages/EntryEditorPage.tsx",
+        "concept:entry-crud-flow",
+        "file:src/pages/EntryListPage.tsx",
+        "file:src/api/categoriesApi.ts",
+        "file:src/api/dataItemsApi.ts"
+      ],
+      "edgeCount": 8
+    },
+    {
+      "nodes": [
+        "config:backend/data/metadata/categories.json",
+        "config:backend/data/metadata/entries.json",
+        "config:backend/data/metadata/tags.json",
+        "file:backend/metadata/store.ts"
+      ],
+      "edgeCount": 7
+    },
+    {
+      "nodes": [
+        "config:package.json",
+        "config:tsconfig.json",
+        "file:server/index.ts"
+      ],
+      "edgeCount": 4
+    },
+    {
+      "nodes": [
+        "file:src/main.tsx",
+        "file:src/index.css"
+      ],
+      "edgeCount": 2
+    }
+  ],
+  "layers": {
+    "count": 9,
+    "list": [
+      {
+        "id": "layer:frontend-ui",
+        "name": "前端 UI 层 (Frontend UI Layer)",
+        "description": "React components, pages, contexts: src/components/, src/pages/, src/context/, src/App.tsx, src/main.tsx"
+      },
+      {
+        "id": "layer:frontend-api",
+        "name": "前端 API 客户端层 (Frontend API Client Layer)",
+        "description": "API client wrappers: src/api/"
+      },
+      {
+        "id": "layer:frontend-types",
+        "name": "前端类型与工具层 (Frontend Types & Utils Layer)",
+        "description": "Type definitions, utilities, mock data: src/types/, src/utils/, src/mock/"
+      },
+      {
+        "id": "layer:express-routes",
+        "name": "Express 路由层 (Express Route Layer)",
+        "description": "Thin Express routes: server/routes/, server/index.ts"
+      },
+      {
+        "id": "layer:express-middleware",
+        "name": "Express 中间件层 (Express Middleware Layer)",
+        "description": "Auth middleware: server/middleware/"
+      },
+      {
+        "id": "layer:ai-service",
+        "name": "AI 服务层 (AI Service Layer)",
+        "description": "LLM chat, RAG, summarization: backend/ai/"
+      },
+      {
+        "id": "layer:data-pipeline",
+        "name": "数据管道层 (Data Pipeline Layer)",
+        "description": "Import, parse, chunk, embed, vector, retrieval: backend/import/, backend/parser/, backend/chunk/, backend/embedding/, backend/vector/, backend/retrieval/"
+      },
+      {
+        "id": "layer:metadata-storage",
+        "name": "元数据存储层 (Metadata Storage Layer)",
+        "description": "Entry/Category/Tag/File CRUD: backend/metadata/, backend/document/"
+      },
+      {
+        "id": "layer:infrastructure",
+        "name": "基础设施/配置层 (Infrastructure/Config Layer)",
+        "description": "Config, types, app factory: backend/config.ts, backend/types.ts, backend/app.ts, backend/main.ts, package.json, vite.config.ts, tsconfig.json, .env.example"
+      }
+    ]
+  },
+  "nodeSummaryIndex": {
+    "file:backend/ai/prompts.ts": {
+      "name": "prompts.ts",
+      "type": "file",
+      "summary": "定义 AI 对话的系统提示词和消息构建函数，为 Ollama 聊天模型提供格式化的上下文消息模板。",
+      "filePath": "backend/ai/prompts.ts"
+    },
+    "function:backend/ai/prompts.ts:buildChatSystemPrompt": {
+      "name": "buildChatSystemPrompt",
+      "type": "function",
+      "summary": "构建聊天系统提示词，将词条列表格式化为助手角色可用的上下文信息。",
+      "filePath": "backend/ai/prompts.ts"
+    },
+    "function:backend/ai/prompts.ts:buildSummarizeMessages": {
+      "name": "buildSummarizeMessages",
+      "type": "function",
+      "summary": "构建摘要请求消息，将单个词条内容格式化为适合 AI 摘要的消息结构。",
+      "filePath": "backend/ai/prompts.ts"
+    },
+    "function:backend/ai/prompts.ts:buildSearchMessages": {
+      "name": "buildSearchMessages",
+      "type": "function",
+      "summary": "构建语义搜索消息，将多个词条和查询语句组合成 AI 搜索请求的消息体。",
+      "filePath": "backend/ai/prompts.ts"
+    },
+    "file:backend/ai/service.ts": {
+      "name": "service.ts",
+      "type": "file",
+      "summary": "AI 服务核心模块，封装了 Ollama 聊天 API 调用、语义搜索增强、智能摘要和结果解析功能。",
+      "filePath": "backend/ai/service.ts"
+    },
+    "class:backend/ai/service.ts:AiService": {
+      "name": "AiService",
+      "type": "class",
+      "summary": "AI 服务类，提供聊天对话、语义搜索增强和内容摘要功能，封装了 Ollama 调用和结果解析逻辑。",
+      "filePath": "backend/ai/service.ts"
+    },
+    "file:backend/app.ts": {
+      "name": "app.ts",
+      "type": "file",
+      "summary": "Express 应用工厂，负责创建和配置后端服务实例，挂载各个路由模块，并处理种子数据的向量化初始化。",
+      "filePath": "backend/app.ts"
+    },
+    "function:backend/app.ts:createApp": {
+      "name": "createApp",
+      "type": "function",
+      "summary": "Express 应用工厂函数，配置 CORS、JSON 解析中间件，挂载所有 API 路由并设置静态文件服务和 SPA 回退路由。",
+      "filePath": "backend/app.ts"
+    },
+    "function:backend/app.ts:runBootstrap": {
+      "name": "runBootstrap",
+      "type": "function",
+      "summary": "应用启动引导函数，执行种子元数据初始化、向量存储连接和已有词条嵌入处理。",
+      "filePath": "backend/app.ts"
+    },
+    "function:backend/app.ts:embedSeedEntries": {
+      "name": "embedSeedEntries",
+      "type": "function",
+      "summary": "将数据库中已有的种子词条内容通过 Ollama 向量化后插入向量存储，为语义搜索建立索引基础。",
+      "filePath": "backend/app.ts"
+    },
+    "file:backend/chunk/service.ts": {
+      "name": "chunk/service.ts",
+      "type": "file",
+      "summary": "文本分块服务（ChunkService），提供文档文本切分为可嵌入 chunk 的核心能力，支持 fixed / paragraph / sentence / markdown 四种分块策略，可配置 chunk 大小（默认 512 字符）、重叠量（默认 64 字符）和最小 chunk 长度（默认 50 字符）。为 RAG pipeline 中 parser→chunk→embed 链路的分块环节，输出格式化的 ChunkResult 数组（含唯一 id、位置索引、起始/结束字符偏移、策略元数据）。",
+      "filePath": "backend/chunk/service.ts"
+    },
+    "class:backend/chunk/service.ts:ChunkService": {
+      "name": "ChunkService",
+      "type": "class",
+      "summary": "文本分块服务类，支持 fixed、paragraph、sentence 和 markdown 四种分块模式，并提供块数估算功能。",
+      "filePath": "backend/chunk/service.ts"
+    },
+    "file:backend/config.ts": {
+      "name": "config.ts",
+      "type": "file",
+      "summary": "后端全局配置模块，从环境变量读取 Ollama 连接参数、Milvus 向量数据库地址和服务器端口等核心配置。",
+      "filePath": "backend/config.ts"
+    },
+    "file:backend/document/store.ts": {
+      "name": "document/store.ts",
+      "type": "file",
+      "summary": "文档存储模块（DocumentStore），负责将解析后的材料性质（ParsedProperty 数组）转换为可检索的 DocumentChunk 并持久化为 JSON 文件（backend/data/documents/entry_{id}.json）。每个 chunk 包含 id（{entryId}_{code} 格式）、entryId、结构化搜索文本（buildSearchText）和完整元数据（code/section/category/中英文名/符号/定义/单位/方法），是 RAG 文档库的写入层。",
+      "filePath": "backend/document/store.ts"
+    },
+    "class:backend/document/store.ts:DocumentStore": {
+      "name": "DocumentStore",
+      "type": "class",
+      "summary": "文档存储类，提供文档的保存、加载和批量读取功能，并构建属性搜索文本用于全文检索。",
+      "filePath": "backend/document/store.ts"
+    },
+    "file:backend/embedding/ollama.ts": {
+      "name": "ollama.ts",
+      "type": "file",
+      "summary": "Ollama 向量嵌入器，通过 HTTP API 调用 Ollama 的 embedding 模型将文本转换为向量表示。",
+      "filePath": "backend/embedding/ollama.ts"
+    },
+    "class:backend/embedding/ollama.ts:OllamaEmbedder": {
+      "name": "OllamaEmbedder",
+      "type": "class",
+      "summary": "Ollama 嵌入器类，封装单文本嵌入和批量嵌入功能，通过 HTTP 请求调用 Ollama embedding API。",
+      "filePath": "backend/embedding/ollama.ts"
+    },
+    "file:backend/import/service.ts": {
+      "name": "service.ts",
+      "type": "file",
+      "summary": "数据导入服务，提供从文件、缓冲区、字符串以及批量目录导入外部数据并自动向量化的完整流水线。",
+      "filePath": "backend/import/service.ts"
+    },
+    "class:backend/import/service.ts:DataImportService": {
+      "name": "DataImportService",
+      "type": "class",
+      "summary": "数据导入服务类，编排解析、分块、嵌入、元数据存储和向量存储的完整导入流水线，支持单文件和批量处理。",
+      "filePath": "backend/import/service.ts"
+    },
+    "file:backend/main.ts": {
+      "name": "main.ts",
+      "type": "file",
+      "summary": "后端服务入口文件，创建 Express 应用并启动 HTTP 服务器，输出运行环境和配置信息。",
+      "filePath": "backend/main.ts"
+    },
+    "function:backend/main.ts:main": {
+      "name": "main",
+      "type": "function",
+      "summary": "主启动函数，调用 createApp 创建 Express 实例并监听端口，打印服务运行状态和 Ollama 配置信息。",
+      "filePath": "backend/main.ts"
+    },
+    "file:backend/metadata/importJob.ts": {
+      "name": "importJob.ts",
+      "type": "file",
+      "summary": "元数据导入任务，负责解析 Markdown 格式的专家知识文件，提取属性表并创建词条及向量索引。",
+      "filePath": "backend/metadata/importJob.ts"
+    },
+    "class:backend/metadata/importJob.ts:ImportJob": {
+      "name": "ImportJob",
+      "type": "class",
+      "summary": "导入任务类，支持从文件和字符串导入 Markdown 内容，自动分组、提取标签并创建词条与向量存储。",
+      "filePath": "backend/metadata/importJob.ts"
+    },
+    "file:backend/metadata/store.ts": {
+      "name": "store.ts",
+      "type": "file",
+      "summary": "元数据存储核心模块，以 JSON 文件系统为基础提供词条、分类、标签、文件和数据项的完整 CRUD 操作。",
+      "filePath": "backend/metadata/store.ts"
+    },
+    "function:backend/metadata/store.ts:seedMetadata": {
+      "name": "seedMetadata",
+      "type": "function",
+      "summary": "种子数据初始化函数，在首次运行时创建默认分类、标签和示例词条，确保系统在空数据库时可用。",
+      "filePath": "backend/metadata/store.ts"
+    },
+    "class:backend/metadata/store.ts:MetadataStore": {
+      "name": "MetadataStore",
+      "type": "class",
+      "summary": "元数据存储类，提供词条、分类、标签、文件和数据项的完整增删改查接口，支持关键词搜索和标签同步。",
+      "filePath": "backend/metadata/store.ts"
+    },
+    "function:backend/metadata/store.ts:loadFile": {
+      "name": "loadFile",
+      "type": "function",
+      "summary": "通用 JSON 文件加载函数，从磁盘读取并解析指定名称的数据文件，支持默认值回退。",
+      "filePath": "backend/metadata/store.ts"
+    },
+    "file:backend/parser/markdown.ts": {
+      "name": "markdown.ts",
+      "type": "file",
+      "summary": "Markdown 解析器，专门解析包含属性表格的 Markdown 文档，提取结构化数据字段和分类信息。",
+      "filePath": "backend/parser/markdown.ts"
+    },
+    "class:backend/parser/markdown.ts:MarkdownParser": {
+      "name": "MarkdownParser",
+      "type": "class",
+      "summary": "Markdown 解析器类，解析 Markdown 表格行、推断分类、构建标题，并生成适合向量化的嵌入文本。",
+      "filePath": "backend/parser/markdown.ts"
+    },
+    "file:backend/parser/service.ts": {
+      "name": "service.ts",
+      "type": "file",
+      "summary": "通用文档解析服务，支持 PDF、DOCX、Markdown、图片和纯文本等多种格式的解析，统一为结构化数据输出。",
+      "filePath": "backend/parser/service.ts"
+    },
+    "function:backend/parser/service.ts:detectFormat": {
+      "name": "detectFormat",
+      "type": "function",
+      "summary": "文件格式检测函数，根据文件扩展名推断文档类型（pdf、docx、md、txt、png、jpg 等）。",
+      "filePath": "backend/parser/service.ts"
+    },
+    "function:backend/parser/service.ts:mimeTypeFor": {
+      "name": "mimeTypeFor",
+      "type": "function",
+      "summary": "MIME 类型映射函数，根据解析格式返回对应的 HTTP MIME 类型字符串。",
+      "filePath": "backend/parser/service.ts"
+    },
+    "function:backend/parser/service.ts:parsePdf": {
+      "name": "parsePdf",
+      "type": "function",
+      "summary": "PDF 文件解析函数，尝试加载 pdf-parse 库提取文本内容，异常时回退到缓冲区原始文本提取。",
+      "filePath": "backend/parser/service.ts"
+    },
+    "function:backend/parser/service.ts:parseDocx": {
+      "name": "parseDocx",
+      "type": "function",
+      "summary": "DOCX 文件解析函数，尝试使用 mammoth 库将 Word 文档转换为 Markdown 格式。",
+      "filePath": "backend/parser/service.ts"
+    },
+    "function:backend/parser/service.ts:parseImage": {
+      "name": "parseImage",
+      "type": "function",
+      "summary": "图片文件解析函数，读取图片元数据（格式、尺寸）并将二进制内容以 Base64 编码嵌入输出。",
+      "filePath": "backend/parser/service.ts"
+    },
+    "class:backend/parser/service.ts:ParserService": {
+      "name": "ParserService",
+      "type": "class",
+      "summary": "解析服务类，提供统一的 parseFile、parseString 和 parseBuffer 接口，根据格式自动路由到对应的解析器。",
+      "filePath": "backend/parser/service.ts"
+    },
+    "file:backend/retrieval/search.ts": {
+      "name": "search.ts",
+      "type": "file",
+      "summary": "语义搜索引擎，结合向量相似度搜索和关键词匹配，支持中英文混合分词和双语检索。",
+      "filePath": "backend/retrieval/search.ts"
+    },
+    "class:backend/retrieval/search.ts:SemanticSearch": {
+      "name": "SemanticSearch",
+      "type": "class",
+      "summary": "语义搜索类，组合向量搜索和关键词搜索两种策略，提供中英文分词和停用词过滤功能。",
+      "filePath": "backend/retrieval/search.ts"
+    },
+    "file:backend/types.ts": {
+      "name": "types.ts",
+      "type": "file",
+      "summary": "后端核心类型定义模块，声明了百科词条、分类、标签、文件、数据项以及解析器和导入相关的所有 TypeScript 接口。",
+      "filePath": "backend/types.ts"
+    },
+    "file:backend/vector/memory.ts": {
+      "name": "memory.ts",
+      "type": "file",
+      "summary": "内存向量存储实现，使用余弦相似度进行本地向量检索，支持数据持久化到 JSON 文件。",
+      "filePath": "backend/vector/memory.ts"
+    },
+    "class:backend/vector/memory.ts:MemoryVectorStore": {
+      "name": "MemoryVectorStore",
+      "type": "class",
+      "summary": "内存向量存储类，提供向量插入、余弦相似度搜索和数据持久化功能，作为 Milvus 的本地轻量替代方案。",
+      "filePath": "backend/vector/memory.ts"
+    },
+    "function:backend/vector/memory.ts:cosineSimilarity": {
+      "name": "cosineSimilarity",
+      "type": "function",
+      "summary": "余弦相似度计算函数，通过向量点积与模长之比衡量两个向量的语义相似程度。",
+      "filePath": "backend/vector/memory.ts"
+    },
+    "file:backend/vector/milvus.ts": {
+      "name": "milvus.ts",
+      "type": "file",
+      "summary": "Milvus 向量数据库客户端，封装 Collection 创建、索引管理、向量插入和搜索的完整操作流程。",
+      "filePath": "backend/vector/milvus.ts"
+    },
+    "function:backend/vector/milvus.ts:loadSDK": {
+      "name": "loadSDK",
+      "type": "function",
+      "summary": "Milvus SDK 动态加载函数，通过 ESM 动态导入加载 @zilliz/milvus2-sdk-node，实现可选依赖。",
+      "filePath": "backend/vector/milvus.ts"
+    },
+    "class:backend/vector/milvus.ts:MilvusClient": {
+      "name": "MilvusClient",
+      "type": "class",
+      "summary": "Milvus 客户端类，管理连接、Collection 创建与索引、向量批量插入和 ANN 搜索，支持动态 SDK 加载。",
+      "filePath": "backend/vector/milvus.ts"
+    },
+    "file:server/index.ts": {
+      "name": "index.ts",
+      "type": "file",
+      "summary": "服务端启动入口，负责初始化元数据种子、连接向量存储，并启动 HTTP 服务器监听请求。",
+      "filePath": "server/index.ts"
+    },
+    "function:server/index.ts:bootstrap": {
+      "name": "bootstrap",
+      "type": "function",
+      "summary": "服务启动引导函数，执行元数据种子初始化、连接向量数据库并启动 Express 监听。",
+      "filePath": "server/index.ts"
+    },
+    "file:server/middleware/auth.ts": {
+      "name": "auth.ts",
+      "type": "file",
+      "summary": "JWT 认证中间件，提供 token 签发、验证以及 requireAuth/optionalAuth 两个 Express 中间件工厂函数。",
+      "filePath": "server/middleware/auth.ts"
+    },
+    "function:server/middleware/auth.ts:signToken": {
+      "name": "signToken",
+      "type": "function",
+      "summary": "JWT Token 签发函数，使用 HMAC-SHA256 算法对 payload 进行签名并返回 Base64URL 编码的 token。",
+      "filePath": "server/middleware/auth.ts"
+    },
+    "function:server/middleware/auth.ts:verifyToken": {
+      "name": "verifyToken",
+      "type": "function",
+      "summary": "JWT Token 验证函数，校验签名完整性、过期时间并解码返回 payload 内容。",
+      "filePath": "server/middleware/auth.ts"
+    },
+    "function:server/middleware/auth.ts:requireAuth": {
+      "name": "requireAuth",
+      "type": "function",
+      "summary": "强制认证中间件，验证 Bearer Token 并将解码后的用户信息注入 req.user，未认证时返回 401。",
+      "filePath": "server/middleware/auth.ts"
+    },
+    "function:server/middleware/auth.ts:optionalAuth": {
+      "name": "optionalAuth",
+      "type": "function",
+      "summary": "可选认证中间件，若请求携带有效 token 则注入用户信息，否则匿名继续处理请求。",
+      "filePath": "server/middleware/auth.ts"
+    },
+    "file:server/routes/ai.ts": {
+      "name": "ai.ts",
+      "type": "file",
+      "summary": "AI 功能路由，暴露聊天对话、语义搜索和内容摘要三个 POST 端点，同时提供数据导入触发接口。",
+      "filePath": "server/routes/ai.ts"
+    },
+    "file:server/routes/auth.ts": {
+      "name": "auth.ts",
+      "type": "file",
+      "summary": "认证路由，提供 POST /login 端点，使用预设账号验证用户名密码并签发 JWT token。",
+      "filePath": "server/routes/auth.ts"
+    },
+    "file:server/routes/categories.ts": {
+      "name": "categories.ts",
+      "type": "file",
+      "summary": "分类查询路由，提供 GET /categories 端点，返回系统中所有可用的百科词条分类列表。",
+      "filePath": "server/routes/categories.ts"
+    },
+    "file:server/routes/dataItems.ts": {
+      "name": "dataItems.ts",
+      "type": "file",
+      "summary": "数据项路由，提供 GET/POST /data-items 端点，支持按词条 ID 查询和更新结构化数据项，部分接口需认证。",
+      "filePath": "server/routes/dataItems.ts"
+    },
+    "file:server/routes/entries.ts": {
+      "name": "entries.ts",
+      "type": "file",
+      "summary": "词条路由，提供 GET/POST/PUT/DELETE /entries 端点，实现词条的完整 CRUD 操作，写操作需认证。",
+      "filePath": "server/routes/entries.ts"
+    },
+    "file:server/routes/files.ts": {
+      "name": "files.ts",
+      "type": "file",
+      "summary": "文件管理路由，提供 GET/POST/DELETE /files 端点，支持文件上传、查询和删除操作。",
+      "filePath": "server/routes/files.ts"
+    },
+    "file:server/routes/pipeline.ts": {
+      "name": "pipeline.ts",
+      "type": "file",
+      "summary": "数据导入流水线路由，暴露分块、嵌入、搜索和完整导入流水线的调试与测试端点，是后端能力的综合集成入口。",
+      "filePath": "server/routes/pipeline.ts"
+    },
+    "file:server/routes/search.ts": {
+      "name": "search.ts",
+      "type": "file",
+      "summary": "搜索路由，提供 GET /search 端点，调用 AI 服务执行语义搜索并返回结果。",
+      "filePath": "server/routes/search.ts"
+    },
+    "file:server/routes/tags.ts": {
+      "name": "tags.ts",
+      "type": "file",
+      "summary": "标签查询路由，提供 GET /tags 端点，返回系统中所有已注册的标签列表。",
+      "filePath": "server/routes/tags.ts"
+    },
+    "file:src/api/categoriesApi.ts": {
+      "name": "Categories API",
+      "type": "file",
+      "summary": "分类 API 模块，封装获取企业知识分类目录的 HTTP 请求，仅暴露 getCategories 方法从后端 /categories 端点获取全部分类列表。",
+      "filePath": "src/api/categoriesApi.ts"
+    },
+    "file:src/api/dataItemsApi.ts": {
+      "name": "Data Items API",
+      "type": "file",
+      "summary": "数据条目 API 模块，提供研发数据字典的完整 CRUD 操作，包括获取全部数据条目、按条目 ID 查询、保存（新增/更新）和删除功能。",
+      "filePath": "src/api/dataItemsApi.ts"
+    },
+    "file:src/api/entriesApi.ts": {
+      "name": "Entries API",
+      "type": "file",
+      "summary": "条目 API 核心模块，封装 Wiki 条目的完整 CRUD 操作与查询过滤功能。定义 EntryQueryParams 接口用于构建多维度查询参数（关键词、类型、可见性、分类、标签），并通过 URLSearchParams 动态拼接查询字符串。",
+      "filePath": "src/api/entriesApi.ts"
+    },
+    "file:src/api/filesApi.ts": {
+      "name": "Files API",
+      "type": "file",
+      "summary": "文件附件 API 模块，提供 Wiki 附件的获取、上传和删除功能。上传支持 base64 数据编码、条目关联和用途类型，删除直接移除物理/逻辑索引中的附件记录。",
+      "filePath": "src/api/filesApi.ts"
+    },
+    "file:src/components/AiSearchResults.tsx": {
+      "name": "AI Search Results Component",
+      "type": "file",
+      "summary": "AI 搜索结果展示组件，根据加载状态展示三种视图：加载中的旋转动画、空结果的占位提示、以及基于 viewMode 切换的表格或网格卡片布局。支持标注 AI 语义搜索来源和关键词回退模式。",
+      "filePath": "src/components/AiSearchResults.tsx"
+    },
+    "file:src/components/AiSearchToggle.tsx": {
+      "name": "AI Search Toggle Component",
+      "type": "file",
+      "summary": "AI 语义搜索开关按钮组件。通过二态切换控制 AI 搜索功能的启用/禁用，启用时显示火花图标和品牌黄色高亮，禁用时回退到普通搜索图标样式。",
+      "filePath": "src/components/AiSearchToggle.tsx"
+    },
+    "file:src/components/AssetCard.tsx": {
+      "name": "Asset Card Component",
+      "type": "file",
+      "summary": "素材展示卡片组件，专为宣发素材库设计。包含 SVG 示意图渲染（业务流程图、产品分子渲染图、工厂车间图）、可见度徽章、文件大小格式化、附件下载按钮和用途类型标签。支持中英文双语切换。",
+      "filePath": "src/components/AssetCard.tsx"
+    },
+    "file:src/components/EntryCard.tsx": {
+      "name": "Entry Card Component",
+      "type": "file",
+      "summary": "Wiki 条目卡片组件，以网格卡片形式展示条目概览信息，包括类型徽章、可见度标签、分类名称、标题、摘要、标签、更新日期，以及详情查看、编辑、删除操作按钮。支持中英文双语显示。",
+      "filePath": "src/components/EntryCard.tsx"
+    },
+    "file:src/components/EntryTable.tsx": {
+      "name": "Entry Table Component",
+      "type": "file",
+      "summary": "条目表格视图组件，以表格式布局展示 Wiki 条目列表。包括列标题（条目名称与摘要、类型、可见范围、业务分类、更新时间、操作），支持内联筛选、查看/编辑/删除操作，并显示标签云。",
+      "filePath": "src/components/EntryTable.tsx"
+    },
+    "file:src/components/FileList.tsx": {
+      "name": "File List Component",
+      "type": "file",
+      "summary": "附件文件列表组件，展示与条目关联的 Wiki 附件集合。每个文件项显示文件名、大小、MIME 类型、用途标签，并提供下载和删除按钮。支持空列表占位提示和中英文双语。",
+      "filePath": "src/components/FileList.tsx"
+    },
+    "file:src/components/FileUpload.tsx": {
+      "name": "File Upload Component",
+      "type": "file",
+      "summary": "文件上传组件，提供拖拽或浏览选择文件上传的交互界面。包含用途类型选择器（PPT素材、宣发素材、客户展示、研发资料、产品资料、内部归档），模拟上传进度状态（空闲/上传中/成功/错误），支持文件类型过滤和重置。",
+      "filePath": "src/components/FileUpload.tsx"
+    },
+    "file:src/components/FilterBar.tsx": {
+      "name": "Filter Bar Component",
+      "type": "file",
+      "summary": "过滤搜索栏组件，提供多维度的 Wiki 条目检索界面。集成了关键词输入框、分类下拉选择器、可见性过滤（含访客受限提示）、条目类型药丸按钮组、以及可用标签云切换。支持中英文双语和登录状态感知。",
+      "filePath": "src/components/FilterBar.tsx"
+    },
+    "file:src/components/Unauthorized.tsx": {
+      "name": "Unauthorized Component",
+      "type": "file",
+      "summary": "未授权访问提示组件，当未登录用户尝试查看内部机密内容时显示的拦截页面。包含锁定图标、中文提示文案、“立即登录”和“返回公开首页”两个操作按钮。",
+      "filePath": "src/components/Unauthorized.tsx"
+    },
+    "file:src/components/VisibilityBadge.tsx": {
+      "name": "Visibility Badge Component",
+      "type": "file",
+      "summary": "可见性徽章组件，通过眼睛图标（公开）或盾牌图标（内部机密）直观展示条目的可见范围。支持中英文标签切换和深浅色主题样式适配。",
+      "filePath": "src/components/VisibilityBadge.tsx"
+    },
+    "file:src/context/LanguageThemeContext.tsx": {
+      "name": "Language & Theme Context",
+      "type": "file",
+      "summary": "语言和主题上下文模块，是前端国际化和主题系统的核心。提供完整的翻译字典（translations 对象，含中英文双语对照，覆盖导航、首页、目录、详情、编辑器、登录、管理后台和 AI 功能等全部页面文案），通过 React Context 暴露 LanguageThemeProvider 和 useLanguageTheme hook，支持浅色/深色主题切换和中/英语言切换，状态持久化到 localStorage。",
+      "filePath": "src/context/LanguageThemeContext.tsx"
+    },
+    "file:src/pages/AdminMockPage.tsx": {
+      "name": "Admin Mock Page",
+      "type": "file",
+      "summary": "系统管理员专区页面，提供 Mock 数据库监控仪表板和 SQLite/PostgreSQL 物理表结构白皮书。展示统计卡片（运行账户、条目总数、附件数量、公开/机密分布）、分类知识档案分布图表，以及完整的四张核心表（users、entries、files、data_items）的字段定义文档。",
+      "filePath": "src/pages/AdminMockPage.tsx"
+    },
+    "file:src/pages/AssetLibraryPage.tsx": {
+      "name": "Asset Library Page",
+      "type": "file",
+      "summary": "宣发素材库页面，为老板和市场部提供可视化素材检索和下载界面。集成关键词搜索、用途分类过滤（PPT素材/宣发素材/客户展示/内部归档）、标签过滤三重筛选，使用 AssetCard 网格展示素材。包含访客安全提示横幅，引导未登录用户登录解锁完整库。",
+      "filePath": "src/pages/AssetLibraryPage.tsx"
+    },
+    "file:src/pages/DataItemPage.tsx": {
+      "name": "Data Item Page",
+      "type": "file",
+      "summary": "研发组协作数据条目对准表页面，仅供内部登录用户访问。以表格形式展示研发数据字典索引，包括关联 Wiki 条目、数据键名、交换格式（cif/json/sql/excel/csv）、Schema 版本、负责人和同步日期。支持关键词搜索和文件格式过滤，未登录时显示安全锁定拦截页。",
+      "filePath": "src/pages/DataItemPage.tsx"
+    },
+    "file:src/pages/EntryDetailPage.tsx": {
+      "name": "Entry Detail Page",
+      "type": "file",
+      "summary": "Wiki 条目详情页面，是系统的核心阅读视图。展示条目标题、摘要引用框、完整 Markdown 正文、元数据（类型/可见性/分类/时间/发布人），右侧边栏展示附件文件列表、标签云和沙盒提示。支持未授权拦截（内部机密内容对访客隐藏）、AI 摘要按钮、编辑跳转，以及为 asset 和 data_item 类型提供专用的可视化扩展面板（SVG 图表和数据字典详情）。",
+      "filePath": "src/pages/EntryDetailPage.tsx"
+    },
+    "file:src/pages/EntryEditorPage.tsx": {
+      "name": "Entry Editor Page",
+      "type": "file",
+      "summary": "Wiki 条目编辑器页面，提供创建和编辑条目的完整表单界面。左侧主面板包含标题输入、类型选择器、可见性控制、摘要文本框、正文 Markdown 编辑器以及 data_item 类型的专用 Schema 扩展字段（数据键名、交换格式、负责人、Schema 版本、字段映射、存储路径）。右侧边栏包含业务分类选择、标签输入、FileUpload 附件上传组件和安全提交面板。支持编辑模式回填已有数据。",
+      "filePath": "src/pages/EntryEditorPage.tsx"
+    },
+    "file:src/pages/EntryListPage.tsx": {
+      "name": "Entry List Page",
+      "type": "file",
+      "summary": "Wiki 条目目录列表页，是系统的核心浏览和检索入口。集成了 FilterBar 过滤组件、AI 语义搜索开关（AiSearchToggle）和结果展示（AiSearchResults）、网格/表格视图切换（使用 EntryCard 和 EntryTable）、新建条目按钮以及多维度筛选（类型、可见性、分类、标签、关键词）。支持从 Navbar 传入初始筛选参数进行预过滤。",
+      "filePath": "src/pages/EntryListPage.tsx"
+    },
+    "file:src/pages/PublicHome.tsx": {
+      "name": "Public Home Page",
+      "type": "file",
+      "summary": "公开首页（着陆页），面向未登录访客和客户的展示页面。包含品牌 Hero 区域（带探索和登录按钮）、核心业务维度统计卡片网格（产品业务、技术优势、专利成果、研发协作数据）、最新公开条目展示和 MVP 场景说明指南区域。所有公开条目仅展示 public 可见性的内容。",
+      "filePath": "src/pages/PublicHome.tsx"
+    },
+    "file:src/types/category.ts": {
+      "name": "Category Type Definition",
+      "type": "file",
+      "summary": "Category 类型定义文件，定义业务分类的数据结构，包含 id、name、可选 description 和 sort_order 排序字段。",
+      "filePath": "src/types/category.ts"
+    },
+    "file:src/types/dataItem.ts": {
+      "name": "DataItem Type Definition",
+      "type": "file",
+      "summary": "DataItem 类型定义文件，定义研发数据条目的数据结构，包括 entry_id 关联、data_name、data_definition、data_format（支持 csv/json/sql/cif/excel/txt）、storage_description、schema_description、schema_version、responsible_person 和 updated_at 字段。",
+      "filePath": "src/types/dataItem.ts"
+    },
+    "file:src/types/entry.ts": {
+      "name": "Entry Type Definition",
+      "type": "file",
+      "summary": "Entry 核心类型定义文件，定义 Wiki 条目的完整数据结构。包含 EntryType 联合类型（asset/product/tech/patent/data_item）、VisibilityType（public/internal）以及 Entry 接口（含 id、title、entry_type、summary、content、visibility、category_id、时间戳和 tags 数组）。",
+      "filePath": "src/types/entry.ts"
+    },
+    "file:src/types/file.ts": {
+      "name": "File Type Definition",
+      "type": "file",
+      "summary": "WikiFile 类型定义文件，定义附件/素材文件的元数据结构。包含 UsageType 联合类型（PPT素材/宣发素材/客户展示/研发资料/产品资料/内部归档）和 WikiFile 接口（含 entry_id 关联、原始文件名、存储文件名、MIME 类型、文件大小、存储路径、用途类型和时间戳）。",
+      "filePath": "src/types/file.ts"
+    },
+    "file:src/utils/labelMapper.ts": {
+      "name": "Label Mapper Utility",
+      "type": "file",
+      "summary": "标签映射工具模块，提供条目类型到中文标签的映射（ENTRY_TYPE_LABELS）和对应的 Tailwind CSS 颜色样式映射（ENTRY_TYPE_COLORS），为五种条目类型（展示素材、产品业务、技术能力、专利成果、数据条目）提供统一的标签渲染方案。",
+      "filePath": "src/utils/labelMapper.ts"
+    },
+    "function:src/api/categoriesApi.ts:categoriesApi": {
+      "name": "categoriesApi",
+      "type": "function",
+      "summary": "分类 API 对象，封装 getCategories 方法以从后端 /categories 端点获取全部分类列表。",
+      "filePath": "src/api/categoriesApi.ts"
+    },
+    "function:src/api/dataItemsApi.ts:dataItemsApi": {
+      "name": "dataItemsApi",
+      "type": "function",
+      "summary": "数据条目 API 对象，提供 getDataItems（获取全部）、getDataItemByEntryId（按条目ID查询）、saveDataItem（创建/更新）和 deleteDataItem（删除）四个 CRUD 方法。",
+      "filePath": "src/api/dataItemsApi.ts"
+    },
+    "function:src/api/entriesApi.ts:entriesApi": {
+      "name": "entriesApi",
+      "type": "function",
+      "summary": "条目 API 核心对象，提供 getEntries（多条件查询过滤）、getEntryById（按ID查询含未授权处理）、createEntry（创建新条目）、updateEntry（更新条目）和 deleteEntry（删除条目）五个方法，是前端数据获取的主入口。",
+      "filePath": "src/api/entriesApi.ts"
+    },
+    "class:src/types/entry.ts:EntryQueryParams": {
+      "name": "EntryQueryParams",
+      "type": "class",
+      "summary": "条目查询参数接口，定义多维过滤条件：keyword（关键词）、entry_type（条目类型/全部）、visibility（可见性/全部）、category_id（分类ID/全部）和 tag（标签名）。",
+      "filePath": "src/api/entriesApi.ts"
+    },
+    "function:src/api/filesApi.ts:filesApi": {
+      "name": "filesApi",
+      "type": "function",
+      "summary": "文件附件 API 对象，提供 getFiles（按条目ID查询附件列表）、uploadFile（上传文件支持 base64 编码）和 deleteFile（删除附件）三个方法。",
+      "filePath": "src/api/filesApi.ts"
+    },
+    "class:src/types/category.ts:Category": {
+      "name": "Category",
+      "type": "class",
+      "summary": "Category 接口，定义业务分类的数据结构：id（自增主键）、name（分类名称）、description（可选描述）、sort_order（排序权重）。",
+      "filePath": "src/types/category.ts"
+    },
+    "class:src/types/dataItem.ts:DataItem": {
+      "name": "DataItem",
+      "type": "class",
+      "summary": "DataItem 接口，定义研发数据条目的完整字段结构，包括 entry_id 外键关联、数据名称、定义、格式、存储描述、Schema 描述、版本号、负责人和更新时间。",
+      "filePath": "src/types/dataItem.ts"
+    },
+    "class:src/types/entry.ts:Entry": {
+      "name": "Entry",
+      "type": "class",
+      "summary": "Entry 核心接口，定义 Wiki 知识条目的完整数据结构：id、title、entry_type（五种类型之一）、summary、content（Markdown 正文）、visibility（public/internal）、category_id（可选分类外键）、时间戳和 tags 标签数组。",
+      "filePath": "src/types/entry.ts"
+    },
+    "class:src/types/entry.ts:EntryType": {
+      "name": "EntryType",
+      "type": "class",
+      "summary": "条目类型联合类型定义，限定条目分类为 asset（展示素材）、product（产品业务）、tech（技术能力）、patent（专利成果）或 data_item（数据条目）。",
+      "filePath": "src/types/entry.ts"
+    },
+    "class:src/types/entry.ts:VisibilityType": {
+      "name": "VisibilityType",
+      "type": "class",
+      "summary": "可见性类型定义，限定条目的访问控制级别为 public（公开可读）或 internal（内部机密）。用于权限隔离和过滤逻辑。",
+      "filePath": "src/types/entry.ts"
+    },
+    "class:src/types/file.ts:WikiFile": {
+      "name": "WikiFile",
+      "type": "class",
+      "summary": "WikiFile 接口，定义附件文件的元数据结构：id、entry_id（外键）、original_filename、stored_filename（UUID 存储名）、file_type（MIME）、file_size（字节数）、storage_path（磁盘路径）和 usage_type（用途分类）。",
+      "filePath": "src/types/file.ts"
+    },
+    "class:src/types/file.ts:UsageType": {
+      "name": "UsageType",
+      "type": "class",
+      "summary": "附件用途类型联合定义，用中文标识六种用途场景：PPT素材、宣发素材、客户展示、研发资料、产品资料、内部归档。用于素材库和上传组件的筛选与分类。",
+      "filePath": "src/types/file.ts"
+    },
+    "function:src/utils/labelMapper.ts:ENTRY_TYPE_LABELS": {
+      "name": "ENTRY_TYPE_LABELS",
+      "type": "function",
+      "summary": "条目类型中文标签映射常量，将 EntryType 五种类型映射为中文显示名称：展示素材、产品业务、技术能力、专利成果、数据条目。",
+      "filePath": "src/utils/labelMapper.ts"
+    },
+    "function:src/utils/labelMapper.ts:ENTRY_TYPE_COLORS": {
+      "name": "ENTRY_TYPE_COLORS",
+      "type": "function",
+      "summary": "条目类型 Tailwind CSS 颜色映射常量，为每种 EntryType 配置独特的颜色组合（靛蓝/天蓝/紫色/青色/玫瑰色），支持深浅色主题自适应，确保视觉区分度。",
+      "filePath": "src/utils/labelMapper.ts"
+    },
+    "function:src/context/LanguageThemeContext.tsx:useLanguageTheme": {
+      "name": "useLanguageTheme",
+      "type": "function",
+      "summary": "语言主题自定义 Hook，封装 React Context 消费逻辑，返回包含 theme（当前主题）、lang（当前语言）、toggleTheme（主题切换）、setLang（语言设置）和 t（翻译函数）的对象。在 Provider 外部调用时抛出错误。",
+      "filePath": "src/context/LanguageThemeContext.tsx"
+    },
+    "function:src/context/LanguageThemeContext.tsx:LanguageThemeProvider": {
+      "name": "LanguageThemeProvider",
+      "type": "function",
+      "summary": "语言和主题的 React Context Provider 组件。管理 theme（light/dark，与 Tailwind dark class 同步）和 lang（zh/en）状态，状态通过 localStorage 持久化，提供 t() 翻译函数从 translations 字典按 key 和当前语言取值，fallback 到中文。",
+      "filePath": "src/context/LanguageThemeContext.tsx"
+    },
+    "function:src/context/LanguageThemeContext.tsx:translations": {
+      "name": "translations",
+      "type": "function",
+      "summary": "多语言翻译字典对象，包含项目中所有前端文本的中英文翻译对照。覆盖导航品牌、首页、目录、详情、素材库、数据条目、编辑器、登录、管理后台和 AI 功能等全部页面模块，共 80+ 个翻译键。",
+      "filePath": "src/context/LanguageThemeContext.tsx"
+    },
+    "function:src/components/AiSearchResults.tsx:AiSearchResults": {
+      "name": "AiSearchResults",
+      "type": "function",
+      "summary": "AI 搜索结果展示组件，Props 包含搜索结果数组、加载状态、来源标注、视图模式、分类映射和操作回调。内部根据加载/空结果/有效结果三种状态渲染不同 UI，结果区支持表格和网格两种视图模式。",
+      "filePath": "src/components/AiSearchResults.tsx"
+    },
+    "function:src/components/AiSearchToggle.tsx:AiSearchToggle": {
+      "name": "AiSearchToggle",
+      "type": "function",
+      "summary": "AI 语义搜索开关按钮，接收 enabled 布尔值和 onToggle 回调，显示火花/Search 图标并根据启用状态切换品牌黄色高亮样式。",
+      "filePath": "src/components/AiSearchToggle.tsx"
+    },
+    "function:src/components/AssetCard.tsx:AssetCard": {
+      "name": "AssetCard",
+      "type": "function",
+      "summary": "素材展示卡片组件，接收 entry、file、onSelect 和 onDownload 回调。包含内嵌 SVG 示意图渲染（业务流程图/分子渲染图/车间图）、可见度徽章、文件大小格式化、下载按钮和用途类型标签，支持中英文双语。",
+      "filePath": "src/components/AssetCard.tsx"
+    },
+    "function:src/components/EntryCard.tsx:EntryCard": {
+      "name": "EntryCard",
+      "type": "function",
+      "summary": "条目卡片组件，展示 Wiki 条目的概览信息，包括类型徽章、可见度标签、分类名、标题、摘要、标签云、更新日期，并提供详情查看、编辑和删除操作按钮。支持中英文双语和登录/未登录权限差异。",
+      "filePath": "src/components/EntryCard.tsx"
+    },
+    "function:src/components/EntryTable.tsx:EntryTable": {
+      "name": "EntryTable",
+      "type": "function",
+      "summary": "表格视图组件，以 HTML table 形式展示条目列表，包含类型徽章、可见度、分类、标签、时间等列，并提供查看/编辑/删除内联操作按钮。空列表时显示占位提示。",
+      "filePath": "src/components/EntryTable.tsx"
+    },
+    "function:src/components/FileList.tsx:FileList": {
+      "name": "FileList",
+      "type": "function",
+      "summary": "附件文件列表组件，以列表形式展示文件集合，每项显示文件图标、名称、大小、MIME 类型、用途标签，并提供下载和删除按钮。支持空列表占位提示。",
+      "filePath": "src/components/FileList.tsx"
+    },
+    "function:src/components/FileUpload.tsx:FileUpload": {
+      "name": "FileUpload",
+      "type": "function",
+      "summary": "文件上传组件，提供拖拽区域和浏览按钮两种上传方式。包含用途类型选择器、模拟上传进度（空闲/上传中/成功三态），支持文件类型过滤，上传完成后可重置。",
+      "filePath": "src/components/FileUpload.tsx"
+    },
+    "function:src/components/FilterBar.tsx:FilterBar": {
+      "name": "FilterBar",
+      "type": "function",
+      "summary": "过滤搜索栏组件，整合关键词输入、分类下拉、可见性选择（含访客受限提示）、条目类型药丸按钮组和标签云切换，所有过滤条件通过 onChange 回调向上传递更新的查询参数。",
+      "filePath": "src/components/FilterBar.tsx"
+    },
+    "function:src/components/Unauthorized.tsx:Unauthorized": {
+      "name": "Unauthorized",
+      "type": "function",
+      "summary": "未授权拦截提示组件，展示锁定图标和中文提示，提供「立即登录」和「返回公开首页」两个导航按钮。用于内部机密内容的访问拦截。",
+      "filePath": "src/components/Unauthorized.tsx"
+    },
+    "function:src/components/VisibilityBadge.tsx:VisibilityBadge": {
+      "name": "VisibilityBadge",
+      "type": "function",
+      "summary": "可见性徽章组件，通过眼睛（公开）或盾牌（内部）图标展示条目可见范围，支持中英文标签和深浅色主题。",
+      "filePath": "src/components/VisibilityBadge.tsx"
+    },
+    "function:src/pages/AdminMockPage.tsx:AdminMockPage": {
+      "name": "AdminMockPage",
+      "type": "function",
+      "summary": "管理员专区页面组件，展示 Mock 数据库监控仪表板（统计卡片、类型分布图表）和 SQLite 物理表结构文档（users/entries/files/data_items 四表字段详述），支持中英文切换。",
+      "filePath": "src/pages/AdminMockPage.tsx"
+    },
+    "function:src/pages/AssetLibraryPage.tsx:AssetLibraryPage": {
+      "name": "AssetLibraryPage",
+      "type": "function",
+      "summary": "宣发素材库页面组件，集成关键词搜索、用途过滤、标签过滤三重筛选，使用 AssetCard 网格展示素材。未登录时显示安全横幅引导登录。",
+      "filePath": "src/pages/AssetLibraryPage.tsx"
+    },
+    "function:src/pages/DataItemPage.tsx:DataItemPage": {
+      "name": "DataItemPage",
+      "type": "function",
+      "summary": "研发数据条目页面组件，以表格形式展示数据字典索引，支持关键词搜索和格式过滤，未登录时显示安全锁定拦截页。",
+      "filePath": "src/pages/DataItemPage.tsx"
+    },
+    "function:src/pages/EntryDetailPage.tsx:EntryDetailPage": {
+      "name": "EntryDetailPage",
+      "type": "function",
+      "summary": "条目详情页面组件，展示完整 Wiki 内容：标题、摘要、Markdown 正文、附件列表、标签云、元数据，并为 asset 和 data_item 类型提供专用可视化面板。包含未授权拦截逻辑。",
+      "filePath": "src/pages/EntryDetailPage.tsx"
+    },
+    "function:src/pages/EntryEditorPage.tsx:EntryEditorPage": {
+      "name": "EntryEditorPage",
+      "type": "function",
+      "summary": "条目编辑器页面组件，提供创建和编辑 Wiki 条目的完整表单，支持标题/类型/可见性/摘要/正文输入、data_item 专用 Schema 扩展字段、附件上传、分类选择和标签编辑。支持创建和编辑双模式。",
+      "filePath": "src/pages/EntryEditorPage.tsx"
+    },
+    "function:src/pages/EntryListPage.tsx:EntryListPage": {
+      "name": "EntryListPage",
+      "type": "function",
+      "summary": "条目目录列表页面组件，集成 FilterBar、AI 搜索、网格/表格视图切换，支持多维度过滤和初始筛选参数传入。是系统的核心浏览入口。",
+      "filePath": "src/pages/EntryListPage.tsx"
+    },
+    "function:src/pages/PublicHome.tsx:PublicHome": {
+      "name": "PublicHome",
+      "type": "function",
+      "summary": "公开首页组件，包含品牌 Hero 区域、核心业务统计卡片网格、最新公开条目预览和 MVP 场景说明指南。所有内容仅展示 public 可见性。",
+      "filePath": "src/pages/PublicHome.tsx"
+    },
+    "concept:visibility-access-control": {
+      "name": "可见性访问控制",
+      "type": "concept",
+      "summary": "系统中贯穿前后端的核心安全机制，通过 VisibilityType（public/internal）对条目进行访问隔离。前端通过 VisibilityBadge 可视化展示、FilterBar 过滤、Unauthorized 组件拦截，后端通过路由中间件验证登录状态后动态过滤 internal 内容。",
+      "filePath": ""
+    },
+    "concept:entry-crud-flow": {
+      "name": "条目 CRUD 数据流",
+      "type": "concept",
+      "summary": "Wiki 知识条目的完整增删改查数据流。API 层（entriesApi/filesApi/dataItemsApi）通过 apiFetch 调用后端 REST 端点，页面层（EntryListPage/EntryDetailPage/EntryEditorPage）通过调用 API 方法实现条目的创建、查询、过滤、更新和删除，数据在 localStorage/Mock 存储中持久化。",
+      "filePath": ""
+    },
+    "concept:ai-semantic-search": {
+      "name": "AI 语义搜索功能",
+      "type": "concept",
+      "summary": "基于 Ollama AI 的语义搜索功能模块，通过 AiSearchToggle 开关控制启用，AiSearchResults 展示结果，AiContext 管理 AI 调用状态。支持自然语言查询，fallback 到关键词匹配，在 EntryListPage 中与 FilterBar 互斥显示。",
+      "filePath": ""
+    },
+    "file:src/main.tsx": {
+      "name": "main.tsx",
+      "type": "file",
+      "summary": "React 应用入口文件，使用 createRoot 将 App 组件挂载到 DOM 的 root 节点，外层包裹 StrictMode 以启用开发阶段的额外检查。",
+      "filePath": "src/main.tsx"
+    },
+    "file:src/App.tsx": {
+      "name": "App.tsx",
+      "type": "file",
+      "summary": "应用根组件，负责组装全局 Provider（LanguageThemeProvider、AuthProvider、AiProvider）、定义基于状态的路由视图切换逻辑、渲染响应式导航栏和页脚。AppContent 内部组件消费多个 Context 实现 conditional rendering。",
+      "filePath": "src/App.tsx"
+    },
+    "file:src/api/client.ts": {
+      "name": "client.ts",
+      "type": "file",
+      "summary": "通用 HTTP 客户端模块，提供 apiFetch 泛型函数封装 fetch API，自动从 localStorage 注入 Bearer token 认证头，统一处理 JSON 请求/响应和错误解析。另导出 hasInternalAccess 用于客户端权限判断。",
+      "filePath": "src/api/client.ts"
+    },
+    "file:src/api/authApi.ts": {
+      "name": "authApi.ts",
+      "type": "file",
+      "summary": "认证 API 模块，封装登录和会话验证两个接口。login 方法发送用户名/密码并获取 token；getMe 方法调用 /auth/me 验证当前会话有效性，失败时返回 isLoggedIn: false 而非抛出异常。",
+      "filePath": "src/api/authApi.ts"
+    },
+    "file:src/context/AuthContext.tsx": {
+      "name": "AuthContext.tsx",
+      "type": "file",
+      "summary": "认证状态 Context Provider，管理全局登录态。AuthProvider 在挂载时从 localStorage 恢复会话并通过 getMe API 验证 token 有效性；提供 login/logout 方法、user/token/isLoggedIn/loading 状态。",
+      "filePath": "src/context/AuthContext.tsx"
+    },
+    "file:src/context/AiContext.tsx": {
+      "name": "AiContext.tsx",
+      "type": "file",
+      "summary": "AI 功能 Context Provider，提供三大 AI 能力：语义搜索（aiSearch）、对话聊天（sendChat/clearChat/chatHistory）、条目摘要（summarize）。所有 AI 调用通过 apiFetch 统一走后端 /search、/ai/chat、/ai/summarize 端点。",
+      "filePath": "src/context/AiContext.tsx"
+    },
+    "file:src/components/Navbar.tsx": {
+      "name": "Navbar.tsx",
+      "type": "file",
+      "summary": "响应式顶部导航栏组件，根据登录态动态展示不同的导航菜单项（已登录显示内部管理入口，未登录显示公开内容筛选分类）。集成主题切换、语言切换和移动端汉堡菜单。",
+      "filePath": "src/components/Navbar.tsx"
+    },
+    "file:src/components/AiChatWidget.tsx": {
+      "name": "AiChatWidget.tsx",
+      "type": "file",
+      "summary": "浮动 AI 聊天窗口组件，提供固定定位的对话气泡按钮和可展开的聊天面板。支持发送消息、查看对话历史、自动滚动到底部。Enter 键发送（Shift+Enter 换行）。",
+      "filePath": "src/components/AiChatWidget.tsx"
+    },
+    "file:src/components/AiSummarizeButton.tsx": {
+      "name": "AiSummarizeButton.tsx",
+      "type": "file",
+      "summary": "AI 摘要按钮组件，接收 entryId 作为 props 并调用 AI 摘要服务。支持展开/收起摘要内容、加载中禁用态和错误提示。适用于在条目详情页内嵌使用。",
+      "filePath": "src/components/AiSummarizeButton.tsx"
+    },
+    "file:src/pages/LoginPage.tsx": {
+      "name": "LoginPage.tsx",
+      "type": "file",
+      "summary": "登录页面组件，提供用户名/密码表单、表单验证和错误提示。登录成功后导航到内部条目列表页。包含演示环境的一键填充功能（'Quick Fill admin'）和双语 UI 支持。左侧展示品牌认证说明 Banner。",
+      "filePath": "src/pages/LoginPage.tsx"
+    },
+    "file:src/types/user.ts": {
+      "name": "user.ts",
+      "type": "file",
+      "summary": "用户相关的 TypeScript 类型定义文件，导出 User 接口（id、username、display_name、created_at）和 AuthState 接口（isLoggedIn、user、token）。是认证模块的类型基础。",
+      "filePath": "src/types/user.ts"
+    },
+    "file:src/mock/mockUsers.ts": {
+      "name": "mockUsers.ts",
+      "type": "file",
+      "summary": "模拟用户数据模块，导出一个 mockUsers 数组，包含单个测试用户（admin / 内部测试用户），用于开发和演示场景的快速登录验证。",
+      "filePath": "src/mock/mockUsers.ts"
+    },
+    "function:src/App.tsx:App": {
+      "name": "App",
+      "type": "function",
+      "summary": "应用的默认导出组件，按顺序嵌套 LanguageThemeProvider → AuthProvider → AiProvider，最内层渲染 AppContent。此三层 Provider 嵌套顺序决定了 Context 的依赖层级。",
+      "filePath": "src/App.tsx"
+    },
+    "function:src/App.tsx:AppContent": {
+      "name": "AppContent",
+      "type": "function",
+      "summary": "应用核心内容组件，消费 AuthContext 和 LanguageThemeContext，通过 useState 管理 currentView/viewDetails 实现基于 switch/case 的客户端路由。loading 态显示旋转加载动画。",
+      "filePath": "src/App.tsx"
+    },
+    "function:src/api/client.ts:apiFetch": {
+      "name": "apiFetch",
+      "type": "function",
+      "summary": "泛型 HTTP 请求函数，自动拼接 /api 基础路径、注入 Bearer token 认证头、设置 Content-Type: application/json，并对非 ok 响应统一解析错误信息并抛出 Error。",
+      "filePath": "src/api/client.ts"
+    },
+    "function:src/api/client.ts:hasInternalAccess": {
+      "name": "hasInternalAccess",
+      "type": "function",
+      "summary": "客户端权限判断函数，从 localStorage 读取 wiki_auth 并检查 token 是否存在，返回 boolean 表示当前用户是否持有有效内部访问凭证。",
+      "filePath": "src/api/client.ts"
+    },
+    "function:src/api/client.ts:getAuthHeaders": {
+      "name": "getAuthHeaders",
+      "type": "function",
+      "summary": "内部辅助函数，从 localStorage 解析 wiki_auth 并提取 token 构造 Authorization: Bearer <token> 请求头。解析失败时静默返回空对象。",
+      "filePath": "src/api/client.ts"
+    },
+    "module:src/api/authApi.ts:authApi": {
+      "name": "authApi",
+      "type": "module",
+      "summary": "认证 API 命名空间对象，封装 login（POST /auth/login）和 getMe（GET /auth/me）两个方法。login 返回 token 和 user；getMe 采用容错设计，失败时返回 isLoggedIn: false。",
+      "filePath": "src/api/authApi.ts"
+    },
+    "function:src/components/Navbar.tsx:Navbar": {
+      "name": "Navbar",
+      "type": "function",
+      "summary": "响应式导航栏 React 组件，接收 currentView 和 onNavigate props，根据登录态渲染不同的导航菜单项。集成主题切换、中英文语言切换和移动端汉堡菜单。",
+      "filePath": "src/components/Navbar.tsx"
+    },
+    "function:src/components/AiChatWidget.tsx:AiChatWidget": {
+      "name": "AiChatWidget",
+      "type": "function",
+      "summary": "浮动 AI 聊天组件，提供消息气泡按钮和可展开的聊天面板。使用 useAi hook 获取 chatHistory、sendChat、clearChat 等聊天能力。",
+      "filePath": "src/components/AiChatWidget.tsx"
+    },
+    "function:src/components/AiSummarizeButton.tsx:AiSummarizeButton": {
+      "name": "AiSummarizeButton",
+      "type": "function",
+      "summary": "AI 摘要按钮组件，接收 entryId props 调用 AI 摘要服务，展示可折叠的摘要结果面板，含加载和错误状态处理。",
+      "filePath": "src/components/AiSummarizeButton.tsx"
+    },
+    "function:src/context/AuthContext.tsx:AuthProvider": {
+      "name": "AuthProvider",
+      "type": "function",
+      "summary": "认证状态 Context Provider 组件，管理 isLoggedIn、user、token、loading 状态。挂载时从 localStorage 恢复会话并通过 API 验证 token；提供 login/logout 操作方法。",
+      "filePath": "src/context/AuthContext.tsx"
+    },
+    "function:src/context/AuthContext.tsx:useAuth": {
+      "name": "useAuth",
+      "type": "function",
+      "summary": "认证 Context 消费 Hook，封装 useContext(AuthContext) 并包含 undefined 检查，在 Provider 外使用时抛出明确错误信息。",
+      "filePath": "src/context/AuthContext.tsx"
+    },
+    "function:src/context/AiContext.tsx:AiProvider": {
+      "name": "AiProvider",
+      "type": "function",
+      "summary": "AI 功能 Context Provider 组件，管理 AI 搜索、聊天和摘要三项能力的状态和方法。aiSearch 调用 POST /search；sendChat 调用 POST /ai/chat 并维护对话历史；summarize 调用 POST /ai/summarize。",
+      "filePath": "src/context/AiContext.tsx"
+    },
+    "function:src/context/AiContext.tsx:useAi": {
+      "name": "useAi",
+      "type": "function",
+      "summary": "AI Context 消费 Hook，封装 useContext(AiContext)。提供 aiSearch、sendChat、clearChat、summarize 等方法和对应的状态（isSearching、isChatting、isSummarizing）。",
+      "filePath": "src/context/AiContext.tsx"
+    },
+    "function:src/pages/LoginPage.tsx:LoginPage": {
+      "name": "LoginPage",
+      "type": "function",
+      "summary": "登录页面组件，接收 onNavigate callback props。提供用户名/密码表单、登录提交、错误展示、演示快速填充、双语 UI 等完整登录流程。",
+      "filePath": "src/pages/LoginPage.tsx"
+    },
+    "concept:client-side-routing": {
+      "name": "客户端视图路由",
+      "type": "concept",
+      "summary": "应用使用基于 useState 的客户端视图路由模式——通过 currentView 字符串状态和 switch/case 条件渲染实现页面切换，不依赖 React Router 等第三方路由库。handleNavigate 函数统一处理视图跳转和详情参数传递。",
+      "filePath": ""
+    },
+    "concept:provider-composition": {
+      "name": "Provider 组合模式",
+      "type": "concept",
+      "summary": "根组件 App 采用 Provider 嵌套组合模式——LanguageThemeProvider → AuthProvider → AiProvider 三层嵌套，确保内部组件可按需消费任意 Context。此模式遵循 React Context 的标准用法：外层 Provider 的状态在内层组件中均可访问。",
+      "filePath": ""
+    },
+    "concept:bearer-token-auth": {
+      "name": "Bearer Token 认证流程",
+      "type": "concept",
+      "summary": "应用采用基于 localStorage 的 Bearer Token 认证方案。登录成功后将 { token, user } 对象 JSON 序列化存入 localStorage 的 wiki_auth 键；apiFetch 每次请求自动从 localStorage 读取 token 并注入 Authorization 头；AuthProvider 挂载时通过 getMe API 验证 token 有效性。",
+      "filePath": ""
+    },
+    "concept:ai-integration": {
+      "name": "AI 功能集成",
+      "type": "concept",
+      "summary": "前端通过 AiContext 统一封装三项 AI 能力——语义搜索（/search 端点返回匹配的 Entry 列表）、AI 对话（/ai/chat 端点维护对话历史并返回助手回复）、AI 摘要（/ai/summarize 端点对指定 Entry 生成摘要文本）。所有调用通过 apiFetch 统一走后端代理。",
+      "filePath": ""
+    },
+    "file:src/api/storageInitializer.ts": {
+      "name": "storageInitializer.ts",
+      "type": "file",
+      "summary": "基于 localStorage 的数据初始化层，在浏览器首次访问时自动灌入 mock 数据，并提供泛型读写与 JSON 解析辅助方法。",
+      "filePath": "src/api/storageInitializer.ts"
+    },
+    "file:src/api/tagsApi.ts": {
+      "name": "tagsApi.ts",
+      "type": "file",
+      "summary": "标签 API 封装模块，通过通用 apiFetch 客户端向后端发起 GET /tags 请求获取标签列表。",
+      "filePath": "src/api/tagsApi.ts"
+    },
+    "file:src/mock/mockCategories.ts": {
+      "name": "mockCategories.ts",
+      "type": "file",
+      "summary": "提供 6 条中文分类 mock 数据，涵盖展示素材、产品资料、技术能力、专利成果、数据条目和研发协作六大类别。",
+      "filePath": "src/mock/mockCategories.ts"
+    },
+    "file:src/mock/mockDataItems.ts": {
+      "name": "mockDataItems.ts",
+      "type": "file",
+      "summary": "提供 2 条科研数据条目 mock 数据，包含晶体结构图谱和实验室表征记录的完整 schema 描述与存储信息。",
+      "filePath": "src/mock/mockDataItems.ts"
+    },
+    "file:src/mock/mockEntries.ts": {
+      "name": "mockEntries.ts",
+      "type": "file",
+      "summary": "提供 8 条百科条目 mock 数据，包含完整的中文标题、内容、分类、标签和可见性字段，用于前端开发和离线演示。",
+      "filePath": "src/mock/mockEntries.ts"
+    },
+    "file:src/mock/mockFiles.ts": {
+      "name": "mockFiles.ts",
+      "type": "file",
+      "summary": "提供 3 条文件 mock 数据，模拟业务流程图、产品图片和工厂照片等附件资源。",
+      "filePath": "src/mock/mockFiles.ts"
+    },
+    "file:src/mock/mockTags.ts": {
+      "name": "mockTags.ts",
+      "type": "file",
+      "summary": "提供 20 条中文标签 mock 数据，如「可对外」「内部资料」等，用于条目的分类标记。",
+      "filePath": "src/mock/mockTags.ts"
+    },
+    "file:src/types/tag.ts": {
+      "name": "tag.ts",
+      "type": "file",
+      "summary": "定义 Tag 接口，包含 id 和 name 两个字段，作为标签实体的类型约束。",
+      "filePath": "src/types/tag.ts"
+    },
+    "function:src/api/storageInitializer.ts:initializeStorage": {
+      "name": "initializeStorage",
+      "type": "function",
+      "summary": "在浏览器环境中检查 localStorage 各键位是否已存在，若不存在则使用对应 mock 数据初始化全部存储空间。",
+      "filePath": "src/api/storageInitializer.ts"
+    },
+    "function:src/api/storageInitializer.ts:getFromStorage": {
+      "name": "getFromStorage",
+      "type": "function",
+      "summary": "泛型方法，从 localStorage 读取指定键的值并执行 JSON 解析，解析失败或键不存在时返回默认值。",
+      "filePath": "src/api/storageInitializer.ts"
+    },
+    "function:src/api/storageInitializer.ts:saveToStorage": {
+      "name": "saveToStorage",
+      "type": "function",
+      "summary": "泛型方法，将任意值序列化为 JSON 后写入 localStorage 指定键。",
+      "filePath": "src/api/storageInitializer.ts"
+    },
+    "config:.env.example": {
+      "name": ".env.example",
+      "type": "config",
+      "summary": "环境变量配置模板，定义服务端口（PORT=3001）、JWT 密钥、Ollama AI 模型配置（DeepSeek-R1:8b / Qwen2.5:7b / BGE-M3）、Milvus 向量数据库连接参数、前端 Vite 开发服务器地址及数据目录路径。",
+      "filePath": ".env.example"
+    },
+    "document:README.md": {
+      "name": "README.md",
+      "type": "document",
+      "summary": "微观纪元 Wiki 完整项目说明文档，共 20 个章节，涵盖企业数据源管道架构（导入→解析→分块→嵌入→检索→RAG 问答）、技术栈总览（React 19 + Express 4 + Vite 6 + Ollama + Milvus）、前置环境配置、快速开始指南、完整 API 端点文档、项目目录结构及三级降级检索策略。",
+      "filePath": "README.md"
+    },
+    "file:index.html": {
+      "name": "index.html",
+      "type": "file",
+      "summary": "Vite SPA 入口 HTML 文件，设置 UTF-8 字符编码、响应式视口、SVG favicon 及页面标题（MicroEra Wiki），通过 ES module script 标签加载 src/main.tsx 挂载 React 根组件。",
+      "filePath": "index.html"
+    },
+    "config:metadata.json": {
+      "name": "metadata.json",
+      "type": "config",
+      "summary": "Google AI Studio 项目元数据配置文件，声明项目名称为 Company Wiki MVP、中文项目描述及服务端 Gemini API 能力权限标记。",
+      "filePath": "metadata.json"
+    },
+    "config:package.json": {
+      "name": "package.json",
+      "type": "config",
+      "summary": "Node.js 项目清单文件，定义 9 个 npm 脚本（dev/build/server/backend/lint 等）、运行时依赖（React 19、Express 4、Vite 6、Tailwind CSS 4、Milvus SDK、Motion 动画库、Multer 文件上传）和开发依赖（TypeScript 5.8、tsx、esbuild、autoprefixer）。",
+      "filePath": "package.json"
+    },
+    "config:tsconfig.json": {
+      "name": "tsconfig.json",
+      "type": "config",
+      "summary": "TypeScript 编译配置文件，目标 ES2022、启用 ESNext 模块系统及 bundler 模块解析、JSX react-jsx 模式、路径别名 @/* 映射到项目根目录、允许导入 .ts 扩展名、配置 noEmit 仅用于类型检查、开启 skipLibCheck 和 allowJs。",
+      "filePath": "tsconfig.json"
+    },
+    "file:backend/data/documents/entry_9.json": {
+      "name": "entry_9.json",
+      "type": "file",
+      "summary": "文档分块存储 — 条目 #9 的「几何结构（计算筛分）」材料性质元数据文本块，包含 8 个 chunk（C01~C08）：可及表面积（质量/体积归一化）、限制孔径（PLD）、最大空腔直径（LCD）、可及体积分数与永久开放体积分数、通道维度、氦气可及空体积分数。全部为 computational 类别，方法涉及 Zeo++ / RASPA / PoreBlazer 计算筛分工具。",
+      "filePath": "backend/data/documents/entry_9.json"
+    },
+    "file:backend/data/documents/entry_10.json": {
+      "name": "entry_10.json",
+      "type": "file",
+      "summary": "文档分块存储 — 条目 #10 的「电子结构」材料性质元数据文本块，包含 12 个 chunk（C09~C20）：带隙（E_g）、态密度（DOS/PDOS）、功函数、电荷密度、HOMO/LUMO 能级与能隙、费米能级、电离势、电子亲和能、介电常数。全部为 computational 类别，方法涉及 DFT（HSE06/PBE0）、UPS、CV 等。",
+      "filePath": "backend/data/documents/entry_10.json"
+    },
+    "file:backend/data/documents/entry_11.json": {
+      "name": "entry_11.json",
+      "type": "file",
+      "summary": "文档分块存储 — 条目 #11 的「能量与相互作用」材料性质元数据文本块，包含 8 个 chunk（C21~C28）：吸附能、扩散能垒、形成能、内聚能、表面能、溶剂化能、缺陷形成能、配位键能。全部为 computational 类别，方法涉及 DFT / GCMC / DFT-NEB / 量热法等。",
+      "filePath": "backend/data/documents/entry_11.json"
+    },
+    "file:backend/data/documents/entry_12.json": {
+      "name": "entry_12.json",
+      "type": "file",
+      "summary": "文档分块存储 — 条目 #12 的「扩散与传质（模拟）」材料性质元数据文本块，包含 4 个 chunk（C29~C32）：自扩散系数（D_s）、传输扩散系数（D_t）、扩散活化能（E_a_diff）、努森扩散系数（D_K）。全部为 computational 类别，方法涉及 MD 模拟 / PFG-NMR / 渗透法等。",
+      "filePath": "backend/data/documents/entry_12.json"
+    },
+    "file:backend/data/documents/entry_13.json": {
+      "name": "entry_13.json",
+      "type": "file",
+      "summary": "文档分块存储 — 条目 #13 的「开放金属位点」材料性质元数据文本块，包含 2 个 chunk（C33~C34）：是否存在开放金属位点（Has_OMS，布尔型 Yes/No）及 OMS 数量（sites/unit cell）。全部为 computational 类别，方法涉及晶体结构分析和配位环境分析。",
+      "filePath": "backend/data/documents/entry_13.json"
+    },
+    "file:backend/data/documents/entry_14.json": {
+      "name": "entry_14.json",
+      "type": "file",
+      "summary": "文档分块存储 — 条目 #14 的「表征与稳定性」材料性质元数据文本块，包含 10 个 chunk（E01~E10）：晶粒尺寸（XRD Scherrer）、颗粒尺寸（SEM/TEM/DLS）、金属含量（ICP）、热分解温度（TGA/DSC）、水热稳定性、化学稳定性（pH 范围）、溶剂稳定性、机械稳定性、湿度稳定性、光稳定性。全部为 experimental 类别。",
+      "filePath": "backend/data/documents/entry_14.json"
+    },
+    "file:backend/data/documents/entry_15.json": {
+      "name": "entry_15.json",
+      "type": "file",
+      "summary": "文档分块存储 — 条目 #15 的「传感性质」材料性质元数据文本块，包含 19 个 chunk（E11~E29）：响应值/灵敏度、响应/恢复时间、基线电阻、阻抗值、电荷转移阻抗、检测限（LOD）、定量限（LOQ）、线性范围、灵敏度斜率、传感选择性、交叉灵敏度、长期漂移、循环稳定性、重复性（RSD）、再现性、抗湿干扰性、操作温度范围。全部为 experimental 类别，方法涉及气敏测试系统 / EIS / 电化学工作站。",
+      "filePath": "backend/data/documents/entry_15.json"
+    },
+    "file:backend/data/documents/entry_16.json": {
+      "name": "entry_16.json",
+      "type": "file",
+      "summary": "文档分块存储 — 条目 #16 的「催化性质」材料性质元数据文本块，包含 17 个 chunk（E30~E46）：转化率、反应速率、转换频率（TOF）、转换数（TON）、表观活化能、反应级数、速率常数、质量/面积比活性、产物选择性、副产物分布、碳平衡、收率、失活速率、再生性能、抗中毒性、积碳量。全部为 experimental 类别，方法涉及 GC/MS / 动力学实验 / TGA 等。",
+      "filePath": "backend/data/documents/entry_16.json"
+    },
+    "file:backend/data/documents/entry_17.json": {
+      "name": "entry_17.json",
+      "type": "file",
+      "summary": "文档分块存储 — 条目 #17 的「工艺与工程性质」材料性质元数据文本块，包含 20 个 chunk（E47~E66）：成膜性、膜厚、机械强度（抗压）、杨氏模量、硬度、剪切/体积模量、热膨胀系数、热导率、比热容、压降、通量（LMH）、空速（GHSV/WHSV）、材料成本、操作寿命、维护周期、能耗、理论/实际产率、堆积密度。全部为 experimental 类别，涵盖工艺放大和工程应用关键参数。",
+      "filePath": "backend/data/documents/entry_17.json"
+    },
+    "file:backend/data/documents/entry_18.json": {
+      "name": "entry_18.json",
+      "type": "file",
+      "summary": "文档分块存储 — 条目 #18 的「孔隙与比表面积」材料性质元数据文本块，包含 9 个 chunk（X01~X09）：BET 比表面积、Langmuir 比表面积、总孔容、微孔/介孔孔容、比孔容、孔径分布（PSD）、平均孔径、孔隙率。全部为 cross 类别（计算与实验交叉），方法涉及 N₂ 77K 吸附 / NLDFT / BJH / t-plot 等。",
+      "filePath": "backend/data/documents/entry_18.json"
+    },
+    "file:backend/data/documents/entry_19.json": {
+      "name": "entry_19.json",
+      "type": "file",
+      "summary": "文档分块存储 — 条目 #19 的「密度」材料性质元数据文本块，包含 3 个 chunk（X10~X12）：骨架密度（扣除孔体积后的骨架质量密度）、晶体密度（含孔道的整体密度）、颗粒密度（含闭孔）。全部为 cross 类别，方法涉及 He 比重法 / 单晶 XRD / 压汞法等。",
+      "filePath": "backend/data/documents/entry_19.json"
+    },
+    "file:backend/data/documents/entry_20.json": {
+      "name": "entry_20.json",
+      "type": "file",
+      "summary": "文档分块存储 — 条目 #20 的「晶体结构」材料性质元数据文本块，包含 6 个 chunk（X13~X18）：晶系（七大晶系枚举）、空间群（Hermann-Mauguin 符号）、拓扑类型（pcu/bcu/dia 等网络拓扑）、晶胞参数 a/b/c 与角度 α/β/γ、晶胞体积 V_cell。全部为 cross 类别，方法涉及 XRD / CIF 解析 / ToposPro。",
+      "filePath": "backend/data/documents/entry_20.json"
+    },
+    "file:backend/data/documents/entry_21.json": {
+      "name": "entry_21.json",
+      "type": "file",
+      "summary": "文档分块存储 — 条目 #21 的「能量与相互作用（cross）」材料性质元数据文本块，包含 4 个 chunk（X19~X22）：等量吸附热（Q_st）、结合能（E_bind）、零电荷点（pH_pzc）、ζ 电位。全部为 cross 类别，方法涉及吸附等温线拟合 / DFT / XPS / 电位滴定 / 电泳等。",
+      "filePath": "backend/data/documents/entry_21.json"
+    },
+    "file:backend/data/documents/entry_22.json": {
+      "name": "entry_22.json",
+      "type": "file",
+      "summary": "文档分块存储 — 条目 #22 的「光谱性质」材料性质元数据文本块，包含 6 个 chunk（X23~X28）：UV-Vis 吸收边/峰、红外振动频率、Raman 位移、XPS 结合能、荧光发射波长、荧光量子产率。全部为 cross 类别，方法涉及 UV-Vis DRS / FTIR / Raman / XPS / PL 光谱等。",
+      "filePath": "backend/data/documents/entry_22.json"
+    },
+    "file:backend/data/documents/entry_23.json": {
+      "name": "entry_23.json",
+      "type": "file",
+      "summary": "文档分块存储 — 条目 #23 的「吸附分离性质」材料性质元数据文本块，包含 21 个 chunk（X29~X49）：吸附量、饱和吸附量、吸附等温线类型（IUPAC I~VI）、等温线方程参数（Langmuir/Freundlich/Henry）、穿透时间与半穿透时间、穿透吸附量、工作容量、选择性（IAST/Henry/理想/穿透）、扩散系数、传质系数、再生度、膜渗透率（GPU/Barrer）与膜选择性。全部为 cross 类别，是吸附分离领域最核心的属性集。",
+      "filePath": "backend/data/documents/entry_23.json"
+    },
+    "file:backend/data/documents/entry_24.json": {
+      "name": "entry_24.json",
+      "type": "file",
+      "summary": "文档分块存储 — 条目 #24 的「通用条件（计算和实验共用）」材料性质元数据文本块，包含 14 个 chunk（P01~P14）：温度、压力、相对压力、相对湿度、气体组成、气体流速、探针分子、加热/冷却速率、吸附平衡时间、浸泡时间、pH 值、溶剂、吸附目标物、相态。全部为 condition 类别，作为其他性质属性的实验/计算条件上下文。",
+      "filePath": "backend/data/documents/entry_24.json"
+    },
+    "file:backend/data/documents/entry_25.json": {
+      "name": "entry_25.json",
+      "type": "file",
+      "summary": "文档分块存储 — 条目 #25 的「计算专属条件」材料性质元数据文本块，包含 6 个 chunk（P15~P20）：计算软件/版本（VASP/Gaussian/Zeo++）、交换关联泛函（PBE/HSE06/B3LYP）、赝势/基组、色散校正（DFT-D3/TS/MBD）、截断能、k 点网格。全部为 condition 类别，作为 DFT 计算性质属性的方法元数据上下文。",
+      "filePath": "backend/data/documents/entry_25.json"
+    },
+    "config:backend/data/metadata/categories.json": {
+      "name": "categories.json",
+      "type": "config",
+      "summary": "Wiki 分类体系种子数据文件，定义 6 个顶层分类：展示素材（展示素材与图解）、产品资料（产品与业务文档）、技术能力（技术研发与能力说明）、专利成果（学术与专利成果）、数据条目（研发数据对齐条目）、研发协作（研发协作与技术交流），按 sort_order 字段排序，为 Wiki 词条提供一级分类导航骨架。",
+      "filePath": "backend/data/metadata/categories.json"
+    },
+    "config:backend/data/metadata/data_items.json": {
+      "name": "data_items.json",
+      "type": "config",
+      "summary": "数据条目（DataItem）种子文件，当前为空数组占位。设计用于存储与 Entry 绑定的结构化研发数据记录（如材料性质参数、实验测量值），由 MetadataStore.saveDataItem() 动态写入。文件可能在未来被自动化导入流程（importJob.ts）填充标准材料科学属性 schema 数据。",
+      "filePath": "backend/data/metadata/data_items.json"
+    },
+    "config:backend/data/metadata/entries.json": {
+      "name": "entries.json",
+      "type": "config",
+      "summary": "Wiki 词条主数据文件，共 26 条记录。前 8 条为初始种子数据，覆盖产品介绍（量子计算材料设计平台）、技术能力（AI 驱动实验数据分析）、专利成果（智能计算方法专利）、展示素材（业务流程图、产品效果图、厂房照片）和数据条目概述（材料结构/实验数据存储 schema）。中间 17 条（id 9-25）为材料科学领域的 computational（计算筛分、电子结构、能量与相互作用、扩散与传质、开放金属位点）、experimental（表征与稳定性、传感性质、催化性质、工艺与工程性质）和 cross（孔隙比表面积、密度、晶体结构、能量与相互作用、光谱性质、吸附分离性质）以及 condition（通用条件、计算专属条件）类别的标准化属性定义条目，每一条以 Markdown 表格形式详细定义了材料属性名、英文名、符号、首选单位和测试方法，构成材料信息学元数据字典。最后一条（id 26）为 SAGE（自进化智能体图记忆引擎）技术论文词条，属于技术能力分类，附带 PDF 文件引用。所有条目通过 category_id 关联分类、tags 数组关联标签体系。",
+      "filePath": "backend/data/metadata/entries.json"
+    },
+    "config:backend/data/metadata/files.json": {
+      "name": "files.json",
+      "type": "config",
+      "summary": "Wiki 文件附件元数据存储文件，当前包含 1 条记录：关联到 entry_id=26（SAGE 论文词条）的 PDF 文件（original_filename: 2605.12061v1(翻译结果).pdf），存储为 12.2MB 的 application/pdf 类型文件，使用随机化 stored_filename（3nyfkxsr）保存于 /uploads/images/ 目录下，usage_type 标记为 PPT素材。由 MetadataStore.createFile() 写入，getFiles() 通过 entry_id 和 visibility 权限过滤查询。",
+      "filePath": "backend/data/metadata/files.json"
+    },
+    "config:backend/data/metadata/tags.json": {
+      "name": "tags.json",
+      "type": "config",
+      "summary": "Wiki 标签体系种子数据文件，定义 26 个标签。前 18 个为通用业务标签（可对外、内部资料、PPT素材、宣发素材、产品图片、流程图、厂房照片、数据格式、数据库架构、技术优势、客户展示、研发协作、产品介绍、材料计算、AI、实验数据、专利成果、技术成果），后 8 个为材料科学领域专业标签（材料性质、元数据、DFT、吸附分离、传感、催化、MOF、COF）。标签通过 entries.json 中 entries 的 tags 字段与词条多对多关联，由 MetadataStore.syncTags() 在创建/更新词条时自动同步新增标签名。",
+      "filePath": "backend/data/metadata/tags.json"
+    },
+    "file:src/index.css": {
+      "name": "index.css",
+      "type": "file",
+      "summary": "Tailwind CSS v4 全局主题样式文件，通过 @theme 指令定义品牌色板（brand-yellow #F2D760、brand-coral #DB5F5B、brand-indigo #2B3150、brand-charcoal #333333、brand-sand #F5F6E5）和语义化主题色（theme-bg/text/card/muted/border），使用 CSS 自定义属性实现 :root 浅色模式和 .dark 深色模式双主题切换。引入 Google Fonts（Plus Jakarta Sans + JetBrains Mono）作为字体栈，配备自定义 Webkit 滚动条样式。",
+      "filePath": "src/index.css"
+    },
+    "config:vite.config.ts": {
+      "name": "vite.config.ts",
+      "type": "config",
+      "summary": "Vite 6 构建工具配置文件，集成 @vitejs/plugin-react 和 @tailwindcss/vite 两个插件，配置 @ 路径别名映射到项目根目录。开发服务器支持 HMR（受 DISABLE_HMR 环境变量控制，用于 AI Studio 环境中禁用文件监听），配置 /api 代理转发到 http://localhost:3001 后端服务。",
+      "filePath": "vite.config.ts"
+    },
+    "config:server/tsconfig.json": {
+      "name": "server/tsconfig.json",
+      "type": "config",
+      "summary": "服务端 TypeScript 编译配置，target ES2022、module ESNext、moduleResolution bundler，启用 strict 严格模式、esModuleInterop、resolveJsonModule 和 skipLibCheck。rootDir 为当前目录，outDir 为 ./dist，包含 server 目录下所有 .ts 文件。",
+      "filePath": "server/tsconfig.json"
+    },
+    "config:backend/swagger/openapi.json": {
+      "name": "openapi.json",
+      "type": "config",
+      "summary": "OpenAPI 3.0.3 规范的 MicroEra Wiki MVP 企业数据管道 API 文档，定义 4 大标签分组（Pipeline 管道处理、AI 智能服务、Entries 条目管理、Auth 认证）下的 20 个 API 端点。Pipeline 端点覆盖完整的导入管道（health/formats/status → parse/chunk/embed → import/string/batch → search），AI 端点提供搜索/聊天 RAG/摘要/导入/重置功能，Entries 端点实现标准 CRUD，Auth 端点提供 JWT Bearer 认证登录和用户信息获取。",
+      "filePath": "backend/swagger/openapi.json"
+    },
+    "file:backend/swagger/swagger.html": {
+      "name": "swagger.html",
+      "type": "file",
+      "summary": "Swagger UI 可视化 API 文档页面，通过 CDN 加载 swagger-ui-dist@5 的 CSS 和 JS 资源，初始化时从 ./openapi.json 加载 API 规范并渲染交互式文档。页面顶部展示深色渐变 Pipeline 流程横幅（Upload → Parse → Document → Chunk → Embed → Vector → Retrieve → LLM），配置 docExpansion=list、filter=true、tryItOutEnabled=true 等交互选项。",
+      "filePath": "backend/swagger/swagger.html"
+    },
+    "config:backend/postman/Enterprise-Data-Pipeline.postman_collection.json": {
+      "name": "Enterprise-Data-Pipeline.postman_collection.json",
+      "type": "config",
+      "summary": "Postman v2.1.0 API 集合文件，按功能分组为 4 个文件夹：Auth（登录 + 获取当前用户，含自动 token 提取的 test 脚本）、Pipeline（8 个请求覆盖完整管道流程：健康检查/格式/状态 → 解析/分块/嵌入 → 字符串导入/批量导入/语义搜索）、AI（5 个请求：AI 搜索/RAG 对话/摘要/材料元数据导入/重置重导）、Entries（4 个请求：公开列表/全部列表/按 ID 获取/创建条目）。使用 {{base_url}} 和 {{jwt_token}} 集合变量实现环境切换和自动认证。",
+      "filePath": "backend/postman/Enterprise-Data-Pipeline.postman_collection.json"
+    },
+    "document:backend/data/materials-metadata.md": {
+      "name": "materials-metadata.md",
+      "type": "document",
+      "summary": "材料性质数据元信息规范文档（v0.2），面向 MOF/COF/分子筛/多孔材料领域，将材料性质按产出场景拆分为三大板块：计算数据（几何结构、电子结构、能量与相互作用、扩散与传质、开放金属位点）、实验数据（表征与稳定性、传感性质、催化性质、工艺与工程性质）、交叉数据（孔隙与比表面积、密度、晶体结构、能量与相互作用、光谱性质、吸附分离性质）。每个性质定义包含中英文名称、符号、首选单位、值域参考和常用方法/仪器。第 4 节定义通用和计算专属条件参数元数据（温度、压力、探针分子、软件/泛函等）。附录包含按应用场景的性质快速索引和 14 条变更记录。",
+      "filePath": "backend/data/materials-metadata.md"
+    },
+    "file:data:backend/data/vectors.json": {
+      "name": "vectors.json",
+      "type": "data",
+      "summary": "内存向量存储数据文件，包含 36 条向量记录，每条记录含 entry_id（关联的条目 ID）和 embedding（768 维浮点数向量数组）。文件为单行 JSON 数组格式（约 547KB），由管道嵌入步骤（/api/pipeline/embed）生成，供语义搜索（/api/pipeline/search）和 RAG 问答（/api/ai/chat）使用，作为 Milvus 向量数据库不可用时的内存降级方案。",
+      "filePath": "backend/data/vectors.json"
+    },
+    "config:.understand-anything/config.json": {
+      "name": "config.json",
+      "type": "config",
+      "summary": "Understand-Anything 分析工具配置文件，设置 outputLanguage 为 zh（中文），控制知识图谱节点和边的文本内容输出语言。",
+      "filePath": ".understand-anything/config.json"
+    },
+    "config:.understand-anything/.understandignore": {
+      "name": ".understandignore",
+      "type": "config",
+      "summary": "Understand-Anything 分析忽略规则文件，采用 .gitignore 兼容的 glob 语法。内置默认排除 node_modules/、.git/、dist/、build/、obj/、*.lock 和 *.min.js。注释区预置了常见忽略模式模板（测试文件 *.test.*、*.spec.*、各种语言测试目录），以及从 .gitignore 同步的环境变量忽略规则（.env* 排除但 .env.example 保留）。当前所有用户规则均处于注释状态。",
+      "filePath": ".understand-anything/.understandignore"
+    }
+  },
+  "totalNodes": 204,
+  "totalEdges": 628
+}

@@ -1,0 +1,249 @@
+{
+  "nodes": [
+    {
+      "id": "config:.env.example",
+      "type": "config",
+      "name": ".env.example",
+      "filePath": ".env.example",
+      "summary": "环境变量配置模板，定义服务端口（PORT=3001）、JWT 密钥、Ollama AI 模型配置（DeepSeek-R1:8b / Qwen2.5:7b / BGE-M3）、Milvus 向量数据库连接参数、前端 Vite 开发服务器地址及数据目录路径。",
+      "tags": ["configuration", "environment-variables", "ollama", "milvus", "jwt"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "微观纪元 Wiki 完整项目说明文档，共 20 个章节，涵盖企业数据源管道架构（导入→解析→分块→嵌入→检索→RAG 问答）、技术栈总览（React 19 + Express 4 + Vite 6 + Ollama + Milvus）、前置环境配置、快速开始指南、完整 API 端点文档、项目目录结构及三级降级检索策略。",
+      "tags": ["documentation", "entry-point", "getting-started", "api-reference", "architecture-overview"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:index.html",
+      "type": "file",
+      "name": "index.html",
+      "filePath": "index.html",
+      "summary": "Vite SPA 入口 HTML 文件，设置 UTF-8 字符编码、响应式视口、SVG favicon 及页面标题（MicroEra Wiki），通过 ES module script 标签加载 src/main.tsx 挂载 React 根组件。",
+      "tags": ["entry-point", "spa-shell", "html"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:metadata.json",
+      "type": "config",
+      "name": "metadata.json",
+      "filePath": "metadata.json",
+      "summary": "Google AI Studio 项目元数据配置文件，声明项目名称为 Company Wiki MVP、中文项目描述及服务端 Gemini API 能力权限标记。",
+      "tags": ["configuration", "google-ai-studio", "metadata"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:package.json",
+      "type": "config",
+      "name": "package.json",
+      "filePath": "package.json",
+      "summary": "Node.js 项目清单文件，定义 9 个 npm 脚本（dev/build/server/backend/lint 等）、运行时依赖（React 19、Express 4、Vite 6、Tailwind CSS 4、Milvus SDK、Motion 动画库、Multer 文件上传）和开发依赖（TypeScript 5.8、tsx、esbuild、autoprefixer）。",
+      "tags": ["configuration", "package-manifest", "build-system", "dependencies", "npm-scripts"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:tsconfig.json",
+      "type": "config",
+      "name": "tsconfig.json",
+      "filePath": "tsconfig.json",
+      "summary": "TypeScript 编译配置文件，目标 ES2022、启用 ESNext 模块系统及 bundler 模块解析、JSX react-jsx 模式、路径别名 @/* 映射到项目根目录、允许导入 .ts 扩展名、配置 noEmit 仅用于类型检查、开启 skipLibCheck 和 allowJs。",
+      "tags": ["configuration", "typescript", "build-system", "compiler-options"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:.env.example",
+      "target": "file:backend/config.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:.env.example",
+      "target": "file:backend/embedding/ollama.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:.env.example",
+      "target": "file:backend/vector/milvus.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:.env.example",
+      "target": "file:server/index.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:.env.example",
+      "target": "file:vite.config.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:backend/app.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:server/index.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:src/App.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:src/main.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:server/routes/pipeline.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:backend/ai/service.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:backend/import/service.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:backend/retrieval/search.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "config:package.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "config:.env.example",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:index.html",
+      "target": "file:src/main.tsx",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:index.html",
+      "target": "file:vite.config.ts",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:metadata.json",
+      "target": "file:server/routes/ai.ts",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:package.json",
+      "target": "file:src/main.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:package.json",
+      "target": "file:server/index.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:package.json",
+      "target": "file:backend/main.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:package.json",
+      "target": "file:vite.config.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:package.json",
+      "target": "config:tsconfig.json",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:tsconfig.json",
+      "target": "file:src/App.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:tsconfig.json",
+      "target": "file:server/index.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:tsconfig.json",
+      "target": "file:backend/config.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:tsconfig.json",
+      "target": "config:package.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

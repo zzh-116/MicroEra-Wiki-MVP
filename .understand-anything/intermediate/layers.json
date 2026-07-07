@@ -1,0 +1,305 @@
+{
+  "project": "company-wiki-mvp",
+  "description": "MicroEra Wiki MVP — 企业知识库平台。采用前后端分离的分层架构，后端为 Express + 领域服务 + 文件/向量双模存储，前端为 React 19 + Vite 6 + TailwindCSS v4 单页应用。数据管线：Upload → Parse → Chunk → Embed → Vector → Retrieve → LLM。",
+  "frameworks": ["React 19", "Vite 6", "Express 4", "TailwindCSS v4", "TypeScript", "Milvus SDK", "Ollama"],
+  "layers": [
+    {
+      "id": "configuration-types",
+      "name": "共享配置与类型定义",
+      "nameEn": "Shared Configuration & Types",
+      "order": 0,
+      "description": "项目级全局配置文件与 TypeScript 类型定义，被所有其他层依赖。包含运行环境配置（端口、Ollama/Milvus 连接信息、JWT 密钥）和领域实体类型（Entry、Category、Tag、WikiFile、DataItem、ParsedProperty 等）。前后端类型定义相互独立但语义对应。",
+      "responsibility": "定义数据结构契约和运行参数，无运行时行为",
+      "dependencies": [],
+      "files": [
+        "backend/config.ts",
+        "backend/types.ts",
+        "src/types/entry.ts",
+        "src/types/category.ts",
+        "src/types/dataItem.ts",
+        "src/types/file.ts",
+        "src/types/tag.ts",
+        "src/types/user.ts"
+      ]
+    },
+    {
+      "id": "data-persistence",
+      "name": "数据持久化层",
+      "nameEn": "Data Persistence Layer",
+      "order": 1,
+      "description": "封装所有数据存储操作。包含两套存储体系：(1) 文件型 JSON 存储 — MetadataStore 管理 Wiki 词条/分类/标签/文件/数据条目的 CRUD，DocumentStore 管理文档分块的结构化持久化；(2) 向量存储 — MilvusClient 连接 Milvus 向量数据库，MemoryVectorStore 提供基于内存余弦相似度的降级方案。数据文件位于 backend/data/ 目录下。",
+      "responsibility": "数据的创建、读取、更新、删除；向量索引和检索的底层实现",
+      "dependencies": ["configuration-types"],
+      "files": [
+        "backend/metadata/store.ts",
+        "backend/document/store.ts",
+        "backend/vector/milvus.ts",
+        "backend/vector/memory.ts",
+        "backend/data/documents/entry_9.json",
+        "backend/data/documents/entry_10.json",
+        "backend/data/documents/entry_11.json",
+        "backend/data/documents/entry_12.json",
+        "backend/data/documents/entry_13.json",
+        "backend/data/documents/entry_14.json",
+        "backend/data/documents/entry_15.json",
+        "backend/data/documents/entry_16.json",
+        "backend/data/documents/entry_17.json",
+        "backend/data/documents/entry_18.json",
+        "backend/data/documents/entry_19.json",
+        "backend/data/documents/entry_20.json",
+        "backend/data/documents/entry_21.json",
+        "backend/data/documents/entry_22.json",
+        "backend/data/documents/entry_23.json",
+        "backend/data/documents/entry_24.json",
+        "backend/data/documents/entry_25.json",
+        "backend/data/vectors.json"
+      ]
+    },
+    {
+      "id": "domain-services",
+      "name": "领域服务层",
+      "nameEn": "Domain Services Layer",
+      "order": 2,
+      "description": "核心业务逻辑层，封装企业数据管线的全部处理环节。包含七大服务模块：(1) 文档解析 — ParserService 支持 PDF/DOCX/Markdown/图片等多格式统一转为 Markdown，MarkdownParser 解析材料性质元数据表格；(2) 文本分块 — ChunkService 提供 fixed/paragraph/sentence/markdown 四种分块策略，支持重叠滑动窗口；(3) 向量嵌入 — OllamaEmbedder 通过 Ollama API 生成文本向量；(4) AI 服务 — AiService 实现 RAG 对话、语义搜索摘要、LLM 回退搜索；(5) 语义检索 — SemanticSearch 集成向量搜索 + 中文/英文分词关键词回退；(6) 数据导入 — DataImportService 编排完整管线（Parse→Chunk→Embed→Vector），ImportJob 处理材料元数据批量导入；(7) Prompt 模板 — 定义 AI 交互的系统提示词和消息格式化函数。",
+      "responsibility": "所有业务逻辑的编排和执行，是 API 网关的委托目标",
+      "dependencies": ["configuration-types", "data-persistence"],
+      "files": [
+        "backend/parser/markdown.ts",
+        "backend/parser/service.ts",
+        "backend/chunk/service.ts",
+        "backend/embedding/ollama.ts",
+        "backend/ai/prompts.ts",
+        "backend/ai/service.ts",
+        "backend/retrieval/search.ts",
+        "backend/import/service.ts",
+        "backend/metadata/importJob.ts"
+      ]
+    },
+    {
+      "id": "api-gateway",
+      "name": "API 网关层",
+      "nameEn": "API Gateway Layer",
+      "order": 3,
+      "description": "HTTP 请求入口层，基于 Express Router 实现薄控制器模式。包含认证中间件（JWT 签名/验证、requireAuth/optionalAuth）和 9 个资源路由模块：(1) auth — 登录与身份验证；(2) entries — 词条 CRUD 及权限控制；(3) categories — 分类查询；(4) tags — 标签管理；(5) files — 文件上传管理；(6) dataItems — 数据条目管理；(7) ai — RAG 对话/摘要/数据导入/重置；(8) search — 语义搜索代理；(9) pipeline — 完整数据管线 API（导入/解析/分块/嵌入/搜索/健康检查/状态）。路由本身无业务逻辑，全部委托给领域服务层。",
+      "responsibility": "HTTP 请求解析、认证鉴权、参数校验、响应格式化",
+      "dependencies": ["domain-services", "configuration-types"],
+      "files": [
+        "server/middleware/auth.ts",
+        "server/routes/auth.ts",
+        "server/routes/entries.ts",
+        "server/routes/categories.ts",
+        "server/routes/tags.ts",
+        "server/routes/files.ts",
+        "server/routes/dataItems.ts",
+        "server/routes/ai.ts",
+        "server/routes/search.ts",
+        "server/routes/pipeline.ts"
+      ]
+    },
+    {
+      "id": "frontend-api-client",
+      "name": "前端 API 客户端层",
+      "nameEn": "Frontend API Client Layer",
+      "order": 4,
+      "description": "封装前端与服务端之间的 HTTP 通信。apiFetch 通用客户端提供基于 fetch 的统一请求方法，自动附加 JWT Bearer Token、统一错误处理。每个后端资源对应一个 API 模块（authApi、entriesApi、categoriesApi、tagsApi、filesApi、dataItemsApi），提供类型安全的 Promise 方法。storageInitializer 负责 localStorage 的初始化与迁移逻辑。此层通过 Vite 开发代理将 /api 请求转发至 Express 后端。",
+      "responsibility": "HTTP 请求封装、认证令牌管理、前后端数据契约桥接",
+      "dependencies": ["configuration-types"],
+      "files": [
+        "src/api/client.ts",
+        "src/api/authApi.ts",
+        "src/api/entriesApi.ts",
+        "src/api/categoriesApi.ts",
+        "src/api/tagsApi.ts",
+        "src/api/filesApi.ts",
+        "src/api/dataItemsApi.ts",
+        "src/api/storageInitializer.ts"
+      ]
+    },
+    {
+      "id": "frontend-state",
+      "name": "前端状态管理层",
+      "nameEn": "Frontend State Management Layer",
+      "order": 5,
+      "description": "基于 React Context API 的全局状态管理。包含三个 Provider：(1) AuthContext — 用户认证状态（登录/登出/会话恢复/Token 持久化），从 localStorage 恢复会话并验证 Token 有效性；(2) AiContext — AI 功能状态（语义搜索/聊天对话/摘要生成），管理聊天历史、加载状态和错误处理；(3) LanguageThemeContext — 国际化与主题切换（中/英文、亮/暗色主题），通过 CSS 变量和 i18n 映射实现。Provider 以嵌套方式在 App 根组件中组合。",
+      "responsibility": "全局状态生命周期管理、跨组件数据共享、副作用处理",
+      "dependencies": ["frontend-api-client", "configuration-types"],
+      "files": [
+        "src/context/AuthContext.tsx",
+        "src/context/AiContext.tsx",
+        "src/context/LanguageThemeContext.tsx"
+      ]
+    },
+    {
+      "id": "frontend-ui-pages",
+      "name": "前端页面层",
+      "nameEn": "Frontend Pages Layer",
+      "order": 6,
+      "description": "页面级视图组件，每个页面由一个 React 函数组件实现，负责编排子组件、调用 API 客户端和 Context 获取数据。包含 8 个页面：(1) PublicHome — 公开首页，展示公开词条和产品概览；(2) LoginPage — 登录页面；(3) EntryListPage — 词条列表浏览，支持多条件筛选；(4) EntryDetailPage — 词条详情页，展示完整内容、关联文件和数据条目；(5) EntryEditorPage — 词条创建/编辑表单；(6) AssetLibraryPage — 展示素材库；(7) DataItemPage — 研发数据条目对齐管理；(8) AdminMockPage — 管理后台/Mock 数据页面。",
+      "responsibility": "页面布局、数据加载编排、用户交互流程控制",
+      "dependencies": ["frontend-state", "frontend-api-client", "configuration-types"],
+      "files": [
+        "src/pages/PublicHome.tsx",
+        "src/pages/LoginPage.tsx",
+        "src/pages/EntryListPage.tsx",
+        "src/pages/EntryDetailPage.tsx",
+        "src/pages/EntryEditorPage.tsx",
+        "src/pages/AssetLibraryPage.tsx",
+        "src/pages/DataItemPage.tsx",
+        "src/pages/AdminMockPage.tsx"
+      ]
+    },
+    {
+      "id": "frontend-ui-components",
+      "name": "前端 UI 组件层",
+      "nameEn": "Frontend UI Components Layer",
+      "order": 7,
+      "description": "可复用的 React UI 组件库。分为三类：(1) 通用组件 — Navbar（响应式导航栏）、FilterBar（筛选搜索栏）、VisibilityBadge（公开/内部徽章）、Unauthorized（未授权提示）；(2) 业务组件 — EntryCard（词条卡片）、EntryTable（词条表格）、AssetCard（素材卡片）、FileList（文件列表）、FileUpload（文件上传控件）；(3) AI 组件 — AiChatWidget（浮动聊天窗口）、AiSearchResults（搜索结果展示）、AiSearchToggle（搜索切换按钮）、AiSummarizeButton（AI 摘要按钮）。所有组件通过 Props 接收数据，不直接发起 API 调用。",
+      "responsibility": "UI 渲染、用户交互事件处理、视觉一致性",
+      "dependencies": ["frontend-state", "configuration-types"],
+      "files": [
+        "src/components/Navbar.tsx",
+        "src/components/FilterBar.tsx",
+        "src/components/VisibilityBadge.tsx",
+        "src/components/Unauthorized.tsx",
+        "src/components/EntryCard.tsx",
+        "src/components/EntryTable.tsx",
+        "src/components/AssetCard.tsx",
+        "src/components/FileList.tsx",
+        "src/components/FileUpload.tsx",
+        "src/components/AiChatWidget.tsx",
+        "src/components/AiSearchResults.tsx",
+        "src/components/AiSearchToggle.tsx",
+        "src/components/AiSummarizeButton.tsx"
+      ]
+    },
+    {
+      "id": "entry-points",
+      "name": "应用入口与组合根",
+      "nameEn": "Application Entry Points & Composition Root",
+      "order": 8,
+      "description": "应用启动和组件装配层。包含三个入口：(1) src/main.tsx + src/App.tsx — React 前端入口，在 App 中组装 Context Provider 嵌套（LanguageTheme → Auth → Ai），实现基于状态的客户端路由分发；(2) backend/app.ts — Express 应用工厂函数 createApp()，组装中间件、挂载路由、执行启动引导（seeding + 向量存储初始化），支持 CORS/静态服务/额外路由等可配置选项；(3) backend/main.ts — 后端独立启动入口（API-only 模式，不服务 SPA）；(4) server/index.ts — 全栈启动入口（Express API + Vite SPA 静态文件服务）。此层是依赖注入和组件装配的组合根。",
+      "responsibility": "应用启动引导、依赖组装、跨层编排",
+      "dependencies": ["frontend-ui-pages", "frontend-ui-components", "frontend-state", "api-gateway", "domain-services", "data-persistence", "configuration-types"],
+      "files": [
+        "src/main.tsx",
+        "src/App.tsx",
+        "backend/app.ts",
+        "backend/main.ts",
+        "server/index.ts"
+      ]
+    },
+    {
+      "id": "build-config",
+      "name": "构建与工程配置",
+      "nameEn": "Build & Engineering Configuration",
+      "order": 9,
+      "description": "构建工具链和项目工程配置文件。包含：vite.config.ts（Vite 构建配置、TailwindCSS 插件、路径别名 @、开发代理 /api → localhost:3001）、package.json（依赖管理和 npm scripts，含 dev/build/server/backend 等多模式启动脚本）、tsconfig.json（TypeScript 编译选项）、server/tsconfig.json（服务端 TypeScript 配置）、index.html（SPA HTML 入口）、.env.example（环境变量模板）、metadata.json（平台元数据描述）。此层为工程基础设施，不参与运行时行为。",
+      "responsibility": "构建流程、依赖管理、编译配置",
+      "dependencies": [],
+      "files": [
+        "vite.config.ts",
+        "package.json",
+        "tsconfig.json",
+        "server/tsconfig.json",
+        "index.html",
+        ".env.example",
+        "metadata.json"
+      ]
+    },
+    {
+      "id": "static-assets",
+      "name": "静态资源与 Mock 数据",
+      "nameEn": "Static Assets & Mock Data",
+      "order": 10,
+      "description": "非核心业务逻辑的辅助文件。包含：(1) Mock 数据 — mockEntries/mockCategories/mockTags/mockFiles/mockDataItems/mockUsers 为前端开发和演示提供预置数据；(2) 全局样式 — src/index.css 定义 TailwindCSS 主题变量和基础样式；(3) 工具函数 — labelMapper.ts 提供前端标签映射和格式化；(4) 静态文件 — favicon.svg 网站图标；(5) 源数据 — backend/data/materials-metadata.md 包含 127+ 材料性质元数据定义（Markdown 表格格式），是数据导入管线的源文件；(6) API 文档 — Swagger UI 交互式 API 文档页面。",
+      "responsibility": "开发辅助、样式定义、静态资源托管",
+      "dependencies": ["configuration-types"],
+      "files": [
+        "src/mock/mockEntries.ts",
+        "src/mock/mockCategories.ts",
+        "src/mock/mockTags.ts",
+        "src/mock/mockFiles.ts",
+        "src/mock/mockDataItems.ts",
+        "src/mock/mockUsers.ts",
+        "src/index.css",
+        "src/utils/labelMapper.ts",
+        "public/favicon.svg",
+        "backend/swagger/swagger.html",
+        "backend/data/materials-metadata.md"
+      ]
+    }
+  ],
+  "crossCuttingConcerns": [
+    {
+      "name": "认证与授权",
+      "description": "JWT 动态签名/验证贯穿 API 网关（server/middleware/auth.ts）和前端状态层（AuthContext）。前端 API 客户端自动附加 Bearer Token，后端路由通过 requireAuth 和 optionalAuth 中间件实现基于 visibility 字段的公开/内部内容隔离。"
+    },
+    {
+      "name": "错误处理",
+      "description": "前端统一错误处理在 client.ts 的 apiFetch 中实现，解析后端 JSON 错误体并抛出。后端各路由返回一致的 { error, message } 格式。AI 服务有超时保护（120s）和优雅降级逻辑。"
+    },
+    {
+      "name": "数据管线",
+      "description": "完整的数据处理管线 Upload → Parse → Chunk → Embed → Vector → Retrieve → LLM 横跨领域服务层（各服务模块）、数据持久化层（存储中间产物）和 API 网关层（管线 API 暴露）。管线的每个阶段都可独立调用或组合执行。"
+    },
+    {
+      "name": "国际化与主题",
+      "description": "LanguageThemeContext 通过 CSS 自定义变量实现亮/暗双主题，通过标签映射实现中/英文双语界面。主题和语言设置通过 localStorage 持久化。"
+    },
+    {
+      "name": "向量存储双模架构",
+      "description": "系统同时支持 Milvus（生产级向量数据库）和 MemoryVectorStore（内存+文件持久化）两种向量存储后端。通过 isReady() 接口实现运行时的自动降级切换。Bootstrap 阶段先行尝试 Milvus 连接，失败后自动回退到内存方案。"
+    }
+  ],
+  "architecturePatterns": [
+    {
+      "pattern": "Thin Controller / Service Layer",
+      "description": "Express 路由层仅作请求转发和参数提取，所有业务逻辑委托给领域服务层。路由文件平均长度 < 40 行。"
+    },
+    {
+      "pattern": "Singleton Service Instances",
+      "description": "所有领域服务（AiService、ParserService、ChunkService、OllamaEmbedder、SemanticSearch、DataImportService、MetadataStore、DocumentStore、MilvusClient、MemoryVectorStore）均导出单例实例，在应用启动时通过 Bootstrap 初始化。"
+    },
+    {
+      "pattern": "Context Provider Composition",
+      "description": "前端状态管理通过 React Context Provider 的嵌套组合实现：LanguageThemeProvider > AuthProvider > AiProvider，形成自底向上的状态依赖树。"
+    },
+    {
+      "pattern": "SPA Client-Side Routing",
+      "description": "前端使用基于 useState 的简易客户端路由（currentView pattern），通过 handleNavigate 函数在页面间切换，URL 不变。适合 MVP 阶段快速迭代。"
+    },
+    {
+      "pattern": "Factory Function Pattern",
+      "description": "Express 应用使用 createApp() 工厂函数创建，支持可配置选项（CORS、静态服务、Bootstrap），便于测试和多模式部署。"
+    },
+    {
+      "pattern": "Strategy Pattern",
+      "description": "ChunkService 的四种分块策略（fixed/paragraph/sentence/markdown）通过策略模式实现，ParserService 的多种文件格式解析同理。"
+    }
+  ],
+  "dataFlow": {
+    "description": "系统主要数据流路径",
+    "flows": [
+      {
+        "name": "Wiki 词条浏览（读路径）",
+        "path": "User → React Page → Context → API Client → [HTTP /api/entries] → Express Route → Auth Middleware → MetadataStore → JSON File → Response → Component Render",
+        "layers": ["frontend-ui-pages", "frontend-state", "frontend-api-client", "api-gateway", "data-persistence"]
+      },
+      {
+        "name": "企业数据管线（写路径）",
+        "path": "User Upload → Express Route → DataImportService → [Parse → Chunk → Embed → Vector] → MetadataStore + DocumentStore + VectorStore",
+        "layers": ["api-gateway", "domain-services", "data-persistence"]
+      },
+      {
+        "name": "RAG 智能问答（AI 路径）",
+        "path": "User Question → React AiContext → API Client → [HTTP /api/ai/chat] → AiService → SemanticSearch → [Vector Search → Keyword Fallback] → Ollama Chat API → Answer + Sources → Response",
+        "layers": ["frontend-ui-components", "frontend-state", "frontend-api-client", "api-gateway", "domain-services", "data-persistence"]
+      },
+      {
+        "name": "语义搜索（检索路径）",
+        "path": "User Query → API Client → [HTTP /api/search] → AiService → SemanticSearch → [Ollama Embedding → Milvus/Memory Vector Search → Keyword Fallback] → Ranked Entries → Response",
+        "layers": ["frontend-api-client", "api-gateway", "domain-services", "data-persistence"]
+      }
+    ]
+  }
+}

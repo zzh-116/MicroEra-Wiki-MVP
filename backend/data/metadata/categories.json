@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "展示素材",
+    "description": "展示素材与图解",
+    "sort_order": 1
+  },
+  {
+    "id": 2,
+    "name": "产品资料",
+    "description": "产品与业务文档",
+    "sort_order": 2
+  },
+  {
+    "id": 3,
+    "name": "技术能力",
+    "description": "技术研发与能力说明",
+    "sort_order": 3
+  },
+  {
+    "id": 4,
+    "name": "专利成果",
+    "description": "学术与专利成果",
+    "sort_order": 4
+  },
+  {
+    "id": 5,
+    "name": "数据条目",
+    "description": "研发数据对齐条目",
+    "sort_order": 5
+  },
+  {
+    "id": 6,
+    "name": "研发协作",
+    "description": "研发协作与技术交流",
+    "sort_order": 6
+  }
+]

@@ -1,0 +1,128 @@
+{
+  "nodes": [
+    {
+      "id": "config:backend/data/metadata/categories.json",
+      "type": "config",
+      "name": "categories.json",
+      "filePath": "backend/data/metadata/categories.json",
+      "summary": "Wiki 分类体系种子数据文件，定义 6 个顶层分类：展示素材（展示素材与图解）、产品资料（产品与业务文档）、技术能力（技术研发与能力说明）、专利成果（学术与专利成果）、数据条目（研发数据对齐条目）、研发协作（研发协作与技术交流），按 sort_order 字段排序，为 Wiki 词条提供一级分类导航骨架。",
+      "tags": ["seed-data", "categories", "metadata-layer", "taxonomy", "classification"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:backend/data/metadata/data_items.json",
+      "type": "config",
+      "name": "data_items.json",
+      "filePath": "backend/data/metadata/data_items.json",
+      "summary": "数据条目（DataItem）种子文件，当前为空数组占位。设计用于存储与 Entry 绑定的结构化研发数据记录（如材料性质参数、实验测量值），由 MetadataStore.saveDataItem() 动态写入。文件可能在未来被自动化导入流程（importJob.ts）填充标准材料科学属性 schema 数据。",
+      "tags": ["seed-data", "data-items", "metadata-layer", "placeholder", "material-science"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:backend/data/metadata/entries.json",
+      "type": "config",
+      "name": "entries.json",
+      "filePath": "backend/data/metadata/entries.json",
+      "summary": "Wiki 词条主数据文件，共 26 条记录。前 8 条为初始种子数据，覆盖产品介绍（量子计算材料设计平台）、技术能力（AI 驱动实验数据分析）、专利成果（智能计算方法专利）、展示素材（业务流程图、产品效果图、厂房照片）和数据条目概述（材料结构/实验数据存储 schema）。中间 17 条（id 9-25）为材料科学领域的 computational（计算筛分、电子结构、能量与相互作用、扩散与传质、开放金属位点）、experimental（表征与稳定性、传感性质、催化性质、工艺与工程性质）和 cross（孔隙比表面积、密度、晶体结构、能量与相互作用、光谱性质、吸附分离性质）以及 condition（通用条件、计算专属条件）类别的标准化属性定义条目，每一条以 Markdown 表格形式详细定义了材料属性名、英文名、符号、首选单位和测试方法，构成材料信息学元数据字典。最后一条（id 26）为 SAGE（自进化智能体图记忆引擎）技术论文词条，属于技术能力分类，附带 PDF 文件引用。所有条目通过 category_id 关联分类、tags 数组关联标签体系。",
+      "tags": ["seed-data", "entries", "metadata-layer", "wiki-content", "material-science", "computational-chemistry", "sensing", "catalysis", "adsorption-separation", "sage-paper"],
+      "complexity": "substantial"
+    },
+    {
+      "id": "config:backend/data/metadata/files.json",
+      "type": "config",
+      "name": "files.json",
+      "filePath": "backend/data/metadata/files.json",
+      "summary": "Wiki 文件附件元数据存储文件，当前包含 1 条记录：关联到 entry_id=26（SAGE 论文词条）的 PDF 文件（original_filename: 2605.12061v1(翻译结果).pdf），存储为 12.2MB 的 application/pdf 类型文件，使用随机化 stored_filename（3nyfkxsr）保存于 /uploads/images/ 目录下，usage_type 标记为 PPT素材。由 MetadataStore.createFile() 写入，getFiles() 通过 entry_id 和 visibility 权限过滤查询。",
+      "tags": ["seed-data", "files", "metadata-layer", "file-attachment", "pdf", "sage-paper"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:backend/data/metadata/tags.json",
+      "type": "config",
+      "name": "tags.json",
+      "filePath": "backend/data/metadata/tags.json",
+      "summary": "Wiki 标签体系种子数据文件，定义 26 个标签。前 18 个为通用业务标签（可对外、内部资料、PPT素材、宣发素材、产品图片、流程图、厂房照片、数据格式、数据库架构、技术优势、客户展示、研发协作、产品介绍、材料计算、AI、实验数据、专利成果、技术成果），后 8 个为材料科学领域专业标签（材料性质、元数据、DFT、吸附分离、传感、催化、MOF、COF）。标签通过 entries.json 中 entries 的 tags 字段与词条多对多关联，由 MetadataStore.syncTags() 在创建/更新词条时自动同步新增标签名。",
+      "tags": ["seed-data", "tags", "metadata-layer", "taxonomy", "tagging-system", "material-science"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:backend/data/metadata/categories.json",
+      "target": "file:backend/metadata/store.ts",
+      "type": "configured_by",
+      "direction": "forward",
+      "weight": 0.85
+    },
+    {
+      "source": "config:backend/data/metadata/categories.json",
+      "target": "config:backend/data/metadata/entries.json",
+      "type": "references",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "config:backend/data/metadata/data_items.json",
+      "target": "file:backend/metadata/store.ts",
+      "type": "configured_by",
+      "direction": "forward",
+      "weight": 0.85
+    },
+    {
+      "source": "config:backend/data/metadata/entries.json",
+      "target": "file:backend/metadata/store.ts",
+      "type": "configured_by",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "config:backend/data/metadata/entries.json",
+      "target": "config:backend/data/metadata/categories.json",
+      "type": "references",
+      "direction": "forward",
+      "weight": 0.65
+    },
+    {
+      "source": "config:backend/data/metadata/entries.json",
+      "target": "config:backend/data/metadata/tags.json",
+      "type": "references",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "config:backend/data/metadata/entries.json",
+      "target": "file:backend/metadata/importJob.ts",
+      "type": "imported_by",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:backend/data/metadata/files.json",
+      "target": "file:backend/metadata/store.ts",
+      "type": "configured_by",
+      "direction": "forward",
+      "weight": 0.85
+    },
+    {
+      "source": "config:backend/data/metadata/files.json",
+      "target": "config:backend/data/metadata/entries.json",
+      "type": "references",
+      "direction": "forward",
+      "weight": 0.75
+    },
+    {
+      "source": "config:backend/data/metadata/tags.json",
+      "target": "file:backend/metadata/store.ts",
+      "type": "configured_by",
+      "direction": "forward",
+      "weight": 0.85
+    },
+    {
+      "source": "config:backend/data/metadata/tags.json",
+      "target": "config:backend/data/metadata/entries.json",
+      "type": "references",
+      "direction": "backward",
+      "weight": 0.7
+    }
+  ]
+}

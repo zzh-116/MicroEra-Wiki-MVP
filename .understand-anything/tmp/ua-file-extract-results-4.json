@@ -1,0 +1,315 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 8,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "src/api/storageInitializer.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 51,
+      "nonEmptyLines": 46,
+      "functions": [
+        {
+          "name": "initializeStorage",
+          "startLine": 16,
+          "endLine": 34,
+          "params": []
+        },
+        {
+          "name": "getFromStorage",
+          "startLine": 37,
+          "endLine": 47,
+          "params": [
+            "key",
+            "defaultValue"
+          ]
+        },
+        {
+          "name": "saveToStorage",
+          "startLine": 49,
+          "endLine": 51,
+          "params": [
+            "key",
+            "value"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "KEYS",
+          "line": 7,
+          "isDefault": false
+        },
+        {
+          "name": "initializeStorage",
+          "line": 16,
+          "isDefault": false
+        },
+        {
+          "name": "getFromStorage",
+          "line": 37,
+          "isDefault": false
+        },
+        {
+          "name": "saveToStorage",
+          "line": 49,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "initializeStorage",
+          "callee": "localStorage.getItem",
+          "lineNumber": 19
+        },
+        {
+          "caller": "initializeStorage",
+          "callee": "localStorage.setItem",
+          "lineNumber": 20
+        },
+        {
+          "caller": "initializeStorage",
+          "callee": "JSON.stringify",
+          "lineNumber": 20
+        },
+        {
+          "caller": "initializeStorage",
+          "callee": "localStorage.getItem",
+          "lineNumber": 22
+        },
+        {
+          "caller": "initializeStorage",
+          "callee": "localStorage.setItem",
+          "lineNumber": 23
+        },
+        {
+          "caller": "initializeStorage",
+          "callee": "JSON.stringify",
+          "lineNumber": 23
+        },
+        {
+          "caller": "initializeStorage",
+          "callee": "localStorage.getItem",
+          "lineNumber": 25
+        },
+        {
+          "caller": "initializeStorage",
+          "callee": "localStorage.setItem",
+          "lineNumber": 26
+        },
+        {
+          "caller": "initializeStorage",
+          "callee": "JSON.stringify",
+          "lineNumber": 26
+        },
+        {
+          "caller": "initializeStorage",
+          "callee": "localStorage.getItem",
+          "lineNumber": 28
+        },
+        {
+          "caller": "initializeStorage",
+          "callee": "localStorage.setItem",
+          "lineNumber": 29
+        },
+        {
+          "caller": "initializeStorage",
+          "callee": "JSON.stringify",
+          "lineNumber": 29
+        },
+        {
+          "caller": "initializeStorage",
+          "callee": "localStorage.getItem",
+          "lineNumber": 31
+        },
+        {
+          "caller": "initializeStorage",
+          "callee": "localStorage.setItem",
+          "lineNumber": 32
+        },
+        {
+          "caller": "initializeStorage",
+          "callee": "JSON.stringify",
+          "lineNumber": 32
+        },
+        {
+          "caller": "getFromStorage",
+          "callee": "initializeStorage",
+          "lineNumber": 38
+        },
+        {
+          "caller": "getFromStorage",
+          "callee": "localStorage.getItem",
+          "lineNumber": 39
+        },
+        {
+          "caller": "getFromStorage",
+          "callee": "JSON.parse",
+          "lineNumber": 42
+        },
+        {
+          "caller": "getFromStorage",
+          "callee": "console.error",
+          "lineNumber": 44
+        },
+        {
+          "caller": "saveToStorage",
+          "callee": "localStorage.setItem",
+          "lineNumber": 50
+        },
+        {
+          "caller": "saveToStorage",
+          "callee": "JSON.stringify",
+          "lineNumber": 50
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 4,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/api/tagsApi.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 8,
+      "nonEmptyLines": 7,
+      "exports": [
+        {
+          "name": "tagsApi",
+          "line": 4,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "getTags",
+          "callee": "apiFetch",
+          "lineNumber": 6
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mock/mockCategories.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 10,
+      "nonEmptyLines": 9,
+      "exports": [
+        {
+          "name": "mockCategories",
+          "line": 3,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mock/mockDataItems.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 28,
+      "nonEmptyLines": 27,
+      "exports": [
+        {
+          "name": "mockDataItems",
+          "line": 3,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mock/mockEntries.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 100,
+      "nonEmptyLines": 99,
+      "exports": [
+        {
+          "name": "mockEntries",
+          "line": 3,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mock/mockFiles.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 37,
+      "nonEmptyLines": 36,
+      "exports": [
+        {
+          "name": "mockFiles",
+          "line": 3,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mock/mockTags.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 22,
+      "nonEmptyLines": 21,
+      "exports": [
+        {
+          "name": "mockTags",
+          "line": 3,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/types/tag.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 4,
+      "nonEmptyLines": 4,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

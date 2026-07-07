@@ -1,0 +1,413 @@
+[
+  {
+    "id": 1,
+    "title": "量子计算材料设计平台",
+    "entry_type": "product",
+    "summary": "面向客户展示公司核心材料计算 SaaS 平台的高层级分析流程和客户案例。",
+    "content": "## 产品定位\n\n本平台致力于推进量子材料与超分子结构的计算设计。\n\n### 核心特性\n\n- 高通量材料带隙逆向搜索\n- 基于图神经网络（GNN）实现分子性质多层级预测\n- DFT 算力自动化排班与交付系统\n- 晶体空间群自动标定算法\n\n### 客户案例\n\n已成功为多家半导体企业完成材料电场模拟、催化筛选与超硬膜层性能预演。",
+    "visibility": "public",
+    "category_id": 2,
+    "created_at": "2026-06-10T01:20:00.000Z",
+    "updated_at": "2026-06-22T09:10:00.000Z",
+    "tags": [
+      "产品介绍",
+      "客户展示",
+      "材料计算"
+    ]
+  },
+  {
+    "id": 2,
+    "title": "AI 驱动的实验数据分析能力",
+    "entry_type": "tech",
+    "summary": "企业自主研发的端到端实验数据仓库和基于大语言模型的智能分析引擎。",
+    "content": "## 技术架构\n\n实验数据通过统一 schema 写入数据湖，经由多模态大模型实现智能推荐与特征提取。\n\n### 技术栈\n\n- 自研数据清洗流水线\n- 多模态大模型（视觉+文本）\n- 自动化异常检测与根因分析\n\n### 性能指标\n\n- 数据吞吐：50GB/h\n- 分析精度：准确率 92%+",
+    "visibility": "public",
+    "category_id": 3,
+    "created_at": "2026-06-10T02:00:00.000Z",
+    "updated_at": "2026-06-21T15:30:00.000Z",
+    "tags": [
+      "技术优势",
+      "AI",
+      "实验数据"
+    ]
+  },
+  {
+    "id": 3,
+    "title": "某某智能计算方法专利",
+    "entry_type": "patent",
+    "summary": "面向高通量材料筛选的智能计算方法和系统发明专利简介。",
+    "content": "## 专利概况\n\n- 专利号：CN2026XXXXXX.X\n- 申请日：2026-03-15\n\n### 技术要点\n\n基于特征强化大模型的可迁移材料性质预测系统。",
+    "visibility": "public",
+    "category_id": 4,
+    "created_at": "2026-06-10T03:30:00.000Z",
+    "updated_at": "2026-06-20T10:00:00.000Z",
+    "tags": [
+      "专利成果",
+      "技术成果",
+      "客户展示"
+    ]
+  },
+  {
+    "id": 4,
+    "title": "公司业务流程图",
+    "entry_type": "asset",
+    "summary": "完整业务流程图（商务对接 → 算力排班 → 交付归档）。",
+    "content": "内部素材。",
+    "visibility": "internal",
+    "category_id": 1,
+    "created_at": "2026-06-11T09:00:00.000Z",
+    "updated_at": "2026-06-19T14:00:00.000Z",
+    "tags": [
+      "PPT素材",
+      "流程图",
+      "内部资料"
+    ]
+  },
+  {
+    "id": 5,
+    "title": "产品效果图 A",
+    "entry_type": "asset",
+    "summary": "材料计算平台 UI 效果图。",
+    "content": "内部宣发素材。",
+    "visibility": "internal",
+    "category_id": 1,
+    "created_at": "2026-06-12T11:00:00.000Z",
+    "updated_at": "2026-06-18T16:00:00.000Z",
+    "tags": [
+      "产品图片",
+      "宣发素材",
+      "内部资料"
+    ]
+  },
+  {
+    "id": 6,
+    "title": "实地厂房照片",
+    "entry_type": "asset",
+    "summary": "研发中心与 HPC 机房实拍。",
+    "content": "公司介绍用素材。",
+    "visibility": "internal",
+    "category_id": 1,
+    "created_at": "2026-06-13T08:00:00.000Z",
+    "updated_at": "2026-06-17T09:00:00.000Z",
+    "tags": [
+      "厂房照片",
+      "宣发素材",
+      "内部资料"
+    ]
+  },
+  {
+    "id": 7,
+    "title": "材料结构数据条目",
+    "entry_type": "data_item",
+    "summary": "晶体结构与分子材料核心研发数据字段对齐元数据。",
+    "content": "晶体结构数据标准化 schema 定义。",
+    "visibility": "internal",
+    "category_id": 5,
+    "created_at": "2026-06-14T10:00:00.000Z",
+    "updated_at": "2026-06-16T11:00:00.000Z",
+    "tags": [
+      "数据格式",
+      "数据库架构",
+      "研发协作"
+    ]
+  },
+  {
+    "id": 8,
+    "title": "实验数据存储结构说明",
+    "entry_type": "data_item",
+    "summary": "实验室表征数据 SQL 存储 schema 与维护人信息。",
+    "content": "实验数据存储结构说明文档。",
+    "visibility": "internal",
+    "category_id": 5,
+    "created_at": "2026-06-15T07:00:00.000Z",
+    "updated_at": "2026-06-15T12:00:00.000Z",
+    "tags": [
+      "数据库架构",
+      "实验数据",
+      "研发协作"
+    ]
+  },
+  {
+    "id": 9,
+    "title": "[computational] computational:几何结构（计算筛分）",
+    "entry_type": "data_item",
+    "summary": "8 个属性定义，涵盖 可及表面积 (质量)、可及表面积 (体积)、限制孔径、最大空腔直径、可及体积分数等",
+    "content": "| # | 中文名称 | 英文名称 | 符号 | 首选单位 | 方法 | 备注 |\n|---|---------|---------|------|---------|------|------|\n| C01 | 可及表面积 (质量) | Accessible Surface Area (mass-normalized) | ASA_mass | **m²/g** | Zeo++ / RASPA / PoreBlazer | 高通量筛选中常用 |\n| C02 | 可及表面积 (体积) | Accessible Surface Area (volume-normalized) | ASA_vol | **m²/cm³** | Zeo++ / RASPA | — |\n| C03 | 限制孔径 | Pore Limiting Diameter | PLD | **Å** | Zeo++ / PoreBlazer | MOF 筛分核心参数 |\n| C04 | 最大空腔直径 | Largest Cavity Diameter | LCD | **Å** | Zeo++ / PoreBlazer | — |\n| C05 | 可及体积分数 | Accessible Volume Fraction | AV_frac / ϕ_acc | **—** (无量纲) | Zeo++ (He 探针) | — |\n| C06 | 永久开放可及体积分数 | Permanently Open Accessible Volume Fraction | POAV_frac | **—** (无量纲) | Zeo++ | 对客体扩散更重要 |\n| C07 | 通道维度 | Channel Dimensionality | ChanDim | **—** (整数) | Zeo++ / 晶体结构分析 | 2D+ 可有效传质 |\n| C08 | 氦气可及空体积分数 | Helium Accessible Void Fraction | — | **—** (无量纲) | Zeo++ | He 探针最小，为体积上限估计 |\n",
+    "visibility": "internal",
+    "tags": [
+      "材料性质",
+      "元数据",
+      "DFT"
+    ],
+    "category_id": 5,
+    "created_at": "2026-07-06T06:03:14.687Z",
+    "updated_at": "2026-07-06T06:03:14.687Z"
+  },
+  {
+    "id": 10,
+    "title": "[computational] computational:电子结构",
+    "entry_type": "data_item",
+    "summary": "12 个属性定义，涵盖 带隙、态密度、投影态密度、功函数、电荷密度等",
+    "content": "| # | 中文名称 | 英文名称 | 符号 | 首选单位 | 方法 | 备注 |\n|---|---------|---------|------|---------|------|------|\n| C09 | 带隙 | Band Gap | E_g | **eV** | DFT (HSE06/PBE0) / UV-Vis DRS | PBE 通常低估带隙 |\n| C10 | 态密度 | Density of States | DOS / g(E) | **states/eV** | DFT | 本质为曲线数据，须存储完整 energy 和 dos 数组，不可仅存单点值；建议同时记录费米能级（eV）作为标量摘要用于检索 |\n| C11 | 投影态密度 | Projected Density of States | PDOS | **states/eV** | DFT | 本质为多条曲线，每条对应一个原子种类、轨道类型（s/p/d/f）和自旋通道；建议存为外链文件 + 摘要索引 |\n| C12 | 功函数 | Work Function | Φ / W_f | **eV** | UPS / DFT | — |\n| C13 | 电荷密度 | Charge Density | ρ(r) | **e/Å³** | DFT / XRD (实验电荷密度) | 用于分析成键与电荷转移。本质为三维网格数据，须存为外链文件（CHGCAR / cube 格式），数据库记录文件路径及最大电荷密度位置作为摘要 |\n| C14 | HOMO 能级 | HOMO Energy | E_HOMO | **eV** | DFT / CV (电化学) | 用于分子/团簇体系 |\n| C15 | LUMO 能级 | LUMO Energy | E_LUMO | **eV** | DFT / CV | — |\n| C16 | HOMO-LUMO 能隙 | HOMO-LUMO Gap | E_g_HL | **eV** | DFT / UV-Vis / CV | 分子体系中最常用的带隙度量 |\n| C17 | 费米能级 | Fermi Level | E_F | **eV** | DFT | — |\n| C18 | 电离势 | Ionization Potential | IP | **eV** | UPS / DFT | — |\n| C19 | 电子亲和能 | Electron Affinity | EA | **eV** | DFT | — |\n| C20 | 介电常数 | Dielectric Constant | ε_r / κ | **—** (无量纲) | DFT-DFPT / 阻抗谱 | 静态/高频介电常数分开记录 |\n",
+    "visibility": "internal",
+    "tags": [
+      "材料性质",
+      "元数据",
+      "DFT"
+    ],
+    "category_id": 5,
+    "created_at": "2026-07-06T06:03:15.479Z",
+    "updated_at": "2026-07-06T06:03:15.479Z"
+  },
+  {
+    "id": 11,
+    "title": "[computational] computational:能量与相互作用",
+    "entry_type": "data_item",
+    "summary": "8 个属性定义，涵盖 吸附能、扩散能垒、形成能、内聚能、表面能等",
+    "content": "| # | 中文名称 | 英文名称 | 符号 | 首选单位 | 方法 | 备注 |\n|---|---------|---------|------|---------|------|------|\n| C21 | 吸附能 | Adsorption Energy | E_ads | **kJ/mol** | DFT / GCMC / 量热法 | E_ads = E_system - (E_substrate + E_gas)；负值表示放热 |\n| C22 | 扩散能垒 | Diffusion Barrier | E_diff / E_a_diff | **kJ/mol** | DFT-NEB / MD 过渡态 | — |\n| C23 | 形成能 | Formation Energy | E_form / ΔH_f | **kJ/mol** | DFT | — |\n| C24 | 内聚能 | Cohesive Energy | E_coh | **kJ/mol** | DFT | — |\n| C25 | 表面能 | Surface Energy | γ | **J/m²** | DFT 平板模型 / 接触角法 | — |\n| C26 | 溶剂化能 | Solvation Energy | E_solv | **kJ/mol** | DFT (隐式溶剂) / 量热 | `[确认]` |\n| C27 | 缺陷形成能 | Defect Formation Energy | E_defect | **eV** | DFT | — |\n| C28 | 配位键能 | Coordination Bond Energy | E_coord | **kJ/mol** | DFT / EXAFS / 量热 | `[确认]` |\n",
+    "visibility": "internal",
+    "tags": [
+      "材料性质",
+      "元数据",
+      "DFT"
+    ],
+    "category_id": 5,
+    "created_at": "2026-07-06T06:03:16.542Z",
+    "updated_at": "2026-07-06T06:03:16.542Z"
+  },
+  {
+    "id": 12,
+    "title": "[computational] computational:扩散与传质（模拟）",
+    "entry_type": "data_item",
+    "summary": "4 个属性定义，涵盖 自扩散系数、传输扩散系数、扩散活化能、努森扩散系数等",
+    "content": "| # | 中文名称 | 英文名称 | 符号 | 首选单位 | 方法 | 备注 |\n|---|---------|---------|------|---------|------|------|\n| C29 | 自扩散系数 | Self-Diffusion Coefficient | D_s | **m²/s** | MD 模拟 / PFG-NMR | — |\n| C30 | 传输扩散系数 | Transport Diffusion Coefficient | D_t | **m²/s** | 渗透法 / 吸附动力学宏观拟合 | D_t = D_s × (∂ln f / ∂ln c) |\n| C31 | 扩散活化能 | Diffusion Activation Energy | E_a_diff | **kJ/mol** | 不同温度的扩散系数拟合 | — |\n| C32 | 努森扩散系数 | Knudsen Diffusivity | D_K | **m²/s** | 努森公式计算 | — |\n",
+    "visibility": "internal",
+    "tags": [
+      "材料性质",
+      "元数据",
+      "DFT",
+      "吸附分离"
+    ],
+    "category_id": 5,
+    "created_at": "2026-07-06T06:03:17.347Z",
+    "updated_at": "2026-07-06T06:03:17.347Z"
+  },
+  {
+    "id": 13,
+    "title": "[computational] computational:开放金属位点",
+    "entry_type": "data_item",
+    "summary": "2 个属性定义，涵盖 是否存在开放金属位点、开放金属位点数量等",
+    "content": "| # | 中文名称 | 英文名称 | 符号 | 首选单位 | 方法 | 备注 |\n|---|---------|---------|------|---------|------|------|\n| C33 | 是否存在开放金属位点 | Has Open Metal Site | Has_OMS | **Yes/No** | 晶体结构分析；配位环境分析；文献标注 | 不同文献对 OMS 的定义可能存在差异；通常指活化后仍暴露的未饱和金属位点 |\n| C34 | 开放金属位点数量 | Open Metal Site Count | N_OMS | **sites/unit cell** | CIF 配位分析；结构拓扑统计 | 通常基于晶体结构统计，不代表实际可接近 OMS 数量 |\n",
+    "visibility": "internal",
+    "tags": [
+      "材料性质",
+      "元数据",
+      "DFT"
+    ],
+    "category_id": 5,
+    "created_at": "2026-07-06T06:03:17.726Z",
+    "updated_at": "2026-07-06T06:03:17.726Z"
+  },
+  {
+    "id": 14,
+    "title": "[experimental] experimental:表征与稳定性",
+    "entry_type": "data_item",
+    "summary": "10 个属性定义，涵盖 晶粒尺寸、颗粒尺寸、金属含量、热分解温度、水热稳定性等",
+    "content": "| # | 中文名称 | 英文名称 | 符号 | 首选单位 | 方法 | 备注 |\n|---|---------|---------|------|---------|------|------|\n| E01 | 晶粒尺寸 | Crystallite Size | d_XRD | **nm** | XRD (Scherrer) | 注意与 SEM 颗粒尺寸的区别 |\n| E02 | 颗粒尺寸 | Particle Size | d_particle | **nm** / **μm** | SEM / TEM / DLS | — |\n| E03 | 金属含量 | Metal Content | w_M | **wt%** | ICP-OES / ICP-MS / XPS | `[确认]` |\n| E04 | 热分解温度 | Thermal Decomposition Temperature | T_d / T_dec | **°C** | TGA / DSC | 以 5% 或 onset 失重为准 |\n| E05 | 水热稳定性 | Hydrothermal Stability | — | **°C** + **%RH** 条件描述 | 高温高湿暴露后 XRD | 定性+半定量，建议附具体条件 |\n| E06 | 化学稳定性 (pH) | Chemical Stability (pH range) | — | **pH** (范围) | 浸泡后 XRD / BET | 建议记录溶液种类、浓度、浸泡时间 |\n| E07 | 溶剂稳定性 | Solvent Stability | — | **定性** (稳定/部分溶胀/溶解) | 溶剂浸泡后 XRD | 建议记录溶剂和温度 |\n| E08 | 机械稳定性 | Mechanical Stability | — | **GPa** (杨氏模量) | 纳米压痕 / 高压 XRD / 计算 | `[确认]` 若需量化机械参数，建议统一使用 E49~E53 的工程力学参数 |\n| E09 | 湿度稳定性 | Moisture Stability | — | **%RH** + 暴露时间 | 恒湿暴露后 XRD / BET | — |\n| E10 | 光稳定性 | Photostability | — | **定性** (波长 + 光强 + 时间) | UV-Vis 光照后表征 | 光催化材料重点关注 |\n",
+    "visibility": "internal",
+    "tags": [
+      "材料性质",
+      "元数据",
+      "实验数据"
+    ],
+    "category_id": 5,
+    "created_at": "2026-07-06T06:03:17.966Z",
+    "updated_at": "2026-07-06T06:03:17.966Z"
+  },
+  {
+    "id": 15,
+    "title": "[experimental] experimental:传感性质",
+    "entry_type": "data_item",
+    "summary": "19 个属性定义，涵盖 响应值 / 灵敏度、响应时间、恢复时间、基线电阻、阻抗值等",
+    "content": "| # | 中文名称 | 英文名称 | 符号 | 首选单位 | 方法 | 备注 |\n|---|---------|---------|------|---------|------|------|\n| E11 | 响应值 / 灵敏度 | Response / Sensitivity | S / ΔR/R₀ | **%** | 气敏测试系统 / 电化学工作站 | S = (R_g - R_0)/R_0（电阻型）或 ΔI/I₀（电流型） |\n| E12 | 响应时间 | Response Time | t_res / τ_res | **s** | 气敏测试系统 | — |\n| E13 | 恢复时间 | Recovery Time | t_rec / τ_rec | **s** | 气敏测试系统 | — |\n| E14 | 基线电阻 | Baseline Resistance | R₀ / R_baseline | **Ω** | 电化学工作站 / 源表 | 电阻型传感器 |\n| E15 | 阻抗值 | Impedance | Z | **Ω** | EIS（电化学阻抗谱） | — |\n| E16 | 电荷转移阻抗 | Charge Transfer Resistance | R_ct | **Ω** | EIS Nyquist 图拟合 | TTF@UTSA-74 传感的核心指标 |\n| E17 | 阻抗模值变化率 | \\ | Z\\ | Δ\\ | Z\\ | ₀ |\n| E18 | 检测限 | Limit of Detection | LOD | **ppm** / **ppb** | 气敏测试系统 | 标注 S/N 定义 |\n| E19 | 定量限 | Limit of Quantification | LOQ | **ppm** / **ppb** | 气敏测试系统 | — |\n| E20 | 线性范围 | Linear Range | — | **ppm ~ ppm** | 多点浓度校准 | — |\n| E21 | 灵敏度/斜率 | Sensitivity Slope | k_sens | **%/ppm** / **Ω/ppm** | 线性拟合 | — |\n| E22 | 传感选择性 | Sensing Selectivity | S_sel | **—** (比值) | 多气体对比测试 | S_sel = S_target / S_interferent |\n| E23 | 交叉灵敏度 | Cross-Sensitivity | — | **%**（相对目标响应） | 多气体测试 | — |\n| E24 | 长期漂移 | Long-term Drift | D_long | **%/月** / **mV/天** | 长期连续监测 | — |\n| E25 | 循环稳定性 | Cycling Stability | — | **%**（保持率） / 循环次数 | 多次循环测试 | 记录循环数和条件 |\n| E26 | 重复性 | Repeatability | RSD | **%RSD** | 重复测量 (n≥5) | — |\n| E27 | 再现性 | Reproducibility | — | **%RSD** | 多批次测量 | — |\n| E28 | 抗湿干扰性 | Humidity Interference | — | **定性** / **% 偏移** | 不同 %RH 条件测试 | 乙炔/VOC 传感器关键指标 |\n| E29 | 操作温度范围 | Operating Temperature Range | — | **°C** / **K** | 变温测试 | — |\n",
+    "visibility": "internal",
+    "tags": [
+      "材料性质",
+      "元数据",
+      "实验数据",
+      "传感"
+    ],
+    "category_id": 5,
+    "created_at": "2026-07-06T06:03:18.963Z",
+    "updated_at": "2026-07-06T06:03:18.963Z"
+  },
+  {
+    "id": 16,
+    "title": "[experimental] experimental:催化性质",
+    "entry_type": "data_item",
+    "summary": "17 个属性定义，涵盖 转化率、反应速率、转换频率、转换数、表观活化能等",
+    "content": "| # | 中文名称 | 英文名称 | 符号 | 首选单位 | 方法 | 备注 |\n|---|---------|---------|------|---------|------|------|\n| E30 | 转化率 | Conversion | X | **%** | GC / MS / 在线分析 | X = (n₀-n)/n₀ |\n| E31 | 反应速率 | Reaction Rate | r | **mmol/(g·h)** | 动力学实验 | — |\n| E32 | 转换频率 | Turnover Frequency | TOF | **h⁻¹** | 活性位点定量 + 动力学 | TOF = r / [活性位点数] |\n| E33 | 转换数 | Turnover Number | TON | **—** (无量纲) | 全程时间积分 | TON = TOF × τ (τ 为催化剂寿命) |\n| E34 | 表观活化能 | Apparent Activation Energy | E_a | **kJ/mol** | 不同温度动力学拟合 | — |\n| E35 | 反应级数 | Reaction Order | n | **—** (无量纲) | 动力学拟合 | — |\n| E36 | 速率常数 | Rate Constant | k | 因反应级数而异 | 动力学拟合 | 标明反应级数 |\n| E37 | 质量比活性 | Mass-specific Activity | A_mass | **mmol/(g·h)** | 动力学实验 | — |\n| E38 | 面积比活性 | Area-specific Activity | A_area | **mmol/(m²·h)** | 动力学实验 + BET 归一化 | — |\n| E39 | 产物选择性 | Product Selectivity | S_prod | **%** | GC / HPLC / MS | — |\n| E40 | 副产物分布 | By-product Distribution | — | **%** | GC / MS | 可存储为列表或多值记录 |\n| E41 | 碳平衡 | Carbon Balance | CB | **%** | GC | CB 偏离 100% 表示积碳/未检测产物 |\n| E42 | 收率 | Yield | Y | **%** | — | — |\n| E43 | 失活速率 | Deactivation Rate | r_deact | **%/h** | 长时间在线监测 | — |\n| E44 | 再生性能 | Regeneration Performance | — | **%**（恢复率） | 再生后活性对比测试 | 记录再生方法(加热/溶剂/氧化)与条件 |\n| E45 | 抗中毒性 | Poisoning Resistance | — | **%**（残余活性） | 毒物掺杂对照实验 | — |\n| E46 | 积碳量 | Coke Content | — | **wt%** | TGA (空气气氛) / TPO | — |\n",
+    "visibility": "internal",
+    "tags": [
+      "材料性质",
+      "元数据",
+      "实验数据",
+      "催化"
+    ],
+    "category_id": 5,
+    "created_at": "2026-07-06T06:03:20.652Z",
+    "updated_at": "2026-07-06T06:03:20.652Z"
+  },
+  {
+    "id": 17,
+    "title": "[experimental] experimental:工艺与工程性质",
+    "entry_type": "data_item",
+    "summary": "20 个属性定义，涵盖 成膜性、膜厚、机械强度 (抗压)、杨氏模量、硬度等",
+    "content": "| # | 中文名称 | 英文名称 | 符号 | 首选单位 | 方法 | 备注 |\n|---|---------|---------|------|---------|------|------|\n| E47 | 成膜性 | Film Formability | — | **定性** | SEM / AFM | — |\n| E48 | 膜厚 | Film Thickness | d_film | **μm** / **nm** | SEM 截面 / 台阶仪 / 椭偏仪 | — |\n| E49 | 机械强度 (抗压) | Compressive Strength | σ_c | **MPa** | 万能试验机 / 纳米压痕 | — |\n| E50 | 杨氏模量 | Young's Modulus | E | **GPa** | 纳米压痕 / DFT | — |\n| E51 | 硬度 | Hardness | H | **GPa** / **MPa** | 纳米压痕 / 维氏硬度计 | — |\n| E52 | 剪切模量 | Shear Modulus | G | **GPa** | DFT / 超声法 | — |\n| E53 | 体积模量 | Bulk Modulus | K | **GPa** | DFT / 高压 XRD | — |\n| E54 | 热膨胀系数 | Thermal Expansion Coefficient | α_T / CTE | **10⁻⁶/K** | 变温 XRD / TMA | — |\n| E55 | 热导率 | Thermal Conductivity | κ / λ | **W/(m·K)** | 激光闪射法 / MD 模拟 | — |\n| E56 | 比热容 | Specific Heat Capacity | C_p | **J/(g·K)** | DSC / 计算 | — |\n| E57 | 压降 | Pressure Drop | ΔP | **kPa** / **bar** | 压力传感器 | 穿透实验关键操作参数 |\n| E58 | 通量 | Flux | J | **L/(m²·h)** (LMH) | 渗透实验 | 膜分离场景 |\n| E59 | 空速 | Space Velocity | GHSV / WHSV | **h⁻¹** (GHSV); **g/(g·h)** (WHSV) | 流量控制 + 反应器体积 | GHSV=气体体积空速；WHSV=质量空速 |\n| E60 | 材料成本 | Material Cost | — | **¥/g** | 试剂报价 + 产率计算 | — |\n| E61 | 操作寿命 | Operating Lifetime / Service Life | τ_life | **h** / **天** / **月** | 加速老化 / 长期在线监测 | — |\n| E62 | 维护周期 | Maintenance Cycle | — | **h** / **天** | 工况监测 | — |\n| E63 | 能耗 | Energy Consumption | — | **kWh/kg** / **kJ/mol** | 工艺能量衡算 | — |\n| E64 | 理论产率 | Theoretical Yield | Y_theo | **%** | 化学计量学计算 | — |\n| E65 | 实际产率 | Actual Yield | Y_act | **%** | 称重计算 | 实验合成步骤核心记录值 |\n| E66 | 堆积密度 | Bulk Density / Tap Density | ρ_bulk | **g/cm³** | 量筒振实法 | 工艺放大填料参数 |\n",
+    "visibility": "internal",
+    "tags": [
+      "材料性质",
+      "元数据",
+      "实验数据",
+      "传感"
+    ],
+    "category_id": 5,
+    "created_at": "2026-07-06T06:03:22.259Z",
+    "updated_at": "2026-07-06T06:03:22.259Z"
+  },
+  {
+    "id": 18,
+    "title": "[cross] cross:孔隙与比表面积",
+    "entry_type": "data_item",
+    "summary": "9 个属性定义，涵盖 比表面积 (BET)、Langmuir 比表面积、总孔容、微孔孔容、介孔孔容等",
+    "content": "| # | 中文名称 | 英文名称 | 符号 | 首选单位 | 方法 | 备注 |\n|---|---------|---------|------|---------|------|------|\n| X01 | 比表面积 (BET) | BET Specific Surface Area | S_BET | **m²/g** | N₂ 77K 吸附 / 比表面积分析仪 | `[实验]` 最通用的比表面积指标 |\n| X02 | Langmuir 比表面积 | Langmuir Surface Area | S_Lang | **m²/g** | N₂ / Ar 吸附 | `[实验]` 微孔材料中常与 BET 并列报告 |\n| X03 | 总孔容 | Total Pore Volume | V_pore / V_t | **cm³/g** | N₂ 77K 吸附 (P/P₀≈0.95) | `[实验]` 单点法或 t-plot 法 |\n| X04 | 微孔孔容 | Micropore Volume | V_micro | **cm³/g** | t-plot / DR / NLDFT | `[实验]` |\n| X05 | 介孔孔容 | Mesopore Volume | V_meso | **cm³/g** | BJH / NLDFT | `[实验]` |\n| X06 | 比孔容 | Specific Pore Volume | v_p | **cm³/g** | — | `[实验]` |\n| X07 | 孔径分布 | Pore Size Distribution | PSD | **Å** (主峰位置) | NLDFT / GCMC 拟合 | `[实验][计算]` 本质为曲线数据，须存储完整孔径和微分孔容数组；PSD_peak 作为标量摘要单独记录用于检索 |\n| X08 | 平均孔径 | Average Pore Diameter | d_p_avg | **Å** | 4V/A (BET) | `[实验]` |\n| X09 | 孔隙率 | Porosity / Void Fraction | ϕ / ε | **—** (无量纲) | 骨架密度vs晶体密度法 / 吸附法 | `[实验][计算]` 有时直接以 AV_frac 或 POAV_frac 近似 |\n",
+    "visibility": "internal",
+    "tags": [
+      "材料性质",
+      "元数据",
+      "吸附分离"
+    ],
+    "category_id": 5,
+    "created_at": "2026-07-06T06:03:24.131Z",
+    "updated_at": "2026-07-06T06:03:24.131Z"
+  },
+  {
+    "id": 19,
+    "title": "[cross] cross:密度",
+    "entry_type": "data_item",
+    "summary": "3 个属性定义，涵盖 骨架密度、晶体密度、颗粒密度等",
+    "content": "| # | 中文名称 | 英文名称 | 符号 | 首选单位 | 方法 | 备注 |\n|---|---------|---------|------|---------|------|------|\n| X10 | 骨架密度 | Framework Density | ρ_framework | **g/cm³** | 晶体结构计算 / He 比重法 | `[实验][计算]` |\n| X11 | 晶体密度 | Crystal Density | ρ_crystal | **g/cm³** | 单晶 XRD / 计算 | `[实验][计算]` |\n| X12 | 颗粒密度 | Particle Density | ρ_particle | **g/cm³** | 压汞法 / 比重瓶法 | `[实验]` |\n",
+    "visibility": "internal",
+    "tags": [
+      "材料性质",
+      "元数据"
+    ],
+    "category_id": 5,
+    "created_at": "2026-07-06T06:03:25.021Z",
+    "updated_at": "2026-07-06T06:03:25.021Z"
+  },
+  {
+    "id": 20,
+    "title": "[cross] cross:晶体结构",
+    "entry_type": "data_item",
+    "summary": "6 个属性定义，涵盖 晶系、空间群、拓扑、晶胞参数 a / b / c、晶胞角度 α / β / γ等",
+    "content": "| # | 中文名称 | 英文名称 | 符号 | 首选单位 | 方法 | 备注 |\n|---|---------|---------|------|---------|------|------|\n| X13 | 晶系 | Crystal System | — | **—** (枚举) | XRD | `[实验][计算]` |\n| X14 | 空间群 | Space Group | — | **—** (符号) | XRD / CIF 解析 | `[实验][计算]` 国际表编号或 Hermann-Mauguin 符号 |\n| X15 | 拓扑 | Topology / Net | — | **—** (符号) | ToposPro / Systre | `[计算]` MOF 中关键分类维度 |\n| X16 | 晶胞参数 a / b / c | Unit Cell Parameters | a, b, c | **Å** | XRD | `[实验][计算]` |\n| X17 | 晶胞角度 α / β / γ | Unit Cell Angles | α, β, γ | **°** (度) | XRD | `[实验][计算]` |\n| X18 | 晶胞体积 | Unit Cell Volume | V_cell | **Å³** | XRD / 计算 | `[实验][计算]` |\n",
+    "visibility": "internal",
+    "tags": [
+      "材料性质",
+      "元数据"
+    ],
+    "category_id": 5,
+    "created_at": "2026-07-06T06:03:25.301Z",
+    "updated_at": "2026-07-06T06:03:25.301Z"
+  },
+  {
+    "id": 21,
+    "title": "[cross] cross:能量与相互作用",
+    "entry_type": "data_item",
+    "summary": "4 个属性定义，涵盖 等量吸附热、结合能、零电荷点、ζ 电位等",
+    "content": "| # | 中文名称 | 英文名称 | 符号 | 首选单位 | 方法 | 备注 |\n|---|---------|---------|------|---------|------|------|\n| X19 | 等量吸附热 | Isosteric Heat of Adsorption | Q_st | **kJ/mol** | 吸附等温线拟合 / 微量热法 | Q_st ≈ -ΔH_ads > 0；`[实验]` 实验等温线拟合；`[计算]` 低覆盖度下 Q_st 常与单分子吸附能趋势相关，但二者并不严格等同 |\n| X20 | 结合能 | Binding Energy | E_b / E_bind | **kJ/mol** | DFT / XPS | `[计算][实验]` 结合能通常用于分子/团簇体系；吸附能更常用于周期性材料与固-气界面体系。两者定义和参考态可能不同，需记录具体计算方法 |\n| X21 | 零电荷点 | Point of Zero Charge | pH_pzc | **pH** | 电位滴定 / 质量滴定 | `[实验]` 对液相吸附/VOC 吸附重要 |\n| X22 | ζ 电位 | Zeta Potential | ζ | **mV** | DLS (ELS) / 电泳 | `[实验]` 胶体稳定性判断 |\n",
+    "visibility": "internal",
+    "tags": [
+      "材料性质",
+      "元数据",
+      "吸附分离"
+    ],
+    "category_id": 5,
+    "created_at": "2026-07-06T06:03:25.767Z",
+    "updated_at": "2026-07-06T06:03:25.767Z"
+  },
+  {
+    "id": 22,
+    "title": "[cross] cross:光谱性质",
+    "entry_type": "data_item",
+    "summary": "6 个属性定义，涵盖 UV-Vis 吸收边 / 吸收峰、红外振动频率、Raman 位移、XPS 结合能、荧光发射波长等",
+    "content": "| # | 中文名称 | 英文名称 | 符号 | 首选单位 | 方法 | 备注 |\n|---|---------|---------|------|---------|------|------|\n| X23 | UV-Vis 吸收边 / 吸收峰 | UV-Vis Absorption Edge / Peak | λ_abs | **nm** | UV-Vis DRS / 分光光度计 | `[实验]` 用于带隙估算 (Tauc plot) |\n| X24 | 红外振动频率 | IR Vibrational Frequency | ν_IR | **cm⁻¹** | FTIR | `[实验]` |\n| X25 | Raman 位移 | Raman Shift | Δν_Raman | **cm⁻¹** | Raman 光谱 | `[实验]` |\n| X26 | XPS 结合能 | XPS Binding Energy | E_XPS | **eV** | XPS | `[实验]` 元素化学态鉴定 |\n| X27 | 荧光发射波长 | Photoluminescence Emission Wavelength | λ_em | **nm** | PL 光谱 / 荧光分光光度计 | `[实验]` |\n| X28 | 荧光量子产率 | Photoluminescence Quantum Yield | Φ_PL / QY | **%** (0~100) | 积分球 + 荧光光谱 | `[实验]` |\n",
+    "visibility": "internal",
+    "tags": [
+      "材料性质",
+      "元数据"
+    ],
+    "category_id": 5,
+    "created_at": "2026-07-06T06:03:26.144Z",
+    "updated_at": "2026-07-06T06:03:26.144Z"
+  },
+  {
+    "id": 23,
+    "title": "[cross] cross:吸附分离性质",
+    "entry_type": "data_item",
+    "summary": "21 个属性定义，涵盖 吸附量、饱和吸附量、吸附等温线类型、吸附等温线方程参数、Langmuir 参数 b等",
+    "content": "| # | 中文名称 | 英文名称 | 符号 | 首选单位 | 方法 | 备注 |\n|---|---------|---------|------|---------|------|------|\n| X29 | 吸附量 | Adsorption Capacity / Uptake | q / n_ads | **mmol/g** | 静态体积法 / 重量法吸附仪 / DVS / UV-Vis 浓度差法 | `[实验]` 必须标注**吸附目标物**（如 C₂H₂ / H₂O / 甲苯）和**相态**（气相/液相）；标注温度+压力条件；cm³(STP)/g 为常见仪器输出，建议入库统一换算为 mmol/g 并记录 STP 定义 |\n| X30 | 饱和吸附量 | Saturation Capacity | q_sat | **mmol/g** | 等温线拟合 (Langmuir / DSLF) | `[实验]` |\n| X31 | 吸附等温线类型 | Adsorption Isotherm Type | — | **—** (枚举) | N₂/Ar 77K 吸附 | `[实验]` |\n| X32 | 吸附等温线方程参数 | Isotherm Model Parameters | — | 因模型而异 | 非线性拟合 | `[实验][计算]` 须同时记录模型名称和对应参数，存储格式为模型名称 + 参数 JSON，同时保留原始等温线数据（压力 × 吸附量数组） |\n| X33 | Langmuir 参数 b | Langmuir Constant | b / K_L | **bar⁻¹** / **kPa⁻¹** | 等温线拟合 | `[实验]` 与温度有关 |\n| X34 | Freundlich 参数 K_F / n | Freundlich Constants | K_F, n | 因 n 而异 | 等温线拟合 | `[实验]` |\n| X35 | Henry 常数 | Henry's Constant | K_H | **mmol/(g·bar)** | 低覆盖度等温线初始斜率 / 色谱法 | `[实验]` 反映吸附剂-吸附质亲和力 |\n| X36 | 穿透时间 | Breakthrough Time | t_bt | **min** | 穿透曲线实验 | `[实验]` |\n| X37 | 半穿透时间 | Half Breakthrough Time | t_0.5 | **min** | 穿透曲线实验 | `[实验]` |\n| X38 | 穿透吸附量 | Breakthrough Capacity | q_bt | **mmol/g** | 穿透曲线积分 | `[实验]` |\n| X39 | 工作容量 | Working Capacity | Δq | **mmol/g** | 等温线差值 / PSA 模拟 | `[实验][计算]` PSA/TSA 工艺关键参数 |\n| X40 | 选择性 | Selectivity | S_ij / α_ij | **—** (无量纲) | IAST / Henry 比值 / 理想吸附溶液理论 | `[实验][计算]` 需标注温度、压力、气相组成 |\n| X41 | IAST 选择性 | IAST Selectivity | S_IAST | **—** (无量纲) | 等温线拟合 + IAST 程序 | `[计算]` 实验中最常用 |\n| X42 | Henry 选择性 | Henry's Selectivity | S_Henry | **—** (无量纲) | Henry 常数比值 | `[计算]` 低压极限下的理想选择性 |\n| X43 | 理想选择性 | Ideal Selectivity | S_ideal | **—** (无量纲) | 单组分等温线比值 | `[实验]` 可近似，但会低估真实竞争吸附差异 |\n| X44 | 扩散系数 | Diffusion Coefficient / Diffusivity | D | **m²/s** | PFG-NMR / 重量法吸附动力学 / MD 模拟 | `[实验][计算]` 分为自扩散系数和传输扩散系数，分别等同 C29 和 C30 |\n| X45 | 传质系数 | Mass Transfer Coefficient | k_LDF | **s⁻¹** | 穿透曲线拟合 / 吸附动力学拟合 | `[实验]` |\n| X46 | 穿透选择性 | Breakthrough Selectivity | S_bt | **—** (无量纲) | 穿透实验积分 | `[实验]` 最接近实际工况 |\n| X47 | 再生度 | Regeneration Ratio | R_reg | **%** | 多次吸附-脱附循环 | `[实验]` |\n| X48 | 膜渗透率 | Membrane Permeability / Permeance | P / Π | **GPU** (1 GPU = 10⁻⁶ cm³(STP)/(cm²·s·cmHg)) | 恒体积变压渗透法 | `[实验]` 注意区分 permeability（渗透率）与 permeance（渗透通量系数）；GPU 常用于 permeance，Barrer 常用于 permeability |\n| X49 | 膜选择性 | Membrane Selectivity | α_mem | **—** (无量纲) | 渗透率比值 | `[实验]` 理想选择性 = 纯气渗透率比；混合气选择性可能不同 |\n",
+    "visibility": "internal",
+    "tags": [
+      "材料性质",
+      "元数据",
+      "吸附分离"
+    ],
+    "category_id": 5,
+    "created_at": "2026-07-06T06:03:26.695Z",
+    "updated_at": "2026-07-06T06:03:26.695Z"
+  },
+  {
+    "id": 24,
+    "title": "[condition] condition:通用条件（计算和实验共用）",
+    "entry_type": "data_item",
+    "summary": "14 个属性定义，涵盖 温度、压力、相对压力、相对湿度、气体组成等",
+    "content": "| # | 中文名称 | 英文名称 | 符号 | 首选单位 | 方法 | 备注 |\n|---|---------|---------|------|---------|------|------|\n| P01 | 温度 | Temperature | T | °C | — | — |\n| P02 | 压力 | Pressure | P / p | kPa, atm, Pa, mmHg | — | — |\n| P03 | 相对压力 | Relative Pressure | P/P₀ | — | — | — |\n| P04 | 相对湿度 | Relative Humidity | RH | — | — | — |\n| P05 | 气体组成 | Gas Composition | y_i / x_i | ppm, ppb, mol fraction | — | — |\n| P06 | 气体流速 | Gas Flow Rate | F / Q | L/min | — | — |\n| P07 | 探针分子 | Probe Molecule | — | — | — | — |\n| P08 | 加热/冷却速率 | Heating/Cooling Rate | β | K/min | — | — |\n| P09 | 吸附平衡时间 | Equilibration Time | t_eq | — | — | — |\n| P10 | 浸泡时间 | Soaking Time | t_soak | — | — | — |\n| P11 | pH 值 | pH Value | pH | — | — | — |\n| P12 | 溶剂 | Solvent | — | — | — | — |\n| P13 | 吸附目标物 | Adsorbate | — | — | — | — |\n| P14 | 相态 | Phase | — | — | — | — |\n",
+    "visibility": "internal",
+    "tags": [
+      "材料性质",
+      "元数据"
+    ],
+    "category_id": 5,
+    "created_at": "2026-07-06T06:03:28.814Z",
+    "updated_at": "2026-07-06T06:03:28.814Z"
+  },
+  {
+    "id": 25,
+    "title": "[condition] condition:计算专属条件",
+    "entry_type": "data_item",
+    "summary": "6 个属性定义，涵盖 计算软件/版本、交换关联泛函、赝势/基组、色散校正、截断能等",
+    "content": "| # | 中文名称 | 英文名称 | 符号 | 首选单位 | 方法 | 备注 |\n|---|---------|---------|------|---------|------|------|\n| P15 | 计算软件/版本 | Software & Version | — | — | — | — |\n| P16 | 交换关联泛函 | XC Functional | — | — | — | — |\n| P17 | 赝势/基组 | Pseudopotential / Basis Set | — | — | — | — |\n| P18 | 色散校正 | Dispersion Correction | — | — | — | — |\n| P19 | 截断能 | Energy Cutoff | E_cut | Ry, Hartree | — | — |\n| P20 | k 点网格 | k-point Mesh | — | — | — | — |\n",
+    "visibility": "internal",
+    "tags": [
+      "材料性质",
+      "元数据"
+    ],
+    "category_id": 5,
+    "created_at": "2026-07-06T06:03:29.659Z",
+    "updated_at": "2026-07-06T06:03:29.659Z"
+  },
+  {
+    "id": 26,
+    "title": "SAGE：一种用于结构感知关联记忆的自进 化智能体图记忆引擎",
+    "entry_type": "tech",
+    "summary": "长期记忆正逐渐成为语言智能体的核心瓶颈。现有的RAG和GraphRAG系统大多将\n记忆图视为静态的检索中间件，这限制了它们从部分线索中恢复完整证据链的能力，\n无法充分利用可复用的图结构角色，也无法通过下游反馈来优化记忆本身。我们提\n出SAGE（自进化智能体图记忆引擎），将图记忆建模为一种动态的长期记忆基底。\nSAGE融合了两个角色：一个记忆写入器，用于从交互历史中逐步构建结构化图记\n忆；以及一个基于图基础模型的记忆读取器，用于执行检索并为记忆写入器提供反\n馈。",
+    "content": "长期记忆正逐渐成为语言智能体的核心瓶颈。现有的RAG和GraphRAG系统大多将\n记忆图视为静态的检索中间件，这限制了它们从部分线索中恢复完整证据链的能力，\n无法充分利用可复用的图结构角色，也无法通过下游反馈来优化记忆本身。我们提\n出SAGE（自进化智能体图记忆引擎），将图记忆建模为一种动态的长期记忆基底。\nSAGE融合了两个角色：一个记忆写入器，用于从交互历史中逐步构建结构化图记\n忆；以及一个基于图基础模型的记忆读取器，用于执行检索并为记忆写入器提供反\n馈。我们提供了严谨的理论分析，支持精心设计的架构组件及整体框架的有效性。\n在多跳问答、开放域检索、领域特定评审问答以及长期智能体-记忆基准测试中，\nSAGE显著提升了证据恢复能力、答案依据性和检索效率：经过两轮自我进化后，\n在多跳问答任务上达到最佳平均排名；在零样本开放域迁移任务中，于NQ数据集\n上实现了82.5/91.6的Recall@2/5。关于LongMemEval和HaluMem的进一步实验结果\n表明，训练过程以及读写反馈机制能够提升多项长期记忆和幻觉诊断指标，这说明\n具备自进化能力且结构感知的图记忆模型是构建鲁棒性长时语言智能体的有前景的\n基础。我们的代码可在此处获取。",
+    "visibility": "internal",
+    "category_id": 3,
+    "tags": [],
+    "created_at": "2026-07-06T08:20:54.919Z",
+    "updated_at": "2026-07-06T08:20:54.919Z"
+  }
+]
