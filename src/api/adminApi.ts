@@ -139,11 +139,13 @@ export const adminApi = {
         job.currentStepIndex = job.steps.length - 1;
         job.entryId = data.entryId;
       } else {
+        const errMsg = (data.errors || []).join('; ') || data.message || data.error || 'Import failed';
+        console.error('Pipeline import failed:', errMsg, data);
         job.status = 'failed';
         const step = job.steps[job.currentStepIndex];
         if (step && step.status === 'running') {
           step.status = 'failed';
-          step.error = data.message || data.error || 'Import failed';
+          step.error = errMsg;
         }
       }
     } catch (err: any) {
