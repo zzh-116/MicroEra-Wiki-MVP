@@ -66,46 +66,51 @@ export default function AdminImportPage({ onNavigate }: AdminImportPageProps) {
   };
 
   const handleStartImport = async () => {
-    if (!mockFileName) return;
+    if (!mockFileName || !selectedFile) return;
 
     // Transition to step 3 (Pipeline) immediately upon trigger
     setCurrentStep(3);
     setUploadProgress(10);
-    setJobState(null);
 
-    // 1. Simulate uploading
+    // Read the actual file content
+    let fileData: ArrayBuffer | string | undefined;
+    try {
+      const isText = /\.(md|txt|csv|json|xml|yaml|yml)$/i.test(selectedFile.name);
+      if (isText) {
+        fileData = await selectedFile.text();
+      } else {
+        fileData = await selectedFile.arrayBuffer();
+      }
+    } catch (err) {
+      console.error('File read error:', err);
+    }
+
+    // Upload progress animation
     const uploadInterval = setInterval(() => {
       setUploadProgress(prev => {
         if (prev === null) return 10;
         if (prev >= 100) {
           clearInterval(uploadInterval);
-          triggerJob();
+          triggerJob(fileData);
           return null;
         }
-        return prev + 30;
+        return prev + 25;
       });
-    }, 120);
+    }, 100);
 
-    const triggerJob = async () => {
+    const triggerJob = async (data?: ArrayBuffer | string) => {
       try {
-        const job = await adminApi.startImportJob({ name: mockFileName, size: 45000 }, targetSpaceId);
+        const job = await adminApi.startImportJob(
+          { name: mockFileName, size: selectedFile.size, data },
+          targetSpaceId
+        );
         setJobState(job);
 
-        let activeJob = job;
-        const tickInterval = setInterval(() => {
-          const updatedJob = adminApi.tickJob(activeJob.id);
-          if (updatedJob) {
-            setJobState(updatedJob);
-            activeJob = updatedJob;
-
-            if (updatedJob.status === 'success' || updatedJob.status === 'failed') {
-              clearInterval(tickInterval);
-              setHistoryJobs(prev => [updatedJob, ...prev]);
-            }
-          } else {
-            clearInterval(tickInterval);
-          }
-        }, 600);
+        if (job.status === 'success') {
+          setHistoryJobs(prev => [job, ...prev]);
+        } else if (job.status === 'failed') {
+          setHistoryJobs(prev => [job, ...prev]);
+        }
       } catch (err) {
         console.error('Error starting import:', err);
       }
