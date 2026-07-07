@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Sparkles, Calendar, BookOpen, Quote, ChevronRight, CornerDownRight, ThumbsUp, MessageSquare } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Sparkles, Calendar, BookOpen, Quote, ChevronRight, CornerDownRight, ThumbsUp, MessageSquare, Search, FileText, BrainCircuit } from 'lucide-react';
 import { Reference } from '../types/wiki';
 
 interface AIAnswerPanelProps {
@@ -10,6 +10,12 @@ interface AIAnswerPanelProps {
   isLoading?: boolean;
 }
 
+const LOADING_STEPS = [
+  { icon: Search, text: '正在向量库中检索相关知识片段...' },
+  { icon: FileText, text: '匹配到相关文档，正在加载上下文段落...' },
+  { icon: BrainCircuit, text: '大模型正在基于检索到的知识生成回答...' },
+];
+
 export default function AIAnswerPanel({
   question,
   answer,
@@ -18,8 +24,22 @@ export default function AIAnswerPanel({
   isLoading = false
 }: AIAnswerPanelProps) {
   const [rated, setRated] = useState(false);
+  const [loadingStep, setLoadingStep] = useState(0);
+
+  // Cycle through loading steps to simulate real pipeline progress
+  useEffect(() => {
+    if (!isLoading) {
+      setLoadingStep(0);
+      return;
+    }
+    const timer = setInterval(() => {
+      setLoadingStep(prev => (prev + 1) % LOADING_STEPS.length);
+    }, 1800);
+    return () => clearInterval(timer);
+  }, [isLoading]);
 
   if (isLoading) {
+    const CurrentIcon = LOADING_STEPS[loadingStep].icon;
     return (
       <div className="bg-white border border-[#DB5F5B]/20 rounded-xl p-5 shadow-sm space-y-4" id="ai-answer-loading">
         <div className="flex items-center space-x-2 border-b border-gray-100 pb-2.5">
@@ -36,9 +56,9 @@ export default function AIAnswerPanel({
           <div className="h-3 bg-gray-100 rounded animate-pulse w-5/12 pt-1" />
         </div>
 
-        <div className="pt-2 flex items-center space-x-1 text-[10px] text-gray-400">
-          <span className="animate-ping h-2 w-2 rounded-full bg-[#DB5F5B] mr-1.5" />
-          <span>读取中: pgvector 数据库稳定子仿真数据块...</span>
+        <div className="pt-2 flex items-center space-x-1.5 text-[10px] text-gray-500 animate-pulse">
+          <CurrentIcon className="w-3 h-3 text-[#DB5F5B]" />
+          <span>{LOADING_STEPS[loadingStep].text}</span>
         </div>
       </div>
     );
