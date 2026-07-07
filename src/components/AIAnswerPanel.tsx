@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Sparkles, Calendar, BookOpen, Quote, ChevronRight, CornerDownRight, ThumbsUp, MessageSquare, Search, FileText, BrainCircuit } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Sparkles, Calendar, BookOpen, Quote, ChevronRight, ThumbsUp, MessageSquare } from 'lucide-react';
 import { Reference } from '../types/wiki';
 
 interface AIAnswerPanelProps {
@@ -10,10 +10,15 @@ interface AIAnswerPanelProps {
   isLoading?: boolean;
 }
 
-const LOADING_STEPS = [
-  { icon: Search, text: '正在向量库中检索相关知识片段...' },
-  { icon: FileText, text: '匹配到相关文档，正在加载上下文段落...' },
-  { icon: BrainCircuit, text: '大模型正在基于检索到的知识生成回答...' },
+const THINKING_PHRASES = [
+  'Thinking…',
+  'Retrieving knowledge fragments…',
+  'Consulting the vector library…',
+  'Formulating a RAG-grounded answer…',
+  'Philosophizing about citation graphs…',
+  'Inspecting neural embeddings…',
+  'Cross-referencing document chunks…',
+  'Synthesizing a grounded response…',
 ];
 
 export default function AIAnswerPanel({
@@ -24,28 +29,37 @@ export default function AIAnswerPanel({
   isLoading = false
 }: AIAnswerPanelProps) {
   const [rated, setRated] = useState(false);
-  const [loadingStep, setLoadingStep] = useState(0);
+  const [phrase, setPhrase] = useState(THINKING_PHRASES[0]);
+  const tickRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Cycle through loading steps to simulate real pipeline progress
   useEffect(() => {
     if (!isLoading) {
-      setLoadingStep(0);
+      setPhrase(THINKING_PHRASES[0]);
+      if (tickRef.current) clearTimeout(tickRef.current);
       return;
     }
-    const timer = setInterval(() => {
-      setLoadingStep(prev => (prev + 1) % LOADING_STEPS.length);
-    }, 1800);
-    return () => clearInterval(timer);
+
+    const tick = () => {
+      setPhrase(prev => {
+        const idx = THINKING_PHRASES.indexOf(prev);
+        const next = (idx + 1) % THINKING_PHRASES.length;
+        return THINKING_PHRASES[next];
+      });
+      // Random interval between 1.5–3.5s for organic Claude-like feel
+      tickRef.current = setTimeout(tick, 1500 + Math.random() * 2000);
+    };
+    tickRef.current = setTimeout(tick, 1500 + Math.random() * 2000);
+
+    return () => { if (tickRef.current) clearTimeout(tickRef.current); };
   }, [isLoading]);
 
   if (isLoading) {
-    const CurrentIcon = LOADING_STEPS[loadingStep].icon;
     return (
       <div className="bg-white border border-[#DB5F5B]/20 rounded-xl p-5 shadow-sm space-y-4" id="ai-answer-loading">
         <div className="flex items-center space-x-2 border-b border-gray-100 pb-2.5">
           <Sparkles className="w-4 h-4 text-[#DB5F5B] animate-spin" />
           <span className="font-semibold text-xs text-[#2B3150]">
-            MiQi 智能语义解析中 (RAG Neural Grounding)...
+            {phrase}
           </span>
         </div>
 
@@ -54,11 +68,6 @@ export default function AIAnswerPanel({
           <div className="h-3 bg-gray-100 rounded animate-pulse w-11/12" />
           <div className="h-3 bg-gray-100 rounded animate-pulse w-10/12" />
           <div className="h-3 bg-gray-100 rounded animate-pulse w-5/12 pt-1" />
-        </div>
-
-        <div className="pt-2 flex items-center space-x-1.5 text-[10px] text-gray-500 animate-pulse">
-          <CurrentIcon className="w-3 h-3 text-[#DB5F5B]" />
-          <span>{LOADING_STEPS[loadingStep].text}</span>
         </div>
       </div>
     );
