@@ -1,0 +1,350 @@
+{
+  "info": {
+    "name": "MicroEra Wiki MVP — Enterprise Data Pipeline",
+    "description": "# 企业数据源管道 API\n\n完整数据管道：**Upload → Parse → Document → Chunk → Embed → Vector → Retrieve → LLM**\n\n## 管道步骤\n\n1. **Upload** — 文件上传 (multipart) 或 API 提交\n2. **Parse** — MarkItDown 统一解析 (PDF/Word/Markdown/TXT/PNG → Markdown)\n3. **Document** — Markdown + 元数据管理\n4. **Chunk** — 智能分块 (fixed / paragraph / sentence / markdown-aware)\n5. **Embed** — BGE-M3 / nomic-embed-text 向量化 (Ollama)\n6. **Vector** — Milvus / 内存向量库存储\n7. **Retrieve** — 语义搜索 (Embedding → TopK → Context)\n8. **LLM** — Ollama Qwen/DeepSeek RAG 问答\n\n## 环境要求\n- Ollama: http://localhost:11434\n- Milvus: localhost:19530 (可选，自动降级到内存向量库)\n- Node.js >= 18",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "microera-wiki"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:3001" },
+    { "key": "jwt_token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const data = pm.response.json();",
+                  "    pm.collectionVariables.set('jwt_token', data.token);",
+                  "    console.log('JWT token set:', data.token.substring(0, 20) + '...');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📊 Pipeline",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/pipeline/health",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pipeline", "health"]
+            }
+          }
+        },
+        {
+          "name": "Get Supported Formats",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/pipeline/formats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pipeline", "formats"]
+            }
+          }
+        },
+        {
+          "name": "Pipeline Status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/pipeline/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pipeline", "status"]
+            }
+          }
+        },
+        {
+          "name": "Step 1: Parse (MarkItDown)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"# 测试文档\\n\\n## 1.1 几何结构\\n\\n| # | 中文名称 | 英文名称 | 符号 | 定义 | 首选单位 | 其他常用单位 | 值域参考 | 常用方法/仪器 | 备注 |\\n|---|---------|---------|------|------|---------|------------|---------|-------------|------|\\n| C01 | 可及表面积 (质量) | Accessible Surface Area | ASA_mass | 探针分子可接触的材料表面积 | **m²/g** | Å²/unit_cell | — | Zeo++ / RASPA | 高通量筛选中常用 |\\n| C02 | 可及表面积 (体积) | Accessible Surface Area (volume) | ASA_vol | 单位体积材料的可及表面积 | **m²/cm³** | m²/m³ | — | Zeo++ / RASPA | — |\",\n  \"fileName\": \"test_material.md\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pipeline/parse",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pipeline", "parse"]
+            }
+          }
+        },
+        {
+          "name": "Step 2: Chunk",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"# 材料性质数据\\n\\n## 几何结构\\n\\n可及表面积是探针分子可接触的材料表面积。在高通量筛选中常用 Zeo++ 软件进行计算。\\n\\n限制孔径沿扩散路径中最窄处的孔径，决定哪些分子可进入孔道。这是 MOF 筛分的核心参数。\\n\\n## 电子结构\\n\\n带隙是价带顶与导带底之间的能量差。常用 DFT 计算获得。HSE06 泛函能更准确地预测带隙值。\",\n  \"strategy\": \"markdown\",\n  \"chunkSize\": 200,\n  \"overlap\": 30\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pipeline/chunk",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pipeline", "chunk"]
+            }
+          }
+        },
+        {
+          "name": "Step 3: Embed",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"texts\": [\n    \"MOF 材料的可及表面积是表征其吸附性能的关键参数\",\n    \"限制孔径 PLD 决定分子筛分的选择性\",\n    \"DFT 计算可以预测材料的电子结构和带隙\"\n  ],\n  \"entryId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pipeline/embed",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pipeline", "embed"]
+            }
+          }
+        },
+        {
+          "name": "Step 4: Full Import (String)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"# 企业知识文档\\n\\n## 产品概述\\n\\nMicroEra 量子计算材料设计平台致力于推进量子材料与超分子结构的计算设计。\\n\\n### 核心特性\\n\\n- 高通量材料带隙逆向搜索\\n- 基于图神经网络（GNN）实现分子性质多层级预测\\n- DFT 算力自动化排班与交付系统\\n\\n## 技术架构\\n\\n平台采用微服务架构，前端使用 React，后端使用 Express，AI 服务基于 Ollama 本地部署。\",\n  \"fileName\": \"product_intro.md\",\n  \"metadata\": {\n    \"title\": \"产品技术介绍\",\n    \"entry_type\": \"product\",\n    \"summary\": \"MicroEra 量子计算材料设计平台产品与技术架构介绍\",\n    \"visibility\": \"public\",\n    \"tags\": [\"产品介绍\", \"技术架构\", \"材料计算\"]\n  },\n  \"skipEmbedding\": false,\n  \"chunkConfig\": {\n    \"strategy\": \"markdown\",\n    \"chunkSize\": 300\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pipeline/import/string",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pipeline", "import", "string"]
+            }
+          }
+        },
+        {
+          "name": "Step 5: Semantic Search",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"MOF 材料筛选的几何参数有哪些\",\n  \"topK\": 5,\n  \"isInternal\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pipeline/search",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pipeline", "search"]
+            }
+          }
+        },
+        {
+          "name": "Batch Import (Directory)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dirPath\": \"./backend/data\",\n  \"pattern\": \"*.md\",\n  \"skipEmbedding\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pipeline/import/batch",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pipeline", "import", "batch"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🤖 AI",
+      "item": [
+        {
+          "name": "AI Search",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"量子计算材料设计平台有哪些功能\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/ai/search",
+              "host": ["{{base_url}}"],
+              "path": ["api", "ai", "search"]
+            }
+          }
+        },
+        {
+          "name": "RAG Chat",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"公司的材料计算平台有哪些核心特性？\",\n  \"history\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/ai/chat",
+              "host": ["{{base_url}}"],
+              "path": ["api", "ai", "chat"]
+            }
+          }
+        },
+        {
+          "name": "AI Summarize Entry",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"entryId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/ai/summarize",
+              "host": ["{{base_url}}"],
+              "path": ["api", "ai", "summarize"]
+            }
+          }
+        },
+        {
+          "name": "Import Materials Metadata",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filePath\": \"backend/data/materials-metadata.md\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/ai/import",
+              "host": ["{{base_url}}"],
+              "path": ["api", "ai", "import"]
+            }
+          }
+        },
+        {
+          "name": "Reset & Reimport",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filePath\": \"backend/data/materials-metadata.md\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/ai/reset",
+              "host": ["{{base_url}}"],
+              "path": ["api", "ai", "reset"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📝 Entries",
+      "item": [
+        {
+          "name": "List Entries (Public)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/entries",
+              "host": ["{{base_url}}"],
+              "path": ["api", "entries"]
+            }
+          }
+        },
+        {
+          "name": "List Entries (All)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/entries?visibility=all",
+              "host": ["{{base_url}}"],
+              "path": ["api", "entries"],
+              "query": [{ "key": "visibility", "value": "all" }]
+            }
+          }
+        },
+        {
+          "name": "Get Entry by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/entries/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "entries", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Entry",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"新条目标题\",\n  \"entry_type\": \"tech\",\n  \"summary\": \"这是一个通过 API 创建的测试条目\",\n  \"content\": \"## 详细内容\\n\\n这是条目的正文内容，支持 Markdown 格式。\",\n  \"visibility\": \"internal\",\n  \"category_id\": 3,\n  \"tags\": [\"技术优势\", \"AI\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/entries",
+              "host": ["{{base_url}}"],
+              "path": ["api", "entries"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
