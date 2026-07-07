@@ -1,33 +1,30 @@
-import { WikiFile, UsageType } from '../types/file';
-import { apiFetch } from './client';
+import { SourceFile } from '../types/wiki';
+import { get, post } from './client';
+import { mvpFileToSourceFile, toNumId } from '../utils/adapter';
 
 export const filesApi = {
-  async getFiles(entryId?: number): Promise<WikiFile[]> {
-    const qs = entryId ? `?entry_id=${entryId}` : '';
-    return apiFetch<WikiFile[]>(`/files${qs}`);
+  async getFilesByEntryId(entryId: string): Promise<SourceFile[]> {
+    try {
+      const numId = toNumId(entryId);
+      const data: any[] = await get(`/files?entry_id=${numId}`);
+      return data.map(mvpFileToSourceFile) as unknown as SourceFile[];
+    } catch {
+      return [];
+    }
   },
 
   async uploadFile(
-    fileInput: { name: string; size: number; type: string; base64Data?: string },
-    entryId: number,
-    usageType: UsageType
-  ): Promise<WikiFile> {
-    return apiFetch<WikiFile>('/files', {
-      method: 'POST',
-      body: JSON.stringify({
-        name: fileInput.name,
-        size: fileInput.size,
-        type: fileInput.type,
-        base64Data: fileInput.base64Data,
-        entryId,
-        usageType,
-      }),
-    });
-  },
-
-  async deleteFile(id: number): Promise<void> {
-    await apiFetch<{ success: boolean }>(`/files/${id}`, {
-      method: 'DELETE',
-    });
+    entryId: string,
+    file: { name: string; size: number; type: string },
+  ): Promise<SourceFile> {
+    const body = {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      entryId: toNumId(entryId),
+      usageType: 'document',
+    };
+    const data = await post<any>('/files', body);
+    return mvpFileToSourceFile(data) as unknown as SourceFile;
   },
 };

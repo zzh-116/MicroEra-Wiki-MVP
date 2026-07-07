@@ -1,34 +1,32 @@
-import React from 'react';
-import { Shield, Eye } from 'lucide-react';
-import { VisibilityType } from '../types/entry';
-import { useLanguageTheme } from '../context/LanguageThemeContext';
+import { Eye, ShieldAlert } from 'lucide-react';
 
 interface VisibilityBadgeProps {
-  visibility: VisibilityType;
+  visibility: 'public' | 'internal';
 }
 
-export const VisibilityBadge: React.FC<VisibilityBadgeProps> = ({ visibility }) => {
-  const { lang } = useLanguageTheme();
+export default function VisibilityBadge({ visibility }: VisibilityBadgeProps) {
   const isPublic = visibility === 'public';
-
-  const label = isPublic 
-    ? (lang === 'zh' ? '公开 (Public)' : 'Public Scope')
-    : (lang === 'zh' ? '内部 (Internal)' : 'Confidential');
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold border select-none ${
+      id={`visibility-badge-${visibility}`}
+      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${
         isPublic
-          ? 'bg-[#F5F6E5] text-[#2B3150] border-brand-yellow/50 dark:bg-brand-indigo dark:text-brand-yellow'
-          : 'bg-brand-coral/10 text-brand-coral border-brand-coral/20'
+          ? 'bg-[#F5F6E5] text-green-700 border-green-200'
+          : 'bg-red-50 text-[#DB5F5B] border-red-100'
       }`}
     >
       {isPublic ? (
-        <Eye className="w-3 h-3 text-brand-coral" />
+        <>
+          <Eye className="w-3 h-3 mr-1 text-green-600" />
+          <span>公开 (Public)</span>
+        </>
       ) : (
-        <Shield className="w-3 h-3 text-brand-coral" />
+        <>
+          <ShieldAlert className="w-3 h-3 mr-1 text-[#DB5F5B]" />
+          <span>内部 (Internal)</span>
+        </>
       )}
-      <span>{label}</span>
     </span>
   );
-};
+}
