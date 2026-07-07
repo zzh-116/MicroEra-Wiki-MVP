@@ -175,7 +175,7 @@ async function embedSeedEntries(vectorStore: { isReady: () => boolean; insert: (
   try {
     const vectors = await ollamaEmbedder.embedBatch(texts);
     const records = seedEntries
-      .map((e, i) => ({ entry_id: e.id, embedding: vectors[i] || [] }))
+      .map((e, i) => ({ chunk_id: `entry_${e.id}_chunk_0`, entry_id: e.id, embedding: vectors[i] || [] }))
       .filter((r) => r.embedding.length > 0);
 
     if (records.length > 0) {

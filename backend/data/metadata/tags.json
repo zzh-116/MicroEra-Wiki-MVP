@@ -102,5 +102,9 @@
   {
     "id": 26,
     "name": "COF"
+  },
+  {
+    "id": 27,
+    "name": "auto-import"
   }
 ]
