@@ -83,10 +83,12 @@ import { createRequire } from 'node:module';
 
 function tryLoadModule(name: string): any {
   try {
-    // Use createRequire for CJS modules to avoid ESM interop issues
     const req = createRequire(import.meta.url);
-    return req(name);
-  } catch {
+    const mod = req(name);
+    // Some CJS modules export a function directly, some wrap it
+    return typeof mod === 'function' ? mod : (mod.default || mod.PDFParse || mod);
+  } catch (e: any) {
+    console.warn(`[Parser] Failed to load ${name}: ${e.message}`);
     return null;
   }
 }
