@@ -210,6 +210,9 @@ pipelineRouter.post('/import', async (req: Request, res: Response) => {
         try { fs.unlinkSync(file.path); } catch { /* ignore */ }
 
         res.status(result.success ? 200 : 422).json(result);
+        if (!result.success) {
+          console.error('[Pipeline] Import failed:', JSON.stringify(result.errors));
+        }
       });
       return;
     }
