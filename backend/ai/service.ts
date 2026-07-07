@@ -1,5 +1,5 @@
 import { config } from '../config.js';
-import { Entry, ChatMessage } from '../types.js';
+import { Entry, ChatMessage, RetrievalResult } from '../types.js';
 import { semanticSearch } from '../retrieval/search.js';
 import { metadataStore } from '../metadata/store.js';
 import { buildChatSystemPrompt, buildSummarizeMessages, buildSearchMessages } from './prompts.js';
@@ -14,7 +14,7 @@ class AiService {
         model,
         messages,
         temperature,
-        max_tokens: 1024,
+        max_tokens: 2048,  // increased from 1024 for academic answers
       }),
       signal: AbortSignal.timeout(120000),
     });
@@ -30,7 +30,7 @@ class AiService {
   /** Semantic search using vector store with LLM fallback */
   async search(query: string, isInternal = false): Promise<Entry[]> {
     try {
-      const results = await semanticSearch.search(query, isInternal);
+      const results = await semanticSearch.search(query, isInternal, 10);
       return results.filter((r) => r.entry).map((r) => r.entry);
     } catch {
       // LLM-based fallback
@@ -43,19 +43,40 @@ class AiService {
     }
   }
 
-  /** RAG chat — returns answer + source entries */
+  /** RAG chat — chunk-level retrieval with topK=5, lower temperature for accuracy */
   async chat(question: string, history: ChatMessage[] = []): Promise<{ answer: string; sources: Entry[] }> {
-    const results = await semanticSearch.search(question, false, 3);
-    const entries = results.filter((r) => r.entry).map((r) => r.entry);
+    // Chunk-level semantic search
+    const results: RetrievalResult[] = await semanticSearch.search(question, false, 5);
+
+    // Build prompt from chunk texts
+    const chunks = results
+      .filter((r) => r.chunkText)
+      .map((r) => ({
+        chunkText: r.chunkText!,
+        entryTitle: r.entry.title,
+        chunkId: r.chunkId || `entry_${r.entry.id}`,
+      }));
 
     const messages: ChatMessage[] = [
-      ...(entries.length > 0 ? [{ role: 'system' as const, content: buildChatSystemPrompt(entries) }] : []),
+      ...(chunks.length > 0 ? [{ role: 'system' as const, content: buildChatSystemPrompt(chunks) }] : []),
       ...history.slice(-10),
       { role: 'user', content: question },
     ];
 
-    const answer = await this.callOllama(messages, 0.7, true);
-    return { answer, sources: entries };
+    // Lower temperature for factual accuracy
+    const answer = await this.callOllama(messages, 0.3, true);
+
+    // Deduplicate sources
+    const seen = new Set<number>();
+    const sources: Entry[] = [];
+    for (const r of results) {
+      if (!seen.has(r.entry.id)) {
+        seen.add(r.entry.id);
+        sources.push(r.entry);
+      }
+    }
+
+    return { answer, sources };
   }
 
   /** Summarize an entry */

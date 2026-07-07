@@ -109,14 +109,14 @@ pipelineRouter.post('/chunk', async (req: Request, res: Response) => {
 
     const chunks = chunkService.chunk(text, 'api_input', {
       strategy: strategy || 'markdown',
-      chunkSize: chunkSize || 512,
-      overlap: overlap || 64,
+      chunkSize: chunkSize || 1024,
+      overlap: overlap || 128,
     });
 
     res.json({
       success: true,
       chunkCount: chunks.length,
-      config: { strategy: strategy || 'markdown', chunkSize: chunkSize || 512, overlap: overlap || 64 },
+      config: { strategy: strategy || 'markdown', chunkSize: chunkSize || 1024, overlap: overlap || 128 },
       chunks: chunks.slice(0, 50).map((c) => ({
         id: c.id,
         index: c.index,
@@ -144,7 +144,7 @@ pipelineRouter.post('/embed', async (req: Request, res: Response) => {
 
     // Chunk if needed
     let chunks = inputTexts;
-    if (inputTexts.length === 1 && inputTexts[0].length > 512) {
+    if (inputTexts.length === 1 && inputTexts[0].length > 1024) {
       chunks = chunkService.chunk(inputTexts[0], 'embed_input').map((c) => c.text);
     }
 
