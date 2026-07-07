@@ -88,16 +88,17 @@ async function tryLoadModule(name: string): Promise<any> {
 }
 
 async function parsePdf(filePath: string, warnings: string[]): Promise<string> {
-  const pdfParse = await tryLoadModule('pdf-parse');
-  if (!pdfParse) {
+  const mod = await tryLoadModule('pdf-parse');
+  if (!mod) {
     warnings.push('pdf-parse not installed; reading PDF as raw text. Install: npm install pdf-parse');
-    // Fallback: try to read as raw text (may get some text from simple PDFs)
     const raw = fs.readFileSync(filePath, 'utf-8');
     return extractReadableText(raw);
   }
 
+  // pdf-parse may export as default, PDFParse, or the module itself
+  const pdfParse = mod.default || mod.PDFParse || mod;
   const buffer = fs.readFileSync(filePath);
-  const data = await pdfParse.default(buffer);
+  const data = await pdfParse(buffer);
   const text = data.text || '';
 
   // Build a structured markdown from PDF content
@@ -109,13 +110,14 @@ async function parsePdf(filePath: string, warnings: string[]): Promise<string> {
 }
 
 async function parseDocx(filePath: string, warnings: string[]): Promise<string> {
-  const mammoth = await tryLoadModule('mammoth');
-  if (!mammoth) {
+  const mod = await tryLoadModule('mammoth');
+  if (!mod) {
     warnings.push('mammoth not installed; reading DOCX as raw text. Install: npm install mammoth');
     const raw = fs.readFileSync(filePath, 'utf-8');
     return extractReadableText(raw);
   }
 
+  const mammoth = mod.default || mod;
   const buffer = fs.readFileSync(filePath);
   const result = await mammoth.convertToMarkdown({ buffer });
   if (result.messages.length > 0) {
