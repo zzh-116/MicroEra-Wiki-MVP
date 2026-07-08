@@ -1,21 +1,21 @@
 import { Router, Request, Response } from 'express';
-import fs from 'node:fs';
-import path from 'node:path';
-import { aiService } from '../../backend/ai/service.js';
-import { importJob } from '../../backend/metadata/importJob.js';
-import { metadataStore } from '../../backend/metadata/store.js';
-import { memoryVectorStore } from '../../backend/vector/memory.js';
-import { config } from '../../backend/config.js';
+import { aiService } from '../../backend/services/ai.service.js';
+import { importService } from '../../backend/services/import.service.js';
+import { entryRepository } from '../../backend/repositories/entry.repository.js';
+import { chunkRepository } from '../../backend/repositories/chunk.repository.js';
+import { vectorRepository } from '../../backend/repositories/vector.repository.js';
+import { conversationRepository } from '../../backend/repositories/conversation.repository.js';
 
 export const aiRouter = Router();
 
-// POST /api/ai/chat — RAG-powered conversational Q&A
+// POST /api/ai/chat — RAG Q&A with conversation persistence
 aiRouter.post('/chat', async (req: Request, res: Response) => {
   try {
-    const { question, history } = req.body || {};
+    const { question, history, conversationId } = req.body || {};
     if (!question?.trim()) { res.json({ answer: '请提出一个问题。', sources: [] }); return; }
-    const { answer, sources } = await aiService.chat(question, history || []);
-    res.json({ answer, sources: sources.map((s: any) => ({ id: s.id, title: s.title, entry_type: s.entry_type })) });
+    const userId = req.user?.userId;
+    const result = await aiService.chat(question, userId, conversationId);
+    res.json({ answer: result.answer, sources: result.sources.map((s) => ({ id: s.id, title: s.title, entry_type: s.entry_type })), conversationId: result.conversationId });
   } catch (err: any) {
     res.status(503).json({ error: 'AI_SERVICE_UNAVAILABLE', message: err.message });
   }
@@ -25,58 +25,50 @@ aiRouter.post('/summarize', async (req: Request, res: Response) => {
   try {
     const { entryId } = req.body || {};
     if (!entryId) { res.status(400).json({ error: 'MISSING_ENTRY_ID', message: '请提供 entryId' }); return; }
-    const summary = await aiService.summarize(Number(entryId));
-    res.json({ summary });
+    res.json({ summary: await aiService.summarize(Number(entryId)) });
   } catch (err: any) {
     res.status(503).json({ error: 'AI_SERVICE_UNAVAILABLE', message: err.message });
   }
 });
 
-// POST /api/ai/import — trigger import pipeline
+// GET /api/ai/conversations — list user conversations
+aiRouter.get('/conversations', async (req: Request, res: Response) => {
+  if (!req.user?.userId) { res.json([]); return; }
+  res.json(await conversationRepository.findByUserId(req.user.userId));
+});
+
+// GET /api/ai/conversations/:id — get messages
+aiRouter.get('/conversations/:id', async (req: Request, res: Response) => {
+  res.json(await conversationRepository.getMessages(Number(req.params.id)));
+});
+
+// POST /api/ai/import — trigger import
 aiRouter.post('/import', async (req: Request, res: Response) => {
   try {
     const { filePath, content } = req.body || {};
     let result;
-    if (filePath) {
-      result = await importJob.importFromFile(filePath);
-    } else if (content) {
-      result = await importJob.importFromString(content);
-    } else {
-      res.status(400).json({ error: 'MISSING_INPUT', message: '请提供 filePath 或 content' });
-      return;
-    }
-    res.json({ success: true, ...result });
+    if (filePath) result = await importService.import({ mode: 'batch', source: filePath, fileName: filePath });
+    else if (content) result = await importService.importFromApi(content, 'api_import.md');
+    else { res.status(400).json({ error: 'MISSING_INPUT', message: '请提供 filePath 或 content' }); return; }
+    res.json({ success: result.success, ...result });
   } catch (err: any) {
     res.status(500).json({ error: 'IMPORT_FAILED', message: err.message });
   }
 });
 
-// POST /api/ai/reset — wipe imported data and reimport cleanly
+// POST /api/ai/reset — wipe and reimport
 aiRouter.post('/reset', async (req: Request, res: Response) => {
   try {
-    const { filePath } = req.body || {};
-    const fp = filePath || 'backend/data/materials-metadata.md';
+    const fp = req.body?.filePath || 'backend/data/materials-metadata.md';
 
-    // 1. Wipe all imported entries (keep seed entries 1-8)
-    const entries = metadataStore.getEntries({}, true);
-    for (const e of entries) {
-      if (e.id > 8) metadataStore.deleteEntry(e.id);
-    }
+    // Delete non-seed entries
+    const all = await entryRepository.findMany({ isInternal: true });
+    for (const e of all) { if (e.id > 8) await entryRepository.delete(e.id); }
 
-    // 2. Wipe vectors and documents
-    const vectorsFile = path.resolve(config.dataDir, 'vectors.json');
-    if (fs.existsSync(vectorsFile)) fs.unlinkSync(vectorsFile);
-    const docsDir = path.resolve(config.dataDir, 'documents');
-    if (fs.existsSync(docsDir)) {
-      for (const f of fs.readdirSync(docsDir)) fs.unlinkSync(path.join(docsDir, f));
-    }
+    await chunkRepository.deleteAll();
+    await vectorRepository.clear();
 
-    // 3. Reconnect memory store (fresh)
-    await memoryVectorStore.connect();
-
-    // 4. Reimport
-    const result = await importJob.importFromFile(fp);
-
+    const result = await importService.import({ mode: 'batch', source: fp, fileName: fp });
     res.json({ success: true, reset: true, ...result });
   } catch (err: any) {
     res.status(500).json({ error: 'RESET_FAILED', message: err.message });

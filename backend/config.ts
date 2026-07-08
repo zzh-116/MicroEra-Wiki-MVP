@@ -20,4 +20,6 @@ export const config = {
   },
 
   dataDir: process.env.DATA_DIR || './backend/data',
+
+  databaseUrl: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/microera_wiki',
 };
