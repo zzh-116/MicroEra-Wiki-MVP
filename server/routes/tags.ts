@@ -1,8 +1,6 @@
 import { Router, Request, Response } from 'express';
-import { metadataStore } from '../../backend/metadata/store.js';
-
+import { tagRepository } from '../../backend/repositories/tag.repository.js';
 export const tagsRouter = Router();
-
-tagsRouter.get('/', (_req: Request, res: Response) => {
-  res.json(metadataStore.getTags());
+tagsRouter.get('/', async (_req: Request, res: Response) => {
+  res.json(await tagRepository.findAll());
 });
