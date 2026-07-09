@@ -1,10 +1,9 @@
 // Prompt templates for AI features — chunk-level RAG
 
 /** Build a compact knowledge context from retrieved chunks */
-function formatChunkForChat(chunkText: string, entryTitle: string, chunkId: string): string {
-  // Use the full chunk text (no arbitrary truncation)
+function formatChunkForChat(chunkText: string, entryTitle: string, chunkLabel: string): string {
   const cleanText = chunkText.trim();
-  return `【来源: ${entryTitle}】(段落: ${chunkId})\n${cleanText}`;
+  return `【来源: ${entryTitle}】(定位: ${chunkLabel})\n${cleanText}`;
 }
 
 /** System prompt for chunk-level RAG chat */
@@ -22,10 +21,9 @@ ${kb}
 回答要求：
 1. 基于上述知识库内容回答，不要编造信息
 2. 如果知识库中有具体论文引用（如 [1]、(Author, Year)、参考文献等格式），请明确列出
-3. 每条关键信息末尾标注来源，格式：(来源: 条目标题)
+3. 每条关键信息末尾标注来源，格式：(来源: 论文标题, 章节名称)。例如：(来源: DeepSeekMath, §Training Data) 或 (来源: DeepSeekMath, §3.1 Pre-training)
 4. 如果知识库信息不足以回答，请诚实说明
-5. 对于学术论文相关问题，请特别注意识别引用格式（方括号编号 [1]、作者-年份 (Smith, 2023)、脚注等）
-6. 简洁直接，2-4 段
+5. 简洁直接，2-4 段
 
 现在回答用户问题。`;
 }

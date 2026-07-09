@@ -61,18 +61,30 @@ class AiService {
       return text;
     };
 
+    // Build a human-readable chunk label from heading metadata.
+    // Falls back to the raw chunkId if no heading is available.
+    const chunkLabel = (r: typeof results[0]): string => {
+      if (r.chunkHeading) {
+        // Strip markdown heading markers (##, ###) for cleaner display
+        const clean = r.chunkHeading.replace(/^#{1,4}\s*/, '');
+        return `§${clean}`;
+      }
+      return r.chunkId || `entry_${r.entry.id}`;
+    };
+
     const chunks = results
       .filter((r) => r.chunkText)
       .map((r) => ({
         chunkText: sanitizeChunk(r.chunkText!),
         entryTitle: r.entry.title,
-        chunkId: r.chunkId || `entry_${r.entry.id}`,
+        chunkId: chunkLabel(r),
       }));
 
     // Diagnostic: log what RAG retrieved
     console.log(`[AI] RAG retrieved ${results.length} results (${chunks.length} with chunk text):`);
     for (const r of results) {
-      console.log(`[AI]   #${r.entry.id} "${r.entry.title.slice(0, 60)}" score=${r.score?.toFixed(4)} chunkId=${r.chunkId || 'N/A'} chunkLen=${r.chunkText?.length || 0}`);
+      const label = chunkLabel(r);
+      console.log(`[AI]   #${r.entry.id} "${r.entry.title.slice(0, 60)}" score=${r.score?.toFixed(4)} label="${label}" chunkLen=${r.chunkText?.length || 0}`);
     }
 
     const messages: ChatMessage[] = [

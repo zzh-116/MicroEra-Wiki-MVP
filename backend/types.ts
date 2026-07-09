@@ -109,6 +109,8 @@ export interface RetrievalResult {
   score: number;
   chunkId?: string;
   chunkText?: string;
+  /** Nearest markdown heading from chunk metadata (e.g. "## Training Data") */
+  chunkHeading?: string;
   chunks?: DocumentChunk[];
 }
 
