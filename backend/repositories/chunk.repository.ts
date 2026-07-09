@@ -100,6 +100,21 @@ export class ChunkRepository extends BaseRepository {
     return map;
   }
 
+  /** Retrieve chunk heading metadata for generating readable citations */
+  async findHeadingsByIds(chunkIds: string[]): Promise<Map<string, string | undefined>> {
+    if (chunkIds.length === 0) return new Map();
+    const rows = await this.db
+      .select({ id: documentChunks.id, metadata: documentChunks.metadata })
+      .from(documentChunks)
+      .where(inArray(documentChunks.id, chunkIds));
+    const map = new Map<string, string | undefined>();
+    for (const r of rows) {
+      const meta = r.metadata as Record<string, unknown> | null;
+      map.set(r.id, meta?.heading as string | undefined);
+    }
+    return map;
+  }
+
   async deleteByEntryId(entryId: number, tx?: DbClient): Promise<void> {
     const client = tx ?? this.db;
     await client.delete(documentChunks).where(eq(documentChunks.entryId, entryId));
