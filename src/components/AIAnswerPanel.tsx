@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Sparkles, Calendar, BookOpen, Quote, ChevronRight, ThumbsUp, MessageSquare } from 'lucide-react';
 import { Reference } from '../types/wiki';
+import { stripDataUriImages } from '../utils/adapter';
 
 interface AIAnswerPanelProps {
   question: string;
@@ -98,7 +99,7 @@ export default function AIAnswerPanel({
       {/* Answer Paragraph */}
       <div className="text-xs text-gray-700 leading-relaxed font-sans bg-gray-50/50 p-3.5 rounded-lg border border-gray-100 select-text">
         {/* Render paragraphs cleanly */}
-        {answer.split('\n\n').map((para, i) => (
+        {stripDataUriImages(answer).split('\n\n').map((para, i) => (
           <p key={i} className="mb-2 last:mb-0">
             {para.split('**').map((chunk, j) => {
               if (j % 2 === 1) {
