@@ -12,6 +12,20 @@ interface AdminContentManagePageProps {
   onNavigate: (view: string, id?: string) => void;
 }
 
+/**
+ * Sanitize a title for safe display — strips invalid UTF-16 surrogates,
+ * null bytes, and other control characters that break layout rendering.
+ * Also truncates unreasonably long strings to a display-safe length.
+ */
+function sanitizeTitle(raw: string): string {
+  if (!raw) return '(未命名条目)';
+  return raw
+    .replace(/\x00/g, '')                         // null bytes
+    .replace(/[\uD800-\uDFFF]/g, '�')        // unpaired surrogates → �
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '') // control chars (keep \n, \t)
+    .slice(0, 500);                                // hard cap for display
+}
+
 export default function AdminContentManagePage({ onNavigate }: AdminContentManagePageProps) {
   const { isLoggedIn, user } = useAuth();
   const [entries, setEntries] = useState<WikiEntry[]>([]);
@@ -185,27 +199,34 @@ export default function AdminContentManagePage({ onNavigate }: AdminContentManag
                   key={entry.id}
                   className="p-3.5 bg-gray-50 border border-gray-150 rounded-lg text-xs flex flex-col sm:flex-row justify-between gap-3"
                 >
-                  <div className="space-y-1.5 pr-2">
+                  {/* Content area: min-w-0 allows flex shrinking; overflow-hidden contains text */}
+                  <div className="space-y-1.5 min-w-0 flex-1 overflow-hidden">
                     <div className="flex items-center space-x-2 select-none">
                       <EntryTypeBadge type={entry.entryType} />
                       <VisibilityBadge visibility={entry.visibility} />
                       <span className="text-[10px] text-gray-400 font-mono">ID: {entry.id}</span>
                     </div>
 
-                    <h4 className="font-extrabold text-gray-800 tracking-tight">
-                      {entry.title}
+                    {/* Title: break-all handles corrupted UTF-8 with no whitespace;
+                        line-clamp-2 prevents excessively tall cards */}
+                    <h4
+                      className="font-extrabold text-gray-800 tracking-tight break-all line-clamp-2"
+                      title={sanitizeTitle(entry.title)}
+                    >
+                      {sanitizeTitle(entry.title)}
                     </h4>
 
-                    <p className="text-[11px] text-gray-500 line-clamp-2 leading-relaxed">
+                    <p className="text-[11px] text-gray-500 line-clamp-2 leading-relaxed break-all">
                       {entry.summary}
                     </p>
                   </div>
 
-                  {/* Actions buttons */}
-                  <div className="flex sm:flex-col justify-end gap-2 shrink-0 items-end select-none">
+                  {/* Actions buttons: shrink-0 + relative + z-10 ensures they stay
+                      accessible and render above any overflow from content area */}
+                  <div className="flex sm:flex-col justify-end gap-2 shrink-0 items-end select-none relative z-10">
                     <button
                       onClick={() => startEditing(entry)}
-                      className="px-2.5 py-1 bg-white border border-gray-200 hover:border-[#DB5F5B]/30 hover:bg-[#F5F6E5]/40 text-gray-600 hover:text-[#DB5F5B] rounded text-[10px] font-bold transition-all flex items-center space-x-1"
+                      className="px-2.5 py-1 bg-white border border-gray-200 hover:border-[#DB5F5B]/30 hover:bg-[#F5F6E5]/40 text-gray-600 hover:text-[#DB5F5B] rounded text-[10px] font-bold transition-all flex items-center space-x-1 whitespace-nowrap"
                     >
                       <Edit className="w-3 h-3" />
                       <span>修订与备份管理</span>
@@ -213,7 +234,7 @@ export default function AdminContentManagePage({ onNavigate }: AdminContentManag
 
                     <button
                       onClick={() => handleDelete(entry.id)}
-                      className="px-2.5 py-1 bg-white border border-gray-200 hover:border-red-300 hover:bg-red-50 text-gray-600 hover:text-red-600 rounded text-[10px] font-bold transition-all flex items-center space-x-1"
+                      className="px-2.5 py-1 bg-white border border-gray-200 hover:border-red-300 hover:bg-red-50 text-gray-600 hover:text-red-600 rounded text-[10px] font-bold transition-all flex items-center space-x-1 whitespace-nowrap"
                     >
                       <Trash2 className="w-3 h-3" />
                       <span>注销</span>
