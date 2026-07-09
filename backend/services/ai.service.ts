@@ -47,10 +47,24 @@ class AiService {
     ]);
     console.log(`[AI] buildRag: getHistory+semanticSearch = ${Date.now() - t0}ms`);
 
+    // Sanitize chunk text: strip Base64 data-URI images from RAG context.
+    // Even though the parser strips them at import time, pre-existing chunks
+    // from before the fix may still contain raw Base64. This is the last
+    // defense before the chunk text reaches the LLM prompt.
+    const sanitizeChunk = (text: string): string => {
+      // Pass 1: markdown image syntax ![alt](data:image/...)
+      text = text.replace(/!\[([^\]]*)\]\(data:image\/[^)]+\)/g,
+        (_m: string, alt: string) => `[Embedded image: ${alt?.trim() || 'Image'}]`);
+      // Pass 2: bare base64 URIs (LLM output, broken parse artifacts)
+      text = text.replace(/data:image\/[a-z+]+;base64,[A-Za-z0-9+/=]{100,}/g,
+        '[Embedded image omitted]');
+      return text;
+    };
+
     const chunks = results
       .filter((r) => r.chunkText)
       .map((r) => ({
-        chunkText: r.chunkText!,
+        chunkText: sanitizeChunk(r.chunkText!),
         entryTitle: r.entry.title,
         chunkId: r.chunkId || `entry_${r.entry.id}`,
       }));

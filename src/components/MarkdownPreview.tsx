@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { FileText, Eye, Code, Check } from 'lucide-react';
 import { MarkdownFile } from '../types/wiki';
+import { stripDataUriImages } from '../utils/adapter';
 
 interface MarkdownPreviewProps {
   markdownFile: MarkdownFile | null;
@@ -70,7 +71,7 @@ export default function MarkdownPreview({ markdownFile, onClose }: MarkdownPrevi
       <div className="p-5 max-h-[500px] overflow-y-auto bg-white font-sans text-xs leading-relaxed text-gray-700 select-text">
         <div className="prose prose-sm max-w-none prose-headings:text-[#2B3150] prose-headings:font-bold prose-h1:text-lg prose-h2:text-sm prose-h3:text-xs">
           {/* We will render markdown text by splitting it into sections and displaying nice visual blocks */}
-          {markdownFile.markdownContent.split('\n').map((line, idx) => {
+          {stripDataUriImages(markdownFile.markdownContent).split('\n').map((line, idx) => {
             if (line.startsWith('# ')) {
               return (
                 <h1 key={idx} className="text-base font-bold text-[#2B3150] border-b border-gray-100 pb-1 mt-4 mb-2">

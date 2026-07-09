@@ -83,6 +83,27 @@ function countWords(text: string): number {
   return cjk + latin;
 }
 
+/** Strip inline data:image/...;base64,... URLs from Markdown */
+function stripDataUriImages(markdown: string): string {
+  // Pass 1: markdown image syntax ![alt](data:image/...)
+  markdown = markdown.replace(
+    /!\[([^\]]*)\]\(data:image\/[^)]+\)/g,
+    (_full: string, alt: string) => `[Embedded image: ${alt?.trim() || 'Image'}]`,
+  );
+  // Pass 2: bare base64 URIs (LLM may output them raw, or broken parse artifacts)
+  markdown = markdown.replace(
+    /data:image\/[a-z+]+;base64,[A-Za-z0-9+/=]{100,}/g,
+    '[Embedded image omitted]',
+  );
+  return markdown;
+}
+
+/** Count how many data-URI images will be stripped */
+function stripDataUriImages_count(markdown: string): number {
+  const matches = markdown.match(/!\[([^\]]*)\]\(data:image\/[^)]+\)/g);
+  return matches ? matches.length : 0;
+}
+
 /** Formats that Docling CLI can process natively */
 const DOCLING_FORMATS: Set<InputFormat> = new Set([
   'pdf', 'docx', 'pptx', 'xlsx', 'html', 'md', 'asciidoc', 'csv', 'txt',
@@ -386,6 +407,16 @@ export class DoclingParser implements DocumentParser {
     // Strip null bytes
     markdown = markdown.replace(/\x00/g, '');
 
+    // Strip inline Base64 data-URI images (Docling embeds images as base64).
+    // These can be tens of KB and break page layout when rendered.
+    // Replaced with a safe placeholder.
+    const strippedCount = stripDataUriImages_count(markdown);
+    markdown = stripDataUriImages(markdown);
+    if (strippedCount > 0) {
+      console.log(`[Docling] Stripped ${strippedCount} inline base64 image(s) from "${fileName}"`);
+      warnings.push(`Stripped ${strippedCount} inline base64 image(s)`);
+    }
+
     // Extract structured properties
     let properties: ParsedProperty[] | undefined;
     if (options.extractProperties) {
@@ -443,6 +474,9 @@ export class DoclingParser implements DocumentParser {
 
     // For text formats, parse directly without invoking Docling CLI
     let markdown = content.replace(/\x00/g, '');
+
+    // Strip inline Base64 data-URI images (defensive — any source can contain them)
+    markdown = stripDataUriImages(markdown);
 
     // For HTML, invoke Docling for better conversion
     if (format === 'html') {

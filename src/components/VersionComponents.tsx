@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { History, Award, CheckCircle, ShieldAlert, ArrowLeftRight, Clock, User, FileText, RotateCcw, HelpCircle } from 'lucide-react';
 import { WikiEntry, EntryVersionHistoryItem } from '../types/wiki';
 import { mockSystemVersionInfo } from '../mock/mockData';
+import { stripDataUriImages } from '../utils/adapter';
 
 // Component 1: VersionBadge
 export function VersionBadge({ 
@@ -421,7 +422,7 @@ export function EntryVersionHistory({ entry, onRollbackSuccess }: EntryVersionHi
               <div>
                 <span className="font-bold text-gray-400 text-[10px] uppercase tracking-wide block select-none">全量 Markdown 备份内容 (Content Backup):</span>
                 <pre className="text-[10px] font-mono text-gray-600 bg-gray-900 border border-gray-950 text-emerald-400 p-3 rounded overflow-x-auto max-h-48 leading-relaxed">
-                  {selectedHistory.contentBackup || entry.content}
+                  {stripDataUriImages(selectedHistory.contentBackup || entry.content)}
                 </pre>
               </div>
             </div>
