@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { queryApi, AIResponse } from '../api/queryApi';
 import { entriesApi } from '../api/entriesApi';
@@ -7,7 +7,7 @@ import { mockGraphNodes, mockGraphEdges } from '../mock/mockData';
 import AIAnswerPanel from '../components/AIAnswerPanel';
 import KnowledgeGraph from '../components/KnowledgeGraph';
 import RelatedKnowledge from '../components/RelatedKnowledge';
-import { Sparkles, Send, HelpCircle, CornerDownRight, BookOpen } from 'lucide-react';
+import { Sparkles, Send, HelpCircle, CornerDownRight, BookOpen, StopCircle } from 'lucide-react';
 
 interface AIQueryPageProps {
   onNavigate: (view: string, id?: string) => void;
@@ -21,31 +21,97 @@ export default function AIQueryPage({ onNavigate }: AIQueryPageProps) {
   const [references, setReferences] = useState<any[]>([]);
   const [relatedEntries, setRelatedEntries] = useState<WikiEntry[]>([]);
 
-  const handleAsk = async (q: string) => {
-    if (!q.trim()) return;
+  // Streaming refs
+  const abortRef = useRef<AbortController | null>(null);
+  const answerRef = useRef<HTMLDivElement>(null);
+  const loadingRef = useRef(false);
+
+  // Auto-scroll as tokens arrive
+  useEffect(() => {
+    if (answerRef.current) {
+      answerRef.current.scrollTop = answerRef.current.scrollHeight;
+    }
+  }, [answer]);
+
+  // Cancel generation
+  const handleStop = useCallback(() => {
+    if (abortRef.current) {
+      abortRef.current.abort();
+      abortRef.current = null;
+    }
+    loadingRef.current = false;
+    setLoading(false);
+  }, []);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (abortRef.current) abortRef.current.abort();
+    };
+  }, []);
+
+  const handleAsk = useCallback(async (q: string) => {
+    if (!q.trim() || loadingRef.current) return;
+
+    // Cancel any existing generation
+    if (abortRef.current) abortRef.current.abort();
+
+    loadingRef.current = true;
     setQuestion(q);
     setLoading(true);
     setAnswer('');
     setReferences([]);
     setRelatedEntries([]);
 
-    try {
-      const res = await queryApi.askAI(q);
-      setAnswer(res.answer);
-      setReferences(res.references);
+    const sources: Array<{ id: number; title: string; entry_type: string }> = [];
 
-      // Load related entry models
-      if (res.relatedEntryIds.length > 0) {
-        const all = await entriesApi.getEntries();
-        const filtered = all.filter(e => res.relatedEntryIds.includes(e.id));
-        setRelatedEntries(filtered);
-      }
-    } catch (err) {
-      console.error('Error during AI query:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    abortRef.current = queryApi.askAIStream(
+      q,
+      {
+        onToken: (token: string) => {
+          setAnswer((prev) => prev + token);
+        },
+        onDone: (data) => {
+          loadingRef.current = false;
+          setLoading(false);
+          abortRef.current = null;
+
+          // Set references from done event
+          const refs = (data.sources || []).map((s) => ({
+            id: `ref-ai-${s.id}`,
+            fromEntryId: String(s.id),
+            locator: '',
+            quote: '',
+            referenceType: 'document' as const,
+            title: s.title,
+            updatedAt: new Date().toISOString(),
+          }));
+          setReferences(refs);
+
+          // Store conversation ID for follow-up
+          if (data.conversationId) {
+            localStorage.setItem('miqro_wiki_conv_id', String(data.conversationId));
+          }
+
+          // Load related entries
+          const entryIds = (data.sources || []).map((s) => String(s.id));
+          if (entryIds.length > 0) {
+            entriesApi.getEntries().then((all) => {
+              const filtered = all.filter((e) => entryIds.includes(e.id));
+              setRelatedEntries(filtered);
+            }).catch(() => {});
+          }
+        },
+        onError: (message: string) => {
+          loadingRef.current = false;
+          setAnswer((prev) => prev + `\n\n[错误: ${message}]`);
+          setLoading(false);
+          abortRef.current = null;
+        },
+      },
+      undefined,
+    );
+  }, []);
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,7 +142,7 @@ export default function AIQueryPage({ onNavigate }: AIQueryPageProps) {
           <span>MiQi 智能科研 RAG 问答中枢 (Neural Semantic Grounding)</span>
         </h2>
         <p className="text-[10px] text-gray-400">
-          基于高维物理沙箱（Sandbox）输出、MarkItDown 文档缓存及向量 Embedding 库为您提供无幻觉的溯源级解答。
+          基于高维物理沙箱（Sandbox）输出、MarkItDown 文档缓存及向量 Embedding 库为您提供无幻觉的溯源级解答 {loading && '— 实时流式生成中...'}
         </p>
       </div>
 
@@ -89,7 +155,7 @@ export default function AIQueryPage({ onNavigate }: AIQueryPageProps) {
               <label className="block text-[10px] font-bold text-gray-600 uppercase tracking-wide">
                 请输入您的技术问题或自然语言查询：
               </label>
-              
+
               <div className="relative">
                 <input
                   type="text"
@@ -100,14 +166,25 @@ export default function AIQueryPage({ onNavigate }: AIQueryPageProps) {
                   onChange={(e) => setQuestion(e.target.value)}
                   id="ai-query-input"
                 />
-                
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="absolute right-2 top-1.5 p-1.5 bg-[#DB5F5B] hover:bg-[#DB5F5B]/90 text-white rounded-md transition-all flex items-center justify-center shrink-0"
-                >
-                  <Send className="w-4 h-4 text-white" />
-                </button>
+
+                {loading ? (
+                  <button
+                    type="button"
+                    onClick={handleStop}
+                    className="absolute right-2 top-1.5 p-1.5 bg-red-500 hover:bg-red-600 text-white rounded-md transition-all flex items-center justify-center shrink-0 animate-pulse"
+                    title="停止生成"
+                  >
+                    <StopCircle className="w-4 h-4 text-white" />
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    disabled={!question.trim()}
+                    className="absolute right-2 top-1.5 p-1.5 bg-[#DB5F5B] hover:bg-[#DB5F5B]/90 text-white rounded-md transition-all flex items-center justify-center shrink-0 disabled:opacity-50"
+                  >
+                    <Send className="w-4 h-4 text-white" />
+                  </button>
+                )}
               </div>
             </form>
 

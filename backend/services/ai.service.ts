@@ -1,5 +1,7 @@
-// AI Service — RAG chat + summarization with conversation persistence
-import { config } from '../config.js';
+// AI Service — RAG chat + summarization with provider-agnostic LLM abstraction
+// Supports both streaming (AsyncGenerator) and non-streaming (Promise<string>)
+import { getLLMProvider } from '../llm/index.js';
+import type { LLMProvider, StreamChunk } from '../llm/types.js';
 import { searchService } from './search.service.js';
 import { entryRepository } from '../repositories/entry.repository.js';
 import { conversationRepository } from '../repositories/conversation.repository.js';
@@ -7,17 +9,8 @@ import { buildChatSystemPrompt, buildSummarizeMessages, buildSearchMessages } fr
 import type { ChatMessage, Entry, RetrievalResult } from '../types.js';
 
 class AiService {
-  private async callOllama(messages: ChatMessage[], temperature = 0.3, useChatModel = false): Promise<string> {
-    const model = useChatModel ? config.ollama.chatModel : config.ollama.model;
-    const response = await fetch(`${config.ollama.url}/v1/chat/completions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model, messages, temperature, max_tokens: 2048 }),
-      signal: AbortSignal.timeout(120000),
-    });
-    if (!response.ok) throw new Error(`Ollama API error ${response.status}`);
-    const data = (await response.json()) as { choices: Array<{ message: { content: string } }> };
-    return data.choices?.[0]?.message?.content || '';
+  private get provider(): LLMProvider {
+    return getLLMProvider();
   }
 
   /** Semantic search with LLM fallback */
@@ -29,44 +22,30 @@ class AiService {
       const allEntries = await entryRepository.findMany({ isInternal });
       if (allEntries.length === 0) return [];
       const messages = buildSearchMessages(allEntries, query);
-      const raw = await this.callOllama(messages, 0.3);
+      const raw = await this.provider.chat(messages, { temperature: 0.3 });
       const ids = this.parseIds(raw);
       return ids.map((id) => allEntries.find((e) => e.id === id)).filter(Boolean) as Entry[];
     }
   }
 
-  /** RAG chat with conversation persistence */
-  async chat(
+  /** Build RAG messages from a question */
+  private async buildRagMessages(
     question: string,
-    userId?: number,
     conversationId?: number,
   ): Promise<{
-    answer: string;
+    messages: ChatMessage[];
     sources: Entry[];
-    conversationId: number;
+    results: RetrievalResult[];
   }> {
-    // Create or reuse conversation
-    if (!conversationId && userId) {
-      const conv = await conversationRepository.create(userId, question.slice(0, 80));
-      conversationId = conv.id;
-    }
-
-    // Save user message
-    if (conversationId) {
-      await conversationRepository.addMessage({
-        conversationId,
-        role: 'user',
-        content: question,
-      });
-    }
-
-    // Get conversation history
-    const history: ChatMessage[] = conversationId
-      ? await conversationRepository.getHistory(conversationId)
-      : [];
-
-    // Chunk-level semantic search
-    const results: RetrievalResult[] = await searchService.semanticSearch(question, false, 5);
+    // Parallelize: history fetch and semantic search are independent
+    const t0 = Date.now();
+    const [history, results] = await Promise.all([
+      conversationId
+        ? conversationRepository.getHistory(conversationId)
+        : Promise.resolve([] as ChatMessage[]),
+      searchService.semanticSearch(question, true, 10),
+    ]);
+    console.log(`[AI] buildRag: getHistory+semanticSearch = ${Date.now() - t0}ms`);
 
     const chunks = results
       .filter((r) => r.chunkText)
@@ -76,13 +55,19 @@ class AiService {
         chunkId: r.chunkId || `entry_${r.entry.id}`,
       }));
 
+    // Diagnostic: log what RAG retrieved
+    console.log(`[AI] RAG retrieved ${results.length} results (${chunks.length} with chunk text):`);
+    for (const r of results) {
+      console.log(`[AI]   #${r.entry.id} "${r.entry.title.slice(0, 60)}" score=${r.score?.toFixed(4)} chunkId=${r.chunkId || 'N/A'} chunkLen=${r.chunkText?.length || 0}`);
+    }
+
     const messages: ChatMessage[] = [
-      ...(chunks.length > 0 ? [{ role: 'system' as const, content: buildChatSystemPrompt(chunks) }] : []),
+      ...(chunks.length > 0
+        ? [{ role: 'system' as const, content: buildChatSystemPrompt(chunks) }]
+        : []),
       ...history.slice(-10),
       { role: 'user', content: question },
     ];
-
-    const answer = await this.callOllama(messages, 0.3, true);
 
     // Deduplicate sources
     const seen = new Set<number>();
@@ -94,7 +79,30 @@ class AiService {
       }
     }
 
-    // Save assistant message
+    return { messages, sources, results };
+  }
+
+  /** Non-streaming RAG chat with conversation persistence */
+  async chat(
+    question: string,
+    userId?: number,
+    conversationId?: number,
+  ): Promise<{
+    answer: string;
+    sources: Entry[];
+    conversationId: number;
+  }> {
+    if (!conversationId && userId) {
+      const conv = await conversationRepository.create(userId, question.slice(0, 80));
+      conversationId = conv.id;
+    }
+    if (conversationId) {
+      await conversationRepository.addMessage({ conversationId, role: 'user', content: question });
+    }
+
+    const { messages, sources } = await this.buildRagMessages(question, conversationId);
+    const answer = await this.provider.chat(messages, { temperature: 0.3 });
+
     if (conversationId) {
       await conversationRepository.addMessage({
         conversationId,
@@ -107,12 +115,102 @@ class AiService {
     return { answer, sources, conversationId: conversationId ?? 0 };
   }
 
+  /**
+   * Streaming RAG chat — yields tokens via AsyncGenerator.
+   * Use this from SSE endpoints.
+   *
+   * Usage:
+   *   for await (const chunk of aiService.streamChat(question, userId, cid, signal)) {
+   *     if (chunk.type === 'token') send(chunk.content);
+   *     if (chunk.type === 'done') saveToDb(chunk.sources);
+   *   }
+   */
+  async *streamChat(
+    question: string,
+    userId?: number,
+    conversationId?: number,
+    signal?: AbortSignal,
+  ): AsyncGenerator<StreamChatEvent> {
+    const t0 = Date.now();
+
+    // Step 1: Create conversation if new (need the ID before proceeding)
+    if (!conversationId && userId) {
+      const conv = await conversationRepository.create(userId, question.slice(0, 80));
+      conversationId = conv.id;
+    }
+    console.log(`[AI] createConv: ${Date.now() - t0}ms`);
+
+    // Step 2: Yield start event IMMEDIATELY — user gets instant feedback
+    yield { type: 'start', conversationId: conversationId ?? 0 };
+
+    // Step 3: Save user message + build RAG messages IN PARALLEL
+    // These are independent: addMessage doesn't affect getHistory (current msg not yet saved)
+    const cid = conversationId;
+    const t1 = Date.now();
+    const [, { messages, sources }] = await Promise.all([
+      cid
+        ? conversationRepository.addMessage({ conversationId: cid, role: 'user', content: question })
+        : Promise.resolve(null),
+      this.buildRagMessages(question, cid),
+    ]);
+    console.log(`[AI] buildRag+addMsg: ${Date.now() - t1}ms (total: ${Date.now() - t0}ms)`);
+
+    // Stream tokens from provider
+    let fullAnswer = '';
+    let tokenCount = 0;
+    const t2 = Date.now();
+    try {
+      for await (const chunk of this.provider.streamChat(messages, { temperature: 0.3 }, signal)) {
+        if (chunk.done) break;
+        fullAnswer += chunk.token;
+        tokenCount++;
+        yield { type: 'token', content: chunk.token };
+      }
+      const ttft = tokenCount > 0 ? '?' : 'N/A';
+      console.log(`[AI] streamTokens: ${Date.now() - t2}ms, ${tokenCount} tokens (total: ${Date.now() - t0}ms)`);
+    } catch (err: any) {
+      // Yield error, but don't throw — save partial answer if we have one
+      yield { type: 'error', message: err.message || 'Generation failed' };
+
+      if (conversationId && fullAnswer) {
+        await conversationRepository.addMessage({
+          conversationId,
+          role: 'assistant',
+          content: fullAnswer + '\n\n[生成中断]',
+          sources: sources.map((s) => ({ id: s.id, title: s.title })),
+        });
+      }
+      return;
+    }
+
+    // Persist complete answer after successful generation
+    if (conversationId) {
+      await conversationRepository.addMessage({
+        conversationId,
+        role: 'assistant',
+        content: fullAnswer,
+        sources: sources.map((s) => ({ id: s.id, title: s.title })),
+      });
+    }
+
+    // Yield done event with sources
+    yield {
+      type: 'done',
+      sources: sources.map((s) => ({
+        id: s.id,
+        title: s.title,
+        entry_type: s.entry_type,
+      })),
+      conversationId: conversationId ?? 0,
+    };
+  }
+
   /** Summarize an entry */
   async summarize(entryId: number): Promise<string> {
     const entry = await entryRepository.findById(entryId);
     if (!entry) throw new Error('ENTRY_NOT_FOUND');
     const messages = buildSummarizeMessages(entry);
-    return this.callOllama(messages, 0.3, true);
+    return this.provider.chat(messages, { temperature: 0.3 });
   }
 
   private parseIds(raw: string): number[] {
@@ -128,5 +226,12 @@ class AiService {
     return [];
   }
 }
+
+/** Events yielded by streamChat() */
+export type StreamChatEvent =
+  | { type: 'start'; conversationId: number }
+  | { type: 'token'; content: string }
+  | { type: 'done'; sources: Array<{ id: number; title: string; entry_type: string }>; conversationId: number }
+  | { type: 'error'; message: string };
 
 export const aiService = new AiService();

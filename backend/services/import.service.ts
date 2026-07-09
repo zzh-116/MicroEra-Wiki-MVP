@@ -1,11 +1,14 @@
 // Import Service — enterprise data pipeline with transactional safety
+// Depends on DocumentParser interface — parser implementation is swappable
 import fs from 'node:fs';
 import path from 'node:path';
 import { db } from '../db/connection.js';
 import { entryRepository, CreateEntryInput } from '../repositories/entry.repository.js';
 import { chunkRepository } from '../repositories/chunk.repository.js';
 import { vectorRepository } from '../repositories/vector.repository.js';
-import { parserService, InputFormat, ParseResult } from '../parser/service.js';
+import { getParser } from '../parser/index.js';
+import type { DocumentParser, InputFormat, ParseResult } from '../parser/types.js';
+import { ParserError } from '../parser/types.js';
 import { chunkService, ChunkConfig } from '../chunk/service.js';
 import { ollamaEmbedder } from '../embedding/ollama.js';
 import type { ParsedProperty, Entry } from '../types.js';
@@ -36,12 +39,21 @@ export interface ImportResult {
   mode: ImportMode;
   source: string;
   entryId: number;
-  parse: { sourceFormat: InputFormat; fileSize: number; wordCount: number; propertyCount: number; warnings: string[] };
-  chunks: { count: number; strategy: string };
-  embedding: { model: string; vectorCount: number; dimension: number; skipped: boolean };
+  parse: { sourceFormat: InputFormat; fileName: string; fileSize: number; wordCount: number; propertyCount: number; warnings: string[]; parseMs: number };
+  chunks: { count: number; strategy: string; chunkMs: number };
+  embedding: { model: string; vectorCount: number; dimension: number; skipped: boolean; embedMs: number };
   vector: { store: string; inserted: number };
-  timing: { parseMs: number; chunkMs: number; embedMs: number; totalMs: number };
+  timing: { totalMs: number };
+  /** Human-readable stage results */
+  stages: StageResult[];
   errors: string[];
+}
+
+export interface StageResult {
+  stage: string;
+  status: 'success' | 'failed' | 'skipped';
+  ms: number;
+  detail: string;
 }
 
 export interface BatchImportResult {
@@ -49,125 +61,206 @@ export interface BatchImportResult {
   results: ImportResult[]; totalTimeMs: number;
 }
 
-export class ImportService {
-  async import(input: ImportInput): Promise<ImportResult> {
-    const startTime = Date.now();
-    const errors: string[] = [];
-    let parseMs = 0, chunkMs = 0, embedMs = 0;
+const RETRY_MAX = 3;
+const RETRY_BASE_MS = 500;
 
-    // Step 1: Parse (outside transaction — pure I/O)
-    const parseStart = Date.now();
-    let parseResult: ParseResult;
-    try {
-      if (input.buffer && input.fileName) {
-        parseResult = await parserService.parseBuffer(input.buffer, input.fileName, { extractProperties: true });
-      } else if (input.content) {
-        parseResult = await parserService.parseString(input.content, input.fileName || 'api_import.md', { extractProperties: true });
-      } else if (input.source) {
-        parseResult = await parserService.parseFile(input.source, { extractProperties: true });
-      } else {
-        throw new Error('No input provided');
-      }
-      parseMs = Date.now() - parseStart;
-    } catch (err: any) {
-      return this.failureResult(input, [`Parse failed: ${err.message}`], startTime);
+export class ImportService {
+  private get parser(): DocumentParser { return getParser(); }
+
+  async import(input: ImportInput): Promise<ImportResult> {
+    const t0 = Date.now();
+    const stages: StageResult[] = [];
+    const errors: string[] = [];
+
+    // ── Stage 1: Parse (with retry) ──
+    const parseResult = await this.retryParse(input, stages, errors);
+    if (!parseResult) {
+      return this.buildResult(input, stages, errors, 0, t0);
     }
 
-    // Steps 2-3: Entry + Chunks (transactional)
     const properties = parseResult.properties || [];
-    const title = input.entryMetadata?.title || parseResult.metadata.fileName.replace(/\.[^.]+$/, '') || `Import ${Date.now()}`;
+    const title = input.entryMetadata?.title
+      || parseResult.metadata.fileName.replace(/\.[^.]+$/, '')
+      || `Import ${Date.now()}`;
 
     let entryContent = parseResult.markdown;
     if (properties.length > 0 && !entryContent.includes('|')) {
       entryContent = this.buildPropertyTable(properties);
     }
 
-    let entry: Entry;
+    // ── Stage 2: Entry + Chunks (transactional) ──
+    let entry: Entry | null = null;
     let chunks: ReturnType<typeof chunkService.chunk> = [];
 
     try {
-      const result = await db.transaction(async (tx) => {
-        // Create entry
+      const txn = await db.transaction(async (tx) => {
+        const tChunk = Date.now();
         const e = await entryRepository.create({
           title,
           entry_type: input.entryMetadata?.entry_type || 'data_item',
-          summary: input.entryMetadata?.summary || `Imported from ${parseResult.sourceFormat}: ${parseResult.metadata.fileName}`,
+          summary: input.entryMetadata?.summary
+            || `Imported from ${parseResult.sourceFormat}: ${parseResult.metadata.fileName}`,
           content: entryContent.slice(0, 50000),
           visibility: input.entryMetadata?.visibility || 'internal',
           category_id: input.entryMetadata?.category_id || 5,
           tags: input.entryMetadata?.tags || this.inferTags(parseResult, properties),
         }, tx as any);
 
-        // Chunk
-        const chunkStart = Date.now();
-        let c: typeof chunks = [];
-        try {
-          c = chunkService.chunk(entryContent, `entry_${e.id}`, input.chunkConfig || { strategy: 'markdown', chunkSize: 512, overlap: 64 });
-          chunkMs = Date.now() - chunkStart;
-        } catch (err: any) {
-          chunkMs = Date.now() - chunkStart;
-          throw err;
+        const c = chunkService.chunk(entryContent, `entry_${e.id}`,
+          input.chunkConfig || { strategy: 'markdown', chunkSize: 512, overlap: 64 });
+
+        // Persist ALL chunks to DB so vector search can retrieve full chunk text.
+        // Delete old chunks first, then append document chunks + property chunks
+        // atomically. (Previously only property chunks were saved; regular document
+        // chunks were embedded but never stored, so search degraded to
+        // entry.content.slice(0,1024) — useless for long documents.)
+        await chunkRepository.deleteByEntryId(e.id, tx as any);
+
+        await chunkRepository.saveChunks(e.id, c.map((ch) => ({
+          id: ch.id,
+          text: ch.text,
+          metadata: { strategy: ch.metadata.strategy, heading: ch.metadata.heading, startChar: ch.startChar, endChar: ch.endChar },
+        })), { deleteExisting: false }, tx as any);
+
+        if (properties.length > 0) {
+          await chunkRepository.saveFromProperties(e.id, properties,
+            { deleteExisting: false }, tx as any);
         }
 
-        // Save property chunks
-        if (properties.length > 0) {
-          await chunkRepository.saveFromProperties(e.id, properties, tx as any);
-        }
+        const chunkMs = Date.now() - tChunk;
+        stages.push({ stage: 'chunk', status: 'success', ms: chunkMs,
+          detail: `${c.length} chunks (${input.chunkConfig?.strategy || 'markdown'})` });
+        console.log(`[Import] Chunk | entry=${e.id} | chunks=${c.length} | ms=${chunkMs} | SUCCESS`);
 
         return { entry: e, chunks: c };
       });
 
-      entry = result.entry;
-      chunks = result.chunks;
+      entry = txn.entry;
+      chunks = txn.chunks;
     } catch (err: any) {
-      errors.push(`Entry/Chunk failed: ${err.message}`);
-      return this.failureResult(input, errors, startTime);
+      // Extract full PostgreSQL/Drizzle error details
+      const errDetail = [
+        err.message,
+        err.code ? `SQLSTATE: ${err.code}` : '',
+        err.detail ? `Detail: ${err.detail}` : '',
+        err.constraint ? `Constraint: ${err.constraint}` : '',
+        err.column ? `Column: ${err.column}` : '',
+        err.table ? `Table: ${err.table}` : '',
+      ].filter(Boolean).join(' | ');
+
+      errors.push(`Entry/Chunk: ${errDetail}`);
+      stages.push({ stage: 'chunk', status: 'failed', ms: 0, detail: errDetail });
+      // Dig into nested error (Drizzle wraps pg errors in `cause`)
+      const pgErr = err.cause || err;
+      console.error(`[Import] Entry/Chunk FAILED:
+  Message: ${err.message}
+  Code: ${err.code || pgErr.code || 'N/A'}
+  Detail: ${err.detail || pgErr.detail || 'N/A'}
+  Constraint: ${err.constraint || pgErr.constraint || 'N/A'}
+  Column: ${err.column || pgErr.column || 'N/A'}
+  Table: ${err.table || pgErr.table || 'N/A'}
+  cause.Message: ${pgErr.message || 'N/A'}
+  cause.Code: ${pgErr.code || 'N/A'}`);
+      return this.buildResult(input, stages, errors, 0, t0);
     }
 
-    // Step 4: Embed + Vector (outside transaction — Ollama is external)
-    const embedStart = Date.now();
-    let vectorCount = 0, dimension = 0;
+    // ── Stage 3: Embed + Vector ──
+    let vectorCount = 0;
+    let dimension = 0;
     let skipped = input.skipEmbedding || false;
+    const tEmbed = Date.now();
 
     if (!skipped && chunks.length > 0) {
       try {
         const texts = chunks.map((c) => c.text);
         const vecs = await ollamaEmbedder.embedBatch(texts);
-        const validVecs = vecs.filter((v) => v.length > 0);
+        const valid = vecs.filter((v) => v.length > 0);
 
-        if (validVecs.length > 0) {
-          dimension = validVecs[0].length;
+        if (valid.length > 0) {
+          dimension = valid[0].length;
           const records = chunks.map((c, i) => ({
-            chunk_id: c.id,
-            entry_id: entry!.id,
-            embedding: vecs[i] || [],
+            chunk_id: c.id, entry_id: entry.id, embedding: vecs[i] || [],
           }));
           await vectorRepository.insert(records);
-          vectorCount = validVecs.length;
+          vectorCount = valid.length;
         }
+        const embedMs = Date.now() - tEmbed;
+        stages.push({ stage: 'embed', status: 'success', ms: embedMs,
+          detail: `${vectorCount} vectors (${config.ollama.embeddingModel})` });
+        console.log(`[Import] Embed | entry=${entry.id} | vectors=${vectorCount} | ms=${embedMs} | SUCCESS`);
       } catch (err: any) {
-        errors.push(`Embedding failed: ${err.message}`);
-        skipped = true;
+        errors.push(`Embedding: ${err.message}`);
+        stages.push({ stage: 'embed', status: 'failed', ms: Date.now() - tEmbed, detail: err.message });
+        console.error(`[Import] Embed | FAILED: ${err.message}`);
+      }
+    } else {
+      stages.push({ stage: 'embed', status: 'skipped', ms: 0,
+        detail: skipped ? 'skipEmbedding=true' : 'no chunks to embed' });
+    }
+
+    return this.buildResult(input, stages, errors, entry!.id, t0);
+  }
+
+  /** Retry parse up to RETRY_MAX times with exponential backoff */
+  private async retryParse(
+    input: ImportInput, stages: StageResult[], errors: string[],
+  ): Promise<ParseResult | null> {
+    let lastErr: Error | null = null;
+
+    for (let attempt = 1; attempt <= RETRY_MAX; attempt++) {
+      const tParse = Date.now();
+      try {
+        let result: ParseResult;
+        if (input.buffer && input.fileName) {
+          result = await this.parser.parseBuffer(input.buffer, input.fileName, { extractProperties: true });
+        } else if (input.content) {
+          result = await this.parser.parseString(input.content, input.fileName || 'api_import.md', { extractProperties: true });
+        } else if (input.source) {
+          result = await this.parser.parseFile(input.source, { extractProperties: true });
+        } else {
+          throw new Error('No input provided — need buffer, content, or source path');
+        }
+
+        const parseMs = Date.now() - tParse;
+        stages.push({ stage: 'parse', status: 'success', ms: parseMs,
+          detail: `${result.sourceFormat} → ${result.metadata.wordCount} words (attempt ${attempt})` });
+        console.log(`[Import] Parse | file=${result.metadata.fileName} | format=${result.sourceFormat} | ms=${parseMs} | SUCCESS`);
+        return result;
+      } catch (err: any) {
+        lastErr = err;
+        const parseMs = Date.now() - tParse;
+
+        if (attempt < RETRY_MAX && this.isRetryable(err)) {
+          const delay = RETRY_BASE_MS * Math.pow(2, attempt - 1);
+          console.warn(`[Import] Parse | attempt ${attempt}/${RETRY_MAX} FAILED, retry in ${delay}ms: ${err.message}`);
+          await new Promise((r) => setTimeout(r, delay));
+          continue;
+        }
+
+        const detail = err instanceof ParserError
+          ? `[${err.code}] ${err.message}${err.suggestion ? ` — ${err.suggestion}` : ''}`
+          : err.message;
+        errors.push(`Parse: ${detail}`);
+        stages.push({ stage: 'parse', status: 'failed', ms: parseMs, detail });
+        console.error(`[Import] Parse | FAILED (attempt ${attempt}): ${detail}`);
+        return null;
       }
     }
-    embedMs = Date.now() - embedStart;
 
-    return {
-      success: errors.length === 0 || chunks.length > 0,
-      mode: input.mode, source: input.source, entryId: entry!.id,
-      parse: { sourceFormat: parseResult.sourceFormat, fileSize: parseResult.metadata.fileSize,
-        wordCount: parseResult.metadata.wordCount || 0, propertyCount: properties.length,
-        warnings: parseResult.warnings },
-      chunks: { count: chunks.length, strategy: input.chunkConfig?.strategy || 'markdown' },
-      embedding: { model: config.ollama.embeddingModel, vectorCount, dimension, skipped },
-      vector: { store: 'pgvector', inserted: vectorCount },
-      timing: { parseMs, chunkMs, embedMs, totalMs: Date.now() - startTime },
-      errors,
-    };
+    return null;
+  }
+
+  private isRetryable(err: Error): boolean {
+    if (err instanceof ParserError) {
+      // Don't retry permanent errors
+      const nonRetryable = ['FILE_NOT_FOUND', 'EMPTY_FILE', 'UNSUPPORTED_FORMAT', 'EMPTY_CONTENT', 'EMPTY_BUFFER', 'BINARY_REQUIRES_FILE'];
+      return !nonRetryable.includes(err.code);
+    }
+    return true; // Unknown errors are retryable
   }
 
   async importBatch(dirPath: string, globPattern = '*', options: { skipEmbedding?: boolean; chunkConfig?: Partial<ChunkConfig> } = {}): Promise<BatchImportResult> {
-    const startTime = Date.now();
+    const t0 = Date.now();
     const results: ImportResult[] = [];
     if (!fs.existsSync(dirPath)) throw new Error(`Directory not found: ${dirPath}`);
     const files = this.globFiles(dirPath, globPattern);
@@ -177,11 +270,15 @@ export class ImportService {
       try {
         results.push(await this.import({ mode: 'batch', source: file, fileName: path.basename(file), ...options }));
       } catch (err: any) {
-        results.push(this.failureResult({ mode: 'batch', source: file }, [err.message], startTime));
+        results.push(this.buildResult({ mode: 'batch', source: file }, [], [err.message], 0, t0));
       }
     }
-    return { total: files.length, succeeded: results.filter((r) => r.success).length,
-      failed: results.filter((r) => !r.success).length, results, totalTimeMs: Date.now() - startTime };
+    return {
+      total: files.length,
+      succeeded: results.filter((r) => r.success).length,
+      failed: results.filter((r) => !r.success).length,
+      results, totalTimeMs: Date.now() - t0,
+    };
   }
 
   async importFromApi(content: string, fileName: string, metadata?: ImportInput['entryMetadata'], options?: { skipEmbedding?: boolean; chunkConfig?: Partial<ChunkConfig> }) {
@@ -193,56 +290,62 @@ export class ImportService {
   }
 
   getSupportedFormats() {
-    return [
-      { format: 'pdf' as const, extensions: ['.pdf'], description: 'PDF documents' },
-      { format: 'docx' as const, extensions: ['.docx', '.doc'], description: 'Word documents' },
-      { format: 'md' as const, extensions: ['.md'], description: 'Markdown' },
-      { format: 'txt' as const, extensions: ['.txt', '.csv', '.json', '.xml', '.yaml', '.yml'], description: 'Plain text' },
-      { format: 'png' as const, extensions: ['.png'], description: 'PNG images' },
-      { format: 'jpg' as const, extensions: ['.jpg', '.jpeg'], description: 'JPEG images' },
-      { format: 'gif' as const, extensions: ['.gif'], description: 'GIF images' },
-      { format: 'webp' as const, extensions: ['.webp'], description: 'WebP images' },
-    ];
+    return this.parser.getCapabilities();
   }
 
-  private failureResult(input: ImportInput, errors: string[], startTime: number): ImportResult {
+  // ---- Helpers ----
+
+  private buildResult(
+    input: ImportInput, stages: StageResult[], errors: string[],
+    entryId: number, startTime: number,
+  ): ImportResult {
+    const parse = stages.find((s) => s.stage === 'parse');
+    const chunk = stages.find((s) => s.stage === 'chunk');
+    const embed = stages.find((s) => s.stage === 'embed');
+
     return {
-      success: false, mode: input.mode, source: input.source, entryId: 0,
-      parse: { sourceFormat: 'txt', fileSize: 0, wordCount: 0, propertyCount: 0, warnings: [] },
-      chunks: { count: 0, strategy: 'none' },
-      embedding: { model: config.ollama.embeddingModel, vectorCount: 0, dimension: 0, skipped: true },
+      success: !stages.some((s) => s.status === 'failed'),
+      mode: input.mode, source: input.source, entryId,
+      parse: {
+        sourceFormat: 'txt', fileName: input.fileName || input.source, fileSize: 0,
+        wordCount: 0, propertyCount: 0, warnings: [],
+        parseMs: parse?.ms || 0,
+      },
+      chunks: { count: chunk?.status === 'success' ? parseInt(chunk.detail) || 0 : 0,
+        strategy: input.chunkConfig?.strategy || 'markdown', chunkMs: chunk?.ms || 0 },
+      embedding: { model: config.ollama.embeddingModel, vectorCount: 0, dimension: 0,
+        skipped: embed?.status === 'skipped', embedMs: embed?.ms || 0 },
       vector: { store: 'pgvector', inserted: 0 },
-      timing: { parseMs: 0, chunkMs: 0, embedMs: 0, totalMs: Date.now() - startTime },
-      errors,
+      timing: { totalMs: Date.now() - startTime },
+      stages, errors,
     };
   }
 
-  private buildPropertyTable(properties: ParsedProperty[]): string {
-    let md = `# 材料性质数据元信息\n\n> 自动导入，共 ${properties.length} 个属性定义\n\n`;
-    md += `| # | 中文名称 | 英文名称 | 符号 | 定义 | 首选单位 | 其他单位 | 值域 | 方法 | 备注 |\n`;
-    md += `|---|---------|---------|------|------|---------|---------|------|------|------|\n`;
-    for (const p of properties) {
+  private buildPropertyTable(props: ParsedProperty[]): string {
+    let md = `# 材料性质数据元信息\n\n> 自动导入，共 ${props.length} 个属性定义\n\n`;
+    md += `| # | 中文名称 | 英文名称 | 符号 | 定义 | 首选单位 | 其他单位 | 值域 | 方法 | 备注 |\n|---|---------|---------|------|------|---------|---------|------|------|------|\n`;
+    for (const p of props) {
       md += `| ${p.code} | ${p.nameZh} | ${p.nameEn} | ${p.symbol} | ${p.definition} | ${p.preferredUnit} | ${p.alternativeUnits || '—'} | ${p.valueRange || '—'} | ${p.methods || '—'} | ${p.notes || '—'} |\n`;
     }
     return md;
   }
 
-  private inferTags(parseResult: ParseResult, properties: ParsedProperty[]): string[] {
-    const tags = new Set<string>();
-    if (parseResult.sourceFormat !== 'md') tags.add(parseResult.sourceFormat.toUpperCase());
-    for (const p of properties) {
-      if (p.category === 'computational') tags.add('DFT');
-      if (p.category === 'experimental') tags.add('实验数据');
-      if (p.category === 'cross') tags.add('交叉数据');
-      if (p.category === 'condition') tags.add('条件参数');
-      if (p.methods.includes('吸附')) tags.add('吸附分离');
-      if (p.methods.includes('传感') || p.section.includes('传感')) tags.add('传感');
-      if (p.methods.includes('催化') || p.section.includes('催化')) tags.add('催化');
-      if (p.nameZh.includes('MOF') || p.nameEn.includes('MOF')) tags.add('MOF');
-      if (p.nameZh.includes('COF') || p.nameEn.includes('COF')) tags.add('COF');
+  private inferTags(parseResult: ParseResult, props: ParsedProperty[]): string[] {
+    const t = new Set<string>();
+    if (parseResult.sourceFormat !== 'md') t.add(parseResult.sourceFormat.toUpperCase());
+    for (const p of props) {
+      if (p.category === 'computational') t.add('DFT');
+      if (p.category === 'experimental') t.add('实验数据');
+      if (p.category === 'cross') t.add('交叉数据');
+      if (p.category === 'condition') t.add('条件参数');
+      if (p.methods.includes('吸附')) t.add('吸附分离');
+      if (p.methods.includes('传感') || p.section.includes('传感')) t.add('传感');
+      if (p.methods.includes('催化') || p.section.includes('催化')) t.add('催化');
+      if (p.nameZh.includes('MOF') || p.nameEn.includes('MOF')) t.add('MOF');
+      if (p.nameZh.includes('COF') || p.nameEn.includes('COF')) t.add('COF');
     }
-    if (tags.size === 0) { tags.add('材料性质'); tags.add('元数据'); }
-    return [...tags].slice(0, 10);
+    if (t.size === 0) { t.add('材料性质'); t.add('元数据'); }
+    return [...t].slice(0, 10);
   }
 
   private globFiles(dirPath: string, pattern: string): string[] {
@@ -250,10 +353,10 @@ export class ImportService {
     const regex = new RegExp(`^${pattern.replace(/\./g, '\\.').replace(/\*/g, '.*').replace(/\?/g, '.')}$`, 'i');
     const supported = new Set(['.pdf','.docx','.doc','.md','.txt','.csv','.json','.xml','.yaml','.yml','.png','.jpg','.jpeg','.gif','.webp']);
     function walk(dir: string) {
-      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-        const full = path.join(dir, entry.name);
-        if (entry.isDirectory()) walk(full);
-        else if (entry.isFile() && regex.test(entry.name) && supported.has(path.extname(entry.name).toLowerCase())) results.push(full);
+      for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, e.name);
+        if (e.isDirectory()) walk(full);
+        else if (e.isFile() && regex.test(e.name) && supported.has(path.extname(e.name).toLowerCase())) results.push(full);
       }
     }
     walk(dirPath);
