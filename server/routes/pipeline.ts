@@ -3,7 +3,7 @@ import { Router, Request, Response } from 'express';
 import multer from 'multer';
 import path from 'node:path';
 import fs from 'node:fs';
-import { parserService } from '../../backend/parser/service.js';
+import { getParser, ParserError } from '../../backend/parser/index.js';
 import { chunkService } from '../../backend/chunk/service.js';
 import { importService } from '../../backend/services/import.service.js';
 import { searchService } from '../../backend/services/search.service.js';
@@ -46,13 +46,47 @@ pipelineRouter.get('/formats', (_req: Request, res: Response) => {
 // Parse
 pipelineRouter.post('/parse', async (req: Request, res: Response) => {
   try {
-    const { content, fileName } = req.body || {};
-    if (!content && !fileName) { res.status(400).json({ error: 'MISSING_INPUT' }); return; }
+    const { content, fileName, filePath } = req.body || {};
+    const parser = getParser();
+
+    if (!content && !fileName && !filePath) {
+      res.status(400).json({
+        error: 'MISSING_INPUT',
+        message: 'Provide "content" (string), "fileName" (path), or "filePath" (path)',
+        supportedFormats: parser.getCapabilities().filter((c) => c.available),
+      });
+      return;
+    }
+
     const result = content
-      ? await parserService.parseString(content, fileName || 'input.md', { extractProperties: true })
-      : await parserService.parseFile(fileName, { extractProperties: true });
-    res.json({ success: true, markdown: result.markdown.slice(0, 10000), fullLength: result.markdown.length, metadata: result.metadata, propertyCount: result.properties?.length || 0, properties: (result.properties || []).slice(0, 20), warnings: result.warnings });
-  } catch (err: any) { res.status(500).json({ error: 'PARSE_FAILED', message: err.message }); }
+      ? await parser.parseString(content, fileName || 'input.md', { extractProperties: true })
+      : await parser.parseFile(fileName || filePath, { extractProperties: true });
+
+    res.json({
+      success: true,
+      format: result.sourceFormat,
+      markdown: result.markdown.slice(0, 10000),
+      fullLength: result.markdown.length,
+      metadata: result.metadata,
+      propertyCount: result.properties?.length || 0,
+      properties: (result.properties || []).slice(0, 20),
+      warnings: result.warnings,
+      timing: result.timing,
+    });
+  } catch (err: any) {
+    if (err instanceof ParserError) {
+      res.status(422).json({
+        error: 'PARSE_FAILED',
+        code: err.code,
+        message: err.message,
+        suggestion: err.suggestion,
+        fileName: err.fileName,
+        format: err.format,
+      });
+    } else {
+      res.status(500).json({ error: 'PARSE_FAILED', message: err.message });
+    }
+  }
 });
 
 // Chunk
@@ -87,10 +121,52 @@ pipelineRouter.post('/import', async (req: Request, res: Response) => {
   try {
     if (upload && req.headers['content-type']?.includes('multipart/form-data')) {
       upload.single('file')(req, res, async (err: any) => {
-        if (err) { res.status(400).json({ error: 'UPLOAD_FAILED', message: err.message }); return; }
+        if (err) {
+          console.error('[Upload] Multer error:', err.message);
+          res.status(400).json({ error: 'UPLOAD_FAILED', message: err.message, code: err.code || 'MULTER_ERROR' });
+          return;
+        }
         const file = (req as any).file;
-        if (!file) { res.status(400).json({ error: 'NO_FILE' }); return; }
+        if (!file) {
+          console.error('[Upload] No file in request');
+          res.status(400).json({ error: 'NO_FILE', message: 'No file uploaded. Use field name "file".' });
+          return;
+        }
+
+        console.log(`[Upload] Received: name=${file.originalname} size=${file.size} type=${file.mimetype} tmp=${file.path}`);
+
+        // Validate: reject empty uploads before any processing
+        if (!file.size || file.size === 0) {
+          console.error(`[Upload] Empty file: ${file.originalname}`);
+          try { fs.unlinkSync(file.path); } catch { /* ignore */ }
+          res.status(422).json({
+            success: false,
+            error: 'EMPTY_UPLOAD',
+            message: `Uploaded file "${file.originalname}" is empty (0 bytes).`,
+            suggestion: 'Check that the file has content before uploading.',
+            stages: [{ stage: 'parse', status: 'failed', ms: 0, detail: 'Empty file: 0 bytes' }],
+            errors: ['Empty file: 0 bytes'],
+          });
+          return;
+        }
+
+        // Read buffer with size validation
         const buffer = fs.readFileSync(file.path);
+        console.log(`[Upload] Buffer: ${buffer.length} bytes (file: ${file.originalname})`);
+
+        if (!buffer || buffer.length === 0) {
+          console.error(`[Upload] Buffer empty after read: ${file.originalname}`);
+          try { fs.unlinkSync(file.path); } catch { /* ignore */ }
+          res.status(422).json({
+            success: false,
+            error: 'EMPTY_BUFFER',
+            message: `File "${file.originalname}" was received but buffer is empty.`,
+            stages: [{ stage: 'parse', status: 'failed', ms: 0, detail: 'Empty buffer after disk read' }],
+            errors: ['Empty buffer after disk read'],
+          });
+          return;
+        }
+
         const result = await importService.importFromUpload(buffer, file.originalname,
           req.body.metadata ? JSON.parse(req.body.metadata) : undefined,
           { skipEmbedding: req.body.skipEmbedding === 'true', chunkConfig: req.body.chunkConfig ? JSON.parse(req.body.chunkConfig) : undefined });
@@ -100,12 +176,34 @@ pipelineRouter.post('/import', async (req: Request, res: Response) => {
       return;
     }
     const { filePath, content, fileName, metadata, skipEmbedding, chunkConfig } = req.body || {};
-    if (!filePath && !content) { res.status(400).json({ error: 'MISSING_INPUT', message: 'Provide filePath, content, or file upload' }); return; }
+    if (!filePath && !content) {
+      res.status(400).json({ error: 'MISSING_INPUT', message: 'Provide filePath, content, or file upload' });
+      return;
+    }
+    if (content && !content.trim()) {
+      res.status(422).json({
+        success: false,
+        error: 'EMPTY_CONTENT',
+        message: 'Content string is empty.',
+        stages: [{ stage: 'parse', status: 'failed', ms: 0, detail: 'Empty content string' }],
+        errors: ['Empty content string'],
+      });
+      return;
+    }
     const result = content
       ? await importService.importFromApi(content, fileName || 'api_import.md', metadata, { skipEmbedding, chunkConfig })
       : await importService.importFromUpload(fs.readFileSync(filePath), path.basename(filePath), metadata, { skipEmbedding, chunkConfig });
     res.status(result.success ? 200 : 422).json(result);
-  } catch (err: any) { res.status(500).json({ error: 'IMPORT_FAILED', message: err.message }); }
+  } catch (err: any) {
+    console.error('[Pipeline] Import failed:', err.message, err.code, err.detail, err.constraint);
+    res.status(500).json({
+      error: 'IMPORT_FAILED',
+      message: err.message,
+      code: err.code || undefined,
+      detail: err.detail || undefined,
+      constraint: err.constraint || undefined,
+    });
+  }
 });
 
 // Import string
@@ -115,7 +213,13 @@ pipelineRouter.post('/import/string', async (req: Request, res: Response) => {
     if (!content) { res.status(400).json({ error: 'MISSING_INPUT' }); return; }
     const result = await importService.importFromApi(content, fileName || 'api_import.md', metadata, { skipEmbedding, chunkConfig });
     res.status(result.success ? 200 : 422).json(result);
-  } catch (err: any) { res.status(500).json({ error: 'IMPORT_FAILED', message: err.message }); }
+  } catch (err: any) {
+    console.error('[Pipeline] String import failed:', err.message, err.code, err.detail, err.constraint);
+    res.status(500).json({
+      error: 'IMPORT_FAILED', message: err.message,
+      code: err.code || undefined, detail: err.detail || undefined, constraint: err.constraint || undefined,
+    });
+  }
 });
 
 // Batch import

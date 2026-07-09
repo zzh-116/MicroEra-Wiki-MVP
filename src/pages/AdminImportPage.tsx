@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { adminApi, ImportJob } from '../api/adminApi';
 import { 
@@ -13,7 +13,7 @@ interface AdminImportPageProps {
 
 export default function AdminImportPage({ onNavigate }: AdminImportPageProps) {
   const { isLoggedIn } = useAuth();
-  
+
   // Wizard Step State: 1 = Upload, 2 = Configure, 3 = Pipeline Execution & Audits
   const [currentStep, setCurrentStep] = useState<number>(1);
 
@@ -22,13 +22,16 @@ export default function AdminImportPage({ onNavigate }: AdminImportPageProps) {
   const [mockFileName, setMockFileName] = useState('');
   const [visibility, setVisibility] = useState<'public' | 'internal'>('internal');
   const [targetSpaceId, setTargetSpaceId] = useState('s-sandbox');
-  
+
   // Upload and Job states
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [jobState, setJobState] = useState<ImportJob | null>(null);
   const [historyJobs, setHistoryJobs] = useState<ImportJob[]>([]);
+  const [pipelineError, setPipelineError] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const pendingFileData = useRef<ArrayBuffer | string | undefined>(undefined);
+  const jobTriggered = useRef<boolean>(false);
 
   if (!isLoggedIn) {
     return (
@@ -38,6 +41,15 @@ export default function AdminImportPage({ onNavigate }: AdminImportPageProps) {
       />
     );
   }
+
+  // Watch for upload progress reaching 100%, then trigger the actual import API
+  useEffect(() => {
+    if (uploadProgress !== null && uploadProgress >= 100 && !jobTriggered.current) {
+      jobTriggered.current = true;
+      console.log('[Import] Upload animation done → calling API');
+      triggerJob();
+    }
+  }, [uploadProgress]);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -68,53 +80,85 @@ export default function AdminImportPage({ onNavigate }: AdminImportPageProps) {
   const handleStartImport = async () => {
     if (!mockFileName || !selectedFile) return;
 
-    // Transition to step 3 (Pipeline) immediately upon trigger
+    console.log('[Import] Step 1: Starting import pipeline');
+    console.log('[Import] File:', mockFileName, 'Size:', selectedFile.size, 'Visibility:', visibility, 'Space:', targetSpaceId);
+
+    // Reset states
     setCurrentStep(3);
     setUploadProgress(10);
+    setJobState(null);
+    setPipelineError(null);
+    jobTriggered.current = false;
 
-    // Read the actual file content
-    let fileData: ArrayBuffer | string | undefined;
+    // Read file content
     try {
       const isText = /\.(md|txt|csv|json|xml|yaml|yml)$/i.test(selectedFile.name);
       if (isText) {
-        fileData = await selectedFile.text();
+        pendingFileData.current = await selectedFile.text();
+        console.log('[Import] File read as text:', (pendingFileData.current as string).length, 'chars');
       } else {
-        fileData = await selectedFile.arrayBuffer();
+        pendingFileData.current = await selectedFile.arrayBuffer();
+        console.log('[Import] File read as binary:', (pendingFileData.current as ArrayBuffer).byteLength, 'bytes');
       }
-    } catch (err) {
-      console.error('File read error:', err);
+    } catch (err: any) {
+      console.error('[Import] File read error:', err);
+      setPipelineError(`文件读取失败: ${err.message || '未知错误'}`);
+      setUploadProgress(null);
+      return;
     }
 
-    // Upload progress animation
+    // Verify file data is not empty
+    const data = pendingFileData.current;
+    const isEmpty = !data ||
+      (typeof data === 'string' && data.length === 0) ||
+      (data instanceof ArrayBuffer && data.byteLength === 0);
+
+    if (isEmpty) {
+      console.log('[Import] File is empty — will use sample content generator');
+    }
+
+    // Upload progress animation — side-effect-free: clamp at 100 to avoid overshoot
+    console.log('[Import] Starting upload progress animation');
     const uploadInterval = setInterval(() => {
       setUploadProgress(prev => {
         if (prev === null) return 10;
-        if (prev >= 100) {
+        const next = prev + 25;
+        if (next >= 100) {
           clearInterval(uploadInterval);
-          triggerJob(fileData);
-          return null;
+          return 100; // ← clamp to exactly 100, triggers the useEffect once
         }
-        return prev + 25;
+        return next;
       });
     }, 100);
+  };
 
-    const triggerJob = async (data?: ArrayBuffer | string) => {
-      try {
-        const job = await adminApi.startImportJob(
-          { name: mockFileName, size: selectedFile.size, data },
-          targetSpaceId
-        );
-        setJobState(job);
+  const triggerJob = async () => {
+    const fileData = pendingFileData.current;
+    console.log('[Import] Step 2: Calling adminApi.startImportJob...');
+    try {
+      const job = await adminApi.startImportJob(
+        { name: mockFileName, size: selectedFile?.size || 0, data: fileData },
+        targetSpaceId
+      );
+      console.log('[Import] API response — status:', job.status, 'entryId:', job.entryId);
+      console.log('[Import] Stages:', JSON.stringify(job.steps.map(s => ({ name: s.name, status: s.status, error: s.error }))));
 
-        if (job.status === 'success') {
-          setHistoryJobs(prev => [job, ...prev]);
-        } else if (job.status === 'failed') {
-          setHistoryJobs(prev => [job, ...prev]);
-        }
-      } catch (err) {
-        console.error('Error starting import:', err);
+      setJobState(job);
+      setUploadProgress(null);
+
+      if (job.status === 'success') {
+        setHistoryJobs(prev => [job, ...prev]);
+      } else if (job.status === 'failed') {
+        setHistoryJobs(prev => [job, ...prev]);
+        const failedStep = job.steps.find(s => s.status === 'failed');
+        setPipelineError(failedStep?.error || '管道执行失败');
       }
-    };
+    } catch (err: any) {
+      console.error('[Import] API call failed:', err);
+      setPipelineError(`API 调用失败: ${err.message || '网络错误'}`);
+      setUploadProgress(null);
+      setJobState(null);
+    }
   };
 
   const jobStep = jobState ? jobState.steps[jobState.currentStepIndex] : null;
@@ -203,8 +247,8 @@ export default function AdminImportPage({ onNavigate }: AdminImportPageProps) {
                 <div className="space-y-1.5 pl-1">
                   {[
                     'stabilizer_quantum_correction_report_2026.pdf',
-                    'biochemical_sandbox_binding_protein.docx',
-                    'materials_structure_pgvector_schema.txt'
+                    'biochemical_sandbox_binding_protein.md',
+                    'materials_structure_pgvector_schema.md'
                   ].map((name) => (
                     <button
                       key={name}
@@ -348,7 +392,25 @@ export default function AdminImportPage({ onNavigate }: AdminImportPageProps) {
                   <span className="text-[10px] text-gray-400">SESSION: {jobState?.id || 'PENDING'}</span>
                 </div>
 
-                {uploadProgress !== null ? (
+                {/* Error state */}
+                {pipelineError && (
+                  <div className="bg-red-50 border border-red-300 rounded p-4 text-xs text-red-800 space-y-2">
+                    <div className="font-extrabold flex items-center">
+                      <AlertCircle className="w-4 h-4 mr-1 text-red-600" />
+                      <span>管道启动失败</span>
+                    </div>
+                    <p className="text-[11px]">{pipelineError}</p>
+                    <button
+                      onClick={() => { setPipelineError(null); setCurrentStep(2); }}
+                      className="bg-white border border-red-300 hover:bg-red-50 text-red-700 font-bold px-3 py-1 rounded text-[11px]"
+                    >
+                      返回重试
+                    </button>
+                  </div>
+                )}
+
+                {/* Upload progress bar — stays visible until jobState arrives */}
+                {!pipelineError && uploadProgress !== null && (
                   <div className="space-y-2 py-4">
                     <div className="flex justify-between font-bold text-xs">
                       <span>传输物理流 (Raw Data Pipeline):</span>
@@ -357,18 +419,43 @@ export default function AdminImportPage({ onNavigate }: AdminImportPageProps) {
                     <div className="h-2 bg-gray-100 rounded-full overflow-hidden border">
                       <div className="h-full bg-blue-700 transition-all duration-150" style={{ width: `${uploadProgress}%` }} />
                     </div>
+                    {uploadProgress >= 100 && (
+                      <p className="text-[10px] text-blue-600 animate-pulse text-center">正在等待后端管道响应...</p>
+                    )}
                   </div>
-                ) : jobState && jobStep ? (
+                )}
+
+                {/* API call in progress — no job yet, progress bar done */}
+                {!pipelineError && uploadProgress === null && !jobState && (
+                  <div className="flex items-center justify-center py-8 space-x-2 text-gray-500">
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span className="text-xs">正在启动 Ingestion Pipeline...</span>
+                  </div>
+                )}
+
+                {jobState && jobStep ? (
                   <div className="space-y-4">
                     
                     {/* Live step */}
-                    <div className="bg-yellow-50 border border-yellow-200 rounded p-3 text-[11px] text-yellow-800 flex items-start">
-                      <RefreshCw className="w-4 h-4 mr-1.5 text-yellow-600 animate-spin shrink-0 mt-0.5" />
-                      <div>
-                        <span className="font-bold">当前环节：{jobStep.name}</span>
-                        <p className="text-[10px] text-yellow-700/80 mt-0.5">{jobStep.description}</p>
+                    {jobState.status === 'failed' ? (
+                      <div className="bg-red-50 border border-red-200 rounded p-3 text-[11px] text-red-800 flex items-start">
+                        <AlertCircle className="w-4 h-4 mr-1.5 text-red-600 shrink-0 mt-0.5" />
+                        <div>
+                          <span className="font-bold">管道执行失败</span>
+                          <p className="text-[10px] text-red-700/80 mt-0.5">
+                            {jobState.steps.find((s) => s.status === 'failed')?.error || '未知错误，请检查日志'}
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      <div className="bg-yellow-50 border border-yellow-200 rounded p-3 text-[11px] text-yellow-800 flex items-start">
+                        <RefreshCw className="w-4 h-4 mr-1.5 text-yellow-600 animate-spin shrink-0 mt-0.5" />
+                        <div>
+                          <span className="font-bold">当前环节：{jobStep?.name || '就绪中...'}</span>
+                          <p className="text-[10px] text-yellow-700/80 mt-0.5">{jobStep?.description || ''}</p>
+                        </div>
+                      </div>
+                    )}
 
                     {/* Progress slider bar */}
                     <div className="space-y-1">
@@ -384,17 +471,28 @@ export default function AdminImportPage({ onNavigate }: AdminImportPageProps) {
                     {/* Sequential step timeline representation */}
                     <div className="space-y-2 text-[11px] pt-2 border-t border-gray-100">
                       {jobState.steps.map((st, i) => (
-                        <div key={st.id} className="flex items-center justify-between select-none py-0.5">
-                          <span className={`${
-                            i === jobState.currentStepIndex 
-                              ? 'text-yellow-600 font-bold animate-pulse' 
-                              : i < jobState.currentStepIndex 
-                              ? 'text-green-600 font-bold' 
-                              : 'text-gray-400'
-                          }`}>
-                            {i < jobState.currentStepIndex ? '✓' : i === jobState.currentStepIndex ? '▶' : '○'} {st.name}
-                          </span>
-                          <span className="text-[9px] text-gray-400">{st.status}</span>
+                        <div key={st.id} className="space-y-0.5">
+                          <div className="flex items-center justify-between select-none py-0.5">
+                            <span className={`${
+                              st.status === 'running'
+                                ? 'text-yellow-600 font-bold'
+                                : st.status === 'success'
+                                ? 'text-green-600 font-bold'
+                                : st.status === 'failed'
+                                ? 'text-red-600 font-bold'
+                                : 'text-gray-400'
+                            }`}>
+                              {st.status === 'success' ? '✓' : st.status === 'failed' ? '✗' : st.status === 'running' ? '▶' : '○'} {st.name}
+                            </span>
+                            <span className={`text-[9px] ${
+                              st.status === 'failed' ? 'text-red-500' : 'text-gray-400'
+                            }`}>{st.status === 'failed' ? 'FAILED' : st.status}</span>
+                          </div>
+                          {st.status === 'failed' && st.error && (
+                            <p className="text-[10px] text-red-500 bg-red-50 px-2 py-1 rounded border border-red-100 ml-4">
+                              {st.error}
+                            </p>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -449,25 +547,33 @@ export default function AdminImportPage({ onNavigate }: AdminImportPageProps) {
             </h3>
 
             <div className="space-y-3 text-xs font-sans">
+              {historyJobs.length === 0 && (
+                <p className="text-gray-400 italic text-[11px] py-4 text-center">暂无导入记录</p>
+              )}
               {historyJobs.map((job) => (
-                <div key={job.id} className="p-2.5 bg-gray-50 border border-gray-200 rounded">
+                <div key={job.id} className={`p-2.5 border rounded ${
+                  job.status === 'success' ? 'bg-green-50 border-green-200' :
+                  job.status === 'failed' ? 'bg-red-50 border-red-200' :
+                  'bg-gray-50 border-gray-200'
+                }`}>
                   <div className="flex justify-between items-start">
                     <span className="font-bold text-gray-800 block truncate max-w-[150px]">{job.filename}</span>
-                    <span className="text-[9px] text-green-800 bg-green-100 px-1 rounded font-bold uppercase font-mono">✓ Success</span>
+                    <span className={`text-[9px] px-1 rounded font-bold uppercase font-mono ${
+                      job.status === 'success' ? 'text-green-800 bg-green-100' :
+                      job.status === 'failed' ? 'text-red-800 bg-red-100' :
+                      'text-yellow-800 bg-yellow-100'
+                    }`}>
+                      {job.status === 'success' ? '✓ Success' : job.status === 'failed' ? '✗ Failed' : '⋯ Running'}
+                    </span>
                   </div>
-                  <span className="text-[10px] text-gray-400 block mt-0.5 font-mono">加工完成于：{job.startedAt}</span>
+                  <span className="text-[10px] text-gray-400 block mt-0.5 font-mono">{job.startedAt}</span>
+                  {job.status === 'failed' && job.steps.find((s) => s.status === 'failed')?.error && (
+                    <p className="text-[10px] text-red-600 mt-1 leading-normal bg-red-50 p-1 rounded">
+                      {job.steps.find((s) => s.status === 'failed')!.error}
+                    </p>
+                  )}
                 </div>
               ))}
-
-              <div className="p-2.5 bg-gray-50 border border-gray-200 rounded">
-                <div className="flex justify-between items-start">
-                  <span className="font-bold text-gray-800 block truncate max-w-[150px]">stabilizer_project_result.pdf</span>
-                  <span className="text-[9px] text-green-800 bg-green-100 px-1 rounded font-bold uppercase font-mono">✓ Success</span>
-                </div>
-                <p className="text-[10px] text-gray-500 mt-1 leading-normal italic bg-white p-1.5 border rounded">
-                  MarkItDown 公式与向量挂载成功，已部署活性 MCP 工具及智能对齐 RAG 服务。
-                </p>
-              </div>
             </div>
           </div>
         </div>
