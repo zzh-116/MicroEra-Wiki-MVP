@@ -26,10 +26,11 @@ export class SearchService {
           // Log what we found for diagnostics
           console.log(`[Search] hit entryIds: [${entryIds.join(', ')}]  chunkIds: [${chunkIds.slice(0, 5).join(', ')}${chunkIds.length > 5 ? '...' : ''}]`);
 
-          // Parallelize independent DB reads — chunk texts and entries don't depend on each other
-          const [chunkTexts, entryList] = await Promise.all([
+          // Parallelize independent DB reads — chunk texts, entries, and headings
+          const [chunkTexts, entryList, chunkHeadings] = await Promise.all([
             chunkRepository.findTextsByIds(chunkIds),
             entryRepository.findByIds(entryIds),
+            chunkRepository.findHeadingsByIds(chunkIds),
           ]);
           const entryMap = new Map(entryList.map((e) => [e.id, e]));
 
@@ -50,11 +51,13 @@ export class SearchService {
                 return null;
               }
               const chunkText = chunkTexts.get(r.chunk_id);
-              console.log(`[Search]   entry=#${r.entry_id} "${entry.title.slice(0, 50)}" score=${r.score?.toFixed(4)} chunkText=${chunkText ? chunkText.length + 'B' : 'MISSING→fallback'}`);
+              const heading = chunkHeadings.get(r.chunk_id);
+              console.log(`[Search]   entry=#${r.entry_id} "${entry.title.slice(0, 50)}" score=${r.score?.toFixed(4)} chunkText=${chunkText ? chunkText.length + 'B' : 'MISSING→fallback'} heading=${heading || '(none)'}`);
               return {
                 entry,
                 score: r.score,
                 chunkId: r.chunk_id,
+                chunkHeading: heading,
                 chunkText: chunkText || entry.content.slice(0, 1024),
               };
             })
