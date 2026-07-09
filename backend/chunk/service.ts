@@ -198,7 +198,7 @@ export class ChunkService {
 
     for (const section of sections) {
       // Extract heading if present
-      const headingMatch = section.match(/^(#{1,4})\s+(.+?)(?:\n|$)/);
+      const headingMatch = section.match(/^(#{1,4})\s+(.+?)(?:\r?\n|$)/);
       const heading = headingMatch ? headingMatch[2].trim() : undefined;
 
       // If section is small enough, keep as one chunk
