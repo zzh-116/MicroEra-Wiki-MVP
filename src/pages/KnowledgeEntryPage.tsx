@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { entriesApi } from '../api/entriesApi';
 import { filesApi } from '../api/filesApi';
 import { markdownApi } from '../api/markdownApi';
+import { stripDataUriImages } from '../utils/adapter';
 import { graphApi } from '../api/graphApi';
 import { SourceFile, MarkdownFile, KnowledgeGraphNode, KnowledgeGraphEdge } from '../types/wiki';
 import Breadcrumbs from '../components/Breadcrumbs';
@@ -248,7 +249,7 @@ export default function KnowledgeEntryPage({ entryId, onNavigate }: KnowledgeEnt
             </h2>
 
             <article className="prose prose-sm max-w-none text-xs text-gray-700 leading-relaxed select-text font-sans">
-              {entry.content.split('\n').map((line: string, idx: number) => {
+              {stripDataUriImages(entry.content).split('\n').map((line: string, idx: number) => {
                 if (line.startsWith('# ')) {
                   return (
                     <h3 key={idx} className="text-base font-extrabold text-gray-900 border-b border-gray-150 pb-1 mt-6 mb-3">

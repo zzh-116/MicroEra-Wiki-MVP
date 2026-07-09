@@ -5,6 +5,61 @@
  * v0.1.1 frontend's camelCase / string-ID format.
  */
 
+// ── Markdown sanitization ───────────────────────────────────────
+
+/**
+ * Strip inline Base64 data-URI images from Markdown.
+ *
+ * Docling and other parsers may embed images as:
+ *   ![alt](data:image/png;base64,iVBORw0KGgo...)
+ *
+ * These can be tens of KB and break page layout when rendered.
+ * This function replaces them with a safe placeholder.
+ *
+ * Used at both the parser level (docling.ts) and renderer level
+ * (all components that display Markdown) — double insurance.
+ */
+export function stripDataUriImages(markdown: string): string {
+  if (!markdown) return markdown;
+
+  // Pass 1: strip markdown image syntax ![alt](data:image/...)
+  markdown = markdown.replace(
+    /!\[([^\]]*)\]\(data:image\/[^)]+\)/g,
+    (_fullMatch: string, alt: string) => {
+      const label = alt?.trim() || 'Image';
+      return `[Embedded image: ${label}]`;
+    },
+  );
+
+  // Pass 2: strip bare data:image URIs that may appear as raw text
+  // (LLM can output these without markdown syntax, or after a broken parse)
+  markdown = markdown.replace(
+    /data:image\/[a-z+]+;base64,[A-Za-z0-9+/=]{100,}/g,
+    '[Embedded image omitted]',
+  );
+
+  return markdown;
+}
+
+/** Strip ALL data: URIs from Markdown links/images (broader catch-all) */
+export function stripAllDataUris(markdown: string): string {
+  if (!markdown) return markdown;
+  // Catch any [text](data:...) or ![alt](data:...) pattern
+  markdown = markdown.replace(
+    /(!?)\[([^\]]*)\]\(data:[^)]+\)/g,
+    (_full: string, bang: string, label: string) => {
+      const alt = label?.trim() || 'object';
+      return bang ? `[Embedded image: ${alt}]` : `[Linked ${alt} omitted]`;
+    },
+  );
+  // Catch bare data: URIs without markdown wrapping
+  markdown = markdown.replace(
+    /data:image\/[a-z+]+;base64,[A-Za-z0-9+/=]{100,}/g,
+    '[Embedded image omitted]',
+  );
+  return markdown;
+}
+
 // ── Key conversion ────────────────────────────────────────────
 
 /** snake_case → camelCase */

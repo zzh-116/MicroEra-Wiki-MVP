@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { WikiEntry, SourceFile, MarkdownFile, KnowledgeGraphNode, KnowledgeGraphEdge, BusinessMetric } from '../types/wiki';
 import { entriesApi } from '../api/entriesApi';
 import { filesApi } from '../api/filesApi';
+import { stripDataUriImages } from '../utils/adapter';
 import { markdownApi } from '../api/markdownApi';
 import { graphApi } from '../api/graphApi';
 import { mockBusinessMetrics, mockReferences } from '../mock/mockData';
@@ -250,7 +251,7 @@ export default function SandboxProjectPage({ entryId, onNavigate }: SandboxProje
             </h2>
 
             <article className="prose prose-sm max-w-none text-xs text-gray-700 leading-relaxed select-text font-sans">
-              {entry.content.split('\n').map((line: string, idx: number) => {
+              {stripDataUriImages(entry.content).split('\n').map((line: string, idx: number) => {
                 if (line.startsWith('# ')) return null;
                 if (line.startsWith('## ')) {
                   return (
