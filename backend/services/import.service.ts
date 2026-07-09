@@ -253,7 +253,7 @@ export class ImportService {
   private isRetryable(err: Error): boolean {
     if (err instanceof ParserError) {
       // Don't retry permanent errors
-      const nonRetryable = ['FILE_NOT_FOUND', 'EMPTY_FILE', 'UNSUPPORTED_FORMAT', 'EMPTY_CONTENT', 'EMPTY_BUFFER', 'BINARY_REQUIRES_FILE'];
+      const nonRetryable = ['FILE_NOT_FOUND', 'EMPTY_FILE', 'UNSUPPORTED_FORMAT', 'EMPTY_CONTENT', 'EMPTY_BUFFER', 'BINARY_REQUIRES_FILE', 'EMPTY_OUTPUT', 'ENCRYPTED', 'CORRUPTED'];
       return !nonRetryable.includes(err.code);
     }
     return true; // Unknown errors are retryable
