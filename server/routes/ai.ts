@@ -40,18 +40,22 @@ aiRouter.post('/chat/stream', async (req: Request, res: Response) => {
 
     // Track connection state for diagnostics
     let streamFinished = false;
+    let streamingStarted = false;
     req.on('close', () => {
       const elapsed = Date.now() - tRoute;
       if (streamFinished) {
         console.log(`[SSE] Connection closed normally after stream completion (${elapsed}ms)`);
-      } else {
-        console.log(`[SSE] Client disconnected prematurely (${elapsed}ms) — request aborted or network issue`);
+      } else if (streamingStarted) {
+        // Only log premature disconnect if we've started sending events.
+        // Preflight/early TCP closes (< 100ms) are normal browser behavior.
+        console.log(`[SSE] Client disconnected during streaming (${elapsed}ms, ${eventCount} events sent) — request aborted or network issue`);
       }
     });
 
     let eventCount = 0;
     for await (const event of aiService.streamChat(question, userId, conversationId)) {
       eventCount++;
+      if (!streamingStarted) streamingStarted = true;
       switch (event.type) {
         case 'start':
           sseStartEvent(send, event.conversationId);

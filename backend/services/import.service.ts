@@ -109,7 +109,11 @@ export class ImportService {
         // Normalize CRLF → LF before chunking. Docling outputs \r\n on Windows,
         // and the chunk service heading regex uses `.` which doesn't match \r,
         // causing ALL heading metadata to be lost (heading=undefined for every chunk).
+        const hasCRLF = entryContent.includes('\r\n');
         const normalizedContent = entryContent.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        if (hasCRLF) {
+          console.log(`[Import] Normalized CRLF → LF in entry content (${entryContent.length} chars)`);
+        }
 
         const c = chunkService.chunk(normalizedContent, `entry_${e.id}`,
           input.chunkConfig || { strategy: 'markdown', chunkSize: 512, overlap: 64 });
