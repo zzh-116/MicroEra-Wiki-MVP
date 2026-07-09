@@ -93,6 +93,12 @@ export async function runBootstrap() {
   // 3. Seed admin user (idempotent)
   await userRepository.seedAdmin();
 
+  // 4. Warm up embedding model — force Ollama to load bge-m3 into memory
+  //    and keep it warm so queries don't pay 1.7s load penalty each time
+  ollamaEmbedder.warmup().then(() => {
+    ollamaEmbedder.startKeepWarm();
+  });
+
   console.log(`[Bootstrap] PostgreSQL ready — ${config.databaseUrl.replace(/\/\/.*@/, '//***@')}`);
   console.log(`[Bootstrap] Ollama: ${config.ollama.url} (chat: ${config.ollama.chatModel}, embed: ${config.ollama.embeddingModel})`);
 }

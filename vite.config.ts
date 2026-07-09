@@ -21,6 +21,15 @@ export default defineConfig(() => {
         '/api': {
           target: 'http://localhost:3001',
           changeOrigin: true,
+          // SSE support: prevent proxy from closing long-lived connections
+          timeout: 0,
+          proxyTimeout: 0,
+          configure: (proxy) => {
+            proxy.on('proxyRes', (proxyRes) => {
+              // Prevent http-proxy from buffering SSE responses
+              proxyRes.headers['cache-control'] = 'no-cache';
+            });
+          },
         },
       },
     },

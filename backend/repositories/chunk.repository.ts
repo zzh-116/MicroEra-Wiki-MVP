@@ -16,8 +16,41 @@ function buildSearchText(p: ParsedProperty): string {
 }
 
 export class ChunkRepository extends BaseRepository {
-  /** Save chunks from parsed properties. Replaces existing chunks for the entry. */
-  async saveFromProperties(entryId: number, properties: ParsedProperty[], tx?: DbClient): Promise<DocumentChunk[]> {
+  /**
+   * Save chunks from ChunkService output (ChunkResult[]).
+   * By default deletes existing chunks for the entry first, then inserts.
+   * Pass { deleteExisting: false } to append without deleting (caller handles cleanup).
+   */
+  async saveChunks(
+    entryId: number,
+    chunks: Array<{ id: string; text: string; metadata?: Record<string, unknown> }>,
+    opts?: { deleteExisting?: boolean },
+    tx?: DbClient,
+  ): Promise<void> {
+    const client = tx ?? this.db;
+    if (opts?.deleteExisting !== false) {
+      await client.delete(documentChunks).where(eq(documentChunks.entryId, entryId));
+    }
+    if (chunks.length > 0) {
+      await client.insert(documentChunks).values(
+        chunks.map((c) => ({
+          id: c.id,
+          entryId,
+          text: c.text,
+          metadata: c.metadata ?? {},
+        })),
+      );
+    }
+    console.log(`[ChunkRepo] Saved ${chunks.length} chunks for entry #${entryId}${opts?.deleteExisting === false ? ' (append)' : ''}`);
+  }
+
+  /** Save chunks from parsed properties. By default deletes existing chunks first. */
+  async saveFromProperties(
+    entryId: number,
+    properties: ParsedProperty[],
+    opts?: { deleteExisting?: boolean },
+    tx?: DbClient,
+  ): Promise<DocumentChunk[]> {
     const client = tx ?? this.db;
     const chunks: DocumentChunk[] = properties.map((p) => ({
       id: `${entryId}_${p.code}`,
@@ -31,8 +64,9 @@ export class ChunkRepository extends BaseRepository {
       },
     }));
 
-    // Delete old chunks, then insert new (within the same tx)
-    await client.delete(documentChunks).where(eq(documentChunks.entryId, entryId));
+    if (opts?.deleteExisting !== false) {
+      await client.delete(documentChunks).where(eq(documentChunks.entryId, entryId));
+    }
 
     if (chunks.length > 0) {
       await client.insert(documentChunks).values(
@@ -66,8 +100,9 @@ export class ChunkRepository extends BaseRepository {
     return map;
   }
 
-  async deleteByEntryId(entryId: number): Promise<void> {
-    await this.db.delete(documentChunks).where(eq(documentChunks.entryId, entryId));
+  async deleteByEntryId(entryId: number, tx?: DbClient): Promise<void> {
+    const client = tx ?? this.db;
+    await client.delete(documentChunks).where(eq(documentChunks.entryId, entryId));
   }
 
   async deleteAll(): Promise<void> {

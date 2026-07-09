@@ -5,10 +5,11 @@ import { entryRepository } from '../../backend/repositories/entry.repository.js'
 import { chunkRepository } from '../../backend/repositories/chunk.repository.js';
 import { vectorRepository } from '../../backend/repositories/vector.repository.js';
 import { conversationRepository } from '../../backend/repositories/conversation.repository.js';
+import { sseStart, sseStartEvent, sseToken, sseDone, sseError } from '../../backend/llm/sse.js';
 
 export const aiRouter = Router();
 
-// POST /api/ai/chat — RAG Q&A with conversation persistence
+// POST /api/ai/chat — non-streaming RAG Q&A (backward compatible)
 aiRouter.post('/chat', async (req: Request, res: Response) => {
   try {
     const { question, history, conversationId } = req.body || {};
@@ -18,6 +19,72 @@ aiRouter.post('/chat', async (req: Request, res: Response) => {
     res.json({ answer: result.answer, sources: result.sources.map((s) => ({ id: s.id, title: s.title, entry_type: s.entry_type })), conversationId: result.conversationId });
   } catch (err: any) {
     res.status(503).json({ error: 'AI_SERVICE_UNAVAILABLE', message: err.message });
+  }
+});
+
+// POST /api/ai/chat/stream — SSE streaming RAG Q&A
+aiRouter.post('/chat/stream', async (req: Request, res: Response) => {
+  const tRoute = Date.now();
+  console.log('[SSE] POST /chat/stream — request received');
+
+  const send = sseStart(res);
+
+  try {
+    const { question, conversationId } = req.body || {};
+    if (!question?.trim()) {
+      sseError(send, res, '请提出一个问题。');
+      return;
+    }
+
+    const userId = req.user?.userId;
+
+    // Track connection state for diagnostics
+    let streamFinished = false;
+    req.on('close', () => {
+      const elapsed = Date.now() - tRoute;
+      if (streamFinished) {
+        console.log(`[SSE] Connection closed normally after stream completion (${elapsed}ms)`);
+      } else {
+        console.log(`[SSE] Client disconnected prematurely (${elapsed}ms) — request aborted or network issue`);
+      }
+    });
+
+    let eventCount = 0;
+    for await (const event of aiService.streamChat(question, userId, conversationId)) {
+      eventCount++;
+      switch (event.type) {
+        case 'start':
+          sseStartEvent(send, event.conversationId);
+          console.log(`[SSE] → start  convId=${event.conversationId}`);
+          break;
+        case 'token':
+          sseToken(send, event.content);
+          break;
+        case 'done':
+          sseDone(send, event);
+          streamFinished = true;
+          console.log(`[SSE] → done   sources=${event.sources.length} convId=${event.conversationId} (${eventCount} events, ${Date.now() - tRoute}ms)`);
+          res.end();
+          break;
+        case 'error':
+          sseError(send, res, event.message);
+          streamFinished = true;
+          console.log(`[SSE] → error  "${event.message}" (${Date.now() - tRoute}ms)`);
+          break;
+      }
+    }
+
+    // If the generator finished without yielding done/error, close gracefully
+    if (!streamFinished) {
+      streamFinished = true;
+      console.log(`[SSE] Generator ended without explicit done/error — closing (${Date.now() - tRoute}ms)`);
+      if (!res.writableEnded) res.end();
+    }
+  } catch (err: any) {
+    console.error(`[SSE] Exception: ${err.message} (${Date.now() - tRoute}ms)`);
+    if (!res.writableEnded) {
+      sseError(send, res, err.message || 'Internal error');
+    }
   }
 });
 

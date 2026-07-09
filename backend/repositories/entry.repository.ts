@@ -16,6 +16,8 @@ export interface CreateEntryInput {
 
 export interface UpdateEntryInput extends Partial<CreateEntryInput> {}
 
+const VALID_ENTRY_TYPES = ['asset', 'product', 'tech', 'patent', 'data_item'] as const;
+
 export class EntryRepository extends BaseRepository {
   /** Hydrate entry rows with their tags */
   private async hydrateTags(entryRows: Array<typeof entries.$inferSelect>): Promise<Entry[]> {
@@ -130,38 +132,77 @@ export class EntryRepository extends BaseRepository {
     const client = tx ?? this.db;
     const now = new Date();
 
-    const [row] = await client
-      .insert(entries)
-      .values({
-        title: input.title,
-        entryType: input.entry_type,
-        summary: input.summary,
-        content: input.content,
-        visibility: input.visibility,
-        categoryId: input.category_id ?? null,
-        createdBy: input.created_by ?? null,
-        createdAt: now,
-        updatedAt: now,
-      })
-      .returning();
+    // Defensive field normalization — prevent common insert failures
+    // Strip null bytes (\x00) — PDF text often contains them, PostgreSQL UTF-8 rejects them (SQLSTATE 22021)
+    const clean = (s: string) => (s || '').replace(/\x00/g, '');
+    const safeTitle = clean(input.title || 'Untitled').slice(0, 500);
+    const safeSummary = clean(input.summary || '').slice(0, 2000);
+    const safeContent = clean(input.content || '');
+    const safeEntryType = VALID_ENTRY_TYPES.includes(input.entry_type as any)
+      ? input.entry_type
+      : 'data_item';
+    const safeVisibility = ['public', 'internal'].includes(input.visibility)
+      ? input.visibility
+      : 'internal';
 
-    // Insert tag associations
-    if (input.tags && input.tags.length > 0) {
-      for (const tagName of input.tags) {
-        await client.insert(tags).values({ name: tagName }).onConflictDoNothing();
-        const [tag] = await client
-          .select({ id: tags.id })
-          .from(tags)
-          .where(eq(tags.name, tagName))
-          .limit(1);
-        if (tag) {
-          await client.insert(entryTags).values({ entryId: row.id, tagId: tag.id });
+    // Log the insert payload for debugging
+    console.log(`[EntryRepo] Creating entry: title="${safeTitle.slice(0, 80)}" type=${safeEntryType} visibility=${safeVisibility} contentLen=${safeContent.length} categoryId=${input.category_id ?? 'null'} createdBy=${input.created_by ?? 'null'} tags=${(input.tags || []).length}`);
+
+    try {
+      const [row] = await client
+        .insert(entries)
+        .values({
+          title: safeTitle,
+          entryType: safeEntryType,
+          summary: safeSummary,
+          content: safeContent,
+          visibility: safeVisibility,
+          categoryId: input.category_id ?? null,
+          createdBy: input.created_by ?? null,
+          createdAt: now,
+          updatedAt: now,
+        })
+        .returning();
+
+      // Insert tag associations
+      if (input.tags && input.tags.length > 0) {
+        for (const tagName of input.tags) {
+          await client.insert(tags).values({ name: tagName }).onConflictDoNothing();
+          const [tag] = await client
+            .select({ id: tags.id })
+            .from(tags)
+            .where(eq(tags.name, tagName))
+            .limit(1);
+          if (tag) {
+            await client.insert(entryTags).values({ entryId: row.id, tagId: tag.id });
+          }
         }
       }
-    }
 
-    const hydrated = await this.hydrateTags([row]);
-    return hydrated[0];
+      const hydrated = await this.hydrateTags([row]);
+      console.log(`[EntryRepo] Created entry #${row.id}`);
+      return hydrated[0];
+    } catch (err: any) {
+      // Full diagnostic logging for database errors
+      console.error('[EntryRepo] INSERT FAILED:');
+      console.error('  Message:', err.message);
+      console.error('  Code:', err.code);
+      console.error('  Detail:', err.detail);
+      console.error('  Constraint:', err.constraint);
+      console.error('  Table:', err.table);
+      console.error('  Column:', err.column);
+      console.error('  Payload:', JSON.stringify({
+        title: safeTitle.slice(0, 100),
+        entryType: safeEntryType,
+        summaryLen: safeSummary.length,
+        contentLen: safeContent.length,
+        visibility: safeVisibility,
+        categoryId: input.category_id,
+        createdBy: input.created_by,
+        tagsCount: input.tags?.length,
+      }));
+      throw err; // Re-throw for upstream handling
+    }
   }
 
   async update(id: number, input: UpdateEntryInput): Promise<Entry> {
