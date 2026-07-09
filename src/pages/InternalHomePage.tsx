@@ -222,21 +222,22 @@ export default function InternalHomePage({ onNavigate }: InternalHomePageProps) 
         ) : (
           <ul className="space-y-2.5 text-xs font-sans pl-1">
             {favorites.map((entry) => (
-              <li key={entry.id} className="flex items-start justify-between border-b border-gray-100 pb-2">
-                <div className="space-y-0.5">
+              <li key={entry.id} className="flex items-start justify-between border-b border-gray-100 pb-2 gap-2">
+                <div className="space-y-0.5 min-w-0 flex-1 overflow-hidden">
                   <button
                     onClick={() => onNavigate('entry-detail', entry.id)}
-                    className="text-[#1D70B8] hover:underline font-bold text-left block"
+                    className="text-[#1D70B8] hover:underline font-bold text-left block truncate w-full"
+                    title={entry.title}
                   >
                     {entry.title}
                   </button>
-                  <p className="text-gray-500 text-[11px] line-clamp-1">{entry.summary}</p>
+                  <p className="text-gray-500 text-[11px] line-clamp-1 break-all">{entry.summary}</p>
                 </div>
-                <div className="flex items-center space-x-2 shrink-0 ml-4">
-                  <span className="text-[10px] px-1.5 py-0.5 font-semibold bg-gray-100 text-gray-600 rounded">
+                <div className="flex items-center space-x-2 shrink-0">
+                  <span className="text-[10px] px-1.5 py-0.5 font-semibold bg-gray-100 text-gray-600 rounded whitespace-nowrap">
                     {entry.entryType.toUpperCase()}
                   </span>
-                  <Bookmark className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
+                  <Bookmark className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500 flex-shrink-0" />
                 </div>
               </li>
             ))}
@@ -255,21 +256,22 @@ export default function InternalHomePage({ onNavigate }: InternalHomePageProps) 
           {recentEntries.map((entry) => (
             <div key={entry.id} className="border-l-2 border-gray-200 pl-4 relative">
               <div className="absolute -left-1.5 top-1 h-3 w-3 rounded-full bg-[#DB5F5B] border-2 border-white" />
-              <span className="font-mono text-[10px] text-gray-400 block font-bold">更新时间：{entry.latestUpdatedAt}</span>
-              <div className="mt-0.5 space-y-0.5">
-                <button 
+              <span className="font-mono text-[10px] text-gray-400 block font-bold truncate">更新时间：{entry.latestUpdatedAt}</span>
+              <div className="mt-0.5 space-y-0.5 min-w-0 overflow-hidden">
+                <button
                   onClick={() => onNavigate('entry-detail', entry.id)}
-                  className="text-[#1D70B8] hover:underline font-bold text-left block"
+                  className="text-[#1D70B8] hover:underline font-bold text-left block truncate w-full"
+                  title={entry.title}
                 >
                   {entry.title}
                 </button>
-                <p className="text-gray-500 text-[11px] leading-relaxed line-clamp-2">
+                <p className="text-gray-500 text-[11px] leading-relaxed line-clamp-2 break-all">
                   {entry.summary}
                 </p>
                 <div className="flex items-center space-x-2 text-[10px] text-gray-400 font-mono select-none pt-0.5">
-                  <span className="font-bold text-gray-600 bg-gray-100 px-1 rounded uppercase">{entry.entryType}</span>
-                  <span>负责人：{entry.owner}</span>
-                  <span>可见范围：{entry.visibility.toUpperCase()}</span>
+                  <span className="font-bold text-gray-600 bg-gray-100 px-1 rounded uppercase whitespace-nowrap">{entry.entryType}</span>
+                  <span className="truncate">负责人：{entry.owner}</span>
+                  <span className="whitespace-nowrap">可见范围：{entry.visibility.toUpperCase()}</span>
                 </div>
               </div>
             </div>
