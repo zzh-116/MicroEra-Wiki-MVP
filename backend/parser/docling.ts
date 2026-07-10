@@ -120,14 +120,18 @@ const BINARY_FORMATS: Set<InputFormat> = new Set([
 // ---- Docling CLI Resolution ----
 
 let _doclingCommand: string | null = null;
-let _doclingChecked = false;
+let _doclingLastCheck = 0;
+/** Retry discovery every 60s after a failure so a mid-session `pip install` takes effect. */
+const DOCLING_RETRY_MS = 60_000;
 
 async function resolveDoclingCommand(): Promise<string> {
-  if (_doclingChecked) {
-    if (!_doclingCommand) throw new Error('Docling CLI not found');
-    return _doclingCommand;
+  if (_doclingCommand) return _doclingCommand;
+
+  const now = Date.now();
+  if (_doclingLastCheck > 0 && now - _doclingLastCheck < DOCLING_RETRY_MS) {
+    throw new Error('Docling CLI not found. Install: pip install docling');
   }
-  _doclingChecked = true;
+  _doclingLastCheck = now;
 
   // Docling installs a console script 'docling' (pip install docling)
   try {
