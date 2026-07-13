@@ -22,7 +22,22 @@ export const searchApi = {
     searchMode: 'keyword' | 'nlp' | 'title' = 'keyword',
   ): Promise<SearchResult[]> {
     try {
-      const data = await post<{ results: any[]; source: string }>('/search', { query });
+      // Map frontend type to backend entry_type
+      const backendTypeMap: Record<string, string> = {
+        project: 'product',
+        paper: 'tech',
+        data_item: 'data_item',
+        template: 'asset',
+        patent: 'patent',
+        concept: 'tech',
+        service: 'tech',
+      };
+      const backendType = typeFilter !== 'all' ? (backendTypeMap[typeFilter] || typeFilter) : undefined;
+
+      const body: any = { query };
+      if (backendType) body.type = backendType;
+
+      const data = await post<{ results: any[]; source: string }>('/search', body);
       const results: SearchResult[] = data.results.map((r: any) => {
         const entry = mvpEntryToWikiEntry(r);
         return {
@@ -38,11 +53,6 @@ export const searchApi = {
           referenceSource: data.source,
         };
       });
-
-      // Client-side filter by type if needed (backend doesn't support typeFilter yet)
-      if (typeFilter !== 'all') {
-        return results.filter((r) => r.type === typeFilter);
-      }
       return results;
     } catch {
       return [];
