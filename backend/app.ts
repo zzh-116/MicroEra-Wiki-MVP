@@ -45,6 +45,7 @@ export async function createApp(options: AppOptions = {}) {
   const { pipelineRouter } = await import('../server/routes/pipeline.js');
   const { graphRouter } = await import('../server/routes/graph.js');
   const { spacesRouter } = await import('../server/routes/spaces.js');
+  const { connectorsRouter } = await import('../server/routes/connectors.js');
 
   app.use('/api/auth', authRouter);
   app.use('/api/categories', categoriesRouter);
@@ -57,6 +58,7 @@ export async function createApp(options: AppOptions = {}) {
   app.use('/api/pipeline', pipelineRouter);
   app.use('/api/graph', graphRouter);
   app.use('/api/spaces', spacesRouter);
+  app.use('/api/connectors', connectorsRouter);
 
   for (const { path: p, router } of extraRoutes) app.use(p, router);
 
