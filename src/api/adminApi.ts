@@ -99,7 +99,7 @@ export const adminApi = {
       );
 
       let result: Response;
-      let isText = /\.(md|txt|csv|json|xml|yaml|yml)$/i.test(file.name);
+      let isText = /\.(md|txt|csv|json|xml|yaml|yml|log|html|htm|adoc|asciidoc)$/i.test(file.name);
       let textContent: string;
 
       if (hasContent && typeof file.data === 'string') {

@@ -198,7 +198,7 @@ export default function AdminImportPage() {
               <div className="space-y-1.5 select-none">
                 <h3 className="text-sm font-extrabold text-gray-900 uppercase">第一步：选择需要分析的物理文件</h3>
                 <p className="text-xs text-gray-500">
-                  支持上传 PDF 学术白皮书、Word 实验日志、Excel 结果表以及落库结构规范。
+                  支持 PDF / Word / Excel / PPT / HTML / Markdown / CSV / 图片（OCR）及纯文本格式。
                 </p>
               </div>
 
@@ -213,14 +213,14 @@ export default function AdminImportPage() {
                 <div className="text-xs text-gray-700 font-bold">
                   {mockFileName ? `已装载文件: ${mockFileName}` : '拖拽物理文件至此，或点击浏览本地文件'}
                 </div>
-                <p className="text-[10px] text-gray-400">支持 *.docx, *.xlsx, *.pdf, *.pptx, *.html, *.txt</p>
+                <p className="text-[10px] text-gray-400">支持 *.pdf, *.docx, *.doc, *.xlsx, *.xls, *.pptx, *.ppt, *.html, *.htm, *.md, *.adoc, *.csv, *.txt, *.json, *.xml, *.yaml, *.log, *.png, *.jpg, *.jpeg, *.gif, *.webp</p>
                 
                 <input
                   type="file"
                   ref={fileInputRef}
                   onChange={handleFileChange}
                   className="hidden"
-                  accept=".docx,.xlsx,.pdf,.pptx,.html,.txt,.md"
+                  accept=".pdf,.docx,.doc,.xlsx,.xls,.pptx,.ppt,.html,.htm,.md,.adoc,.asciidoc,.csv,.txt,.json,.xml,.yaml,.yml,.log,.png,.jpg,.jpeg,.gif,.webp"
                 />
               </div>
 
