@@ -13,6 +13,7 @@ import { chunkService, ChunkConfig } from '../chunk/service.js';
 import { ollamaEmbedder } from '../embedding/ollama.js';
 import type { ParsedProperty, Entry } from '../types.js';
 import { config } from '../config.js';
+import type { Document } from '../connectors/types.js';
 
 export type ImportMode = 'upload' | 'api' | 'batch';
 
@@ -266,6 +267,58 @@ export class ImportService {
       return !nonRetryable.includes(err.code);
     }
     return true; // Unknown errors are retryable
+  }
+
+  /**
+   * Import a Document produced by a Connector — skips the parser stage entirely.
+   * The connector has already produced unified Markdown content.
+   * This method goes straight to: entry → chunk → embed → vector.
+   */
+  async importFromConnector(doc: Document): Promise<ImportResult> {
+    const t0 = Date.now();
+    const stages: StageResult[] = [];
+    const errors: string[] = [];
+
+    // Map Sandbox asset types to Wiki entry types
+    // 'product' → frontend 'project' → search filter "Sandbox 项目"
+    const entryTypeMap: Record<string, string> = {
+      operator: 'product',
+      dot: 'product',
+      dataset: 'product',
+      post: 'product',
+    };
+    const entryType = (entryTypeMap[doc.type] || 'product') as Entry['entry_type'];
+
+    // Map Sandbox project → Wiki category (default to category 1 = 首页)
+    // Category IDs come from the seed data; adjust as needed
+    const projectCategoryMap: Record<string, number> = {};
+    const categoryId = (doc.metadata?.projectId && projectCategoryMap[String(doc.metadata.projectId)])
+      || 1; // Default: category 1
+
+    // Build import input so we can reuse the existing pipeline logic
+    const input: ImportInput = {
+      mode: 'api',
+      source: `${doc.source}:${doc.id}`,
+      content: doc.content,
+      fileName: `${doc.title}.md`,
+      entryMetadata: {
+        title: doc.title,
+        entry_type: entryType,
+        summary: doc.description || `Imported from ${doc.source}: ${doc.title}`,
+        visibility: 'internal',
+        tags: doc.tags,
+        category_id: categoryId,
+      },
+      chunkConfig: { strategy: 'markdown', chunkSize: 1024, overlap: 128 },
+    };
+
+    // Mark parse as "skipped" (connector provided structured data)
+    stages.push({ stage: 'parse', status: 'skipped', ms: 0, detail: `connector:${doc.source} — structured data, no parser needed` });
+    console.log(`[Import] Connector | source=${doc.source} | id=${doc.id} | title=${doc.title}`);
+
+    // Reuse the existing import pipeline (entry → chunk → embed → vector)
+    // except we skip the parse stage by calling import() with pre-built content
+    return this.import(input);
   }
 
   async importBatch(dirPath: string, globPattern = '*', options: { skipEmbedding?: boolean; chunkConfig?: Partial<ChunkConfig> } = {}): Promise<BatchImportResult> {
