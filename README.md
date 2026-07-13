@@ -5,86 +5,109 @@
 ## 企业数据源架构
 
 ```
-      ┌──────────────────────────────────────────────────┐
-      │  Sandbox API │ PDF │ Word │ Markdown │ TXT │ PNG  │
-      └──────────────────────┬───────────────────────────┘
-                             │
-                             ▼
-                   Data Import Service
-              （Upload / API / Batch Import）
-                             │
-                             ▼
-                      Parser Service
-                （MarkItDown → 统一 Markdown）
-                             │
-                             ▼
-                    Document Service
-            （Markdown + Metadata 管理）
-                             │
-                             ▼
-                      Chunk Service
-                 （4 种分块策略）
-                             │
-                             ▼
-                   Embedding Service
-               （默认 BGE-M3，本地 Ollama）
-                             │
-                             ▼
-                   pgvector (PostgreSQL)
-              （IVFFlat 索引，余弦相似度）
-                             │
-                             ▼
-                    Retrieval Service
-            （Embedding → TopK → Context）
-                             │
-                             ▼
-                    LLM Provider (SSE 流式)
-        （Ollama / OpenAI / DeepSeek 可切换）
-                             │
-                             ▼
-                     Express REST API
-                             │
-                             ▼
-                  Swagger / React 前端
+     ┌─────────────────────────────────────────────────────┐
+     │          Data Sources                              │
+     │  Sandbox  │  PDF  │  Word  │  Markdown  │  TXT  │  PNG  │
+     └──────────┬──────────────────┬────────────────────────┘
+                │                  │
+                ▼                  ▼
+        Connector Layer      Parser (Docling)
+        (结构化数据)          (非结构化文档)
+                │                  │
+                ▼                  ▼
+          Unified Document Model (Markdown)
+                │
+                ▼
+           Chunk Service
+         (4 种分块策略)
+                │
+                ▼
+        Embedding Service
+      (BGE-M3, 本地 Ollama)
+                │
+                ▼
+        pgvector (PostgreSQL)
+      (IVFFlat 索引, 余弦相似度)
+                │
+                ▼
+        Retrieval Service
+      (Embedding → TopK → Context)
+                │
+                ▼
+        LLM Provider (SSE 流式)
+     (Ollama / DeepSeek 可切换)
+                │
+                ▼
+        Express REST API
+                │
+                ▼
+      React Router SPA 前端
 ```
 
 ## 技术栈
 
 | 层 | 技术 |
 |---|---|
-| 前端 | React 19 + TypeScript + Vite 6 + Tailwind CSS 4 |
+| 前端 | React 19 + TypeScript + Vite 6 + Tailwind CSS 4 + React Router v6 |
 | 后端 | Express 4 + TypeScript (tsx) |
 | 数据库 | PostgreSQL 16 + pgvector (Drizzle ORM) |
 | AI 对话 | qwen2.5:7b / deepseek-r1:8b via Ollama（SSE 流式） |
 | Embedding | bge-m3 (1024d) via Ollama |
 | 向量存储 | pgvector (PostgreSQL) |
-| LLM 抽象 | Provider 模式（Ollama / OpenAI / DeepSeek 可切换） |
-| 文档解析 | MarkItDown：pdf-parse / mammoth / 原生 Markdown |
+| LLM 抽象 | Provider 模式（Ollama / DeepSeek 可切换） |
+| 文档解析 | Docling CLI：PDF / DOCX / PPTX / XLSX / HTML / 图片 (OCR) |
 | 认证 | JWT + bcrypt (PostgreSQL users 表) |
 
 ## 功能
 
 ### 平台功能
+- **React Router SPA** — 14 条路由，URL 导航、浏览器历史、深链接、返回按钮、面包屑
 - **公开首页** — 产品/技术/专利展示，免登录
-- **资产目录** — 多条件筛选（类型/可见度/分类/标签），网格/表格双视图
+- **内部首页** — 最近更新、星标收藏、AI 快速问答
+- **知识索引** — 多条件筛选（类型/可见度/分类），分页展示
+- **条目详情** — Markdown 渲染 + 知识图谱 + 版本历史 + 附件列表
 - **内部登录** — JWT 认证 + bcrypt 密码哈希，公开/内部内容隔离
-- **条目编辑器** — Markdown 编辑 + 文件附件
-- **宣发素材库** — PPT/图片/流程图管理，用途分类
-- **研发数据对准** — DataItem Schema 对齐表格
-- **管理员专区** — 统计仪表盘
-- **中英双语** + **深色/浅色主题**
+- **管理后台** — 条目元数据清单、在线编辑、版本快照备份、分页浏览
+- **认证守卫** — 受保护路由自动重定向到登录页，登录后返回原页面
 
 ### 企业数据管道
 
 | 步骤 | 功能 | 实现 |
 |------|------|------|
-| 1. Import | 文件上传 / API 提交 / 目录批量导入 | `backend/services/import.service.ts` |
-| 2. Parse | MarkItDown：PDF/Word/MD/TXT/PNG → 统一 Markdown | `backend/parser/service.ts` |
-| 3. Chunk | 4 种策略：fixed / paragraph / sentence / markdown-aware | `backend/chunk/service.ts` |
-| 4. Embed | BGE-M3 向量化（1024d），本地 Ollama | `backend/embedding/ollama.ts` |
-| 5. Vector | pgvector 存储 + IVFFlat 索引 | `backend/repositories/vector.repository.ts` |
-| 6. Retrieve | 语义搜索：Embedding → TopK → Context | `backend/services/search.service.ts` |
-| 7. LLM | RAG 流式问答 + AI 摘要，Provider 抽象层 | `backend/services/ai.service.ts` |
+| Connect | Sandbox API 连接器（Token 认证 + 自动刷新） | `backend/connectors/sandbox/` |
+| Import | 文件上传 / API 提交 / Connector 同步 / 目录批量导入 | `backend/services/import.service.ts` |
+| Parse | Docling：PDF/Word/PPT/Excel/HTML/MD/TXT/图片(OCR) → 统一 Markdown | `backend/parser/docling.ts` |
+| Chunk | 4 种策略：fixed / paragraph / sentence / markdown-aware | `backend/chunk/service.ts` |
+| Embed | BGE-M3 向量化（1024d），本地 Ollama | `backend/embedding/ollama.ts` |
+| Vector | pgvector 存储 + IVFFlat 索引 | `backend/repositories/vector.repository.ts` |
+| Retrieve | 语义搜索：Embedding → TopK → Context | `backend/services/search.service.ts` |
+| LLM | RAG 流式问答 + AI 摘要，Provider 抽象层 | `backend/services/ai.service.ts` |
+
+### Sandbox 数据连接器
+
+Sandbox 作为结构化数据源接入 Wiki，不走 Parser，直接产出 Markdown：
+
+```
+Sandbox REST API (Bearer Token)
+    │  POST /api/login
+    │  GET  /api/da/asset/project-select
+    │  POST /api/da/asset/page          ← 分页循环拉取
+    │  GET  /api/da/asset/operator/:id  ← 按类型取详情
+    │  GET  /api/da/asset/dot/:id
+    │  GET  /api/da/asset/dataset/:id
+    │  GET  /api/da/asset/post/:id
+    ▼
+getDisplayTitle(detail)
+    name → originalName → description → ObjectId
+    ▼
+JSON → Markdown (toMarkdown)
+    ▼
+importFromConnector() → Entry → Chunk → Embed → pgvector
+```
+
+- **可插拔架构** — `ConnectorRegistry` 模式，后续 Feishu/Confluence/Notion 只需注册新 Connector
+- **增量同步** — 基于 `updateTime` + `lastSyncTime` 持久化
+- **智能标题** — 从 `name` / `originalName` / `description` 自动生成可读标题，ObjectId 保留在 Markdown 页脚
 
 ### AI 功能
 
@@ -118,6 +141,12 @@ ollama pull deepseek-r1:8b      # 备选
 docker compose up -d             # 启动 PostgreSQL 16 + pgvector
 ```
 
+- **Docling**（文档解析，可选）：
+
+```bash
+pip install docling              # PDF/Word/PPT/Excel/图片解析
+```
+
 ## 快速开始
 
 ```bash
@@ -138,20 +167,20 @@ ollama pull qwen2.5:7b
 npm run backend        # Express API :3001（自动 migrate + seed）
 npm run dev            # Vite 前端 :3000
 
-# 6. 测试 RAG 问答（非流式）
-curl -X POST http://localhost:3001/api/ai/chat \
+# 6. 同步 Sandbox 数据
+curl -X POST http://localhost:3001/api/connectors/sandbox/sync \
   -H "Content-Type: application/json" \
-  -d '{"question":"公司的材料计算平台有哪些核心特性？"}'
+  -d '{"projectId":"155"}'
 
-# 7. 测试 SSE 流式问答
+# 7. 测试语义搜索
+curl -X POST http://localhost:3001/api/search \
+  -H "Content-Type: application/json" \
+  -d '{"query":"MOF 材料的可及表面积","topK":5}'
+
+# 8. 测试 RAG 问答（SSE 流式）
 curl -N -X POST http://localhost:3001/api/ai/chat/stream \
   -H "Content-Type: application/json" \
   -d '{"question":"什么是量子计算材料设计？"}'
-
-# 8. 测试语义搜索
-curl -X POST http://localhost:3001/api/pipeline/search \
-  -H "Content-Type: application/json" \
-  -d '{"query":"MOF 材料的可及表面积","topK":5}'
 ```
 
 ## 生产构建
@@ -183,174 +212,164 @@ npm run db:studio      # 启动 Drizzle Studio（可视化数据库管理）
 
 ## API 端点
 
+### 🔌 Connectors（数据源连接器）
+
+| Method | Path | 说明 |
+|--------|------|------|
+| `GET` | `/api/connectors/health` | 连接器健康检查 + 已注册列表 |
+| `GET` | `/api/connectors` | 列出所有已注册连接器 |
+| `POST` | `/api/connectors/:name/connect` | 连接/认证 |
+| `GET` | `/api/connectors/:name/documents` | 列出文档（?projectId/keyword/type） |
+| `GET` | `/api/connectors/:name/documents/:id` | 获取文档详情 |
+| `POST` | `/api/connectors/:name/sync/preview` | 预览同步 |
+| `POST` | `/api/connectors/:name/sync` | 完整同步 → Entry → Chunk → Embed |
+| `GET` | `/api/connectors/sandbox/projects` | Sandbox 项目列表 |
+| `GET` | `/api/connectors/sandbox/last-sync` | 上次同步时间 |
+
 ### 📊 Pipeline（企业数据管道）
 
 | Method | Path | 说明 |
 |--------|------|------|
-| `GET` | `/api/pipeline/health` | 管道健康检查（Ollama/Milvus 状态、支持格式） |
-| `GET` | `/api/pipeline/formats` | 列出支持的输入格式及其说明 |
-| `GET` | `/api/pipeline/status` | 管道状态摘要（条目数、向量库、模型配置） |
-| `POST` | `/api/pipeline/parse` | Step 1 — MarkItDown 解析（PDF/Word/MD/TXT → Markdown） |
-| `POST` | `/api/pipeline/chunk` | Step 2 — 智能分块（4 种策略可配） |
-| `POST` | `/api/pipeline/embed` | Step 3 — 向量嵌入 + 存入向量库 |
-| `POST` | `/api/pipeline/import` | **完整管道**（multipart 文件上传 或 JSON body） |
+| `GET` | `/api/pipeline/health` | 管道健康检查 |
+| `GET` | `/api/pipeline/formats` | 支持的输入格式 |
+| `GET` | `/api/pipeline/status` | 管道状态（条目数/模型配置） |
+| `POST` | `/api/pipeline/parse` | Docling 解析（PDF/Word/PPT/Excel → Markdown） |
+| `POST` | `/api/pipeline/chunk` | 智能分块（4 种策略可配） |
+| `POST` | `/api/pipeline/embed` | 向量嵌入 |
+| `POST` | `/api/pipeline/import` | 完整管道（multipart 文件上传） |
 | `POST` | `/api/pipeline/import/string` | 完整管道（字符串内容） |
 | `POST` | `/api/pipeline/import/batch` | 批量导入（扫描目录） |
-| `POST` | `/api/pipeline/search` | 语义搜索（Embedding → TopK → Context） |
+| `POST` | `/api/pipeline/search` | 语义搜索 |
+
+### 🔍 Search
+
+| Method | Path | 说明 |
+|--------|------|------|
+| `POST` | `/api/search` | 关键词/类型搜索（支持分页 `page`/`pageSize`，空查询回退 DB） |
 
 ### 🤖 AI
 
-| Method | Path | 输入 | 输出 | 说明 |
-|--------|------|------|------|------|
-| `POST` | `/api/ai/search` | `{query}` | `{results[], source}` | 语义搜索 |
-| `POST` | `/api/ai/chat` | `{question, conversationId?}` | `{answer, sources[], conversationId}` | 非流式 RAG 问答 |
-| `POST` | `/api/ai/chat/stream` | `{question, conversationId?}` | SSE 事件流 | **流式 RAG 问答**（token 级实时生成） |
-| `POST` | `/api/ai/summarize` | `{entryId}` | `{summary}` | AI 摘要 |
-| `GET` | `/api/ai/conversations` | — | 对话列表 | 当前用户的对话历史 |
-| `GET` | `/api/ai/conversations/:id` | — | 消息列表 | 指定对话的完整消息 |
-| `POST` | `/api/ai/import` | `{filePath \| content}` | `{entryIds[], propertyCount}` | 数据导入 |
-| `POST` | `/api/ai/reset` | `{filePath}` | 清空导入数据 + 重新导入 | 重置管道 |
+| Method | Path | 说明 |
+|--------|------|------|
+| `POST` | `/api/ai/chat` | 非流式 RAG 问答 |
+| `POST` | `/api/ai/chat/stream` | **流式 RAG 问答**（SSE） |
+| `POST` | `/api/ai/summarize` | AI 摘要 |
+| `GET` | `/api/ai/conversations` | 对话历史列表 |
+| `GET` | `/api/ai/conversations/:id` | 对话详情 |
 
-### 🔐 Auth
+### 🔐 Auth / 📝 Entries / Categories / Tags / Files / DataItems
 
 | Method | Path | Auth | 说明 |
 |--------|------|------|------|
-| `POST` | `/api/auth/login` | — | 登录，返回 JWT |
+| `POST` | `/api/auth/login` | — | 登录 |
 | `GET` | `/api/auth/me` | Bearer | 当前用户 |
-
-### 📝 Entries / Categories / Tags / Files / DataItems
-
-| Method | Path | Auth | 说明 |
-|--------|------|------|------|
-| `GET` | `/api/entries` | optional | 列表 (?keyword/type/visibility/category/tag) |
-| `GET` `/POST` `/PUT` `/DELETE` | `/api/entries/:id` | Bearer | 详情/创建/更新/删除（级联） |
+| `GET` | `/api/entries` | optional | 列表（?page/pageSize/keyword/type/visibility/category/tag） |
+| `GET` `/POST` `/PUT` `/DELETE` | `/api/entries/:id` | Bearer | 条目 CRUD |
 | `GET` | `/api/categories` | — | 分类列表 |
 | `GET` | `/api/tags` | — | 标签列表 |
-| `GET` `/POST` `/DELETE` | `/api/files` | optional | 文件列表/上传/删除 |
+| `GET` `/POST` `/DELETE` | `/api/files` | optional | 文件管理 |
 | `GET` `/PUT` `/DELETE` | `/api/data-items` | Bearer | DataItem CRUD |
-
-## API 文档
-
-- **Swagger UI**: http://localhost:3001/api/docs
-- **OpenAPI Spec**: `backend/swagger/openapi.json`
-- **Postman Collection**: `backend/postman/Enterprise-Data-Pipeline.postman_collection.json`
 
 ## 项目结构
 
 ```
-├── backend/                          # 核心业务逻辑（框架无关）
-│   ├── config.ts                     # 集中配置
+├── backend/                          # 核心业务逻辑
+│   ├── config.ts                     # 集中配置（含 Sandbox 连接参数）
 │   ├── types.ts                      # 共享类型定义
-│   ├── app.ts                        # Express App 工厂（auto-migrate + seed）
+│   ├── app.ts                        # Express App 工厂
 │   ├── main.ts                       # 独立 API 入口
 │   │
+│   ├── connectors/                   # 🆕 数据源连接器层（可插拔）
+│   │   ├── types.ts                  # Connector 接口 + Unified Document Model
+│   │   ├── registry.ts               # ConnectorRegistry（同 ParserFactory 模式）
+│   │   ├── index.ts                  # 公共导出
+│   │   └── sandbox/                  # Sandbox 连接器
+│   │       ├── types.ts              # Sandbox API 响应类型
+│   │       ├── auth.ts               # Token 登录 + 自动刷新
+│   │       ├── client.ts             # HTTP Client（全部 API 封装）
+│   │       ├── assets.ts             # 分页循环拉取
+│   │       ├── detail.ts             # 按类型路由详情
+│   │       ├── markdown.ts           # JSON → Markdown + getDisplayTitle()
+│   │       ├── sync.ts               # 全量/增量同步
+│   │       └── index.ts              # SandboxConnector 实现
+│   │
 │   ├── db/                           # 数据库层
-│   │   ├── connection.ts             # PostgreSQL 连接池 + Drizzle 实例
-│   │   ├── schema.ts                 # 11 张表的 Drizzle schema 定义
-│   │   ├── migrate.ts                # 迁移执行器
-│   │   ├── seed.ts                   # 初始数据填充（admin 用户 + 条目）
-│   │   └── migrations/               # 自动生成的 SQL 迁移文件
+│   │   ├── connection.ts             # PostgreSQL + Drizzle
+│   │   ├── schema.ts                 # Drizzle schema（entries/categories/tags/vectors/...）
+│   │   ├── migrate.ts / seed.ts      # 迁移 + 种子数据
+│   │   └── migrations/               # SQL 迁移文件
 │   │
-│   ├── repositories/                 # Repository 层（数据访问）
-│   │   ├── base.ts                   # 抽象 BaseRepository
-│   │   ├── entry.repository.ts       # 条目 CRUD + 搜索
-│   │   ├── category.repository.ts    # 分类查询
-│   │   ├── tag.repository.ts         # 标签 CRUD + 关联
-│   │   ├── user.repository.ts        # 用户 + bcrypt 认证
-│   │   ├── file.repository.ts        # 文件元数据
-│   │   ├── data-item.repository.ts   # DataItem CRUD
-│   │   ├── chunk.repository.ts       # 文档分块持久化
-│   │   ├── conversation.repository.ts # 对话历史
-│   │   └── vector.repository.ts      # pgvector 向量存储
+│   ├── repositories/                 # Repository 层
+│   │   ├── entry.repository.ts       # 条目 CRUD + 分页搜索
+│   │   ├── vector.repository.ts      # pgvector 向量存储
+│   │   └── ...                       # category/tag/user/file/chunk/conversation
 │   │
-│   ├── services/                     # Service 层（业务逻辑）
-│   │   ├── auth.service.ts           # 认证服务（替换硬编码 admin）
+│   ├── services/                     # Service 层
+│   │   ├── auth.service.ts           # JWT 认证
 │   │   ├── search.service.ts         # 语义 + 关键词检索
-│   │   ├── ai.service.ts             # RAG 问答（流式 + 非流式）
-│   │   └── import.service.ts         # 数据导入管道（事务安全）
+│   │   ├── ai.service.ts             # RAG 问答
+│   │   └── import.service.ts         # 数据导入管道（含 importFromConnector）
 │   │
-│   ├── llm/                          # LLM Provider 抽象层（新增）
-│   │   ├── types.ts                  # LLMProvider 接口 + StreamChunk 类型
-│   │   ├── ollama.provider.ts        # Ollama 实现（流式 + 非流式）
-│   │   ├── sse.ts                    # SSE 工具函数
-│   │   └── index.ts                  # Provider 工厂
+│   ├── parser/                       # 文档解析
+│   │   ├── base.ts                   # DocumentParser 接口
+│   │   ├── factory.ts                # ParserFactory（可插拔）
+│   │   ├── docling.ts                # Docling CLI 解析器
+│   │   ├── models.ts                 # ParseResult 等类型
+│   │   └── markdown.ts               # Markdown 属性提取
 │   │
-│   ├── parser/
-│   │   ├── markdown.ts               # Markdown 表格解析器
-│   │   └── service.ts                # MarkItDown 多格式解析
-│   ├── chunk/
-│   │   └── service.ts                # 分块服务（4 种策略）
-│   ├── embedding/
-│   │   └── ollama.ts                 # BGE-M3 嵌入
-│   ├── ai/
-│   │   └── prompts.ts                # Prompt 模板
-│   ├── swagger/                      # OpenAPI + Swagger UI
+│   ├── chunk/service.ts              # 分块服务（4 种策略）
+│   ├── embedding/ollama.ts           # BGE-M3 嵌入
+│   ├── llm/                          # LLM Provider 抽象
 │   └── data/                         # 运行时数据
-│       └── materials-metadata.md     # 源数据（169 个材料性质属性）
 │
-├── server/                           # Express 薄路由层
-│   ├── index.ts                      # 入口
-│   ├── middleware/
-│   │   └── auth.ts                   # JWT 中间件
+├── server/                           # Express 路由层
+│   ├── middleware/auth.ts            # JWT 中间件（requireAuth / optionalAuth）
 │   └── routes/
-│       ├── auth.ts                   # /api/auth/login, /me
-│       ├── entries.ts                # /api/entries CRUD
-│       ├── ai.ts                     # /api/ai/chat, /chat/stream, /summarize, /conversations
-│       └── pipeline.ts               # /api/pipeline/*
+│       ├── connectors.ts             # 🆕 /api/connectors/*
+│       ├── search.ts                 # /api/search
+│       ├── pipeline.ts               # /api/pipeline/*
+│       ├── ai.ts                     # /api/ai/*
+│       ├── auth.ts                   # /api/auth/*
+│       └── entries.ts / files.ts / ... # CRUD 路由
 │
-├── src/                              # React 前端
-│   ├── api/
-│   │   └── queryApi.ts              # askAI() + askAIStream() SSE 流式
-│   └── pages/
-│       └── AIQueryPage.tsx          # 流式问答页面（token 级实时显示 + 停止按钮）
+├── src/                              # React 前端（React Router SPA）
+│   ├── router/index.tsx              # 🆕 路由配置（14 routes + 404）
+│   ├── layouts/AppLayout.tsx         # 🆕 统一布局（TopNav + Sidebar + Outlet + Footer）
+│   ├── components/
+│   │   ├── Pagination.tsx            # 🆕 统一分页组件
+│   │   ├── ProtectedRoute.tsx        # 🆕 认证守卫
+│   │   ├── TopNav.tsx / WikiSidebar.tsx / Footer.tsx / Breadcrumbs.tsx
+│   │   └── KnowledgeGraph.tsx / AIAnswerPanel.tsx / ...
+│   ├── pages/
+│   │   ├── HomePage.tsx              # 🆕 认证条件首页路由
+│   │   ├── EntryDetailPage.tsx       # 🆕 详情页包装（返回按钮 + 面包屑）
+│   │   ├── NotFoundPage.tsx          # 🆕 404 页面
+│   │   ├── SearchPage.tsx            # 搜索 + 分页 + URL 参数同步
+│   │   └── AdminContentManagePage.tsx # 管理后台 + 分页
+│   └── api/                          # API Client
 │
 ├── docker-compose.yml                # PostgreSQL 16 + pgvector
-├── drizzle.config.ts                 # Drizzle Kit 配置
-├── .env.example                      # 环境变量模板
 └── package.json
 ```
 
-## 管道架构（Service → Repository → PostgreSQL）
+## 路由一览
 
-```
-Service 层                    Repository 层               Database
-───────────                  ──────────────              ────────
-auth.service.ts      →       user.repository.ts      →   users
-ai.service.ts        →       conversation.repository  →   conversations, chat_messages
-ai.service.ts        →       entry.repository.ts      →   entries, entry_tags
-search.service.ts    →       vector.repository.ts     →   vectors (pgvector)
-import.service.ts    →       entry + chunk repos      →   entries, document_chunks
-```
-
-## LLM Provider 抽象
-
-```
-AiService
-    │ streamChat() / chat()
-    ▼
-LLMProvider (interface)
-    │ streamChat() → AsyncGenerator<StreamChunk>
-    │ chat()       → Promise<string>
-    ▼
-├── OllamaProvider   (当前)  — Ollama /v1/chat/completions
-├── OpenAIProvider   (未来)  — api.openai.com
-├── DeepSeekProvider (未来)  — api.deepseek.com
-└── ...
-```
-
-添加新 Provider 只需实现 `LLMProvider` 接口，不改任何业务代码。
-
-## 搜索策略
-
-```
-语义搜索请求
-  │
-  ├─ 1. pgvector (IVFFlat + Cosine Distance)
-  │     └─ 主搜索：Embedding → TopK → Context
-  │
-  └─ 2. Keyword Search (标题×10 + 摘要×5 + 标签×3 + 内容×2)
-        └─ 兜底：无向量数据或 pgvector 不可用时
-```
+| Path | Page | Auth |
+|---|---|---|
+| `/` | HomePage (auth-conditional) | public |
+| `/login` | LoginPage | guest |
+| `/search` | SearchPage | public |
+| `/entry/:id` | EntryDetailPage (← 返回按钮) | public |
+| `/ai-query` | AIQueryPage | public |
+| `/graph` | KnowledgeGraphPage | public |
+| `/system-version` | SystemVersionPage | public |
+| `/papers` | PaperLibraryPage | protected |
+| `/data-items` | DataItemPage | protected |
+| `/templates` | TemplateLibraryPage | protected |
+| `/business-value` | BusinessValuePage | protected |
+| `/admin/import` | AdminImportPage | protected |
+| `/admin/manage` | AdminContentManagePage | protected |
+| `*` | NotFoundPage (404) | — |
 
 ## 环境变量
 
@@ -364,8 +383,13 @@ DATABASE_URL=postgresql://postgres:postgres@localhost:5432/microera_wiki
 
 # Ollama
 OLLAMA_URL=http://localhost:11434
-OLLAMA_CHAT_MODEL=qwen2.5:7b         # RAG 对话模型
-OLLAMA_EMBED_MODEL=bge-m3            # 嵌入模型（1024d）
+OLLAMA_CHAT_MODEL=qwen2.5:7b
+OLLAMA_EMBED_MODEL=bge-m3
+
+# Sandbox 数据源
+SANDBOX_BASE_URL=http://139.196.211.120:6810
+SANDBOX_USERNAME=admin
+SANDBOX_PASSWORD=123456
 
 # 前端开发
 VITE_API_BASE_URL=http://localhost:3001
