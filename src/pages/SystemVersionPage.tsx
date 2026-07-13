@@ -1,19 +1,15 @@
 import React from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { HelpCircle, ChevronRight, Award, History, Info } from 'lucide-react';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { VersionInfoPanel } from '../components/VersionComponents';
 
-interface SystemVersionPageProps {
-  onNavigate: (view: string, id?: string) => void;
-}
-
-export default function SystemVersionPage({ onNavigate }: SystemVersionPageProps) {
-  const { isLoggedIn } = useAuth();
+export default function SystemVersionPage() {
+  const navigate = useNavigate();
 
   // Clean breadcrumbs paths
   const breadcrumbPaths = [
-    { label: '公司 Wiki', view: isLoggedIn ? 'internal-home' : 'public-home' },
+    { label: '公司 Wiki', to: '/' },
     { label: '系统版本与合规信息' }
   ];
 
@@ -21,7 +17,7 @@ export default function SystemVersionPage({ onNavigate }: SystemVersionPageProps
     <div className="space-y-5" id="system-version-page-panel">
       {/* Upper Breadcrumbs and Utility bar */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-150 pb-2 gap-2">
-        <Breadcrumbs paths={breadcrumbPaths} onNavigate={onNavigate} />
+        <Breadcrumbs paths={breadcrumbPaths} />
         
         <div className="flex items-center space-x-2 text-[10px] text-gray-400 font-mono">
           <span>档案编号: MIQRO-SPEC-2026</span>
@@ -133,7 +129,7 @@ export default function SystemVersionPage({ onNavigate }: SystemVersionPageProps
             </p>
             <div className="pt-1.5">
               <button
-                onClick={() => onNavigate('admin-manage')}
+                onClick={() => navigate('/admin/manage')}
                 className="w-full py-1.5 bg-[#DB5F5B] hover:bg-[#DB5F5B]/90 text-white font-bold rounded text-[11px] transition-all"
               >
                 前往“管理维护端”修改条目
@@ -144,5 +140,4 @@ export default function SystemVersionPage({ onNavigate }: SystemVersionPageProps
 
       </div>
     </div>
-  );
-}
+  )}

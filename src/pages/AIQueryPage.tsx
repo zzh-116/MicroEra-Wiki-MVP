@@ -10,10 +10,9 @@ import RelatedKnowledge from '../components/RelatedKnowledge';
 import { Sparkles, Send, HelpCircle, CornerDownRight, BookOpen, StopCircle } from 'lucide-react';
 
 interface AIQueryPageProps {
-  onNavigate: (view: string, id?: string) => void;
-}
+  onNavigate: (view: string, id?: string) => void}
 
-export default function AIQueryPage({ onNavigate }: AIQueryPageProps) {
+export default function AIQueryPage() {
   const { isLoggedIn } = useAuth();
   const [question, setQuestion] = useState('');
   const [loading, setLoading] = useState(false);
@@ -29,26 +28,21 @@ export default function AIQueryPage({ onNavigate }: AIQueryPageProps) {
   // Auto-scroll as tokens arrive
   useEffect(() => {
     if (answerRef.current) {
-      answerRef.current.scrollTop = answerRef.current.scrollHeight;
-    }
+      answerRef.current.scrollTop = answerRef.current.scrollHeight}
   }, [answer]);
 
   // Cancel generation
   const handleStop = useCallback(() => {
     if (abortRef.current) {
       abortRef.current.abort();
-      abortRef.current = null;
-    }
+      abortRef.current = null}
     loadingRef.current = false;
-    setLoading(false);
-  }, []);
+    setLoading(false)}, []);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (abortRef.current) abortRef.current.abort();
-    };
-  }, []);
+      if (abortRef.current) abortRef.current.abort()}}, []);
 
   const handleAsk = useCallback(async (q: string) => {
     if (!q.trim() || loadingRef.current) return;
@@ -69,8 +63,7 @@ export default function AIQueryPage({ onNavigate }: AIQueryPageProps) {
       q,
       {
         onToken: (token: string) => {
-          setAnswer((prev) => prev + token);
-        },
+          setAnswer((prev) => prev + token)},
         onDone: (data) => {
           loadingRef.current = false;
           setLoading(false);
@@ -90,38 +83,31 @@ export default function AIQueryPage({ onNavigate }: AIQueryPageProps) {
 
           // Store conversation ID for follow-up
           if (data.conversationId) {
-            localStorage.setItem('miqro_wiki_conv_id', String(data.conversationId));
-          }
+            localStorage.setItem('miqro_wiki_conv_id', String(data.conversationId))}
 
           // Load related entries
           const entryIds = (data.sources || []).map((s) => String(s.id));
           if (entryIds.length > 0) {
             entriesApi.getEntries().then((all) => {
               const filtered = all.filter((e) => entryIds.includes(e.id));
-              setRelatedEntries(filtered);
-            }).catch(() => {});
-          }
+              setRelatedEntries(filtered)}).catch(() => {})}
         },
         onError: (message: string) => {
           loadingRef.current = false;
           setAnswer((prev) => prev + `\n\n[错误: ${message}]`);
           setLoading(false);
-          abortRef.current = null;
-        },
+          abortRef.current = null},
       },
       undefined,
-    );
-  }, []);
+    )}, []);
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    handleAsk(question);
-  };
+    handleAsk(question)};
 
   const handleQuickQuestionClick = (q: string) => {
     setQuestion(q);
-    handleAsk(q);
-  };
+    handleAsk(q)};
 
   // Check if a quick question was routed from another page
   useEffect(() => {
@@ -129,8 +115,7 @@ export default function AIQueryPage({ onNavigate }: AIQueryPageProps) {
     if (quickQ) {
       localStorage.removeItem('miqro_wiki_quick_q');
       setQuestion(quickQ);
-      handleAsk(quickQ);
-    }
+      handleAsk(quickQ)}
   }, []);
 
   return (
@@ -215,7 +200,6 @@ export default function AIQueryPage({ onNavigate }: AIQueryPageProps) {
             question={question}
             answer={answer}
             references={references}
-            onNavigate={onNavigate}
             isLoading={loading}
           />
         </div>
@@ -230,7 +214,6 @@ export default function AIQueryPage({ onNavigate }: AIQueryPageProps) {
             <KnowledgeGraph
               nodes={mockGraphNodes.slice(0, 5)}
               edges={mockGraphEdges.slice(0, 4)}
-              onNavigate={onNavigate}
               height={190}
               interactive={false}
             />
@@ -243,11 +226,9 @@ export default function AIQueryPage({ onNavigate }: AIQueryPageProps) {
             </h3>
             <RelatedKnowledge
               relatedEntries={relatedEntries}
-              onNavigate={onNavigate}
             />
           </div>
         </div>
       </div>
     </div>
-  );
-}
+  )}

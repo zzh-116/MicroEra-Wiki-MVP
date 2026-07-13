@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { WikiEntry, SourceFile, MarkdownFile, KnowledgeGraphNode, KnowledgeGraphEdge, BusinessMetric } from '../types/wiki';
 import { entriesApi } from '../api/entriesApi';
@@ -22,12 +23,8 @@ import {
 } from 'lucide-react';
 import { EntryVersionMeta, EntryVersionHistory } from '../components/VersionComponents';
 
-interface SandboxProjectPageProps {
-  entryId: string;
-  onNavigate: (view: string, id?: string) => void;
-}
-
-export default function SandboxProjectPage({ entryId, onNavigate }: SandboxProjectPageProps) {
+export default function SandboxProjectPage({ entryId }: { entryId: string }) {
+  const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
   const [entry, setEntry] = useState<any>(null);
   const [files, setFiles] = useState<SourceFile[]>([]);
@@ -44,8 +41,7 @@ export default function SandboxProjectPage({ entryId, onNavigate }: SandboxProje
     name: string;
     type: string;
     relationship: string;
-    id: string;
-  } | null>(null);
+    id: string} | null>(null);
 
   useEffect(() => {
     const loadProjectData = async () => {
@@ -77,18 +73,14 @@ export default function SandboxProjectPage({ entryId, onNavigate }: SandboxProje
         // Load related entries
         const allEntries = await entriesApi.getEntries();
         const related = allEntries.filter(e => loadedEntry.relatedEntryIds.includes(e.id));
-        setRelatedEntries(related);
-      } catch (err: any) {
+        setRelatedEntries(related)} catch (err: any) {
         if (err.message === 'FORBIDDEN_INTERNAL_ACCESS') {
-          setErrorState('FORBIDDEN');
-        } else {
-          setErrorState(err.message || '加载错误');
-        }
+          setErrorState('FORBIDDEN')} else {
+          setErrorState(err.message || '加载错误')}
       }
     };
 
-    loadProjectData();
-  }, [entryId, isLoggedIn]);
+    loadProjectData()}, [entryId, isLoggedIn]);
 
   const handlePreviewMarkdown = async (sourceFileId: string) => {
     setSelectedFileId(sourceFileId);
@@ -96,45 +88,38 @@ export default function SandboxProjectPage({ entryId, onNavigate }: SandboxProje
     setMdFile(md);
     
     setTimeout(() => {
-      document.getElementById('markdown-view')?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-  };
+      document.getElementById('markdown-view')?.scrollIntoView({ behavior: 'smooth' })}, 100)};
 
   const handleToggleBookmark = () => {
-    setBookmarked(!bookmarked);
-  };
+    setBookmarked(!bookmarked)};
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })}
   };
 
   if (errorState === 'FORBIDDEN') {
-    return <Unauthorized onLoginRedirect={() => onNavigate('login')} />;
-  }
+    return <Unauthorized />}
 
   if (errorState) {
     return (
       <div className="text-center py-12 text-red-500 italic font-bold">
         加载出错: {errorState}
       </div>
-    );
-  }
+    )}
 
   if (!entry) {
     return (
       <div className="py-16 text-center text-gray-500 font-bold animate-pulse">
         正在拉取沙箱项目过程、计算日志与 RAG 活性服务...
       </div>
-    );
-  }
+    )}
 
   // Create breadcrumb array
   const breadcrumbPaths = [
-    { label: '首页', view: isLoggedIn ? 'internal-home' : 'public-home' },
-    { label: 'Sandbox 项目知识库', view: 'search' },
+    { label: '首页', to: '/' },
+    { label: 'Sandbox 项目知识库', to: '/search' },
     { label: entry.title }
   ];
 
@@ -166,15 +151,14 @@ export default function SandboxProjectPage({ entryId, onNavigate }: SandboxProje
       name: node.label,
       type: node.type,
       relationship
-    });
-  };
+    })};
 
   return (
     <div className="space-y-6" id={`sandbox-project-page-${entry.id}`}>
       
       {/* 1. Breadcrumbs & Actions Row */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 pb-3 gap-2 select-none">
-        <Breadcrumbs paths={breadcrumbPaths} onNavigate={onNavigate} />
+        <Breadcrumbs paths={breadcrumbPaths} />
 
         <div className="flex items-center space-x-2 shrink-0">
           <span className="text-[10px] text-green-700 bg-green-50 border border-green-200 px-2.5 py-1 rounded font-mono font-bold uppercase select-none">
@@ -258,25 +242,21 @@ export default function SandboxProjectPage({ entryId, onNavigate }: SandboxProje
                     <h3 key={idx} className="text-base font-extrabold text-gray-900 border-b border-gray-150 pb-1 mt-6 mb-3">
                       {line.replace('## ', '')}
                     </h3>
-                  );
-                }
+                  )}
                 if (line.startsWith('- ')) {
                   return (
                     <div key={idx} className="flex items-start space-x-1.5 ml-3 my-1 leading-relaxed">
                       <span className="text-[#DB5F5B] font-bold shrink-0 mt-0.5">•</span>
                       <span>{line.replace('- ', '')}</span>
                     </div>
-                  );
-                }
+                  )}
                 if (!line.trim()) {
-                  return <div key={idx} className="h-2" />;
-                }
+                  return <div key={idx} className="h-2" />}
                 return (
                   <p key={idx} className="my-2 text-gray-600 leading-relaxed">
                     {line}
                   </p>
-                );
-              })}
+                )})}
             </article>
           </section>
 
@@ -366,8 +346,7 @@ export default function SandboxProjectPage({ entryId, onNavigate }: SandboxProje
                 markdownFile={mdFile}
                 onClose={() => {
                   setSelectedFileId(null);
-                  setMdFile(null);
-                }}
+                  setMdFile(null)}}
               />
             </section>
           )}
@@ -380,7 +359,6 @@ export default function SandboxProjectPage({ entryId, onNavigate }: SandboxProje
             </h3>
             <ReferenceList
               references={mockReferences}
-              onNavigate={onNavigate}
             />
           </section>
 
@@ -471,7 +449,6 @@ export default function SandboxProjectPage({ entryId, onNavigate }: SandboxProje
             <KnowledgeGraph
               nodes={graph.nodes}
               edges={graph.edges}
-              onNavigate={onNavigate}
               height={240}
             />
           </section>
@@ -528,7 +505,7 @@ export default function SandboxProjectPage({ entryId, onNavigate }: SandboxProje
               {relatedEntries.map((res) => (
                 <button
                   key={res.id}
-                  onClick={() => onNavigate('entry-detail', res.id)}
+                  onClick={() => navigate(`/entry/${res.id}`)}
                   className="w-full text-left font-bold text-[#1D70B8] hover:underline block leading-relaxed"
                 >
                   {res.title}
@@ -542,5 +519,4 @@ export default function SandboxProjectPage({ entryId, onNavigate }: SandboxProje
       </div>
 
     </div>
-  );
-}
+  )}

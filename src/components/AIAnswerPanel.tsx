@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Sparkles, Calendar, BookOpen, Quote, ChevronRight, ThumbsUp, MessageSquare } from 'lucide-react';
 import { Reference } from '../types/wiki';
 import { stripDataUriImages } from '../utils/adapter';
@@ -7,7 +8,6 @@ interface AIAnswerPanelProps {
   question: string;
   answer: string;
   references: Reference[];
-  onNavigate: (view: string, id?: string) => void;
   isLoading?: boolean;
 }
 
@@ -26,9 +26,9 @@ export default function AIAnswerPanel({
   question,
   answer,
   references,
-  onNavigate,
   isLoading = false
 }: AIAnswerPanelProps) {
+  const navigate = useNavigate();
   const [rated, setRated] = useState(false);
   const [phrase, setPhrase] = useState(THINKING_PHRASES[0]);
   const tickRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -161,7 +161,7 @@ export default function AIAnswerPanel({
                 
                 {ref.fromEntryId && (
                   <button
-                    onClick={() => onNavigate('entry-detail', ref.fromEntryId)}
+                    onClick={() => navigate(`/entry/${ref.fromEntryId}`)}
                     className="text-[#DB5F5B] hover:underline flex items-center font-semibold"
                   >
                     <span>跳转至原始条目详情</span>

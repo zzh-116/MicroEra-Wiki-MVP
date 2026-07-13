@@ -1,52 +1,25 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-interface FooterProps {
-  onNavigate: (view: string, id?: string) => void;
-}
-
-export default function Footer({ onNavigate }: FooterProps) {
+export default function Footer() {
   return (
     <footer className="bg-[#2B3150] text-gray-300 text-xs mt-12 border-t-8 border-[#DB5F5B] select-none" id="gov-style-footer">
       <div className="max-w-7xl mx-auto px-4 py-10">
         {/* Four Column Directory */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pb-8 border-b border-gray-700/60">
-          
+
           {/* Col 1: Wiki内容 */}
           <div className="space-y-3">
             <h4 className="font-extrabold text-[#F2D760] text-xs uppercase tracking-wider pb-1 border-b border-gray-700/55">
               Wiki 内容
             </h4>
             <ul className="space-y-2 text-[11px] text-gray-300">
-              <li>
-                <button onClick={() => onNavigate('search')} className="hover:underline hover:text-white text-left">
-                  公开知识 (Public Knowledge)
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('search')} className="hover:underline hover:text-white text-left">
-                  内部知识 (Internal Directory)
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('entry-detail', 'e-stabilizer-project')} className="hover:underline hover:text-white text-left">
-                  Sandbox 项目 (Sandbox Process)
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('papers')} className="hover:underline hover:text-white text-left">
-                  论文知识库 (Papers Archive)
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('data-items')} className="hover:underline hover:text-white text-left">
-                  数据条目 (Data Items)
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('templates')} className="hover:underline hover:text-white text-left">
-                  模板库 (Template Library)
-                </button>
-              </li>
+              <li><Link to="/search" className="hover:underline hover:text-white">公开知识 (Public Knowledge)</Link></li>
+              <li><Link to="/search" className="hover:underline hover:text-white">内部知识 (Internal Directory)</Link></li>
+              <li><Link to="/entry/e-stabilizer-project" className="hover:underline hover:text-white">Sandbox 项目 (Sandbox Process)</Link></li>
+              <li><Link to="/papers" className="hover:underline hover:text-white">论文知识库 (Papers Archive)</Link></li>
+              <li><Link to="/data-items" className="hover:underline hover:text-white">数据条目 (Data Items)</Link></li>
+              <li><Link to="/templates" className="hover:underline hover:text-white">模板库 (Template Library)</Link></li>
             </ul>
           </div>
 
@@ -56,36 +29,12 @@ export default function Footer({ onNavigate }: FooterProps) {
               服务与工具
             </h4>
             <ul className="space-y-2 text-[11px] text-gray-300">
-              <li>
-                <button onClick={() => onNavigate('ai-query')} className="hover:underline hover:text-white text-left">
-                  RAG 服务 (RAG Q&A)
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('system-version')} className="hover:underline hover:text-white text-left">
-                  MCP 工具 (MCP Sandbox)
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('ai-query')} className="hover:underline hover:text-white text-left">
-                  MiQi 智能调用 (MiQi Assistance)
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('search')} className="hover:underline hover:text-white text-left">
-                  查询接口 (Search Hub)
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('admin-import')} className="hover:underline hover:text-white text-left">
-                  导入任务 (Import Pipeline)
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('system-version')} className="hover:underline hover:text-white text-left">
-                  API 文档 (Integrations)
-                </button>
-              </li>
+              <li><Link to="/ai-query" className="hover:underline hover:text-white">RAG 服务 (RAG Q&A)</Link></li>
+              <li><Link to="/system-version" className="hover:underline hover:text-white">MCP 工具 (MCP Sandbox)</Link></li>
+              <li><Link to="/ai-query" className="hover:underline hover:text-white">MiQi 智能调用 (MiQi Assistance)</Link></li>
+              <li><Link to="/search" className="hover:underline hover:text-white">查询接口 (Search Hub)</Link></li>
+              <li><Link to="/admin/import" className="hover:underline hover:text-white">导入任务 (Import Pipeline)</Link></li>
+              <li><Link to="/system-version" className="hover:underline hover:text-white">API 文档 (Integrations)</Link></li>
             </ul>
           </div>
 
@@ -95,36 +44,12 @@ export default function Footer({ onNavigate }: FooterProps) {
               管理与规范
             </h4>
             <ul className="space-y-2 text-[11px] text-gray-300">
-              <li>
-                <button onClick={() => onNavigate('admin-manage')} className="hover:underline hover:text-white text-left">
-                  内容管理 (Content Management)
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('admin-import')} className="hover:underline hover:text-white text-left">
-                  文件入库规范 (Ingestion Specs)
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('system-version')} className="hover:underline hover:text-white text-left">
-                  Reference 引用规范
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('system-version')} className="hover:underline hover:text-white text-left">
-                  权限说明 (Access Control)
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('system-version')} className="hover:underline hover:text-white text-left">
-                  数据标准化说明 (Standards)
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('system-version')} className="hover:underline hover:text-white text-left">
-                  版本记录 (Revision Log)
-                </button>
-              </li>
+              <li><Link to="/admin/manage" className="hover:underline hover:text-white">内容管理 (Content Management)</Link></li>
+              <li><Link to="/admin/import" className="hover:underline hover:text-white">文件入库规范 (Ingestion Specs)</Link></li>
+              <li><Link to="/system-version" className="hover:underline hover:text-white">Reference 引用规范</Link></li>
+              <li><Link to="/system-version" className="hover:underline hover:text-white">权限说明 (Access Control)</Link></li>
+              <li><Link to="/system-version" className="hover:underline hover:text-white">数据标准化说明 (Standards)</Link></li>
+              <li><Link to="/system-version" className="hover:underline hover:text-white">版本记录 (Revision Log)</Link></li>
             </ul>
           </div>
 
@@ -134,26 +59,10 @@ export default function Footer({ onNavigate }: FooterProps) {
               支持
             </h4>
             <ul className="space-y-2 text-[11px] text-gray-300">
-              <li>
-                <button onClick={() => onNavigate('system-version')} className="hover:underline hover:text-white text-left">
-                  使用说明 (User Guide)
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('system-version')} className="hover:underline hover:text-white text-left">
-                  需求反馈 (Feedback Hub)
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('system-version')} className="hover:underline hover:text-white text-left">
-                  联系维护人 (Contact Xue Yue)
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('system-version')} className="hover:underline hover:text-white text-left">
-                  常见问题 (FAQs)
-                </button>
-              </li>
+              <li><Link to="/system-version" className="hover:underline hover:text-white">使用说明 (User Guide)</Link></li>
+              <li><Link to="/system-version" className="hover:underline hover:text-white">需求反馈 (Feedback Hub)</Link></li>
+              <li><Link to="/system-version" className="hover:underline hover:text-white">联系维护人 (Contact Xue Yue)</Link></li>
+              <li><Link to="/system-version" className="hover:underline hover:text-white">常见问题 (FAQs)</Link></li>
             </ul>
           </div>
 

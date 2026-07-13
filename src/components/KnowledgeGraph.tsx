@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Network, Info, Eye, ExternalLink } from 'lucide-react';
 import { KnowledgeGraphNode, KnowledgeGraphEdge, EntryType } from '../types/wiki';
 import EntryTypeBadge from './EntryTypeBadge';
@@ -6,7 +7,6 @@ import EntryTypeBadge from './EntryTypeBadge';
 interface KnowledgeGraphProps {
   nodes: KnowledgeGraphNode[];
   edges: KnowledgeGraphEdge[];
-  onNavigate: (view: string, id?: string) => void;
   height?: number;
   interactive?: boolean;
 }
@@ -14,10 +14,10 @@ interface KnowledgeGraphProps {
 export default function KnowledgeGraph({
   nodes,
   edges,
-  onNavigate,
   height = 320,
   interactive = true
 }: KnowledgeGraphProps) {
+  const navigate = useNavigate();
   const [selectedNode, setSelectedNode] = useState<KnowledgeGraphNode | null>(null);
   const [hoveredNode, setHoveredNode] = useState<KnowledgeGraphNode | null>(null);
 
@@ -237,7 +237,7 @@ export default function KnowledgeGraph({
 
           {selectedNode && (
             <button
-              onClick={() => onNavigate('entry-detail', selectedNode.entryId)}
+              onClick={() => navigate(`/entry/${selectedNode.entryId}`)}
               className="w-full mt-3 py-1.5 bg-[#2B3150] hover:bg-[#2B3150]/90 text-white font-semibold rounded text-[11px] transition-all flex items-center justify-center space-x-1"
             >
               <ExternalLink className="w-3 h-3 text-[#F2D760]" />
