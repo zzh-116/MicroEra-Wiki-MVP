@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Briefcase, TrendingUp, DollarSign, Cpu, ArrowRight, ShieldAlert, Award } from 'lucide-react';
 import { BusinessMetric } from '../types/wiki';
@@ -6,25 +7,21 @@ import { mockBusinessMetrics } from '../mock/mockData';
 import Unauthorized from '../components/Unauthorized';
 
 interface BusinessValuePageProps {
-  onNavigate: (view: string, id?: string) => void;
-}
+  onNavigate: (view: string, id?: string) => void}
 
-export default function BusinessValuePage({ onNavigate }: BusinessValuePageProps) {
+export default function BusinessValuePage() {
+  const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
   const [metrics, setMetrics] = useState<BusinessMetric[]>([]);
 
   useEffect(() => {
-    setMetrics(mockBusinessMetrics);
-  }, []);
+    setMetrics(mockBusinessMetrics)}, []);
 
   if (!isLoggedIn) {
     return (
-      <Unauthorized
-        onLoginRedirect={() => onNavigate('login')}
-        requiredRole="internal"
+      <Unauthorized requiredRole="internal"
       />
-    );
-  }
+    )}
 
   return (
     <div className="space-y-5" id="business-value-page-panel">
@@ -123,7 +120,7 @@ export default function BusinessValuePage({ onNavigate }: BusinessValuePageProps
                 <span className="text-gray-400">核对状态：✅ 外部财务与算法组联合认定通过</span>
                 
                 <button
-                  onClick={() => onNavigate('entry-detail', metric.projectEntryId)}
+                  onClick={() => navigate(`/entry/${metric.projectEntryId}`)}
                   className="text-[#DB5F5B] font-bold hover:underline flex items-center select-none"
                 >
                   <span>直达归档项目 Wiki</span>
@@ -135,5 +132,4 @@ export default function BusinessValuePage({ onNavigate }: BusinessValuePageProps
         </div>
       </div>
     </div>
-  );
-}
+  )}

@@ -1,13 +1,14 @@
+import { useNavigate } from 'react-router-dom';
 import { Link2, ArrowRight } from 'lucide-react';
 import { WikiEntry } from '../types/wiki';
 import EntryTypeBadge from './EntryTypeBadge';
 
 interface RelatedKnowledgeProps {
   relatedEntries: WikiEntry[];
-  onNavigate: (view: string, id?: string) => void;
 }
 
-export default function RelatedKnowledge({ relatedEntries, onNavigate }: RelatedKnowledgeProps) {
+export default function RelatedKnowledge({ relatedEntries }: RelatedKnowledgeProps) {
+  const navigate = useNavigate();
   if (!relatedEntries || relatedEntries.length === 0) {
     return (
       <div className="text-xs text-gray-400 italic py-2" id="no-related-knowledge">
@@ -21,7 +22,7 @@ export default function RelatedKnowledge({ relatedEntries, onNavigate }: Related
       {relatedEntries.map((entry) => (
         <div
           key={entry.id}
-          onClick={() => onNavigate('entry-detail', entry.id)}
+          onClick={() => navigate(`/entry/${entry.id}`)}
           className="p-2.5 bg-white rounded-lg border border-gray-100 hover:border-[#DB5F5B]/30 hover:shadow-sm cursor-pointer transition-all flex flex-col justify-between group"
         >
           <div className="flex items-start justify-between gap-1 mb-1">
