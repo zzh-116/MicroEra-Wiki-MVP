@@ -28,6 +28,13 @@ export const config = {
     dimension: parseInt(process.env.EMBEDDING_DIM || '1024', 10),
   },
 
+  /** Sandbox data platform connector */
+  sandbox: {
+    baseUrl: process.env.SANDBOX_BASE_URL || 'http://139.196.211.120:6810',
+    username: process.env.SANDBOX_USERNAME || 'admin',
+    password: process.env.SANDBOX_PASSWORD || '123456',
+  },
+
   dataDir: process.env.DATA_DIR || './backend/data',
 
   databaseUrl: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/microera_wiki',

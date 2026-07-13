@@ -4,10 +4,12 @@ import { useAuth } from '../context/AuthContext';
 import { adminApi } from '../api/adminApi';
 import { entriesApi } from '../api/entriesApi';
 import { WikiEntry, EntryType, EntryVersionHistoryItem } from '../types/wiki';
-import { Trash2, Edit, AlertCircle, Search, Settings, FileText, ChevronRight, CornerDownRight, Check, ShieldCheck } from 'lucide-react';
+import { Trash2, Edit, AlertCircle, Search, Settings, FileText, ChevronRight, CornerDownRight, Check, ShieldCheck, ChevronLeft } from 'lucide-react';
 import EntryTypeBadge from '../components/EntryTypeBadge';
 import VisibilityBadge from '../components/VisibilityBadge';
 import Unauthorized from '../components/Unauthorized';
+
+const PAGE_SIZE = 10;
 
 interface AdminContentManagePageProps {
   onNavigate: (view: string, id?: string) => void}
@@ -32,6 +34,7 @@ export default function AdminContentManagePage() {
   const [entries, setEntries] = useState<WikiEntry[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [editingEntry, setEditingEntry] = useState<WikiEntry | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // VERSION CONTROL FORM STATES
   const [editVersion, setEditVersion] = useState('v1.1');
@@ -136,9 +139,41 @@ export default function AdminContentManagePage() {
   };
 
   const filtered = entries.filter(
-    e => e.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    e => e.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
          e.summary.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Pagination
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(currentPage, totalPages);
+  const pagedItems = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+  const startItem = filtered.length === 0 ? 0 : (safePage - 1) * PAGE_SIZE + 1;
+  const endItem = Math.min(safePage * PAGE_SIZE, filtered.length);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  };
+
+  // Reset to page 1 when search changes
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    setCurrentPage(1);
+  };
+
+  // Generate page numbers for display
+  const getPageNumbers = (): (number | 'ellipsis')[] => {
+    const pages: (number | 'ellipsis')[] = [];
+    const maxVisible = 5;
+    let start = Math.max(1, safePage - Math.floor(maxVisible / 2));
+    let end = Math.min(totalPages, start + maxVisible - 1);
+    if (end - start < maxVisible - 1) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+    if (start > 1) pages.push(1, 'ellipsis');
+    for (let i = start; i <= end; i++) pages.push(i);
+    if (end < totalPages) pages.push('ellipsis', totalPages);
+    return pages;
+  };
 
   if (!isLoggedIn) {
     return (
@@ -174,7 +209,7 @@ export default function AdminContentManagePage() {
                   className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#DB5F5B] text-xs font-sans"
                   placeholder="检索需要审核的条目标题..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                   id="admin-search-filter"
                 />
                 <Search className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-gray-400" />
@@ -183,7 +218,7 @@ export default function AdminContentManagePage() {
 
             {/* List block */}
             <div className="space-y-3">
-              {filtered.map((entry) => (
+              {pagedItems.map((entry) => (
                 <div
                   key={entry.id}
                   className="p-3.5 bg-gray-50 border border-gray-150 rounded-lg text-xs flex flex-col sm:flex-row justify-between gap-3"
@@ -196,8 +231,6 @@ export default function AdminContentManagePage() {
                       <span className="text-[10px] text-gray-400 font-mono">ID: {entry.id}</span>
                     </div>
 
-                    {/* Title: break-all handles corrupted UTF-8 with no whitespace;
-                        line-clamp-2 prevents excessively tall cards */}
                     <h4
                       className="font-extrabold text-gray-800 tracking-tight break-all line-clamp-2"
                       title={sanitizeTitle(entry.title)}
@@ -210,8 +243,7 @@ export default function AdminContentManagePage() {
                     </p>
                   </div>
 
-                  {/* Actions buttons: shrink-0 + relative + z-10 ensures they stay
-                      accessible and render above any overflow from content area */}
+                  {/* Actions buttons */}
                   <div className="flex sm:flex-col justify-end gap-2 shrink-0 items-end select-none relative z-10">
                     <button
                       onClick={() => startEditing(entry)}
@@ -231,7 +263,63 @@ export default function AdminContentManagePage() {
                   </div>
                 </div>
               ))}
+
+              {filtered.length === 0 && (
+                <div className="text-center py-8 text-gray-400 italic text-xs">
+                  未在知识库中找到符合条件的 Wiki 条目。
+                </div>
+              )}
             </div>
+
+            {/* Pagination Controls */}
+            {filtered.length > PAGE_SIZE && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-gray-100 select-none">
+                <span className="text-[10px] text-gray-400 font-mono">
+                  第 {safePage} / {totalPages} 页，共 {filtered.length} 条
+                </span>
+
+                <div className="flex items-center space-x-1">
+                  {/* Previous */}
+                  <button
+                    onClick={() => goToPage(safePage - 1)}
+                    disabled={safePage <= 1}
+                    className="px-2 py-1 text-[10px] font-bold border border-gray-200 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center space-x-0.5"
+                  >
+                    <ChevronLeft className="w-3 h-3" />
+                    <span className="hidden sm:inline">上一页</span>
+                  </button>
+
+                  {/* Page Numbers */}
+                  {getPageNumbers().map((p, i) =>
+                    p === 'ellipsis' ? (
+                      <span key={`e-${i}`} className="px-1.5 text-[10px] text-gray-400">…</span>
+                    ) : (
+                      <button
+                        key={p}
+                        onClick={() => goToPage(p)}
+                        className={`w-7 h-7 text-[10px] font-bold rounded transition-all ${
+                          p === safePage
+                            ? 'bg-[#2B3150] text-[#F2D760]'
+                            : 'border border-gray-200 hover:bg-gray-100 text-gray-600'
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    )
+                  )}
+
+                  {/* Next */}
+                  <button
+                    onClick={() => goToPage(safePage + 1)}
+                    disabled={safePage >= totalPages}
+                    className="px-2 py-1 text-[10px] font-bold border border-gray-200 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center space-x-0.5"
+                  >
+                    <span className="hidden sm:inline">下一页</span>
+                    <ChevronRight className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
