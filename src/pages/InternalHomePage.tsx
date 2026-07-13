@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, Sparkles, Clock, Bookmark, ChevronRight, ArrowRight, Cpu, Database, Network, Activity } from 'lucide-react';
 import { WikiEntry } from '../types/wiki';
 import { entriesApi } from '../api/entriesApi';
 
 interface InternalHomePageProps {
-  onNavigate: (view: string, id?: string) => void;
-}
+  onNavigate: (view: string, id?: string) => void}
 
-export default function InternalHomePage({ onNavigate }: InternalHomePageProps) {
+export default function InternalHomePage() {
+  const navigate = useNavigate();
   const [recentEntries, setRecentEntries] = useState<WikiEntry[]>([]);
   const [favorites, setFavorites] = useState<WikiEntry[]>([]);
   const [searchInput, setSearchInput] = useState('');
@@ -21,26 +22,21 @@ export default function InternalHomePage({ onNavigate }: InternalHomePageProps) 
         setRecentEntries(sorted.slice(0, 5));
 
         // Mock favorites (e.g. project and schemas)
-        setFavorites(list.filter(e => e.id === 'e-stabilizer-project' || e.id === 'e-data-stabilizer-schema'));
-      } catch (err) {
-        console.error('Error loading internal home:', err);
-      }
+        setFavorites(list.filter(e => e.id === 'e-stabilizer-project' || e.id === 'e-data-stabilizer-schema'))} catch (err) {
+        console.error('Error loading internal home:', err)}
     };
-    loadEntries();
-  }, []);
+    loadEntries()}, []);
 
   const handleAskSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchInput.trim()) {
       localStorage.setItem('miqro_wiki_quick_q', searchInput);
-      onNavigate('ai-query');
-    }
+      navigate('/ai-query')}
   };
 
   const handleQuickQuestion = (q: string) => {
     localStorage.setItem('miqro_wiki_quick_q', q);
-    onNavigate('ai-query');
-  };
+    navigate('/ai-query')};
 
   return (
     <div className="space-y-10" id="internal-home-panel">
@@ -120,7 +116,7 @@ export default function InternalHomePage({ onNavigate }: InternalHomePageProps) 
               记录和对比 Sandbox 的多项多项式仿真过程。
             </p>
             <button 
-              onClick={() => onNavigate('entry-detail', 'e-stabilizer-project')}
+              onClick={() => navigate('/entry/e-stabilizer-project')}
               className="text-[#1D70B8] hover:underline font-bold text-[11px] block"
             >
               进入稳定子仿真项目 &rarr;
@@ -136,7 +132,7 @@ export default function InternalHomePage({ onNavigate }: InternalHomePageProps) 
               包含 Daniel Gottesman 等核心学者的纠错仿真研究白皮书。
             </p>
             <button 
-              onClick={() => onNavigate('papers')}
+              onClick={() => navigate('/papers')}
               className="text-[#1D70B8] hover:underline font-bold text-[11px] block"
             >
               浏览论文文献库 &rarr;
@@ -152,7 +148,7 @@ export default function InternalHomePage({ onNavigate }: InternalHomePageProps) 
               定义三斜晶格、纠错概率矩阵及 Hamiltonian 数据结构 Schema。
             </p>
             <button 
-              onClick={() => onNavigate('data-items')}
+              onClick={() => navigate('/data-items')}
               className="text-[#1D70B8] hover:underline font-bold text-[11px] block"
             >
               查看数据条目标准 &rarr;
@@ -168,7 +164,7 @@ export default function InternalHomePage({ onNavigate }: InternalHomePageProps) 
               提供统一的实验日志、报告公式及复盘文档的 Markdown 模版。
             </p>
             <button 
-              onClick={() => onNavigate('templates')}
+              onClick={() => navigate('/templates')}
               className="text-[#1D70B8] hover:underline font-bold text-[11px] block"
             >
               进入标准模板库 &rarr;
@@ -184,7 +180,7 @@ export default function InternalHomePage({ onNavigate }: InternalHomePageProps) 
               汇总量子计算、生物及材料算法产出为公司带来的资金和时间收益。
             </p>
             <button 
-              onClick={() => onNavigate('business-value')}
+              onClick={() => navigate('/business-value')}
               className="text-[#1D70B8] hover:underline font-bold text-[11px] block"
             >
               查看商业化评估 &rarr;
@@ -200,7 +196,7 @@ export default function InternalHomePage({ onNavigate }: InternalHomePageProps) 
               全域节点交互式关联跳转，可按引用、源文件及服务类型过滤。
             </p>
             <button 
-              onClick={() => onNavigate('graph-view')}
+              onClick={() => navigate('/graph')}
               className="text-[#1D70B8] hover:underline font-bold text-[11px] block"
             >
               打开知识图谱视角 &rarr;
@@ -225,7 +221,7 @@ export default function InternalHomePage({ onNavigate }: InternalHomePageProps) 
               <li key={entry.id} className="flex items-start justify-between border-b border-gray-100 pb-2 gap-2">
                 <div className="space-y-0.5 min-w-0 flex-1 overflow-hidden">
                   <button
-                    onClick={() => onNavigate('entry-detail', entry.id)}
+                    onClick={() => navigate(`/entry/${entry.id}`)}
                     className="text-[#1D70B8] hover:underline font-bold text-left block truncate w-full"
                     title={entry.title}
                   >
@@ -259,7 +255,7 @@ export default function InternalHomePage({ onNavigate }: InternalHomePageProps) 
               <span className="font-mono text-[10px] text-gray-400 block font-bold truncate">更新时间：{entry.latestUpdatedAt}</span>
               <div className="mt-0.5 space-y-0.5 min-w-0 overflow-hidden">
                 <button
-                  onClick={() => onNavigate('entry-detail', entry.id)}
+                  onClick={() => navigate(`/entry/${entry.id}`)}
                   className="text-[#1D70B8] hover:underline font-bold text-left block truncate w-full"
                   title={entry.title}
                 >
@@ -284,10 +280,9 @@ export default function InternalHomePage({ onNavigate }: InternalHomePageProps) 
         <span className="font-bold text-[#2B3150] block mb-1">💡 物理计算平台指引</span>
         所有在这里修改或导入的实验过程，都会经由后台算子转化为标准 Markdown。
         如需发布新的可外部调用 MCP 接口，请进入
-        <button onClick={() => onNavigate('admin-import')} className="text-blue-700 hover:underline mx-1 font-bold">【文件导入】</button>
+        <button onClick={() => navigate('/admin/import')} className="text-blue-700 hover:underline mx-1 font-bold">【文件导入】</button>
         或联系 Xue Yue 进行权限提权。
       </div>
 
     </div>
-  );
-}
+  )}

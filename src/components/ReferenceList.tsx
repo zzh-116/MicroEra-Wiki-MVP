@@ -1,12 +1,13 @@
+import { useNavigate } from 'react-router-dom';
 import { Quote, FileText, ChevronRight } from 'lucide-react';
 import { Reference } from '../types/wiki';
 
 interface ReferenceListProps {
   references: Reference[];
-  onNavigate: (view: string, id?: string) => void;
 }
 
-export default function ReferenceList({ references, onNavigate }: ReferenceListProps) {
+export default function ReferenceList({ references }: ReferenceListProps) {
+  const navigate = useNavigate();
   if (!references || references.length === 0) {
     return (
       <div className="text-sm text-gray-400 italic py-2" id="no-references">
@@ -41,7 +42,7 @@ export default function ReferenceList({ references, onNavigate }: ReferenceListP
             <span>引用类型：{ref.referenceType === 'paper' ? '学术论文' : 'Sandbox 结果文件'}</span>
             {ref.toEntryId && (
               <button
-                onClick={() => onNavigate('entry-detail', ref.toEntryId)}
+                onClick={() => navigate(`/entry/${ref.toEntryId}`)}
                 className="text-[#DB5F5B] hover:underline flex items-center font-medium"
               >
                 <span>跳转至关联条目</span>

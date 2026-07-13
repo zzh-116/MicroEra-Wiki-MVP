@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { entriesApi } from '../api/entriesApi';
 import { filesApi } from '../api/filesApi';
@@ -20,12 +21,8 @@ import { mockEntries } from '../mock/mockData';
 import { Bookmark, User, Share2, History, Database, Network, ChevronDown, List, Terminal, Cpu } from 'lucide-react';
 import { EntryVersionMeta, EntryVersionHistory } from '../components/VersionComponents';
 
-interface KnowledgeEntryPageProps {
-  entryId: string;
-  onNavigate: (view: string, id?: string) => void;
-}
-
-export default function KnowledgeEntryPage({ entryId, onNavigate }: KnowledgeEntryPageProps) {
+export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
+  const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
   const [entry, setEntry] = useState<any>(null);
   const [files, setFiles] = useState<SourceFile[]>([]);
@@ -41,8 +38,7 @@ export default function KnowledgeEntryPage({ entryId, onNavigate }: KnowledgeEnt
     name: string;
     type: string;
     relationship: string;
-    id: string;
-  } | null>(null);
+    id: string} | null>(null);
 
   useEffect(() => {
     const loadEntryData = async () => {
@@ -70,18 +66,14 @@ export default function KnowledgeEntryPage({ entryId, onNavigate }: KnowledgeEnt
         // Load related entries
         const allEntries = await entriesApi.getEntries();
         const related = allEntries.filter(e => loadedEntry.relatedEntryIds.includes(e.id));
-        setRelatedEntries(related);
-      } catch (err: any) {
+        setRelatedEntries(related)} catch (err: any) {
         if (err.message === 'FORBIDDEN_INTERNAL_ACCESS') {
-          setErrorState('FORBIDDEN');
-        } else {
-          setErrorState(err.message || '加载错误');
-        }
+          setErrorState('FORBIDDEN')} else {
+          setErrorState(err.message || '加载错误')}
       }
     };
 
-    loadEntryData();
-  }, [entryId, isLoggedIn]);
+    loadEntryData()}, [entryId, isLoggedIn]);
 
   const handlePreviewMarkdown = async (sourceFileId: string) => {
     setSelectedFileId(sourceFileId);
@@ -90,45 +82,38 @@ export default function KnowledgeEntryPage({ entryId, onNavigate }: KnowledgeEnt
     
     // Smooth scroll to md preview block
     setTimeout(() => {
-      document.getElementById('markdown-view')?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-  };
+      document.getElementById('markdown-view')?.scrollIntoView({ behavior: 'smooth' })}, 100)};
 
   const handleToggleBookmark = () => {
-    setBookmarked(!bookmarked);
-  };
+    setBookmarked(!bookmarked)};
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })}
   };
 
   if (errorState === 'FORBIDDEN') {
-    return <Unauthorized onLoginRedirect={() => onNavigate('login')} />;
-  }
+    return <Unauthorized />}
 
   if (errorState) {
     return (
       <div className="text-center py-12 text-red-500 italic font-bold">
         加载出错: {errorState}
       </div>
-    );
-  }
+    )}
 
   if (!entry) {
     return (
       <div className="py-16 text-center text-gray-500 font-bold animate-pulse">
         正在拉取科学文献元数据与关系链...
       </div>
-    );
-  }
+    )}
 
   // Create breadcrumb array
   const breadcrumbPaths = [
-    { label: '首页', view: isLoggedIn ? 'internal-home' : 'public-home' },
-    { label: entry.entryType === 'project' ? 'Sandbox 项目知识库' : '学术文献库', view: 'search' },
+    { label: '首页', to: '/' },
+    { label: entry.entryType === 'project' ? 'Sandbox 项目知识库' : '学术文献库', to: '/search' },
     { label: entry.title }
   ];
 
@@ -159,15 +144,14 @@ export default function KnowledgeEntryPage({ entryId, onNavigate }: KnowledgeEnt
       name: node.label,
       type: node.type,
       relationship
-    });
-  };
+    })};
 
   return (
     <div className="space-y-6" id={`wiki-entry-page-${entry.id}`}>
       
       {/* 1. Breadcrumbs & Actions Row */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 pb-3 gap-2 select-none">
-        <Breadcrumbs paths={breadcrumbPaths} onNavigate={onNavigate} />
+        <Breadcrumbs paths={breadcrumbPaths} />
 
         <div className="flex items-center space-x-2 shrink-0">
           <button
@@ -255,39 +239,33 @@ export default function KnowledgeEntryPage({ entryId, onNavigate }: KnowledgeEnt
                     <h3 key={idx} className="text-base font-extrabold text-gray-900 border-b border-gray-150 pb-1 mt-6 mb-3">
                       {line.replace('# ', '')}
                     </h3>
-                  );
-                }
+                  )}
                 if (line.startsWith('## ')) {
                   return (
                     <h4 key={idx} className="text-xs font-extrabold text-[#DB5F5B] mt-5 mb-2 uppercase tracking-wide">
                       {line.replace('## ', '')}
                     </h4>
-                  );
-                }
+                  )}
                 if (line.startsWith('### ')) {
                   return (
                     <h5 key={idx} className="text-xs font-bold text-gray-800 mt-4 mb-1">
                       {line.replace('### ', '')}
                     </h5>
-                  );
-                }
+                  )}
                 if (line.startsWith('- ')) {
                   return (
                     <div key={idx} className="flex items-start space-x-1.5 ml-3 my-1 leading-relaxed">
                       <span className="text-[#DB5F5B] font-bold shrink-0 mt-0.5">•</span>
                       <span>{line.replace('- ', '')}</span>
                     </div>
-                  );
-                }
+                  )}
                 if (!line.trim()) {
-                  return <div key={idx} className="h-2" />;
-                }
+                  return <div key={idx} className="h-2" />}
                 return (
                   <p key={idx} className="my-2 text-gray-600 leading-relaxed">
                     {line}
                   </p>
-                );
-              })}
+                )})}
             </article>
           </section>
 
@@ -314,8 +292,7 @@ export default function KnowledgeEntryPage({ entryId, onNavigate }: KnowledgeEnt
                 markdownFile={mdFile}
                 onClose={() => {
                   setSelectedFileId(null);
-                  setMdFile(null);
-                }}
+                  setMdFile(null)}}
               />
             </section>
           )}
@@ -338,7 +315,6 @@ export default function KnowledgeEntryPage({ entryId, onNavigate }: KnowledgeEnt
                   updatedAt: '2026-06-30'
                 }
               ] : []}
-              onNavigate={onNavigate}
             />
           </section>
 
@@ -366,7 +342,7 @@ export default function KnowledgeEntryPage({ entryId, onNavigate }: KnowledgeEnt
                     <div><span className="font-bold text-gray-600">输出：</span>带有 reference 溯源位置的回答</div>
                   </div>
                   <button 
-                    onClick={() => onNavigate('ai-query')}
+                    onClick={() => navigate('/ai-query')}
                     className="text-blue-700 hover:underline font-bold text-[10px] block"
                   >
                     查看服务问答说明 &rarr;
@@ -387,7 +363,7 @@ export default function KnowledgeEntryPage({ entryId, onNavigate }: KnowledgeEnt
                     <div><span className="font-bold text-gray-600">输出：</span>高密度结构化实体 JSON 数据</div>
                   </div>
                   <button 
-                    onClick={() => onNavigate('system-version')}
+                    onClick={() => navigate('/system-version')}
                     className="text-blue-700 hover:underline font-bold text-[10px] block"
                   >
                     查看接口工具定义 &rarr;
@@ -408,7 +384,7 @@ export default function KnowledgeEntryPage({ entryId, onNavigate }: KnowledgeEnt
                     <div><span className="font-bold text-gray-600">输出：</span>物理摘要与可靠引用链</div>
                   </div>
                   <button 
-                    onClick={() => onNavigate('system-version')}
+                    onClick={() => navigate('/system-version')}
                     className="text-blue-700 hover:underline font-bold text-[10px] block"
                   >
                     查看调用样例 &rarr;
@@ -432,7 +408,6 @@ export default function KnowledgeEntryPage({ entryId, onNavigate }: KnowledgeEnt
             <KnowledgeGraph
               nodes={graph.nodes}
               edges={graph.edges}
-              onNavigate={onNavigate}
               height={260}
             />
           </section>
@@ -493,7 +468,6 @@ export default function KnowledgeEntryPage({ entryId, onNavigate }: KnowledgeEnt
             </h3>
             <RelatedKnowledge
               relatedEntries={relatedEntries}
-              onNavigate={onNavigate}
             />
           </div>
 
@@ -502,5 +476,4 @@ export default function KnowledgeEntryPage({ entryId, onNavigate }: KnowledgeEnt
       </div>
 
     </div>
-  );
-}
+  )}

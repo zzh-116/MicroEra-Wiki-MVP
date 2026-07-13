@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { BookOpen, Search, ArrowRight, ExternalLink, ShieldAlert, FileText, CheckCircle } from 'lucide-react';
 import { Paper, WikiEntry } from '../types/wiki';
@@ -8,10 +9,10 @@ import TagList from '../components/TagList';
 import Unauthorized from '../components/Unauthorized';
 
 interface PaperLibraryPageProps {
-  onNavigate: (view: string, id?: string) => void;
-}
+  onNavigate: (view: string, id?: string) => void}
 
-export default function PaperLibraryPage({ onNavigate }: PaperLibraryPageProps) {
+export default function PaperLibraryPage() {
+  const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -22,8 +23,7 @@ export default function PaperLibraryPage({ onNavigate }: PaperLibraryPageProps) 
 
     // Filter by tab
     if (activeTab !== 'all') {
-      result = result.filter(p => p.field === activeTab);
-    }
+      result = result.filter(p => p.field === activeTab)}
 
     // Filter by query
     if (searchQuery.trim()) {
@@ -32,20 +32,15 @@ export default function PaperLibraryPage({ onNavigate }: PaperLibraryPageProps) 
         p => p.title.toLowerCase().includes(q) || 
              p.authors.toLowerCase().includes(q) || 
              p.abstract.toLowerCase().includes(q)
-      );
-    }
+      )}
 
-    setFilteredPapers(result);
-  }, [activeTab, searchQuery]);
+    setFilteredPapers(result)}, [activeTab, searchQuery]);
 
   if (!isLoggedIn) {
     return (
-      <Unauthorized
-        onLoginRedirect={() => onNavigate('login')}
-        requiredRole="internal"
+      <Unauthorized requiredRole="internal"
       />
-    );
-  }
+    )}
 
   return (
     <div className="space-y-5" id="paper-library-page-panel">
@@ -112,7 +107,7 @@ export default function PaperLibraryPage({ onNavigate }: PaperLibraryPageProps) 
             return (
               <div
                 key={paper.id}
-                onClick={() => onNavigate('entry-detail', paper.entryId)}
+                onClick={() => navigate(`/entry/${paper.entryId}`)}
                 className="bg-white border border-gray-200 hover:border-[#DB5F5B]/30 hover:shadow-md cursor-pointer transition-all p-4 rounded-xl space-y-3.5 group"
               >
                 {/* Header row */}
@@ -166,7 +161,7 @@ export default function PaperLibraryPage({ onNavigate }: PaperLibraryPageProps) 
                   </div>
 
                   <button
-                    onClick={() => onNavigate('entry-detail', paper.entryId)}
+                    onClick={() => navigate(`/entry/${paper.entryId}`)}
                     className="text-[#DB5F5B] font-bold flex items-center group-hover:underline"
                   >
                     <span>查阅文献 Wiki 全文与引航连线</span>
@@ -174,10 +169,8 @@ export default function PaperLibraryPage({ onNavigate }: PaperLibraryPageProps) 
                   </button>
                 </div>
               </div>
-            );
-          })
+            )})
         )}
       </div>
     </div>
-  );
-}
+  )}

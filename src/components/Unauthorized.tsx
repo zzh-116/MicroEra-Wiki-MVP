@@ -1,11 +1,13 @@
+import { useNavigate } from 'react-router-dom';
 import { ShieldAlert, Lock, ArrowRight } from 'lucide-react';
 
 interface UnauthorizedProps {
-  onLoginRedirect: () => void;
   requiredRole?: string;
 }
 
-export default function Unauthorized({ onLoginRedirect, requiredRole = 'internal' }: UnauthorizedProps) {
+export default function Unauthorized({ requiredRole = 'internal' }: UnauthorizedProps) {
+  const navigate = useNavigate();
+
   return (
     <div
       className="max-w-md mx-auto my-12 bg-white border border-red-150 rounded-xl p-6 text-center shadow-md flex flex-col items-center space-y-4"
@@ -21,7 +23,7 @@ export default function Unauthorized({ onLoginRedirect, requiredRole = 'internal
           <span>访问权限受限 (Internal Directory Only)</span>
         </h3>
         <p className="text-xs text-gray-500 leading-relaxed max-w-sm">
-          您当前作为 **未登录访客 (Guest)** 访问。本条目包含微观纪元内部专有的 
+          您当前作为 **未登录访客 (Guest)** 访问。本条目包含微观纪元内部专有的
           Sandbox 项目计算细节、原始白皮书及商业敏感数据。
         </p>
       </div>
@@ -33,7 +35,7 @@ export default function Unauthorized({ onLoginRedirect, requiredRole = 'internal
       </div>
 
       <button
-        onClick={onLoginRedirect}
+        onClick={() => navigate('/login')}
         className="w-full py-2 bg-[#2B3150] hover:bg-[#2B3150]/95 text-white font-bold rounded-lg text-xs transition-all flex items-center justify-center space-x-1.5"
       >
         <span>前往企业登录控制台</span>

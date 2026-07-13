@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { adminApi } from '../api/adminApi';
 import { entriesApi } from '../api/entriesApi';
@@ -9,8 +10,7 @@ import VisibilityBadge from '../components/VisibilityBadge';
 import Unauthorized from '../components/Unauthorized';
 
 interface AdminContentManagePageProps {
-  onNavigate: (view: string, id?: string) => void;
-}
+  onNavigate: (view: string, id?: string) => void}
 
 /**
  * Sanitize a title for safe display — strips invalid UTF-16 surrogates,
@@ -26,7 +26,8 @@ function sanitizeTitle(raw: string): string {
     .slice(0, 500);                                // hard cap for display
 }
 
-export default function AdminContentManagePage({ onNavigate }: AdminContentManagePageProps) {
+export default function AdminContentManagePage() {
+  const navigate = useNavigate();
   const { isLoggedIn, user } = useAuth();
   const [entries, setEntries] = useState<WikiEntry[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -41,16 +42,13 @@ export default function AdminContentManagePage({ onNavigate }: AdminContentManag
   const loadEntries = async () => {
     try {
       const list = await entriesApi.getEntries();
-      setEntries(list);
-    } catch (err) {
-      console.error('Error loading entries:', err);
-    }
+      setEntries(list)} catch (err) {
+      console.error('Error loading entries:', err)}
   };
 
   useEffect(() => {
     if (isLoggedIn) {
-      loadEntries();
-    }
+      loadEntries()}
   }, [isLoggedIn]);
 
   const startEditing = (entry: WikiEntry) => {
@@ -64,22 +62,18 @@ export default function AdminContentManagePage({ onNavigate }: AdminContentManag
     if (currentVer.startsWith('v')) {
       const num = parseFloat(currentVer.replace('v', ''));
       if (!isNaN(num)) {
-        nextVer = `v${(num + 0.1).toFixed(1)}`;
-      }
+        nextVer = `v${(num + 0.1).toFixed(1)}`}
     }
     setEditVersion(nextVer);
-    setEditVersionNote(`补充说明与 ${entry.title} 内容微调，全量快照备份。`);
-  };
+    setEditVersionNote(`补充说明与 ${entry.title} 内容微调，全量快照备份。`)};
 
   const handleDelete = async (id: string) => {
     if (confirm('警告：确定要彻底删除该企业知识条目吗？关联文献与关系图谱连线将会一并清空，此操作不可逆。')) {
       try {
         await entriesApi.deleteEntry(id);
         alert('条目已安全从 pgvector 及 Wiki 数据库注销。');
-        loadEntries();
-      } catch (err) {
-        console.error('Error deleting entry:', err);
-      }
+        loadEntries()} catch (err) {
+        console.error('Error deleting entry:', err)}
     }
   };
 
@@ -137,10 +131,8 @@ export default function AdminContentManagePage({ onNavigate }: AdminContentManag
 
       alert(`[修改成功] 已为该知识条目生成新版 ${editVersion}，并对历史数据进行了全量安全备份！`);
       setEditingEntry(null);
-      loadEntries();
-    } catch (err) {
-      console.error('Error updating entry:', err);
-    }
+      loadEntries()} catch (err) {
+      console.error('Error updating entry:', err)}
   };
 
   const filtered = entries.filter(
@@ -150,12 +142,9 @@ export default function AdminContentManagePage({ onNavigate }: AdminContentManag
 
   if (!isLoggedIn) {
     return (
-      <Unauthorized
-        onLoginRedirect={() => onNavigate('login')}
-        requiredRole="admin"
+      <Unauthorized requiredRole="admin"
       />
-    );
-  }
+    )}
 
   return (
     <div className="space-y-5" id="admin-content-panel">
@@ -403,5 +392,4 @@ export default function AdminContentManagePage({ onNavigate }: AdminContentManag
         </div>
       </div>
     </div>
-  );
-}
+  )}

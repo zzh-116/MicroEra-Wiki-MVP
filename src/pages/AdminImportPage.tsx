@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { adminApi, ImportJob } from '../api/adminApi';
 import { 
@@ -8,10 +9,10 @@ import {
 import Unauthorized from '../components/Unauthorized';
 
 interface AdminImportPageProps {
-  onNavigate: (view: string, id?: string) => void;
-}
+  onNavigate: (view: string, id?: string) => void}
 
-export default function AdminImportPage({ onNavigate }: AdminImportPageProps) {
+export default function AdminImportPage() {
+  const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
 
   // Wizard Step State: 1 = Upload, 2 = Configure, 3 = Pipeline Execution & Audits
@@ -35,47 +36,39 @@ export default function AdminImportPage({ onNavigate }: AdminImportPageProps) {
 
   if (!isLoggedIn) {
     return (
-      <Unauthorized
-        onLoginRedirect={() => onNavigate('login')}
-        requiredRole="admin"
+      <Unauthorized requiredRole="admin"
       />
-    );
-  }
+    )}
 
   // Watch for upload progress reaching 100%, then trigger the actual import API
   useEffect(() => {
     if (uploadProgress !== null && uploadProgress >= 100 && !jobTriggered.current) {
       jobTriggered.current = true;
       console.log('[Import] Upload animation done → calling API');
-      triggerJob();
-    }
+      triggerJob()}
   }, [uploadProgress]);
 
   const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
+    e.preventDefault()};
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
       setSelectedFile(file);
-      setMockFileName(file.name);
-    }
+      setMockFileName(file.name)}
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setSelectedFile(file);
-      setMockFileName(file.name);
-    }
+      setMockFileName(file.name)}
   };
 
   const handleQuickUploadSample = (name: string) => {
     setSelectedFile(new File([''], name));
-    setMockFileName(name);
-  };
+    setMockFileName(name)};
 
   const handleStartImport = async () => {
     if (!mockFileName || !selectedFile) return;
@@ -95,17 +88,14 @@ export default function AdminImportPage({ onNavigate }: AdminImportPageProps) {
       const isText = /\.(md|txt|csv|json|xml|yaml|yml)$/i.test(selectedFile.name);
       if (isText) {
         pendingFileData.current = await selectedFile.text();
-        console.log('[Import] File read as text:', (pendingFileData.current as string).length, 'chars');
-      } else {
+        console.log('[Import] File read as text:', (pendingFileData.current as string).length, 'chars')} else {
         pendingFileData.current = await selectedFile.arrayBuffer();
-        console.log('[Import] File read as binary:', (pendingFileData.current as ArrayBuffer).byteLength, 'bytes');
-      }
+        console.log('[Import] File read as binary:', (pendingFileData.current as ArrayBuffer).byteLength, 'bytes')}
     } catch (err: any) {
       console.error('[Import] File read error:', err);
       setPipelineError(`文件读取失败: ${err.message || '未知错误'}`);
       setUploadProgress(null);
-      return;
-    }
+      return}
 
     // Verify file data is not empty
     const data = pendingFileData.current;
@@ -114,8 +104,7 @@ export default function AdminImportPage({ onNavigate }: AdminImportPageProps) {
       (data instanceof ArrayBuffer && data.byteLength === 0);
 
     if (isEmpty) {
-      console.log('[Import] File is empty — will use sample content generator');
-    }
+      console.log('[Import] File is empty — will use sample content generator')}
 
     // Upload progress animation — side-effect-free: clamp at 100 to avoid overshoot
     console.log('[Import] Starting upload progress animation');
@@ -127,10 +116,7 @@ export default function AdminImportPage({ onNavigate }: AdminImportPageProps) {
           clearInterval(uploadInterval);
           return 100; // ← clamp to exactly 100, triggers the useEffect once
         }
-        return next;
-      });
-    }, 100);
-  };
+        return next})}, 100)};
 
   const triggerJob = async () => {
     const fileData = pendingFileData.current;
@@ -147,18 +133,15 @@ export default function AdminImportPage({ onNavigate }: AdminImportPageProps) {
       setUploadProgress(null);
 
       if (job.status === 'success') {
-        setHistoryJobs(prev => [job, ...prev]);
-      } else if (job.status === 'failed') {
+        setHistoryJobs(prev => [job, ...prev])} else if (job.status === 'failed') {
         setHistoryJobs(prev => [job, ...prev]);
         const failedStep = job.steps.find(s => s.status === 'failed');
-        setPipelineError(failedStep?.error || '管道执行失败');
-      }
+        setPipelineError(failedStep?.error || '管道执行失败')}
     } catch (err: any) {
       console.error('[Import] API call failed:', err);
       setPipelineError(`API 调用失败: ${err.message || '网络错误'}`);
       setUploadProgress(null);
-      setJobState(null);
-    }
+      setJobState(null)}
   };
 
   const jobStep = jobState ? jobState.steps[jobState.currentStepIndex] : null;
@@ -401,7 +384,7 @@ export default function AdminImportPage({ onNavigate }: AdminImportPageProps) {
                     </div>
                     <p className="text-[11px]">{pipelineError}</p>
                     <button
-                      onClick={() => { setPipelineError(null); setCurrentStep(2); }}
+                      onClick={() => { setPipelineError(null); setCurrentStep(2)}}
                       className="bg-white border border-red-300 hover:bg-red-50 text-red-700 font-bold px-3 py-1 rounded text-[11px]"
                     >
                       返回重试
@@ -517,15 +500,14 @@ export default function AdminImportPage({ onNavigate }: AdminImportPageProps) {
                           setCurrentStep(1);
                           setSelectedFile(null);
                           setMockFileName('');
-                          setJobState(null);
-                        }}
+                          setJobState(null)}}
                         className="bg-white border border-green-300 hover:bg-green-100 text-green-800 font-bold px-2 py-1 rounded transition-all"
                       >
                         继续上传物理文件 &rarr;
                       </button>
                       
                       <button
-                        onClick={() => onNavigate('search')}
+                        onClick={() => navigate('/search')}
                         className="bg-green-700 hover:bg-green-800 text-white font-bold px-2.5 py-1 rounded transition-all"
                       >
                         去搜索页查阅条目 &rarr;
@@ -581,5 +563,4 @@ export default function AdminImportPage({ onNavigate }: AdminImportPageProps) {
       </div>
 
     </div>
-  );
-}
+  )}
