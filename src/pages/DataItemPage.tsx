@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Database, Search, ArrowRight, ShieldAlert, Cpu, Code, User, Calendar, HardDrive, Info } from 'lucide-react';
 import { DataItem } from '../types/wiki';
@@ -6,10 +7,10 @@ import { mockDataItems } from '../mock/mockData';
 import Unauthorized from '../components/Unauthorized';
 
 interface DataItemPageProps {
-  onNavigate: (view: string, id?: string) => void;
-}
+  onNavigate: (view: string, id?: string) => void}
 
-export default function DataItemPage({ onNavigate }: DataItemPageProps) {
+export default function DataItemPage() {
+  const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredItems, setFilteredItems] = useState<DataItem[]>([]);
@@ -23,20 +24,15 @@ export default function DataItemPage({ onNavigate }: DataItemPageProps) {
                   item.dataDefinition.toLowerCase().includes(q) ||
                   item.dataFormat.toLowerCase().includes(q)
         )
-      );
-    } else {
-      setFilteredItems(mockDataItems);
-    }
+      )} else {
+      setFilteredItems(mockDataItems)}
   }, [searchQuery]);
 
   if (!isLoggedIn) {
     return (
-      <Unauthorized
-        onLoginRedirect={() => onNavigate('login')}
-        requiredRole="internal"
+      <Unauthorized requiredRole="internal"
       />
-    );
-  }
+    )}
 
   return (
     <div className="space-y-5" id="data-item-page-panel">
@@ -106,7 +102,7 @@ export default function DataItemPage({ onNavigate }: DataItemPageProps) {
 
                 <div className="flex items-center space-x-2 shrink-0 select-none">
                   <button
-                    onClick={() => onNavigate('entry-detail', item.entryId)}
+                    onClick={() => navigate(`/entry/${item.entryId}`)}
                     className="py-1 px-2.5 bg-gray-50 border border-gray-200 hover:border-[#DB5F5B]/30 hover:bg-white text-gray-600 rounded text-[10px] font-bold transition-all flex items-center space-x-1"
                   >
                     <span>跳转至 Wiki 解析条目</span>
@@ -171,5 +167,4 @@ export const stabilizerResultTable = pgTable('simulation_outputs', {
         )}
       </div>
     </div>
-  );
-}
+  )}

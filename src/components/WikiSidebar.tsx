@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronRight, Folder, FolderOpen, FileText, Lock, Globe, Database, HelpCircle } from 'lucide-react';
 import { WikiSpace, WikiEntry } from '../types/wiki';
 import { spacesApi } from '../api/spacesApi';
 import { entriesApi } from '../api/entriesApi';
+import { useAuth } from '../context/AuthContext';
 
-interface WikiSidebarProps {
-  currentEntryId?: string;
-  onNavigate: (view: string, id?: string) => void;
-  isLoggedIn: boolean;
-}
-
-export default function WikiSidebar({ currentEntryId, onNavigate, isLoggedIn }: WikiSidebarProps) {
+export default function WikiSidebar() {
+  const { id: currentEntryId } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
   const [spaces, setSpaces] = useState<WikiSpace[]>([]);
   const [entries, setEntries] = useState<WikiEntry[]>([]);
   const [expandedSpaces, setExpandedSpaces] = useState<Record<string, boolean>>({
@@ -41,7 +40,7 @@ export default function WikiSidebar({ currentEntryId, onNavigate, isLoggedIn }: 
   // Recursively render the tree hierarchy
   const renderSpaceNode = (space: WikiSpace, depth: number) => {
     const isExpanded = expandedSpaces[space.id];
-    const hasChildren = (space.children && space.children.length > 0) || 
+    const hasChildren = (space.children && space.children.length > 0) ||
                         entries.some(e => e.spaceId === space.id);
 
     // Filter entries belonging to this space
@@ -67,13 +66,13 @@ export default function WikiSidebar({ currentEntryId, onNavigate, isLoggedIn }: 
             ) : (
               <span className="w-3.5" />
             )}
-            
+
             {isExpanded ? (
               <FolderOpen className="w-3.5 h-3.5 text-[#DB5F5B] flex-shrink-0" />
             ) : (
               <Folder className="w-3.5 h-3.5 text-[#2B3150] flex-shrink-0" />
             )}
-            
+
             <span className="truncate" title={space.name}>{space.name}</span>
           </div>
 
@@ -95,7 +94,7 @@ export default function WikiSidebar({ currentEntryId, onNavigate, isLoggedIn }: 
               return (
                 <div
                   key={entry.id}
-                  onClick={() => onNavigate('entry-detail', entry.id)}
+                  onClick={() => navigate(`/entry/${entry.id}`)}
                   className={`flex items-center justify-between py-1 pr-2 rounded-md cursor-pointer transition-all ${
                     isActive
                       ? 'bg-[#2B3150] text-[#F2D760] font-bold shadow-sm'
@@ -135,7 +134,7 @@ export default function WikiSidebar({ currentEntryId, onNavigate, isLoggedIn }: 
       <div className="space-y-1">
         {spaces.map(space => renderSpaceNode(space, 0))}
       </div>
-      
+
       {/* Quick guide bottom card */}
       <div className="mt-4 p-2 bg-gray-50 rounded border border-gray-150 text-[10px] text-gray-500">
         <div className="font-bold flex items-center mb-0.5 text-[#2B3150]">

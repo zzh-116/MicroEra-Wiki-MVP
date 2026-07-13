@@ -1,28 +1,21 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, ChevronRight, ArrowRight, Activity, Award, HelpCircle, FileText, ExternalLink } from 'lucide-react';
 import { mockEntries } from '../mock/mockData';
 
-interface PublicHomePageProps {
-  onNavigate: (view: string, id?: string) => void;
-}
-
-export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
+export default function PublicHomePage() {
+  const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState('');
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchInput.trim()) {
-      // Store query in local storage so SearchPage can consume it
-      localStorage.setItem('miqro_wiki_search_query', searchInput);
-      onNavigate('search');
-    }
+      navigate(`/search?q=${encodeURIComponent(searchInput)}`)}
   };
 
   // Helper function to handle fast query navigation
   const handleQuickNav = (query: string) => {
-    localStorage.setItem('miqro_wiki_search_query', query);
-    onNavigate('search');
-  };
+    navigate(`/search?q=${encodeURIComponent(query)}`)};
 
   return (
     <div className="space-y-10" id="public-home-panel">
@@ -65,19 +58,19 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
 
         {/* Quick links beneath the search */}
         <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs font-bold pt-1 select-none">
-          <button onClick={() => onNavigate('search')} className="text-blue-700 hover:underline hover:text-blue-800 flex items-center">
+          <button onClick={() => navigate('/search')} className="text-blue-700 hover:underline hover:text-blue-800 flex items-center">
             查看全部 Sandbox 项目 <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
           </button>
-          <button onClick={() => onNavigate('papers')} className="text-blue-700 hover:underline hover:text-blue-800 flex items-center">
+          <button onClick={() => navigate('/papers')} className="text-blue-700 hover:underline hover:text-blue-800 flex items-center">
             查看论文知识库 <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
           </button>
-          <button onClick={() => onNavigate('data-items')} className="text-blue-700 hover:underline hover:text-blue-800 flex items-center">
+          <button onClick={() => navigate('/data-items')} className="text-blue-700 hover:underline hover:text-blue-800 flex items-center">
             查看数据条目 <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
           </button>
-          <button onClick={() => onNavigate('search')} className="text-blue-700 hover:underline hover:text-blue-800 flex items-center">
+          <button onClick={() => navigate('/search')} className="text-blue-700 hover:underline hover:text-blue-800 flex items-center">
             查看可调用服务 <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
           </button>
-          <button onClick={() => onNavigate('admin-import')} className="text-blue-700 hover:underline hover:text-blue-800 flex items-center">
+          <button onClick={() => navigate('/admin/import')} className="text-blue-700 hover:underline hover:text-blue-800 flex items-center">
             上传并整理文档 <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
           </button>
         </div>
@@ -94,7 +87,7 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
           
           <div className="space-y-1">
             <button 
-              onClick={() => onNavigate('entry-detail', 'e-stabilizer-project')}
+              onClick={() => navigate('/entry/e-stabilizer-project')}
               className="text-[#1D70B8] hover:underline hover:text-blue-800 font-bold text-left block"
             >
               稳定子算法 Sandbox 计算项目
@@ -118,7 +111,7 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
 
           <div className="space-y-1">
             <button 
-              onClick={() => onNavigate('data-items')}
+              onClick={() => navigate('/data-items')}
               className="text-[#1D70B8] hover:underline hover:text-blue-800 font-bold text-left block"
             >
               材料结构数据条目
@@ -130,7 +123,7 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
 
           <div className="space-y-1">
             <button 
-              onClick={() => onNavigate('data-items')}
+              onClick={() => navigate('/data-items')}
               className="text-[#1D70B8] hover:underline hover:text-blue-800 font-bold text-left block"
             >
               实验数据存储结构说明
@@ -154,7 +147,7 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
 
           <div className="space-y-1">
             <button 
-              onClick={() => onNavigate('templates')}
+              onClick={() => navigate('/templates')}
               className="text-[#1D70B8] hover:underline hover:text-blue-800 font-bold text-left block"
             >
               项目复盘报告模板
@@ -166,7 +159,7 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
 
           <div className="space-y-1">
             <button 
-              onClick={() => onNavigate('ai-query')}
+              onClick={() => navigate('/ai-query')}
               className="text-[#1D70B8] hover:underline hover:text-blue-800 font-bold text-left block"
             >
               稳定子算法知识查询服务
@@ -178,7 +171,7 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
 
           <div className="space-y-1">
             <button 
-              onClick={() => onNavigate('admin-import')}
+              onClick={() => navigate('/admin/import')}
               className="text-[#1D70B8] hover:underline hover:text-blue-800 font-bold text-left block"
             >
               MarkItDown 文件入库流程
@@ -205,12 +198,12 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
               Sandbox 项目知识
             </h3>
             <ul className="space-y-2 text-[#1D70B8]">
-              <li><button onClick={() => onNavigate('entry-detail', 'e-stabilizer-project')} className="hover:underline font-semibold block text-left">项目过程记录</button></li>
+              <li><button onClick={() => navigate('/entry/e-stabilizer-project')} className="hover:underline font-semibold block text-left">项目过程记录</button></li>
               <li><button onClick={() => handleQuickNav('结果')} className="hover:underline font-semibold block text-left">项目结果文件</button></li>
               <li><button onClick={() => handleQuickNav('Gottesman')} className="hover:underline font-semibold block text-left">项目引用文献</button></li>
               <li><button onClick={() => handleQuickNav('Session')} className="hover:underline font-semibold block text-left">Sandbox 任务与 MiQi Session</button></li>
-              <li><button onClick={() => onNavigate('graph-view')} className="hover:underline font-semibold block text-left">项目知识图谱</button></li>
-              <li><button onClick={() => onNavigate('entry-detail', 'e-stabilizer-project')} className="hover:underline font-semibold block text-left">项目服务化状态</button></li>
+              <li><button onClick={() => navigate('/graph')} className="hover:underline font-semibold block text-left">项目知识图谱</button></li>
+              <li><button onClick={() => navigate('/entry/e-stabilizer-project')} className="hover:underline font-semibold block text-left">项目服务化状态</button></li>
             </ul>
           </div>
 
@@ -220,12 +213,12 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
               论文知识库
             </h3>
             <ul className="space-y-2 text-[#1D70B8]">
-              <li><button onClick={() => onNavigate('papers')} className="hover:underline font-semibold block text-left">量子计算论文</button></li>
-              <li><button onClick={() => onNavigate('papers')} className="hover:underline font-semibold block text-left">生物方向论文</button></li>
-              <li><button onClick={() => onNavigate('papers')} className="hover:underline font-semibold block text-left">材料方向论文</button></li>
-              <li><button onClick={() => onNavigate('graph-view')} className="hover:underline font-semibold block text-left">论文与项目关联</button></li>
-              <li><button onClick={() => onNavigate('papers')} className="hover:underline font-semibold block text-left">论文 PDF 与 Markdown 结果</button></li>
-              <li><button onClick={() => onNavigate('papers')} className="hover:underline font-semibold block text-left">论文引用来源</button></li>
+              <li><button onClick={() => navigate('/papers')} className="hover:underline font-semibold block text-left">量子计算论文</button></li>
+              <li><button onClick={() => navigate('/papers')} className="hover:underline font-semibold block text-left">生物方向论文</button></li>
+              <li><button onClick={() => navigate('/papers')} className="hover:underline font-semibold block text-left">材料方向论文</button></li>
+              <li><button onClick={() => navigate('/graph')} className="hover:underline font-semibold block text-left">论文与项目关联</button></li>
+              <li><button onClick={() => navigate('/papers')} className="hover:underline font-semibold block text-left">论文 PDF 与 Markdown 结果</button></li>
+              <li><button onClick={() => navigate('/papers')} className="hover:underline font-semibold block text-left">论文引用来源</button></li>
             </ul>
           </div>
 
@@ -235,12 +228,12 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
               数据条目与标准
             </h3>
             <ul className="space-y-2 text-[#1D70B8]">
-              <li><button onClick={() => onNavigate('data-items')} className="hover:underline font-semibold block text-left">数据定义</button></li>
-              <li><button onClick={() => onNavigate('data-items')} className="hover:underline font-semibold block text-left">数据格式</button></li>
-              <li><button onClick={() => onNavigate('data-items')} className="hover:underline font-semibold block text-left">数据库 Schema</button></li>
-              <li><button onClick={() => onNavigate('data-items')} className="hover:underline font-semibold block text-left">存储位置说明</button></li>
-              <li><button onClick={() => onNavigate('data-items')} className="hover:underline font-semibold block text-left">跨组协作数据</button></li>
-              <li><button onClick={() => onNavigate('data-items')} className="hover:underline font-semibold block text-left">数据更新时间记录</button></li>
+              <li><button onClick={() => navigate('/data-items')} className="hover:underline font-semibold block text-left">数据定义</button></li>
+              <li><button onClick={() => navigate('/data-items')} className="hover:underline font-semibold block text-left">数据格式</button></li>
+              <li><button onClick={() => navigate('/data-items')} className="hover:underline font-semibold block text-left">数据库 Schema</button></li>
+              <li><button onClick={() => navigate('/data-items')} className="hover:underline font-semibold block text-left">存储位置说明</button></li>
+              <li><button onClick={() => navigate('/data-items')} className="hover:underline font-semibold block text-left">跨组协作数据</button></li>
+              <li><button onClick={() => navigate('/data-items')} className="hover:underline font-semibold block text-left">数据更新时间记录</button></li>
             </ul>
           </div>
 
@@ -250,12 +243,12 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
               知识服务
             </h3>
             <ul className="space-y-2 text-[#1D70B8]">
-              <li><button onClick={() => onNavigate('ai-query')} className="hover:underline font-semibold block text-left">RAG 查询服务</button></li>
-              <li><button onClick={() => onNavigate('system-version')} className="hover:underline font-semibold block text-left">MCP 工具服务</button></li>
-              <li><button onClick={() => onNavigate('ai-query')} className="hover:underline font-semibold block text-left">MiQi 可调用服务</button></li>
-              <li><button onClick={() => onNavigate('system-version')} className="hover:underline font-semibold block text-left">服务输入输出 Schema</button></li>
-              <li><button onClick={() => onNavigate('entry-detail', 'e-stabilizer-project')} className="hover:underline font-semibold block text-left">服务调用状态</button></li>
-              <li><button onClick={() => onNavigate('entry-detail', 'e-stabilizer-project')} className="hover:underline font-semibold block text-left">服务 Reference 来源</button></li>
+              <li><button onClick={() => navigate('/ai-query')} className="hover:underline font-semibold block text-left">RAG 查询服务</button></li>
+              <li><button onClick={() => navigate('/system-version')} className="hover:underline font-semibold block text-left">MCP 工具服务</button></li>
+              <li><button onClick={() => navigate('/ai-query')} className="hover:underline font-semibold block text-left">MiQi 可调用服务</button></li>
+              <li><button onClick={() => navigate('/system-version')} className="hover:underline font-semibold block text-left">服务输入输出 Schema</button></li>
+              <li><button onClick={() => navigate('/entry/e-stabilizer-project')} className="hover:underline font-semibold block text-left">服务调用状态</button></li>
+              <li><button onClick={() => navigate('/entry/e-stabilizer-project')} className="hover:underline font-semibold block text-left">服务 Reference 来源</button></li>
             </ul>
           </div>
 
@@ -265,12 +258,12 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
               模板与标准文件
             </h3>
             <ul className="space-y-2 text-[#1D70B8]">
-              <li><button onClick={() => onNavigate('templates')} className="hover:underline font-semibold block text-left">项目复盘模板</button></li>
-              <li><button onClick={() => onNavigate('templates')} className="hover:underline font-semibold block text-left">实验记录模板</button></li>
-              <li><button onClick={() => onNavigate('templates')} className="hover:underline font-semibold block text-left">报告模板</button></li>
-              <li><button onClick={() => onNavigate('templates')} className="hover:underline font-semibold block text-left">官方核准文件</button></li>
-              <li><button onClick={() => onNavigate('system-version')} className="hover:underline font-semibold block text-left">历史版本</button></li>
-              <li><button onClick={() => onNavigate('templates')} className="hover:underline font-semibold block text-left">下载与复用</button></li>
+              <li><button onClick={() => navigate('/templates')} className="hover:underline font-semibold block text-left">项目复盘模板</button></li>
+              <li><button onClick={() => navigate('/templates')} className="hover:underline font-semibold block text-left">实验记录模板</button></li>
+              <li><button onClick={() => navigate('/templates')} className="hover:underline font-semibold block text-left">报告模板</button></li>
+              <li><button onClick={() => navigate('/templates')} className="hover:underline font-semibold block text-left">官方核准文件</button></li>
+              <li><button onClick={() => navigate('/system-version')} className="hover:underline font-semibold block text-left">历史版本</button></li>
+              <li><button onClick={() => navigate('/templates')} className="hover:underline font-semibold block text-left">下载与复用</button></li>
             </ul>
           </div>
 
@@ -280,12 +273,12 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
               商业价值展示
             </h3>
             <ul className="space-y-2 text-[#1D70B8]">
-              <li><button onClick={() => onNavigate('business-value')} className="hover:underline font-semibold block text-left">项目商业价值</button></li>
-              <li><button onClick={() => onNavigate('business-value')} className="hover:underline font-semibold block text-left">成果物画廊</button></li>
-              <li><button onClick={() => onNavigate('business-value')} className="hover:underline font-semibold block text-left">宣传简报</button></li>
-              <li><button onClick={() => onNavigate('business-value')} className="hover:underline font-semibold block text-left">专利产出</button></li>
-              <li><button onClick={() => onNavigate('business-value')} className="hover:underline font-semibold block text-left">论文产出</button></li>
-              <li><button onClick={() => onNavigate('business-value')} className="hover:underline font-semibold block text-left">客户展示材料</button></li>
+              <li><button onClick={() => navigate('/business-value')} className="hover:underline font-semibold block text-left">项目商业价值</button></li>
+              <li><button onClick={() => navigate('/business-value')} className="hover:underline font-semibold block text-left">成果物画廊</button></li>
+              <li><button onClick={() => navigate('/business-value')} className="hover:underline font-semibold block text-left">宣传简报</button></li>
+              <li><button onClick={() => navigate('/business-value')} className="hover:underline font-semibold block text-left">专利产出</button></li>
+              <li><button onClick={() => navigate('/business-value')} className="hover:underline font-semibold block text-left">论文产出</button></li>
+              <li><button onClick={() => navigate('/business-value')} className="hover:underline font-semibold block text-left">客户展示材料</button></li>
             </ul>
           </div>
 
@@ -303,7 +296,7 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
           
           <div className="space-y-1.5">
             <button 
-              onClick={() => onNavigate('entry-detail', 'e-stabilizer-project')}
+              onClick={() => navigate('/entry/e-stabilizer-project')}
               className="text-[#1D70B8] hover:underline font-bold text-left block text-sm"
             >
               稳定子算法 Sandbox 计算项目
@@ -312,7 +305,7 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
               查看该项目的完整仿真过程记录、结果文件、物理模型引用文献、对应关系图谱以及封装好的 MCP 知识工具包。
             </p>
             <button 
-              onClick={() => onNavigate('entry-detail', 'e-stabilizer-project')}
+              onClick={() => navigate('/entry/e-stabilizer-project')}
               className="text-[#2B3150] hover:underline font-bold text-[10px] block"
             >
               查看详情 →
@@ -321,7 +314,7 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
 
           <div className="space-y-1.5">
             <button 
-              onClick={() => onNavigate('papers')}
+              onClick={() => navigate('/papers')}
               className="text-[#1D70B8] hover:underline font-bold text-left block text-sm"
             >
               论文知识库：量子计算方向
@@ -330,7 +323,7 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
               收录 Daniel Gottesman 及团队的前沿学术论文，支持 PDF 物理文件入库、公式自动提取和知识图谱节点关联。
             </p>
             <button 
-              onClick={() => onNavigate('papers')}
+              onClick={() => navigate('/papers')}
               className="text-[#2B3150] hover:underline font-bold text-[10px] block"
             >
               查看详情 →
@@ -339,7 +332,7 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
 
           <div className="space-y-1.5">
             <button 
-              onClick={() => onNavigate('entry-detail', 'e-stabilizer-project')}
+              onClick={() => navigate('/entry/e-stabilizer-project')}
               className="text-[#1D70B8] hover:underline font-bold text-left block text-sm"
             >
               项目知识服务化流程
@@ -348,7 +341,7 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
               了解微观纪元研发人员如何将冷数据一键打包，并在 MiQi 智能体内进行免配置、可追溯的安全授权调用。
             </p>
             <button 
-              onClick={() => onNavigate('entry-detail', 'e-stabilizer-project')}
+              onClick={() => navigate('/entry/e-stabilizer-project')}
               className="text-[#2B3150] hover:underline font-bold text-[10px] block"
             >
               查看详情 →
@@ -372,7 +365,7 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
             <span className="font-mono text-[10px] text-gray-400 block font-bold">2026-07-02</span>
             <div className="mt-0.5">
               <button 
-                onClick={() => onNavigate('entry-detail', 'e-stabilizer-project')}
+                onClick={() => navigate('/entry/e-stabilizer-project')}
                 className="text-[#1D70B8] hover:underline font-bold inline text-left mr-1.5"
               >
                 稳定子算法 Sandbox 计算项目
@@ -386,7 +379,7 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
             <span className="font-mono text-[10px] text-gray-400 block font-bold">2026-07-01</span>
             <div className="mt-0.5">
               <button 
-                onClick={() => onNavigate('data-items')}
+                onClick={() => navigate('/data-items')}
                 className="text-[#1D70B8] hover:underline font-bold inline text-left mr-1.5"
               >
                 材料结构数据条目
@@ -401,7 +394,7 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
             <div className="mt-0.5">
               <span className="text-gray-400">新增文献</span>
               <button 
-                onClick={() => onNavigate('papers')}
+                onClick={() => navigate('/papers')}
                 className="text-[#1D70B8] hover:underline font-bold inline text-left mx-1.5"
               >
                 Quantum Error Correction with Stabilizer Codes
@@ -415,7 +408,7 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
             <span className="font-mono text-[10px] text-gray-400 block font-bold">2026-06-29</span>
             <div className="mt-0.5">
               <button 
-                onClick={() => onNavigate('templates')}
+                onClick={() => navigate('/templates')}
                 className="text-[#1D70B8] hover:underline font-bold inline text-left mr-1.5"
               >
                 项目复盘报告模板
@@ -434,39 +427,38 @@ export default function PublicHomePage({ onNavigate }: PublicHomePageProps) {
         </h2>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-2 text-xs font-sans font-bold">
-          <button onClick={() => onNavigate('search')} className="text-blue-700 hover:underline text-left flex items-center">
+          <button onClick={() => navigate('/search')} className="text-blue-700 hover:underline text-left flex items-center">
             <span>所有知识条目</span> <ChevronRight className="w-3.5 h-3.5 text-gray-400 ml-0.5" />
           </button>
-          <button onClick={() => onNavigate('search')} className="text-blue-700 hover:underline text-left flex items-center">
+          <button onClick={() => navigate('/search')} className="text-blue-700 hover:underline text-left flex items-center">
             <span>所有 Sandbox 项目</span> <ChevronRight className="w-3.5 h-3.5 text-gray-400 ml-0.5" />
           </button>
-          <button onClick={() => onNavigate('papers')} className="text-blue-700 hover:underline text-left flex items-center">
+          <button onClick={() => navigate('/papers')} className="text-blue-700 hover:underline text-left flex items-center">
             <span>所有论文</span> <ChevronRight className="w-3.5 h-3.5 text-gray-400 ml-0.5" />
           </button>
-          <button onClick={() => onNavigate('data-items')} className="text-blue-700 hover:underline text-left flex items-center">
+          <button onClick={() => navigate('/data-items')} className="text-blue-700 hover:underline text-left flex items-center">
             <span>所有数据条目</span> <ChevronRight className="w-3.5 h-3.5 text-gray-400 ml-0.5" />
           </button>
-          <button onClick={() => onNavigate('templates')} className="text-blue-700 hover:underline text-left flex items-center">
+          <button onClick={() => navigate('/templates')} className="text-blue-700 hover:underline text-left flex items-center">
             <span>所有模板文件</span> <ChevronRight className="w-3.5 h-3.5 text-gray-400 ml-0.5" />
           </button>
-          <button onClick={() => onNavigate('search')} className="text-blue-700 hover:underline text-left flex items-center">
+          <button onClick={() => navigate('/search')} className="text-blue-700 hover:underline text-left flex items-center">
             <span>所有服务</span> <ChevronRight className="w-3.5 h-3.5 text-gray-400 ml-0.5" />
           </button>
-          <button onClick={() => onNavigate('graph-view')} className="text-blue-700 hover:underline text-left flex items-center">
+          <button onClick={() => navigate('/graph')} className="text-blue-700 hover:underline text-left flex items-center">
             <span>所有知识图谱标签</span> <ChevronRight className="w-3.5 h-3.5 text-gray-400 ml-0.5" />
           </button>
-          <button onClick={() => onNavigate('system-version')} className="text-blue-700 hover:underline text-left flex items-center">
+          <button onClick={() => navigate('/system-version')} className="text-blue-700 hover:underline text-left flex items-center">
             <span>负责人索引</span> <ChevronRight className="w-3.5 h-3.5 text-gray-400 ml-0.5" />
           </button>
-          <button onClick={() => onNavigate('admin-manage')} className="text-blue-700 hover:underline text-left flex items-center">
+          <button onClick={() => navigate('/admin/manage')} className="text-blue-700 hover:underline text-left flex items-center">
             <span>操作日志审计</span> <ChevronRight className="w-3.5 h-3.5 text-gray-400 ml-0.5" />
           </button>
-          <button onClick={() => onNavigate('admin-import')} className="text-blue-700 hover:underline text-left flex items-center">
+          <button onClick={() => navigate('/admin/import')} className="text-blue-700 hover:underline text-left flex items-center">
             <span>导入任务流水线</span> <ChevronRight className="w-3.5 h-3.5 text-gray-400 ml-0.5" />
           </button>
         </div>
       </div>
 
     </div>
-  );
-}
+  )}

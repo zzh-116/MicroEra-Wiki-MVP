@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { searchApi, SearchResult } from '../api/searchApi';
 import { Search, CornerDownRight, Filter, Calendar, Shield, ArrowRight, ExternalLink } from 'lucide-react';
@@ -6,10 +7,10 @@ import EntryTypeBadge from '../components/EntryTypeBadge';
 import VisibilityBadge from '../components/VisibilityBadge';
 
 interface SearchPageProps {
-  onNavigate: (view: string, id?: string) => void;
-}
+  onNavigate: (view: string, id?: string) => void}
 
-export default function SearchPage({ onNavigate }: SearchPageProps) {
+export default function SearchPage() {
+  const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -25,12 +26,9 @@ export default function SearchPage({ onNavigate }: SearchPageProps) {
     setLoading(true);
     try {
       const apiResults = await searchApi.search(currentQuery, currentType, 'nlp');
-      setResults(apiResults);
-    } catch (err) {
-      console.error('Error during search:', err);
-    } finally {
-      setLoading(false);
-    }
+      setResults(apiResults)} catch (err) {
+      console.error('Error during search:', err)} finally {
+      setLoading(false)}
   };
 
   // Initial load or transition load
@@ -42,30 +40,25 @@ export default function SearchPage({ onNavigate }: SearchPageProps) {
       queryToUse = storedQuery;
       setQuery(storedQuery);
       localStorage.removeItem('miqro_wiki_search_query');
-      localStorage.removeItem('miqro_wiki_quick_q');
-    }
-    executeSearch(queryToUse, typeFilter);
-  }, [isLoggedIn, typeFilter]);
+      localStorage.removeItem('miqro_wiki_quick_q')}
+    executeSearch(queryToUse, typeFilter)}, [isLoggedIn, typeFilter]);
 
   const handleSearchFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    executeSearch(query, typeFilter);
-  };
+    executeSearch(query, typeFilter)};
 
   const handleClearFilters = () => {
     setTypeFilter('all');
     setVisibilityFilter('all');
     setTimeFilter('all');
     setQuery('');
-    executeSearch('', 'all');
-  };
+    executeSearch('', 'all')};
 
   // Client-side filtration for Visibility and Time
   const filteredResults = results.filter((res) => {
     // 1. Visibility Filter
     if (visibilityFilter !== 'all') {
-      if (res.visibility !== visibilityFilter) return false;
-    }
+      if (res.visibility !== visibilityFilter) return false}
 
     // 2. Time Filter (Updated in 2026-07-02 context)
     if (timeFilter !== 'all') {
@@ -76,11 +69,9 @@ export default function SearchPage({ onNavigate }: SearchPageProps) {
 
       if (timeFilter === '7days' && diffDays > 7) return false;
       if (timeFilter === '30days' && diffDays > 30) return false;
-      if (timeFilter === '90days' && diffDays > 90) return false;
-    }
+      if (timeFilter === '90days' && diffDays > 90) return false}
 
-    return true;
-  });
+    return true});
 
   return (
     <div className="space-y-6" id="search-page-panel">
@@ -259,7 +250,7 @@ export default function SearchPage({ onNavigate }: SearchPageProps) {
                   {/* Title Link */}
                   <div className="flex items-start justify-between gap-4">
                     <button
-                      onClick={() => onNavigate('entry-detail', res.id)}
+                      onClick={() => navigate(`/entry/${res.id}`)}
                       className="text-base font-bold text-[#1D70B8] hover:underline hover:text-blue-800 text-left leading-snug"
                     >
                       {res.title}
@@ -301,7 +292,7 @@ export default function SearchPage({ onNavigate }: SearchPageProps) {
                     </div>
                     
                     <button
-                      onClick={() => onNavigate('entry-detail', res.id)}
+                      onClick={() => navigate(`/entry/${res.id}`)}
                       className="text-[#1D70B8] hover:underline font-bold flex items-center text-[11px]"
                     >
                       <span>阅读条目全文</span>
@@ -319,5 +310,4 @@ export default function SearchPage({ onNavigate }: SearchPageProps) {
       </div>
 
     </div>
-  );
-}
+  )}

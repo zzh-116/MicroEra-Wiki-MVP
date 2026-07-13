@@ -1,33 +1,35 @@
 import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ShieldCheck, User, Lock, AlertCircle, ArrowLeft } from 'lucide-react';
 
-interface LoginPageProps {
-  onSuccess: () => void;
-  onBack: () => void;
-}
-
-export default function LoginPage({ onSuccess, onBack }: LoginPageProps) {
+export default function LoginPage() {
   const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('admin123');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
-    setTimeout(() => {
-      const res = login(username, password);
+    try {
+      const res = await login(username, password);
       setLoading(false);
       if (res.success) {
-        onSuccess();
+        const from = (location.state as any)?.from?.pathname || '/';
+        navigate(from, { replace: true });
       } else {
         setError(res.error || '登录失败');
       }
-    }, 450);
+    } catch {
+      setLoading(false);
+      setError('登录失败，请重试');
+    }
   };
 
   const handleQuickFill = () => {
@@ -124,13 +126,13 @@ export default function LoginPage({ onSuccess, onBack }: LoginPageProps) {
       {/* Footer controls */}
       <div className="flex items-center justify-between pt-3 border-t border-gray-100 text-[10px] text-gray-400">
         <button
-          onClick={onBack}
+          onClick={() => navigate('/')}
           className="flex items-center space-x-1 hover:text-gray-700 transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>返回访客大厅</span>
         </button>
-        
+
         <span>演示账号密码：admin / admin123</span>
       </div>
     </div>
