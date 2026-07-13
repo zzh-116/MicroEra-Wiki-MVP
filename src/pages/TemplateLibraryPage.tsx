@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FileSignature, Search, ArrowRight, Download, FileText, CheckCircle, ShieldAlert } from 'lucide-react';
 import { TemplateFile } from '../types/wiki';
@@ -6,10 +7,10 @@ import { mockTemplates } from '../mock/mockData';
 import Unauthorized from '../components/Unauthorized';
 
 interface TemplateLibraryPageProps {
-  onNavigate: (view: string, id?: string) => void;
-}
+  onNavigate: (view: string, id?: string) => void}
 
-export default function TemplateLibraryPage({ onNavigate }: TemplateLibraryPageProps) {
+export default function TemplateLibraryPage() {
+  const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredTemplates, setFilteredTemplates] = useState<TemplateFile[]>([]);
@@ -23,24 +24,18 @@ export default function TemplateLibraryPage({ onNavigate }: TemplateLibraryPageP
                t.projectType.toLowerCase().includes(q) || 
                t.department.toLowerCase().includes(q)
         )
-      );
-    } else {
-      setFilteredTemplates(mockTemplates);
-    }
+      )} else {
+      setFilteredTemplates(mockTemplates)}
   }, [searchQuery]);
 
   const handleDownload = (name: string) => {
-    alert(`[Mock 触发下载] 标准办公模板《${name}》已成功打包并发送至浏览器下载队列。`);
-  };
+    alert(`[Mock 触发下载] 标准办公模板《${name}》已成功打包并发送至浏览器下载队列。`)};
 
   if (!isLoggedIn) {
     return (
-      <Unauthorized
-        onLoginRedirect={() => onNavigate('login')}
-        requiredRole="internal"
+      <Unauthorized requiredRole="internal"
       />
-    );
-  }
+    )}
 
   return (
     <div className="space-y-5" id="template-library-page-panel">
@@ -126,7 +121,7 @@ export default function TemplateLibraryPage({ onNavigate }: TemplateLibraryPageP
                 </button>
 
                 <button
-                  onClick={() => onNavigate('entry-detail', template.entryId)}
+                  onClick={() => navigate(`/entry/${template.entryId}`)}
                   className="text-[#DB5F5B] font-bold hover:underline flex items-center"
                 >
                   <span>在线查看骨架纲要</span>
@@ -138,5 +133,4 @@ export default function TemplateLibraryPage({ onNavigate }: TemplateLibraryPageP
         )}
       </div>
     </div>
-  );
-}
+  )}
