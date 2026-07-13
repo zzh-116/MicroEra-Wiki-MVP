@@ -6,10 +6,9 @@ import KnowledgeGraph from '../components/KnowledgeGraph';
 import EntryTypeBadge from '../components/EntryTypeBadge';
 
 interface KnowledgeGraphPageProps {
-  onNavigate: (view: string, id?: string) => void;
-}
+  onNavigate: (view: string, id?: string) => void}
 
-export default function KnowledgeGraphPage({ onNavigate }: KnowledgeGraphPageProps) {
+export default function KnowledgeGraphPage() {
   const [nodes, setNodes] = useState<KnowledgeGraphNode[]>([]);
   const [edges, setEdges] = useState<KnowledgeGraphEdge[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,15 +18,11 @@ export default function KnowledgeGraphPage({ onNavigate }: KnowledgeGraphPagePro
       try {
         const data = await graphApi.getGlobalGraph();
         setNodes(data.nodes);
-        setEdges(data.edges);
-      } catch (err) {
-        console.error('Error fetching global graph:', err);
-      } finally {
-        setLoading(false);
-      }
+        setEdges(data.edges)} catch (err) {
+        console.error('Error fetching global graph:', err)} finally {
+        setLoading(false)}
     };
-    fetchGraph();
-  }, []);
+    fetchGraph()}, []);
 
   return (
     <div className="space-y-5" id="knowledge-graph-page-panel">
@@ -53,7 +48,6 @@ export default function KnowledgeGraphPage({ onNavigate }: KnowledgeGraphPagePro
             <KnowledgeGraph
               nodes={nodes}
               edges={edges}
-              onNavigate={onNavigate}
               height={420}
             />
           </div>
@@ -110,5 +104,4 @@ export default function KnowledgeGraphPage({ onNavigate }: KnowledgeGraphPagePro
         </div>
       )}
     </div>
-  );
-}
+  )}
