@@ -19,7 +19,7 @@ class AiService {
       const results = await searchService.semanticSearch(query, isInternal, 10);
       return results.filter((r) => r.entry).map((r) => r.entry);
     } catch {
-      const allEntries = await entryRepository.findMany({ isInternal });
+      const allEntries = await entryRepository.findAll({ isInternal });
       if (allEntries.length === 0) return [];
       const messages = buildSearchMessages(allEntries, query);
       const raw = await this.provider.chat(messages, { temperature: 0.3 });

@@ -90,12 +90,12 @@ export class SearchService {
     // Search by individual tokens OR full query — token-based is critical for
     // mixed Chinese-English queries like "IHDec是什么" where the full query
     // string won't appear in any entry content.
-    const all = await entryRepository.findMany({ keyword: query, isInternal });
+    const { entries: all } = await entryRepository.findMany({ keyword: query, isInternal });
     if (all.length === 0 && tokens.length > 0) {
       // Fallback: search by each token individually and union results
       const entryMap = new Map<number, Entry>();
       for (const token of tokens.slice(0, 5)) {
-        const results = await entryRepository.findMany({ keyword: token, isInternal });
+        const { entries: results } = await entryRepository.findMany({ keyword: token, isInternal });
         for (const e of results) {
           if (!entryMap.has(e.id)) entryMap.set(e.id, e);
         }

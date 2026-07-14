@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { adminApi } from '../api/adminApi';
 import { entriesApi } from '../api/entriesApi';
-import { WikiEntry, EntryType, EntryVersionHistoryItem } from '../types/wiki';
-import { Trash2, Edit, AlertCircle, Search, Settings, FileText, ChevronRight, CornerDownRight, Check, ShieldCheck, ChevronLeft } from 'lucide-react';
+import { WikiEntry, EntryVersionHistoryItem } from '../types/wiki';
+import { Trash2, Edit, Search, Settings, Check, ShieldCheck } from 'lucide-react';
 import EntryTypeBadge from '../components/EntryTypeBadge';
 import VisibilityBadge from '../components/VisibilityBadge';
 import Unauthorized from '../components/Unauthorized';
-
-const PAGE_SIZE = 10;
+import Pagination from '../components/Pagination';
 
 interface AdminContentManagePageProps {
   onNavigate: (view: string, id?: string) => void}
@@ -31,10 +29,14 @@ function sanitizeTitle(raw: string): string {
 export default function AdminContentManagePage() {
   const navigate = useNavigate();
   const { isLoggedIn, user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [entries, setEntries] = useState<WikiEntry[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [editingEntry, setEditingEntry] = useState<WikiEntry | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
+
+  // Pagination from URL
+  const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
+  const pageSize = Math.min(100, Math.max(1, parseInt(searchParams.get('pageSize') || '10', 10) || 10));
 
   // VERSION CONTROL FORM STATES
   const [editVersion, setEditVersion] = useState('v1.1');
@@ -143,36 +145,24 @@ export default function AdminContentManagePage() {
          e.summary.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Pagination
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const safePage = Math.min(currentPage, totalPages);
-  const pagedItems = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
-  const startItem = filtered.length === 0 ? 0 : (safePage - 1) * PAGE_SIZE + 1;
-  const endItem = Math.min(safePage * PAGE_SIZE, filtered.length);
+  // Pagination (client-side)
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const pagedItems = filtered.slice((safePage - 1) * pageSize, safePage * pageSize);
 
-  const goToPage = (page: number) => {
-    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  const updateUrl = (p: number, ps?: number) => {
+    const next = new URLSearchParams(searchParams);
+    if (p > 1) next.set('page', String(p)); else next.delete('page');
+    if (ps && ps !== 10) next.set('pageSize', String(ps)); else if (!ps) next.delete('pageSize');
+    setSearchParams(next, { replace: true });
   };
 
-  // Reset to page 1 when search changes
+  const handlePageChange = (p: number) => updateUrl(p);
+  const handlePageSizeChange = (ps: number) => updateUrl(1, ps);
+
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
-    setCurrentPage(1);
-  };
-
-  // Generate page numbers for display
-  const getPageNumbers = (): (number | 'ellipsis')[] => {
-    const pages: (number | 'ellipsis')[] = [];
-    const maxVisible = 5;
-    let start = Math.max(1, safePage - Math.floor(maxVisible / 2));
-    let end = Math.min(totalPages, start + maxVisible - 1);
-    if (end - start < maxVisible - 1) {
-      start = Math.max(1, end - maxVisible + 1);
-    }
-    if (start > 1) pages.push(1, 'ellipsis');
-    for (let i = start; i <= end; i++) pages.push(i);
-    if (end < totalPages) pages.push('ellipsis', totalPages);
-    return pages;
+    setSearchParams({}, { replace: true });
   };
 
   if (!isLoggedIn) {
@@ -272,54 +262,13 @@ export default function AdminContentManagePage() {
             </div>
 
             {/* Pagination Controls */}
-            {filtered.length > PAGE_SIZE && (
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-gray-100 select-none">
-                <span className="text-[10px] text-gray-400 font-mono">
-                  第 {safePage} / {totalPages} 页，共 {filtered.length} 条
-                </span>
-
-                <div className="flex items-center space-x-1">
-                  {/* Previous */}
-                  <button
-                    onClick={() => goToPage(safePage - 1)}
-                    disabled={safePage <= 1}
-                    className="px-2 py-1 text-[10px] font-bold border border-gray-200 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center space-x-0.5"
-                  >
-                    <ChevronLeft className="w-3 h-3" />
-                    <span className="hidden sm:inline">上一页</span>
-                  </button>
-
-                  {/* Page Numbers */}
-                  {getPageNumbers().map((p, i) =>
-                    p === 'ellipsis' ? (
-                      <span key={`e-${i}`} className="px-1.5 text-[10px] text-gray-400">…</span>
-                    ) : (
-                      <button
-                        key={p}
-                        onClick={() => goToPage(p)}
-                        className={`w-7 h-7 text-[10px] font-bold rounded transition-all ${
-                          p === safePage
-                            ? 'bg-[#2B3150] text-[#F2D760]'
-                            : 'border border-gray-200 hover:bg-gray-100 text-gray-600'
-                        }`}
-                      >
-                        {p}
-                      </button>
-                    )
-                  )}
-
-                  {/* Next */}
-                  <button
-                    onClick={() => goToPage(safePage + 1)}
-                    disabled={safePage >= totalPages}
-                    className="px-2 py-1 text-[10px] font-bold border border-gray-200 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center space-x-0.5"
-                  >
-                    <span className="hidden sm:inline">下一页</span>
-                    <ChevronRight className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-            )}
+            <Pagination
+              page={safePage}
+              pageSize={pageSize}
+              total={filtered.length}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+            />
           </div>
         </div>
 

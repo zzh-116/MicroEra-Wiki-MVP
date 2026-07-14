@@ -15,30 +15,35 @@ export interface SearchResult {
   referenceSource?: string;
 }
 
+export interface SearchResponse {
+  results: SearchResult[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+  source: string;
+}
+
 export const searchApi = {
   async search(
     query: string,
     typeFilter: string = 'all',
     searchMode: 'keyword' | 'nlp' | 'title' = 'keyword',
-  ): Promise<SearchResult[]> {
+    page = 1,
+    pageSize = 10,
+  ): Promise<SearchResponse> {
     try {
-      // Map frontend type to backend entry_type
       const backendTypeMap: Record<string, string> = {
-        project: 'product',
-        paper: 'tech',
-        data_item: 'data_item',
-        template: 'asset',
-        patent: 'patent',
-        concept: 'tech',
-        service: 'tech',
+        project: 'product', paper: 'tech', data_item: 'data_item',
+        template: 'asset', patent: 'patent', concept: 'tech', service: 'tech',
       };
       const backendType = typeFilter !== 'all' ? (backendTypeMap[typeFilter] || typeFilter) : undefined;
 
-      const body: any = { query };
+      const body: any = { query, page, pageSize };
       if (backendType) body.type = backendType;
 
-      const data = await post<{ results: any[]; source: string }>('/search', body);
-      const results: SearchResult[] = data.results.map((r: any) => {
+      const data = await post<any>('/search', body);
+      const results: SearchResult[] = (data.results || []).map((r: any) => {
         const entry = mvpEntryToWikiEntry(r);
         return {
           id: entry.id as string,
@@ -53,9 +58,9 @@ export const searchApi = {
           referenceSource: data.source,
         };
       });
-      return results;
+      return { results, page: data.page || 1, pageSize: data.pageSize || 10, total: data.total || results.length, totalPages: data.totalPages || 1, source: data.source || 'database' };
     } catch {
-      return [];
+      return { results: [], page: 1, pageSize: 10, total: 0, totalPages: 0, source: 'error' };
     }
   },
 };

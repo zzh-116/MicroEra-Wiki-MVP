@@ -77,7 +77,9 @@ export class EntryRepository extends BaseRepository {
     category_id?: string;
     tag?: string;
     isInternal?: boolean;
-  }): Promise<Entry[]> {
+    page?: number;
+    pageSize?: number;
+  }): Promise<{ entries: Entry[]; total: number; page: number; pageSize: number; totalPages: number }> {
     const conditions: ReturnType<typeof eq>[] = [isNull(entries.deletedAt)];
 
     if (!params?.isInternal) {
@@ -114,18 +116,49 @@ export class EntryRepository extends BaseRepository {
         if (ids.length > 0) {
           conditions.push(inArray(entries.id, ids));
         } else {
-          return [];
+          return { entries: [], total: 0, page: params.page || 1, pageSize: params.pageSize || 10, totalPages: 0 };
         }
       }
     }
 
+    const where = and(...conditions);
+
+    // Get total count
+    const countResult = await this.db
+      .select({ count: sql<number>`count(*)` })
+      .from(entries)
+      .where(where);
+    const total = Number(countResult[0]?.count ?? 0);
+
+    // Apply pagination
+    const pg = params?.page || 1;
+    const ps = params?.pageSize || 10;
+    const offset = (pg - 1) * ps;
+    const totalPages = Math.max(1, Math.ceil(total / ps));
+
     const rows = await this.db
       .select()
       .from(entries)
-      .where(and(...conditions))
-      .orderBy(desc(entries.updatedAt));
+      .where(where)
+      .orderBy(desc(entries.updatedAt))
+      .limit(ps)
+      .offset(offset);
 
-    return this.hydrateTags(rows);
+    const entriesList = await this.hydrateTags(rows);
+    return { entries: entriesList, total, page: pg, pageSize: ps, totalPages };
+  }
+
+  /** Backward-compatible: returns flat array for callers that don't need pagination */
+  async findAll(params?: {
+    keyword?: string;
+    entry_type?: string;
+    visibility?: string;
+    category_id?: string;
+    tag?: string;
+    isInternal?: boolean;
+  }): Promise<Entry[]> {
+    const result = await this.findMany({ ...params, page: 1, pageSize: 999999 });
+    return result.entries;
   }
 
   async create(input: CreateEntryInput, tx?: DbClient): Promise<Entry> {

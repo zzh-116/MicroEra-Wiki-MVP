@@ -1,77 +1,112 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { searchApi, SearchResult } from '../api/searchApi';
 import { Search, CornerDownRight, Filter, Calendar, Shield, ArrowRight, ExternalLink } from 'lucide-react';
 import EntryTypeBadge from '../components/EntryTypeBadge';
 import VisibilityBadge from '../components/VisibilityBadge';
-
-interface SearchPageProps {
-  onNavigate: (view: string, id?: string) => void}
+import Pagination from '../components/Pagination';
 
 export default function SearchPage() {
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
-  const [query, setQuery] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [query, setQuery] = useState(searchParams.get('q') || '');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   // Filters state
-  const [typeFilter, setTypeFilter] = useState('all');
-  const [visibilityFilter, setVisibilityFilter] = useState('all'); // all, public, internal
-  const [timeFilter, setTimeFilter] = useState('all'); // all, 7days, 30days, 90days
+  const [typeFilter, setTypeFilter] = useState(searchParams.get('type') || 'all');
+  const [visibilityFilter, setVisibilityFilter] = useState('all');
+  const [timeFilter, setTimeFilter] = useState('all');
 
-  // Run search
-  const executeSearch = async (currentQuery: string, currentType: string) => {
-    setLoading(true);
-    try {
-      const apiResults = await searchApi.search(currentQuery, currentType, 'nlp');
-      setResults(apiResults)} catch (err) {
-      console.error('Error during search:', err)} finally {
-      setLoading(false)}
+  // Pagination from URL
+  const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
+  const pageSize = Math.min(100, Math.max(1, parseInt(searchParams.get('pageSize') || '10', 10) || 10));
+
+  const updateUrlParams = (updates: Record<string, string>) => {
+    const next = new URLSearchParams(searchParams);
+    for (const [k, v] of Object.entries(updates)) {
+      if (v && v !== 'all' && v !== '1' && v !== '10') next.set(k, v);
+      else next.delete(k);
+    }
+    setSearchParams(next, { replace: true });
   };
 
-  // Initial load or transition load
+  // Run search
+  const executeSearch = async (currentQuery: string, currentType: string, currentPage: number, currentPageSize: number) => {
+    setLoading(true);
+    try {
+      const data = await searchApi.search(currentQuery, currentType, 'nlp', currentPage, currentPageSize);
+      setResults(data.results);
+      setTotal(data.total);
+      setTotalPages(data.totalPages);
+    } catch (err) {
+      console.error('Error during search:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const doSearch = (newPage?: number, newPageSize?: number) => {
+    const p = newPage ?? page;
+    const ps = newPageSize ?? pageSize;
+    updateUrlParams({ q: query, type: typeFilter, page: String(p), pageSize: ps !== 10 ? String(ps) : '' });
+    executeSearch(query, typeFilter, p, ps);
+  };
+
+  // Initial load
   useEffect(() => {
-    // Check for incoming queries from home page
     const storedQuery = localStorage.getItem('miqro_wiki_search_query') || localStorage.getItem('miqro_wiki_quick_q');
-    let queryToUse = '';
+    let q = query;
     if (storedQuery) {
-      queryToUse = storedQuery;
+      q = storedQuery;
       setQuery(storedQuery);
       localStorage.removeItem('miqro_wiki_search_query');
-      localStorage.removeItem('miqro_wiki_quick_q')}
-    executeSearch(queryToUse, typeFilter)}, [isLoggedIn, typeFilter]);
+      localStorage.removeItem('miqro_wiki_quick_q');
+    }
+    executeSearch(q, typeFilter, page, pageSize);
+  }, [isLoggedIn]);
 
   const handleSearchFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    executeSearch(query, typeFilter)};
+    doSearch(1);
+  };
 
   const handleClearFilters = () => {
     setTypeFilter('all');
     setVisibilityFilter('all');
     setTimeFilter('all');
     setQuery('');
-    executeSearch('', 'all')};
+    setSearchParams({}, { replace: true });
+    executeSearch('', 'all', 1, pageSize);
+  };
 
-  // Client-side filtration for Visibility and Time
+  const handleTypeChange = (newType: string) => {
+    setTypeFilter(newType);
+    updateUrlParams({ type: newType, page: '' });
+    executeSearch(query, newType, 1, pageSize);
+  };
+
+  const handlePageChange = (p: number) => doSearch(p);
+  const handlePageSizeChange = (ps: number) => doSearch(1, ps);
+
+  // Client-side filters (visibility + time)
   const filteredResults = results.filter((res) => {
-    // 1. Visibility Filter
-    if (visibilityFilter !== 'all') {
-      if (res.visibility !== visibilityFilter) return false}
-
-    // 2. Time Filter (Updated in 2026-07-02 context)
+    if (visibilityFilter !== 'all' && res.visibility !== visibilityFilter) return false;
     if (timeFilter !== 'all') {
       const resDate = new Date(res.updatedAt);
-      const currentDate = new Date('2026-07-01'); // Fixed relative to 2026-07-01
-      const diffTime = Math.abs(currentDate.getTime() - resDate.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
+      const currentDate = new Date('2026-07-01');
+      const diffDays = Math.ceil(Math.abs(currentDate.getTime() - resDate.getTime()) / (1000 * 60 * 60 * 24));
       if (timeFilter === '7days' && diffDays > 7) return false;
       if (timeFilter === '30days' && diffDays > 30) return false;
-      if (timeFilter === '90days' && diffDays > 90) return false}
-
-    return true});
+      if (timeFilter === '90days' && diffDays > 90) return false;
+    }
+    return true;
+  });
 
   return (
     <div className="space-y-6" id="search-page-panel">
@@ -126,7 +161,7 @@ export default function SearchPage() {
                     type="radio"
                     name="typeFilter"
                     checked={typeFilter === opt.value}
-                    onChange={() => setTypeFilter(opt.value)}
+                    onChange={() => handleTypeChange(opt.value)}
                     className="h-3.5 w-3.5 text-[#DB5F5B] focus:ring-[#DB5F5B]"
                   />
                   <span>{opt.label}</span>
@@ -221,7 +256,7 @@ export default function SearchPage() {
           {/* Results Summary Info */}
           <div className="flex items-center justify-between pb-1.5 border-b-2 border-gray-900 text-xs select-none">
             <span className="font-bold text-gray-800">
-              {loading ? '正在对齐知识库语料...' : `检索结果：找到 ${filteredResults.length} 条记录`}
+              {loading ? '正在对齐知识库语料...' : `检索结果：共 ${total} 条`}
             </span>
             <span className="text-[10px] text-gray-400 font-mono">
               {!isLoggedIn && '* 登录后可解锁机密(Internal)知识。'}
@@ -303,6 +338,17 @@ export default function SearchPage() {
                 </div>
               ))}
             </div>
+          )}
+
+          {/* Pagination */}
+          {!loading && total > 0 && (
+            <Pagination
+              page={page}
+              pageSize={pageSize}
+              total={total}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+            />
           )}
 
         </div>
