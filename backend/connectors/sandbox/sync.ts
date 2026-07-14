@@ -1,13 +1,13 @@
 // Sandbox Sync — orchestrates full and incremental sync from Sandbox into the
-// Wiki pipeline. Converts Sandbox assets → Document Model → Import Service.
+// Wiki pipeline. Converts Sandbox assets → Knowledge Layer → Document Model → Import Service.
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { listAllAssets } from './assets.js';
 import { fetchDetail } from './detail.js';
-import { toMarkdown, getDisplayTitle } from './markdown.js';
 import type { Document, DocumentSummary, SyncResult } from '../types.js';
 import type { ListParams } from '../types.js';
+import { parseSandboxDetail, toEmbeddingMarkdown } from './knowledge/index.js';
 
 /** File to persist last sync timestamp for incremental sync */
 function lastSyncFile(): string {
@@ -72,22 +72,26 @@ export async function fetchDocument(id: string, type?: string): Promise<Document
 }
 
 function toDocument(id: string, detail: any): Document {
-  const displayTitle = getDisplayTitle(detail);
-  const markdown = toMarkdown(detail);
+  // Route through Knowledge Layer for normalization
+  const knowledge = parseSandboxDetail(detail, detail.project?.projectTitle);
+  // Generate clean embedding-optimized Markdown (no UUIDs, no raw IDs)
+  const markdown = toEmbeddingMarkdown(knowledge);
   return {
     id,
-    title: displayTitle,
+    title: knowledge.title,
     type: detail.type || 'unknown',
-    updatedAt: detail.updateTime || '',
+    updatedAt: knowledge.updatedAt || '',
     content: markdown,
-    attachments: [],
+    attachments: knowledge.attachments,
     source: 'sandbox',
-    tags: detail.tags || [],
-    description: detail.description,
-    author: detail.author,
+    tags: knowledge.tags,
+    description: knowledge.abstract,
+    author: knowledge.author,
     metadata: {
       projectId: detail.project?.projectId,
       projectTitle: detail.project?.projectTitle,
+      knowledgeType: knowledge.type,
+      unresolvedIds: knowledge.metadata.unresolvedIds,
     },
   };
 }
