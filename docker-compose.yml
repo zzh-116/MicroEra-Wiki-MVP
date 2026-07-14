@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   postgres:
-    image: pgvector/pgvector:pg16  # includes pgvector extension for future use
+    image: pgvector/pgvector:pg16
     container_name: microera-postgres
     environment:
       POSTGRES_USER: postgres
@@ -17,6 +15,28 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
+
+  app:
+    build: .
+    container_name: microera-app
+    ports:
+      - '3001:3001'
+    env_file:
+      - .env
+    environment:
+      # Override — use Docker service name, not localhost
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/microera_wiki
+      # Ollama runs on host — use host.docker.internal (Windows/Mac)
+      # On Linux, use: 172.17.0.1  or  host IP
+      OLLAMA_URL: http://host.docker.internal:11434
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - app-data:/app/backend/data
+    restart: unless-stopped
 
 volumes:
   pgdata:
+  app-data:

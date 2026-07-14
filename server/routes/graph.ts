@@ -5,7 +5,7 @@ export const graphRouter = Router();
 
 graphRouter.get('/global', optionalAuth, async (_req: Request, res: Response) => {
   const isInternal = (_req as any).isInternal === true;
-  const all = await entryRepository.findMany({ isInternal });
+  const { entries: all } = await entryRepository.findMany({ isInternal });
   const nodes = all.map((e) => ({ id: `gn-${e.id}`, label: e.title, type: e.entry_type, entryId: String(e.id), description: e.summary }));
   const edges: Array<{ id: string; source: string; target: string; relation: string; description: string }> = [];
   const seen = new Set<string>();
@@ -28,7 +28,7 @@ graphRouter.get('/focused', optionalAuth, async (req: Request, res: Response) =>
   const eid = parseInt(req.query.entryId as string, 10);
   if (isNaN(eid)) { res.json({ nodes: [], edges: [] }); return; }
   const isInternal = (req as any).isInternal === true;
-  const all = await entryRepository.findMany({ isInternal });
+  const { entries: all } = await entryRepository.findMany({ isInternal });
   const center = all.find((e) => e.id === eid);
   if (!center) { res.json({ nodes: [], edges: [] }); return; }
   const cn = `gn-${center.id}`;

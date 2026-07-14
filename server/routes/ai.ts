@@ -133,7 +133,7 @@ aiRouter.post('/reset', async (req: Request, res: Response) => {
     const fp = req.body?.filePath || 'backend/data/materials-metadata.md';
 
     // Delete non-seed entries
-    const all = await entryRepository.findMany({ isInternal: true });
+    const { entries: all } = await entryRepository.findMany({ isInternal: true });
     for (const e of all) { if (e.id > 8) await entryRepository.delete(e.id); }
 
     await chunkRepository.deleteAll();

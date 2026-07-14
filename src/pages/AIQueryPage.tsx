@@ -12,6 +12,8 @@ import { Sparkles, Send, HelpCircle, CornerDownRight, BookOpen, StopCircle } fro
 interface AIQueryPageProps {
   onNavigate: (view: string, id?: string) => void}
 
+const CACHE_KEY = 'miqro_wiki_ai_query_state';
+
 export default function AIQueryPage() {
   const { isLoggedIn } = useAuth();
   const [question, setQuestion] = useState('');
@@ -24,6 +26,39 @@ export default function AIQueryPage() {
   const abortRef = useRef<AbortController | null>(null);
   const answerRef = useRef<HTMLDivElement>(null);
   const loadingRef = useRef(false);
+  // Multi-turn conversation — read saved convId, update on each response
+  const convIdRef = useRef<number | undefined>(
+    parseInt(localStorage.getItem('miqro_wiki_conv_id') || '') || undefined,
+  );
+  const [convActive, setConvActive] = useState(!!convIdRef.current);
+
+  // Restore cached conversation state on mount (preserves answer across navigation)
+  useEffect(() => {
+    try {
+      const cached = sessionStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const state = JSON.parse(cached);
+        if (state.question) setQuestion(state.question);
+        if (state.answer) setAnswer(state.answer);
+        if (state.references?.length) setReferences(state.references);
+        if (state.relatedEntries?.length) setRelatedEntries(state.relatedEntries);
+      }
+    } catch {}
+  }, []);
+
+  // Persist conversation state so navigating away & back doesn't lose the answer
+  useEffect(() => {
+    if (answer || references.length > 0) {
+      try {
+        sessionStorage.setItem(CACHE_KEY, JSON.stringify({
+          question,
+          answer,
+          references,
+          relatedEntries,
+        }));
+      } catch {}
+    }
+  }, [question, answer, references, relatedEntries]);
 
   // Auto-scroll as tokens arrive
   useEffect(() => {
@@ -50,6 +85,8 @@ export default function AIQueryPage() {
     // Cancel any existing generation
     if (abortRef.current) abortRef.current.abort();
 
+    // Clear cached state when starting a fresh search
+    sessionStorage.removeItem(CACHE_KEY);
     loadingRef.current = true;
     setQuestion(q);
     setLoading(true);
@@ -58,6 +95,9 @@ export default function AIQueryPage() {
     setRelatedEntries([]);
 
     const sources: Array<{ id: number; title: string; entry_type: string }> = [];
+
+    // Pass conversationId for multi-turn RAG
+    const convId = convIdRef.current;
 
     abortRef.current = queryApi.askAIStream(
       q,
@@ -81,9 +121,12 @@ export default function AIQueryPage() {
           }));
           setReferences(refs);
 
-          // Store conversation ID for follow-up
+          // Store conversation ID for multi-turn follow-up
           if (data.conversationId) {
-            localStorage.setItem('miqro_wiki_conv_id', String(data.conversationId))}
+            convIdRef.current = data.conversationId;
+            localStorage.setItem('miqro_wiki_conv_id', String(data.conversationId));
+            setConvActive(true);
+          }
 
           // Load related entries
           const entryIds = (data.sources || []).map((s) => String(s.id));
@@ -98,8 +141,20 @@ export default function AIQueryPage() {
           setLoading(false);
           abortRef.current = null},
       },
-      undefined,
+      convId,
     )}, []);
+
+  // Start a new conversation (clears multi-turn context)
+  const handleNewChat = useCallback(() => {
+    convIdRef.current = undefined;
+    localStorage.removeItem('miqro_wiki_conv_id');
+    setConvActive(false);
+    setQuestion('');
+    setAnswer('');
+    setReferences([]);
+    setRelatedEntries([]);
+    sessionStorage.removeItem(CACHE_KEY);
+  }, []);
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,9 +180,23 @@ export default function AIQueryPage() {
         <h2 className="text-base font-extrabold text-[#2B3150] flex items-center space-x-1 uppercase tracking-wide">
           <Sparkles className="w-5 h-5 text-[#DB5F5B] animate-pulse" />
           <span>MiQi 智能科研 RAG 问答中枢 (Neural Semantic Grounding)</span>
+          {convActive && (
+            <span className="text-[10px] font-normal normal-case bg-green-50 text-green-700 border border-green-200 px-2 py-0.5 rounded-full">
+              多轮对话中
+            </span>
+          )}
+          {convActive && (
+            <button
+              onClick={handleNewChat}
+              className="text-[10px] font-normal text-gray-500 hover:text-red-500 border border-gray-200 hover:border-red-200 rounded-full px-2 py-0.5 transition-colors ml-auto"
+            >
+              新对话
+            </button>
+          )}
         </h2>
         <p className="text-[10px] text-gray-400">
           基于高维物理沙箱（Sandbox）输出、MarkItDown 文档缓存及向量 Embedding 库为您提供无幻觉的溯源级解答 {loading && '— 实时流式生成中...'}
+          {convActive && ' · 后续提问将携带上文对话历史'}
         </p>
       </div>
 

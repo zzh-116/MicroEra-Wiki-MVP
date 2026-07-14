@@ -15,7 +15,10 @@
     { "name": "Pipeline", "description": "数据导入与处理管道" },
     { "name": "AI", "description": "AI 搜索、问答、摘要" },
     { "name": "Entries", "description": "Wiki 条目管理" },
-    { "name": "Auth", "description": "身份认证" }
+    { "name": "Auth", "description": "身份认证" },
+    { "name": "Admin", "description": "管理运维（重建索引等）" },
+    { "name": "Search", "description": "语义搜索 + 数据库查询" },
+    { "name": "Graph", "description": "知识图谱" }
   ],
   "paths": {
     "/api/pipeline/health": {
@@ -654,6 +657,90 @@
         "summary": "获取当前用户信息",
         "security": [{ "bearerAuth": [] }],
         "responses": { "200": { "description": "用户信息" } }
+      }
+    },
+    "/api/admin/rebuild-embeddings": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "一键重建所有向量嵌入",
+        "description": "清空所有现有向量，遍历所有条目重新分块、嵌入、存储。用于更换 Embedding 模型或分块策略后重建索引。\n\n**流程**: 清空向量 → 逐条目分块 → 批量嵌入 → 写入 pgvector",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "chunkSize": { "type": "integer", "default": 1024 },
+                  "overlap": { "type": "integer", "default": 128 },
+                  "strategy": { "type": "string", "enum": ["markdown", "fixed", "paragraph", "sentence"], "default": "markdown" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "重建完成（含处理条目数、向量数、耗时、错误列表）" },
+          "401": { "description": "未认证" },
+          "500": { "description": "重建失败" }
+        }
+      }
+    },
+    "/api/admin/stats": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "管理统计信息",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "条目数、Embedding 模型、LLM 配置等统计" }
+        }
+      }
+    },
+    "/api/search": {
+      "post": {
+        "tags": ["Search"],
+        "summary": "语义搜索 / 数据库查询",
+        "description": "有 query 时执行语义搜索；无 query 时按过滤条件返回数据库条目列表。",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": { "type": "string" },
+                  "type": { "type": "string" },
+                  "page": { "type": "integer" },
+                  "pageSize": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "搜索结果（含匹配原因和引用来源）" },
+          "503": { "description": "搜索不可用" }
+        }
+      }
+    },
+    "/api/graph/global": {
+      "get": {
+        "tags": ["Graph"],
+        "summary": "获取全量知识图谱",
+        "responses": {
+          "200": { "description": "节点 + 边（基于共享标签关系）" }
+        }
+      }
+    },
+    "/api/graph/focused": {
+      "get": {
+        "tags": ["Graph"],
+        "summary": "获取以某条目为中心的子图",
+        "parameters": [
+          { "name": "entryId", "in": "query", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "中心节点 + 关联子图" }
+        }
       }
     }
   },

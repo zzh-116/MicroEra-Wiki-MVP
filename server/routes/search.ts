@@ -12,11 +12,16 @@ searchRouter.post('/', optionalAuth, async (req: Request, res: Response) => {
 
     // If no query, query the database directly (supports type filter or all)
     if (!hasQuery) {
+      const { page, pageSize } = req.body || {};
+      const pg = Math.max(1, parseInt(page || '1', 10) || 1);
+      const ps = Math.min(100, Math.max(1, parseInt(pageSize || '10', 10) || 10));
       const result = await entryRepository.findMany({
         entry_type: type && type !== 'all' ? type : undefined,
         isInternal: req.isInternal,
+        page: pg,
+        pageSize: ps,
       });
-      const entries = result.map((e) => ({
+      const items = result.entries.map((e) => ({
         id: e.id,
         title: e.title,
         entry_type: e.entry_type,
@@ -28,7 +33,7 @@ searchRouter.post('/', optionalAuth, async (req: Request, res: Response) => {
         updated_at: e.updated_at,
         tags: e.tags,
       }));
-      res.json({ results: entries, source: 'database' });
+      res.json({ results: items, page: result.page, pageSize: result.pageSize, total: result.total, totalPages: result.totalPages, source: 'database' });
       return;
     }
 

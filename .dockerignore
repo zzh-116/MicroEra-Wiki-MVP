@@ -1,0 +1,11 @@
+node_modules
+dist
+.git
+.env
+.env.local
+.gitlab
+docs
+.vite
+*.log
+backend/data/uploads/*
+!backend/data/uploads/.gitkeep
