@@ -209,9 +209,11 @@ pipelineRouter.post('/import', async (req: Request, res: Response) => {
 // Import string
 pipelineRouter.post('/import/string', async (req: Request, res: Response) => {
   try {
-    const { content, fileName, metadata, skipEmbedding, chunkConfig } = req.body || {};
-    if (!content) { res.status(400).json({ error: 'MISSING_INPUT' }); return; }
-    const result = await importService.importFromApi(content, fileName || 'api_import.md', metadata, { skipEmbedding, chunkConfig });
+      const { content, fileName, metadata, skipEmbedding, chunkConfig } = req.body || {};
+      // 兼容前端传的 entryMetadata（与 metadata 同义）
+      const meta = metadata || (req.body as any)?.entryMetadata;
+      if (!content) { res.status(400).json({ error: 'MISSING_INPUT' }); return; }
+      const result = await importService.importFromApi(content, fileName || 'api_import.md', meta, { skipEmbedding, chunkConfig });
     res.status(result.success ? 200 : 422).json(result);
   } catch (err: any) {
     console.error('[Pipeline] String import failed:', err.message, err.code, err.detail, err.constraint);
