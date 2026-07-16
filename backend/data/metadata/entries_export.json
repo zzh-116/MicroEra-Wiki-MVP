@@ -1,0 +1,2278 @@
+{
+  "exportedAt": "2026-07-16T01:53:25.225Z",
+  "totalEntries": 284,
+  "entries": [
+    {
+      "id": 1,
+      "title": "量子计算材料设计平台",
+      "entry_type": "product",
+      "summary": "面向客户展示公司核心材料计算 SaaS 平台的高层级分析流程和客户案例。",
+      "visibility": "public",
+      "updated_at": "2026-06-22T09:10:00.000Z"
+    },
+    {
+      "id": 2,
+      "title": "AI 驱动的实验数据分析能力",
+      "entry_type": "tech",
+      "summary": "企业自主研发的端到端实验数据仓库和基于大语言模型的智能分析引擎。",
+      "visibility": "public",
+      "updated_at": "2026-06-21T15:30:00.000Z"
+    },
+    {
+      "id": 3,
+      "title": "某某智能计算方法专利",
+      "entry_type": "patent",
+      "summary": "面向高通量材料筛选的智能计算方法和系统发明专利简介。",
+      "visibility": "public",
+      "updated_at": "2026-06-20T10:00:00.000Z"
+    },
+    {
+      "id": 4,
+      "title": "公司业务流程图",
+      "entry_type": "asset",
+      "summary": "完整业务流程图（商务对接 → 算力排班 → 交付归档）。",
+      "visibility": "internal",
+      "updated_at": "2026-06-19T14:00:00.000Z"
+    },
+    {
+      "id": 5,
+      "title": "产品效果图 A",
+      "entry_type": "asset",
+      "summary": "材料计算平台 UI 效果图。",
+      "visibility": "internal",
+      "updated_at": "2026-06-18T16:00:00.000Z"
+    },
+    {
+      "id": 6,
+      "title": "实地厂房照片",
+      "entry_type": "asset",
+      "summary": "研发中心与 HPC 机房实拍。",
+      "visibility": "internal",
+      "updated_at": "2026-06-17T09:00:00.000Z"
+    },
+    {
+      "id": 7,
+      "title": "材料结构数据条目",
+      "entry_type": "data_item",
+      "summary": "晶体结构与分子材料核心研发数据字段对齐元数据。",
+      "visibility": "internal",
+      "updated_at": "2026-06-16T11:00:00.000Z"
+    },
+    {
+      "id": 8,
+      "title": "实验数据存储结构说明",
+      "entry_type": "data_item",
+      "summary": "实验室表征数据 SQL 存储 schema 与维护人信息。",
+      "visibility": "internal",
+      "updated_at": "2026-06-15T12:00:00.000Z"
+    },
+    {
+      "id": 9,
+      "title": "UiO-68-SMe-Pt",
+      "entry_type": "product",
+      "summary": "基于MOF孔道内Pt纳米簇催化乙炔聚合反应的化学传感材料",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:21.732Z"
+    },
+    {
+      "id": 10,
+      "title": "ZJU-195([Cu2L(H2O)2])",
+      "entry_type": "product",
+      "summary": "通过氨基官能团化增强乙炔吸附的Cu-桨轮结构MOF材料",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:23.767Z"
+    },
+    {
+      "id": 11,
+      "title": "MOF-OH",
+      "entry_type": "product",
+      "summary": "利用氢键作用实现极高乙炔存储密度 (0.81g/mL) 的MOF材料，甚至超过了固态乙炔的密度",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:25.473Z"
+    },
+    {
+      "id": 12,
+      "title": "NKMOF-1-Ni",
+      "entry_type": "product",
+      "summary": "利用平面正方形的 Ni2+ 位点和孔道内的硫原子 (S) 共同作用吸附乙炔，且具有优异的耐水性",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:27.132Z"
+    },
+    {
+      "id": 13,
+      "title": "Cu(I)-MOF(CuI@...)",
+      "entry_type": "product",
+      "summary": "基于Cu(I)金属中心与乙炔弱相互作用的化学传感材料，兼具传感与深度纯化功能",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:28.682Z"
+    },
+    {
+      "id": 14,
+      "title": "APPT-Cd",
+      "entry_type": "product",
+      "summary": "基于微孔结构和极性表面的Cd基MOF，用于常温下乙炔/乙烯分离",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:31.203Z"
+    },
+    {
+      "id": 15,
+      "title": "UTSA-200",
+      "entry_type": "product",
+      "summary": "具有 3.4 Å 超微孔的 MOF，通过尺寸排阻和氢键协同作用实现乙炔/乙烯分离",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:32.925Z"
+    },
+    {
+      "id": 16,
+      "title": "MIL-100(Cr)",
+      "entry_type": "product",
+      "summary": "具有介孔结构的 Cr 基 MOF，结合介孔限域与 π 络合作用吸附乙炔",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:34.517Z"
+    },
+    {
+      "id": 17,
+      "title": "TIFSIX-2-Cu-i",
+      "entry_type": "product",
+      "summary": "TIFSIX系列MOF，利用 TiF62− 阴离子构建强结合位点，通过强氢键作用 (C-H···F) 吸附乙炔",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:36.464Z"
+    },
+    {
+      "id": 18,
+      "title": "Fe-MOF(Compound 1)",
+      "entry_type": "product",
+      "summary": "一种Fe基MOF材料，具有独特的U型孔道结构，可用于乙炔吸附分离",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:38.061Z"
+    },
+    {
+      "id": 19,
+      "title": "NOTT-300",
+      "entry_type": "product",
+      "summary": "乙炔不仅作为氢键供体，还作为受体与孔道内的 -OH 基团形成侧向相互作用，同时伴随与苯环的 π−π 堆积",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:39.803Z"
+    },
+    {
+      "id": 20,
+      "title": "Zn-MOF(FJI-H11)",
+      "entry_type": "product",
+      "summary": "基于动力学分离机理，通过乙炔四聚体形成高速通道实现超快扩散的Zn基MOF",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:41.365Z"
+    },
+    {
+      "id": 21,
+      "title": "Cu-In/NU-907",
+      "entry_type": "product",
+      "summary": "基于限域催化和双金属协同作用将乙炔催化转化为C4产物的MOF材料",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:43.254Z"
+    },
+    {
+      "id": 22,
+      "title": "Rigid-Flexible MOF(Zn-btb-dmtrz)",
+      "entry_type": "product",
+      "summary": "兼具刚性和柔性的Zn基MOF，通过门控效应实现乙炔特异性开关吸附",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:44.654Z"
+    },
+    {
+      "id": 23,
+      "title": "MFM-520",
+      "entry_type": "product",
+      "summary": "具有独特的\"领结型\"（bowtie-shaped）孔腔（6.6×4.0×3.6 Å），每个孔腔正好容纳两个乙炔分子，而排斥稍大的乙烯或乙烷。",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:46.276Z"
+    },
+    {
+      "id": 24,
+      "title": "MFM-190(NO2)",
+      "entry_type": "product",
+      "summary": "硝基功能化的 MOF 材料，具有极高的乙炔吸附热",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:47.817Z"
+    },
+    {
+      "id": 25,
+      "title": "Cu2(pzdc)2(pyz)",
+      "entry_type": "product",
+      "summary": "乙炔分子作为氢键供体，与孔壁上未配位的氧原子形成C-H···O氢键。",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:49.383Z"
+    },
+    {
+      "id": 26,
+      "title": "NUM-15",
+      "entry_type": "product",
+      "summary": "利用 C-H···N 氢键相互作用进行乙炔吸附的MOF材料",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:50.859Z"
+    },
+    {
+      "id": 27,
+      "title": "CAU-10-H",
+      "entry_type": "product",
+      "summary": "基于孔隙限域机理实现乙炔物理吸附的MOF材料",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:52.225Z"
+    },
+    {
+      "id": 28,
+      "title": "Zn-CAT",
+      "entry_type": "product",
+      "summary": "具有双重互穿结构的柔性MOF系列，随压力增加发生结构变形（Gate-opening），呈 S 型吸附等温线",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:53.827Z"
+    },
+    {
+      "id": 29,
+      "title": "ZU-610a",
+      "entry_type": "product",
+      "summary": "通过后合成修饰收缩孔径，使得材料优先吸附二氧化碳而非乙炔（与原样ZU-610相反），展示了孔径调节对选择性的反转作用。",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:56.377Z"
+    },
+    {
+      "id": 30,
+      "title": "FJU-22a",
+      "entry_type": "product",
+      "summary": "利用配体上的非配位氧原子位点锚定乙炔分子。",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:57.834Z"
+    },
+    {
+      "id": 31,
+      "title": "Zn-CAT 系列",
+      "entry_type": "product",
+      "summary": "基于门控效应的柔性MOF材料，表现出S型吸附等温线",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:12:59.163Z"
+    },
+    {
+      "id": 32,
+      "title": "UTSA-74",
+      "entry_type": "product",
+      "summary": "MOF-74的异构体，含有四配位和六配位两种Zn位点，其中六配位位点活化后可结合两个乙炔分子。",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:00.539Z"
+    },
+    {
+      "id": 33,
+      "title": "IPM-100",
+      "entry_type": "product",
+      "summary": "利用孔内溶剂分子辅助吸附乙炔的 MOF 材料，具有极高的 C2H2/CH4 选择性",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:02.042Z"
+    },
+    {
+      "id": 34,
+      "title": "ZNU-1",
+      "entry_type": "product",
+      "summary": "通过双重氢键协同捕获乙炔的MOF材料",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:03.931Z"
+    },
+    {
+      "id": 35,
+      "title": "Cu(OH)INA",
+      "entry_type": "product",
+      "summary": "通过超强氢键实现超高密度乙炔堆积的Cu基MOF，水相合成极具工业化前景",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:05.403Z"
+    },
+    {
+      "id": 36,
+      "title": "NTU-67",
+      "entry_type": "product",
+      "summary": "具有\"三叶草型\"（three-bladed）通道，通过优化的窗口孔径，在动力学上区分线性的乙炔/二氧化碳与矩形的乙烯。",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:07.068Z"
+    },
+    {
+      "id": 37,
+      "title": "UTSA-100",
+      "entry_type": "product",
+      "summary": "具有 4.0 Å 孔径的 MOF，利用分子尺寸差异分离乙炔/乙烯",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:08.582Z"
+    },
+    {
+      "id": 38,
+      "title": "BSF-1",
+      "entry_type": "product",
+      "summary": "引入闭合十二硼酸盐簇 ([B12H12]2+)，提供氢键位点识别乙炔的MOF系列材料",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:10.065Z"
+    },
+    {
+      "id": 39,
+      "title": "M'MOF-3",
+      "entry_type": "product",
+      "summary": "极窄孔径，仅允许乙炔快速扩散，通过动力学筛分实现乙炔吸附。",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:11.562Z"
+    },
+    {
+      "id": 40,
+      "title": "HKUST-1",
+      "entry_type": "product",
+      "summary": "经典的 Cu 基 MOF，具有暴露的 Cu2+ 金属位点，通过 π-络合作用强吸附乙炔",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:12.866Z"
+    },
+    {
+      "id": 41,
+      "title": "In-MOF([In(dtztp)0.5...])",
+      "entry_type": "product",
+      "summary": "基于铟和四唑配体的 MOF，具有优异的水/油稳定性",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:14.307Z"
+    },
+    {
+      "id": 42,
+      "title": "SIFSIX 系列(SIFSIX-1/2/3...)",
+      "entry_type": "product",
+      "summary": "基于 SiF62− 阴离子的杂化超微孔材料，通过强氢键作用高效捕获乙炔",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:16.190Z"
+    },
+    {
+      "id": 43,
+      "title": "Ca-MOF([Ca(dtztp)0.5])",
+      "entry_type": "product",
+      "summary": "基于钙和四唑配体的 MOF，利用 Ca2+ 开放位点与炔基 π 电子云相互作用",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:17.727Z"
+    },
+    {
+      "id": 44,
+      "title": "Cu(TMBP)Cl",
+      "entry_type": "product",
+      "summary": "[Cu(TMBP)X] (X=Cl, Br, I) 系列MOF，乙炔分子以头对头方式与卤素原子相互作用，其中 Cu(TMBP)Cl 效果最佳",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:19.410Z"
+    },
+    {
+      "id": 45,
+      "title": "FJI-H8-R (R=Me, Et, Pr)",
+      "entry_type": "product",
+      "summary": "笼状结构提供了合适的空间几何形状，有效分离乙炔/二氧化碳。",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:20.950Z"
+    },
+    {
+      "id": 46,
+      "title": "MOF-74 系列(Mg, Co, Ni, Fe)",
+      "entry_type": "product",
+      "summary": "具有高密度金属开放位点的一维孔道 MOF 系列，对乙炔有强吸附能力",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:22.438Z"
+    },
+    {
+      "id": 47,
+      "title": "CuI@UiO-66-(COOH)2",
+      "entry_type": "product",
+      "summary": "通过后修饰引入 Cu+ 离子，利用 Cu(I)-炔基 π-络合作用实现对乙炔的超强结合（尤其在低压下）",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:23.916Z"
+    },
+    {
+      "id": 48,
+      "title": "可吸附乙炔的MOF_20251230160641A117.xlsx",
+      "entry_type": "product",
+      "summary": "一组可吸附乙炔的金属有机框架（MOF）材料及其吸附性能数据，涵盖多种吸附机理（开放金属位点、氢键、尺寸排阻、静电作用等），包含吸附类型、等量吸附热(Qst)、核心机理与关键特性等信息，来源于近年的学术文献与综述。",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:25.471Z"
+    },
+    {
+      "id": 49,
+      "title": "Sandbox 6a4b3cf0f074402e3d11b1b3",
+      "entry_type": "product",
+      "summary": "Imported from sandbox: Sandbox 6a4b3cf0f074402e3d11b1b3",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:25.911Z"
+    },
+    {
+      "id": 50,
+      "title": "UTSA-74（Zn）合成与乙炔传感测试流程",
+      "entry_type": "product",
+      "summary": "本流程描述了UTSA-74（Zn）的水热合成、活化、TTF气相渗透掺杂改性，以及材料的表征、多组分竞争吸附测试和乙炔电化学传感测试的全过程，旨在实现乙炔的选择性吸附与电化学响应检测。",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:26.243Z"
+    },
+    {
+      "id": 51,
+      "title": "ESEDIQ_clean",
+      "entry_type": "product",
+      "summary": "经过清洗/预处理后的 ESEDIQ 材料的高通量筛分数据",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:27.907Z"
+    },
+    {
+      "id": 52,
+      "title": "dot",
+      "entry_type": "product",
+      "summary": "高通量筛分得到的 ESEDIQ_clean 材料的结构性质数据，包含可及表面积、限制孔径、通道维度、可及体积分数、永久开放体积分数、孔径分布峰值等孔隙结构参数，以及筛选通过状态。",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:28.731Z"
+    },
+    {
+      "id": 53,
+      "title": "df96459f-5f3c-41cb-b235-2c4a0dc47be4_dataset.csv",
+      "entry_type": "product",
+      "summary": "Imported from sandbox: df96459f-5f3c-41cb-b235-2c4a0dc47be4_dataset.csv",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:29.141Z"
+    },
+    {
+      "id": 54,
+      "title": "In3(OH)3(TATAB)2",
+      "entry_type": "product",
+      "summary": "In3(OH)3(TATAB)2 在荧光传感TNP及吸附乙炔中的性能数据",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:29.453Z"
+    },
+    {
+      "id": 55,
+      "title": "ZIF-8/ZnO-update-update-update-update",
+      "entry_type": "product",
+      "summary": "ZIF-8/ZnO复合材料对H2S的电阻型传感性能数据，包含多浓度下的电阻变化和选择性数据",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:32.016Z"
+    },
+    {
+      "id": 56,
+      "title": "CoNi-MOFs-update",
+      "entry_type": "product",
+      "summary": "钴镍双金属有机框架对硫氢根离子的电化学传感性能数据",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:35.552Z"
+    },
+    {
+      "id": 57,
+      "title": "ESEDIQ_clean1",
+      "entry_type": "product",
+      "summary": "Imported from sandbox: ESEDIQ_clean1",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:37.380Z"
+    },
+    {
+      "id": 58,
+      "title": "dataset1.csv",
+      "entry_type": "product",
+      "summary": "Imported from sandbox: dataset1.csv",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:39.473Z"
+    },
+    {
+      "id": 59,
+      "title": "dataset.csv",
+      "entry_type": "product",
+      "summary": "Imported from sandbox: dataset.csv",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:39.789Z"
+    },
+    {
+      "id": 60,
+      "title": "cxzbvx",
+      "entry_type": "product",
+      "summary": "Imported from sandbox: cxzbvx",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:40.073Z"
+    },
+    {
+      "id": 61,
+      "title": "基于MOF的电阻型传感器-update",
+      "entry_type": "product",
+      "summary": "基于MOF的电阻型传感器研发流程，涵盖从计算筛选、实验筛选、合成与表征、吸附性能测试、传感器件制备、气敏测试到实际变压器油环境验证的完整链路",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:40.374Z"
+    },
+    {
+      "id": 62,
+      "title": "变压器油特性分析和检测方法调研1",
+      "entry_type": "product",
+      "summary": "对变压器油的特性（主要成分及与故障关系）、现阶段常用油色谱分析方法（实验室气相色谱检测方法和油色谱在线监测装置）以及油中溶解气体警戒值和对应故障类型判断（三比值法）进行系统调研和整理",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:40.750Z"
+    },
+    {
+      "id": 63,
+      "title": "dataset_small.csv-update-update-update",
+      "entry_type": "product",
+      "summary": "高通量筛选的MOF材料结构性质数据，包含孔隙结构参数（可及表面积、限制孔径、通道维度、体积分数等）及筛选通过状态",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:41.929Z"
+    },
+    {
+      "id": 64,
+      "title": "乙炔传感MOF材料（UiO-68-SMe-Pt）合成与表征流程",
+      "entry_type": "product",
+      "summary": "以1,4-二溴-2,5-二氟苯为起始原料，通过Suzuki偶联、甲硫醇化、水解三步合成有机配体H2L，再经溶剂热反应制备UiO-68-SMe MOF晶体，进而通过Pt负载得到UiO-68-SMe-Pt，最后进行系列结构表征的完整实验流程。",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:43.329Z"
+    },
+    {
+      "id": 65,
+      "title": "一种用于绝缘油C2H4气体检测传感器的气敏材料合成方案",
+      "entry_type": "product",
+      "summary": "Imported from sandbox: 一种用于绝缘油C2H4气体检测传感器的气敏材料合成方案",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:45.545Z"
+    },
+    {
+      "id": 66,
+      "title": "JAKBIJ_clean",
+      "entry_type": "product",
+      "summary": "经过清洗/预处理后的 JAKBIJ 材料高通量筛分数据",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:46.411Z"
+    },
+    {
+      "id": 67,
+      "title": "绝缘油C2H4气体检测传感器气敏材料合成方案",
+      "entry_type": "product",
+      "summary": "本文档描述了一种用于绝缘油C2H4气体检测传感器的MOF基气敏材料的完整合成方案，包括有机配体H2L的三步合成（SM1→Me2L→H2L）以及UiO-68-SMe MOF的结晶活化与后合成金属化修饰（UiO-68-SMe-Pt），最后进行多项结构表征。",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:46.929Z"
+    },
+    {
+      "id": 68,
+      "title": "数字资产导入流程（Dot类型）",
+      "entry_type": "product",
+      "summary": "本图为多泳道序列图/流程图，包含客户端、Controller 层、Service 层（同步阶段）、Service 层（异步阶段）四个纵向泳道以及右侧的主线程轮询分支。流程从客户端 POST /da/asset/import 开始，经参数校验、OSS 文件存在性校验、并发任务去重、任务记录创建后立即返回 taskId；与此同时主线程进入 180s 轮询，异步线程获取 Redis 分布式锁后按 ass",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:48.195Z"
+    },
+    {
+      "id": 69,
+      "title": "测试POST",
+      "entry_type": "product",
+      "summary": "测试",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:48.848Z"
+    },
+    {
+      "id": 70,
+      "title": "Ni/Co Ni-Pyz",
+      "entry_type": "product",
+      "summary": "Ni/Co Ni-Pyz 在电感传感NH3中的性能数据，具有高灵敏度和优异选择性",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:49.161Z"
+    },
+    {
+      "id": 71,
+      "title": "Cu3(HITP)2",
+      "entry_type": "product",
+      "summary": "Cu3(HITP)2材料对NH3的电阻型传感性能数据，包含多浓度下的响应率、响应恢复时间、检测下限及选择性数据",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:51.049Z"
+    },
+    {
+      "id": 72,
+      "title": "fum-fcu-MOF",
+      "entry_type": "product",
+      "summary": "fum-fcu-MOF材料对H2S的电容型传感性能数据，包含检测下限、电容变化率及选择性数据",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:54.707Z"
+    },
+    {
+      "id": 73,
+      "title": "TMA-Co(II)/PDLA",
+      "entry_type": "product",
+      "summary": "TMA-Co(II)/PDLA 在比色传感NH3中的性能数据",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:57.433Z"
+    },
+    {
+      "id": 74,
+      "title": "TCPP(Ni)-Co",
+      "entry_type": "product",
+      "summary": "TCPP(Ni)-Co 在电感传感茶碱中的性能数据",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:13:59.077Z"
+    },
+    {
+      "id": 75,
+      "title": "Co-MOF-74-TTF",
+      "entry_type": "product",
+      "summary": "Co-MOF-74-TTF 在电感传感CO2、CH4、N2中的性能数据",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:00.789Z"
+    },
+    {
+      "id": 76,
+      "title": "MOF6/Mxene",
+      "entry_type": "product",
+      "summary": "MOF6/Mxene复合材料对NH3的电阻型传感性能数据，包含疏水处理前后的多浓度响应数据",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:02.402Z"
+    },
+    {
+      "id": 77,
+      "title": "MOF-5/CS/IL",
+      "entry_type": "product",
+      "summary": "MOF-5/壳聚糖/离子液体复合材料对H2S的电阻型传感性能数据，包含多浓度下的电流和电阻响应数据",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:05.802Z"
+    },
+    {
+      "id": 78,
+      "title": "16 h Def-ZIF67",
+      "entry_type": "product",
+      "summary": "经16小时水搅拌处理后的缺陷ZIF67材料对C2H4等气体的电阻型传感性能数据",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:08.702Z"
+    },
+    {
+      "id": 79,
+      "title": "MOF-808-EDTA-M",
+      "entry_type": "product",
+      "summary": "MOF-808-EDTA-M 在比色传感HCl及其他酸性蒸汽/气体中的性能数据",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:10.972Z"
+    },
+    {
+      "id": 80,
+      "title": "MOF传感器文献_20260121162607A028.xlsx",
+      "entry_type": "product",
+      "summary": "来自多篇文献的MOF基气体/离子传感器性能数据汇总，涵盖NH3、H2S、C2H4、CO、NO2等多种目标分析物的传感响应性能",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:12.792Z"
+    },
+    {
+      "id": 81,
+      "title": "测试POST2",
+      "entry_type": "product",
+      "summary": "测试",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:13.177Z"
+    },
+    {
+      "id": 82,
+      "title": "郑跃强-测试Post",
+      "entry_type": "product",
+      "summary": "郑跃强-测试Post3",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:13.477Z"
+    },
+    {
+      "id": 83,
+      "title": "测试测试测试测试测试",
+      "entry_type": "product",
+      "summary": "测试测试测试测试测试测试测试测试测试",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:13.774Z"
+    },
+    {
+      "id": 84,
+      "title": "C₂H₂/C₂H₄ 选择性筛选方案-update",
+      "entry_type": "product",
+      "summary": "通过 DFT 计算筛选具有高 C₂H₂/C₂H₄ 选择性的 MOF 材料",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:14.077Z"
+    },
+    {
+      "id": 85,
+      "title": "测试POST1",
+      "entry_type": "product",
+      "summary": "测试",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:14.415Z"
+    },
+    {
+      "id": 86,
+      "title": "新建dATAset",
+      "entry_type": "product",
+      "summary": "测试新建",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:14.752Z"
+    },
+    {
+      "id": 87,
+      "title": "1111",
+      "entry_type": "product",
+      "summary": "Imported from sandbox: 1111",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:15.045Z"
+    },
+    {
+      "id": 88,
+      "title": "sdfsd",
+      "entry_type": "product",
+      "summary": "ddd",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:15.322Z"
+    },
+    {
+      "id": 89,
+      "title": "CuI@UiO−66−(COOH)2",
+      "entry_type": "product",
+      "summary": "通过后修饰引入 Cu+ 离子利用 π-络合作用实现乙炔超强结合的 MOF 材料",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:15.612Z"
+    },
+    {
+      "id": 90,
+      "title": "Cu(TMBP)X",
+      "entry_type": "product",
+      "summary": "利用卤素相互作用吸附乙炔的 MOF 材料系列，其中 Cu(TMBP)Cl 效果最佳",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:17.166Z"
+    },
+    {
+      "id": 91,
+      "title": "SIFSIX 系列",
+      "entry_type": "product",
+      "summary": "Benchmark 级材料；捕获痕量乙炔最有效的策略之一",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:18.727Z"
+    },
+    {
+      "id": 92,
+      "title": "Ca-MOF",
+      "entry_type": "product",
+      "summary": "低成本、易再生；吸附热适中，适合大流量变压吸附循环",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:20.147Z"
+    },
+    {
+      "id": 93,
+      "title": "FJI-H8",
+      "entry_type": "product",
+      "summary": "笼状结构提供了合适的空间几何形状，有效分离乙炔/二氧化碳",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:21.750Z"
+    },
+    {
+      "id": 94,
+      "title": "In-MOF",
+      "entry_type": "product",
+      "summary": "极耐水/耐油（沸水7天稳定）；有滞后环，抓得牢；C2H2/CH4 选择性高 (137)",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:23.176Z"
+    },
+    {
+      "id": 95,
+      "title": "MOF-74 系列",
+      "entry_type": "product",
+      "summary": "极高的金属位点密度，直接结合乙炔",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:14:26.102Z"
+    },
+    {
+      "id": 96,
+      "title": "????",
+      "entry_type": "asset",
+      "summary": "Test import",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:25:04.675Z"
+    },
+    {
+      "id": 97,
+      "title": "MOF-303小试放大预算和风险评估报告-2.0",
+      "entry_type": "asset",
+      "summary": "MOF-303小试放大预算和风险评估报告 一．100 ml反应釜合成 1.1 合成方法 ① 配置溶液A——1.74 g 3,5-吡唑二羧酸一水合物+0.6 g 氢氧化钠+90 ml H2O；② 配置溶液B——2.41 g 氯化铝六水合物+10 ml H2O；③使用分液漏斗缓慢将溶液B滴加进入溶液A，此时出现白色沉淀，溶液逐渐变为奶白色；④将混合溶液转移进入100 ml反应釜，反应釜放入100℃烘箱",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:37:01.068Z"
+    },
+    {
+      "id": 98,
+      "title": "MOF-303小试放大预算和风险评估报告-2.0",
+      "entry_type": "asset",
+      "summary": "MOF-303小试放大预算和风险评估报告 一．100 ml反应釜合成 1.1 合成方法 ① 配置溶液A——1.74 g 3,5-吡唑二羧酸一水合物+0.6 g 氢氧化钠+90 ml H2O；② 配置溶液B——2.41 g 氯化铝六水合物+10 ml H2O；③使用分液漏斗缓慢将溶液B滴加进入溶液A，此时出现白色沉淀，溶液逐渐变为奶白色；④将混合溶液转移进入100 ml反应釜，反应釜放入100℃烘箱",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:41:21.304Z"
+    },
+    {
+      "id": 99,
+      "title": "MOF-303小试放大预算和风险评估报告-2.0",
+      "entry_type": "asset",
+      "summary": "MOF-303 小试放大预算和风险评估报告  一．100 ml 反应釜合成  1.1 合成方法  ① 配置溶液 A——1.74 g 3,5-吡唑二羧酸一水合物+0.6 g 氢氧化钠+90 ml  H2O；② 配置溶液 B——2.41 g 氯化铝六水合物+10 ml H2O；③使用分液漏斗 缓慢将溶液 B 滴加进入溶液 A，此时出现白色沉淀，溶液逐渐变为奶白色；④ 将混合溶液转移进入 100 ml",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:41:24.413Z"
+    },
+    {
+      "id": 100,
+      "title": "MOFs材料机理2",
+      "entry_type": "tech",
+      "summary": "步骤一 主反应: 步骤二 MOF-303 氯化铝六水合物 AlCl3·6H2O NaOH 3,5-吡唑二羧酸一水合物 C5H4N2O4· H2O 氢氧化钠 步骤一 NaOH过少时 NaOH过量时 1.溶液碱性过强，抑制 MOF 形成 2.金属离子沉淀，降低产率 干扰 MOF 有序生长，导致产物降低 水解 沉淀 极端碱性条件偏铝酸盐 步骤二 需要存在少量的NaOH  UTSA-16 步骤一 主反应:",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:41:53.540Z"
+    },
+    {
+      "id": 101,
+      "title": "1-s2.0-S0009250925013971-main",
+      "entry_type": "tech",
+      "summary": "Optimization of hydrothermal carbonization parameters of sugarcane  residues for enhanced hydrochar fuel properties with ammonium  adsorption assessment Edy Kurniawan a , b , Rattana Jariyaboon a , b",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:02.203Z"
+    },
+    {
+      "id": 102,
+      "title": "1-s2.0-S0141813025001230-main",
+      "entry_type": "tech",
+      "summary": "Extraction of high-purity lignin from the kraft pulping black liquor by enzyme purification process with alkaline-resistant xylanase and cellulase Yanzhen Xie a , Xingxiang Ji a , Zhongjian Tian a , b",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:03.659Z"
+    },
+    {
+      "id": 103,
+      "title": "1-s2.0-S0141813025086374-main",
+      "entry_type": "tech",
+      "summary": "Evaluation of lignin and cellulose nanoparticles from  bacterial-deconstructed sugarcane bagasse for effective quercetin delivery Gaurav Singh a , b , 1 , Abhishek Verma a , 1 , Ankit Srivastava c , S",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:05.496Z"
+    },
+    {
+      "id": 104,
+      "title": "1-s2.0-S0926669025015614-main",
+      "entry_type": "tech",
+      "summary": "Sustainable and efficient valorization of sugarcane bagasse: Integrated  conversion of holocellulose into acetone, butanol, and ethanol Maryam Mohagheghian a , Hamid Zilouei a , * , Keikhosro Karimi b",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:07.737Z"
+    },
+    {
+      "id": 105,
+      "title": "1-s2.0-S0957582024001381-main",
+      "entry_type": "tech",
+      "summary": "Process Safety and Environmental Protection 184 (2024) 615–623 Available online 8 February 2024 0957-5820/© 2024 Institution of Chemical Engineers. Published by Elsevier Ltd. All rights reserved. Deve",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:08.581Z"
+    },
+    {
+      "id": 106,
+      "title": "1-s2.0-S0959652625013630-main",
+      "entry_type": "tech",
+      "summary": "Global optimization of multiply enzyme synergic treatment in the pulp and  paper industry through machine learning methodology Manli Yang a , Hui Zhao b , Chenyang Zhang a , Shipeng Gao c , Haorui Wan",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:09.571Z"
+    },
+    {
+      "id": 107,
+      "title": "1-s2.0-S0961953425002089-main",
+      "entry_type": "tech",
+      "summary": "Valorization of agave bagasse as a bio-template for circular economy:  Applications in energy conversion, metabolite production, and sustainable  material synthesis Walter M. Warren-Vega a , b , c , R",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:10.993Z"
+    },
+    {
+      "id": 108,
+      "title": "1-s2.0-S0961953425005720-main",
+      "entry_type": "tech",
+      "summary": "Fermentation of sugarcane bagasse for production of value-added phenolic  compounds using potential bacterial strains: A comparative analysis Bhabjit Pattnaik a , Preeti b , * , Dolly Gupta b , Dipanw",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:12.392Z"
+    },
+    {
+      "id": 109,
+      "title": "1-s2.0-S0961953425006968-main",
+      "entry_type": "tech",
+      "summary": "Integrated assessment of bio-oil catalytic hydrocracking for diesel and  gasoline production in the sugarcane industry Edvan Vinícius Gonçalves a , Bruno Bertolo Caetano a , Melissa Gurgel Adeodato Vi",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:13.586Z"
+    },
+    {
+      "id": 110,
+      "title": "1-s2.0-S0961953425008979-main",
+      "entry_type": "tech",
+      "summary": "Maximizing wheat straw utilization: An integrated, near-zero-waste  sequential biorefining approach Harmeet Kaur 1 , Dinesh Goyal * Department of Biotechnology, Thapar Institute of Engineering & Techn",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:14.646Z"
+    },
+    {
+      "id": 111,
+      "title": "1-s2.0-S1369703X25000646-main",
+      "entry_type": "tech",
+      "summary": "Regular article Simultaneous enzymatic hydrolysis and bioconversion of deacetylated and  disk refined sugarcane bagasse to single-cell protein: An experimental  investigation and techno-economic analy",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:15.941Z"
+    },
+    {
+      "id": 112,
+      "title": "1-s2.0-S1385894725049903-main",
+      "entry_type": "tech",
+      "summary": "Exploring exopolysaccharide production from sugarcane bagasse:  Mechanisms and processes involving Leuconostoc mesenteroides Yi Yang , Ziwen Wang , Zehai Chen , Yang Qiu , Dan Zhao , Renpeng Du * , Ji",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:17.346Z"
+    },
+    {
+      "id": 113,
+      "title": "1-s2.0-S2351978919303488-main",
+      "entry_type": "tech",
+      "summary": "ScienceDirect Available online at www.sciencedirect.com Available online at www.sciencedirect.com ScienceDirect  Procedia Manufacturing 00 (2017) 000–000    www.elsevier.com/locate/procedia  * Paulo A",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:17.844Z"
+    },
+    {
+      "id": 114,
+      "title": "1-s2.0-S2589014X25002361-main",
+      "entry_type": "tech",
+      "summary": "Agro-industrial waste valorization through solid-state fermentation by  Lentinula edodes for high-protein and β -glucans flour development for  human diet: Chemical characterization, drying kinetics e",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:29.060Z"
+    },
+    {
+      "id": 115,
+      "title": "1-s2.0-S2589014X25003044-main",
+      "entry_type": "tech",
+      "summary": "Techno-economic evaluation of multiple product scenarios from pineapple  leaf waste in integrated biorefinery Poornima Vengaprath Bhattathiri a , b , Warren Batchelor c , Antonio Patti d , Amit Arora",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:30.323Z"
+    },
+    {
+      "id": 116,
+      "title": "1-s2.0-S2590123025012368-main",
+      "entry_type": "tech",
+      "summary": "Research paper Sustainable lactic acid production: Optimization yield from sugarcane and  beet molasses through fermentation Nahla M. Salatein a , Rawan K. Hassan a , * , Rana Adel Ibrahim a , Said E.",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:31.762Z"
+    },
+    {
+      "id": 117,
+      "title": "1-s2.0-S266615432300056X-main",
+      "entry_type": "tech",
+      "summary": "Journal of Agriculture and Food Research 12 (2023) 100549 Available online 6 March 2023 2666-1543/© 2023 The Authors. Published by Elsevier B.V. This is an open access article under the CC BY-NC-ND li",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:33.040Z"
+    },
+    {
+      "id": 118,
+      "title": "2025-12-12甘蔗渣生物炼制与高值化利用场景验证平台",
+      "entry_type": "tech",
+      "summary": "项目名称：甘蔗渣生物炼制与高值化利用场景验证平台 一、 总体工艺流程设计 我们将整个流程分为三个主要模块：前处理与分离（酶解中心）、纤维利用（造纸/材料中心）、滤液利用（发酵中心）。 1. 第一阶段：生物-化学联合预处理与分离 目标： 温和地把甘蔗渣的三大组分（纤维素、半纤维素、木质素）拆解开，尽量避免破坏纤维结构。 工艺步骤： 原料预处理： 甘蔗渣除杂、清洗、切断。在切断时，需要保持较大块段，比",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:33.303Z"
+    },
+    {
+      "id": 119,
+      "title": "2025-12-15甘蔗渣生物炼制与高值化利用场景验证平台",
+      "entry_type": "tech",
+      "summary": "一、 行业领军企业是如何利用非粮生物质的？（四大模式） 1. “三素分离”是核心，全组分利用是趋势 案例代表：新乡化纤（案例7）、济南圣泉（案例11）、黑龙江秸乐（案例23）、南乐集聚区（特色2）。 做法：不再只盯着纤维素（造纸），而是通过物理、化学或生物手段，将纤维素、半纤维素、木质素彻底分离，分别通过不同工艺转化。 利用方式： 纤维素  纺织纤维、纸浆、乙醇。 半纤维素  糠醛、木糖、木糖醇。",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:43.147Z"
+    },
+    {
+      "id": 120,
+      "title": "2025-Transparent wood",
+      "entry_type": "tech",
+      "summary": "Academic Editors: Rodolphe Sonnier and Roland El Hage Received: 22 February 2025 Revised: 18 March 2025 Accepted: 26 March 2025 Published: 28 March 2025 Citation: Hai, L.V .; Srikanth, N.; Le, T.D.T.;",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:49.024Z"
+    },
+    {
+      "id": 121,
+      "title": "2025-enzyme-food",
+      "entry_type": "tech",
+      "summary": "1 of 35Food Science & Nutrition, 2025; 13:e70927 https://doi.org/10.1002/fsn3.70927 Food Science & Nutrition REVIEW OPEN ACCESS Enzyme Technology in the Food Industry: Molecular  Mechanisms, Applicati",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:43:55.762Z"
+    },
+    {
+      "id": 122,
+      "title": "2025-ligini",
+      "entry_type": "tech",
+      "summary": "Review From black to green - A critical review of thermochemical valorization of  black liquor Quan Liu , Xuesong Zhang , Lujia Han * Engineering Laboratory for AgroBiomass Recycling & Valorizing, Col",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:44:34.314Z"
+    },
+    {
+      "id": 123,
+      "title": "2025-lignin-oiland water separate",
+      "entry_type": "tech",
+      "summary": "Review A mini-review on lignin isolation and modification based on sorbent  materials with porous nature as demulsifier for oil/water separations Maged M. Basuliman a , b , Zakariyya Uba Zango c , Dja",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:44:36.603Z"
+    },
+    {
+      "id": 124,
+      "title": "2025-lignin2",
+      "entry_type": "tech",
+      "summary": "REVIEW Open Access © The Author(s) 2025. Open Access  This article is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International  License, which permits any non-commer",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:44:37.810Z"
+    },
+    {
+      "id": 125,
+      "title": "2025.07.21.665674v1.full",
+      "entry_type": "tech",
+      "summary": "Alp haGEM Enables Precise Genome-Scale Metabolic Modelling by Integrating Protein 1  Struct ure Alignment with deep-learning-based Dark Metabolism Mining 2   3  Weish ang Han 1* , Luchi Xiao 1* , Haoc",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:44:46.990Z"
+    },
+    {
+      "id": 126,
+      "title": "2025_ Orange peel composition-mono",
+      "entry_type": "tech",
+      "summary": "橙皮成分、生物聚合物提取及其在造纸与包装领域的应用：综述 瓦卢雷迪·雷瓦蒂，苏斯米塔·博拉，努林·阿夫齐娅，塔布利·戈什 * Department of Food Engineering and Technology, School of Engineering, Tezpur University, Tezpur, Assam, 784028, India 论文信息 Keywords: 橙皮 可",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:45:26.749Z"
+    },
+    {
+      "id": 127,
+      "title": "2025_ Orange peel composition",
+      "entry_type": "tech",
+      "summary": "Orange peel composition, biopolymer extraction, and applications  in paper and packaging sector: A review Valureddi Revathi , Susmita Bora , Nurin Afzia , Tabli Ghosh * Department of Food Engineering",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:45:28.329Z"
+    },
+    {
+      "id": 128,
+      "title": "2025_Chimeric enzymes",
+      "entry_type": "tech",
+      "summary": "Chimeric enzymes in the pulp and paper making industry:  Current developments Abdullah Arsalan a , 1 , Yuvaraj Ravikumar a , c , 1 , Xinrui Tang a , Zijing Cao a , Mei Zhao a , ** ,   Wenjing Sun a ,",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:45:30.030Z"
+    },
+    {
+      "id": 129,
+      "title": "2025_Decarbonization pathways",
+      "entry_type": "tech",
+      "summary": "Decarbonization pathways for the pulp and paper industry: A  comprehensive review Farhan Haider Joyo a , * , Benedetto Nastasi b , Davide Astiaso Garcia a a Department of Astronautical, Electrical and",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:45:32.538Z"
+    },
+    {
+      "id": 130,
+      "title": "2025_lignocellulosic biomass",
+      "entry_type": "tech",
+      "summary": "Review Preparation and applications of nanoparticles from lignocellulosic biomass:  A review Ajay Kumar Chauhan a , Surendra Pratap Singh b , Aman Singh Rajpoot c , Shailja Chauhan d ,   Aatikah Meraj",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:45:34.261Z"
+    },
+    {
+      "id": 131,
+      "title": "2025_microalgae biodiesel",
+      "entry_type": "tech",
+      "summary": "Impact of oxyhydrogen-enriched, nano-doped microalgae biodiesel on  diesel engine performance, emissions, and thermo-exergetic sustainability Aman Singh Rajpoot a , Ajay Kumar Chauhan b , Amul Jain c",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:45:37.589Z"
+    },
+    {
+      "id": 132,
+      "title": "2025_waste",
+      "entry_type": "tech",
+      "summary": "Use of industrial pulp and paper waste as agricultural inputs: A systematic literature review1 DOI: http://dx.doi.org/10.1590/1807-1929/agriambi.v29n5e287587 • Ref. 287587 – Received 15 Jun, 2024 * Co",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:45:38.181Z"
+    },
+    {
+      "id": 133,
+      "title": "BC",
+      "entry_type": "tech",
+      "summary": "新生物 30 高效低能耗发酵生产细菌纤维素技术 项目负责人：张海波 技术联络人：张海波 联系方式：0532-58568203 电子邮箱：zhanghb@qibebt.ac.cn 关键词：细菌纤维素、高效低能耗发酵 技术成熟度：应用研究（TRL=6-7）  项目简介 细菌纤维素是重要的塑料替代品，也是重要的食品原料。针对细菌纤维素的生产对椰子 水依赖性强、生产成本高、生产效率低等问题，研究采用合成",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:45:38.642Z"
+    },
+    {
+      "id": 134,
+      "title": "CN201410834523.6_一种2,5-呋喃二甲酸的制备方法",
+      "entry_type": "patent",
+      "summary": "(10)申请公布号                (43)申请公布日                 (21)申请号 201410834523.6 (22)申请日 2014.12.26 C07D 307/68(2006.01) (71)申请人 中国科学技术大学先进技术研究院 地址 230088 安徽省合肥市高新区望江西路 5089 号 申请人 合肥利夫生物科技有限公司 (72)发明人 邓晋  徐海",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:45:40.364Z"
+    },
+    {
+      "id": 135,
+      "title": "CN201410834527.4_一种催化体系可循环使用的2,5-呋喃二甲醛的制备方法",
+      "entry_type": "patent",
+      "summary": "(10)申请公布号                (43)申请公布日                 (21)申请号 201410834527.4 (22)申请日 2014.12.26 C07D 307/46(2006.01) B01J 31/28(2006.01) (71)申请人 合肥利夫生物科技有限公司 地址 230031 安徽省合肥市高新区望江西路 800 号科技产业园 A3 楼 310 室",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:45:41.388Z"
+    },
+    {
+      "id": 136,
+      "title": "CN201410834559.4_一种2,5-呋喃二甲醛的制备方法",
+      "entry_type": "patent",
+      "summary": "(10)申请公布号                (43)申请公布日                 (21)申请号 201410834559.4 (22)申请日 2014.12.26 C07D 307/46(2006.01) (71)申请人 合肥利夫生物科技有限公司 地址 230031 安徽省合肥市高新区望江西路 800 号科技产业园 A3 楼 310 室 (72)发明人 邓晋  徐海  汪鹏",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:45:42.493Z"
+    },
+    {
+      "id": 137,
+      "title": "CN201510616697.X_一种由生物质衍生物5-HMF或糠醛制备长链烷烃的方法",
+      "entry_type": "patent",
+      "summary": "(10)申请公布号                (43)申请公布日                 (21)申请号 201510616697.X (22)申请日 2015.09.24 C07C 1/20(2006.01) C07C 9/16(2006.01) C07C 9/15(2006.01) (71)申请人 合肥利夫生物科技有限公司 地址 230031 安徽省合肥市高新区望江西路 800 号",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:45:43.688Z"
+    },
+    {
+      "id": 138,
+      "title": "CN201610040983.0_合成奈妥吡坦中间体杂质2-(3,5-双三氟甲基苯基)丙酸的方法",
+      "entry_type": "patent",
+      "summary": "(10)申请公布号                (43)申请公布日                 (21)申请号 201610040983.0 (22)申请日 2016.01.21 C07C 57/58(2006.01) C07C 51/08(2006.01) (71)申请人 中国科学技术大学先进技术研究院 地址 230088 安徽省合肥市望江西路 5089 号 申请人 浙江海洲制药有限公司",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:45:44.877Z"
+    },
+    {
+      "id": 139,
+      "title": "CN201610101663.1_一种奈妥吡坦中间体的合成方法",
+      "entry_type": "patent",
+      "summary": "(10)申请公布号                (43)申请公布日                 (21)申请号 201610101663.1 (22)申请日 2016.02.24 C07C 51/353(2006.01) C07C 57/58(2006.01) (71)申请人 合肥利夫生物科技有限公司 地址 230031 安徽省合肥市高新区望江西路 800 号科技产业园 A3 楼 310 室",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:45:46.147Z"
+    },
+    {
+      "id": 140,
+      "title": "CN201610101681.X_一种药物中间体的合成方法",
+      "entry_type": "patent",
+      "summary": "(10)申请公布号                (43)申请公布日                 (21)申请号 201610101681.X (22)申请日 2016.02.24 C07C 51/08(2006.01) C07C 57/58(2006.01) (71)申请人 合肥利夫生物科技有限公司 地址 230031 安徽省合肥市高新区望江西路 800 号科技产业园 A3 楼 310 室",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:45:47.265Z"
+    },
+    {
+      "id": 141,
+      "title": "CN201610101682.4_一种奈妥吡坦中间体2-(3,5-双三氟甲基苯基)-2-甲基丙酸的合成方法",
+      "entry_type": "patent",
+      "summary": "(10)申请公布号                (43)申请公布日                 (21)申请号 201610101682.4 (22)申请日 2016.02.24 C07C 51/08(2006.01) C07C 57/58(2006.01) (71)申请人 合肥利夫生物科技有限公司 地址 230031 安徽省合肥市高新区望江西路 800 号科技产业园 A3 楼 310 室",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:45:48.348Z"
+    },
+    {
+      "id": 142,
+      "title": "CN201610326841.0_一种由糖制备5-羟甲基糠醛的方法",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 201610326841.0 (22)申请日 2016.05.13 (71)申请人 中盐安徽红四方股份有限公司 地址 230022 安徽省合肥市祁门路12号 申请人 合肥利夫生物科技有限公司 (72)发明人 傅尧　方立贵　谢中平　刘红梅　 陶小洲　邓晋　徐海　李兴龙　 吴江江　汪",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:45:49.577Z"
+    },
+    {
+      "id": 143,
+      "title": "CN201611079757.X_一种利用乙酰丙酸制备吡咯烷酮的方法",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 201611079757.X (22)申请日 2016.11.30 (71)申请人 合肥利夫生物科技有限公司 地址 230000 安徽省合肥市创新产业园二 期E3楼A区8层、 9层 （即801、 901室） (72)发明人 邓晋　金梦　徐海　李兴龙　徐强　 (74)专利代理机构",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:45:50.718Z"
+    },
+    {
+      "id": 144,
+      "title": "1-s2.0-S0009250925013971-main",
+      "entry_type": "tech",
+      "summary": "Optimization of hydrothermal carbonization parameters of sugarcane  residues for enhanced hydrochar fuel properties with ammonium  adsorption assessment Edy Kurniawan a , b , Rattana Jariyaboon a , b",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:54:42.880Z"
+    },
+    {
+      "id": 145,
+      "title": "1-s2.0-S0141813025001230-main",
+      "entry_type": "tech",
+      "summary": "Extraction of high-purity lignin from the kraft pulping black liquor by enzyme purification process with alkaline-resistant xylanase and cellulase Yanzhen Xie a , Xingxiang Ji a , Zhongjian Tian a , b",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:54:44.245Z"
+    },
+    {
+      "id": 146,
+      "title": "1-s2.0-S0141813025086374-main",
+      "entry_type": "tech",
+      "summary": "Evaluation of lignin and cellulose nanoparticles from  bacterial-deconstructed sugarcane bagasse for effective quercetin delivery Gaurav Singh a , b , 1 , Abhishek Verma a , 1 , Ankit Srivastava c , S",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:54:46.111Z"
+    },
+    {
+      "id": 147,
+      "title": "1-s2.0-S0926669025015614-main",
+      "entry_type": "tech",
+      "summary": "Sustainable and efficient valorization of sugarcane bagasse: Integrated  conversion of holocellulose into acetone, butanol, and ethanol Maryam Mohagheghian a , Hamid Zilouei a , * , Keikhosro Karimi b",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:54:48.477Z"
+    },
+    {
+      "id": 148,
+      "title": "1-s2.0-S0957582024001381-main",
+      "entry_type": "tech",
+      "summary": "Process Safety and Environmental Protection 184 (2024) 615?623 Available online 8 February 2024 0957-5820/? 2024 Institution of Chemical Engineers. Published by Elsevier Ltd. All rights reserved. Deve",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:54:49.365Z"
+    },
+    {
+      "id": 149,
+      "title": "1-s2.0-S0959652625013630-main",
+      "entry_type": "tech",
+      "summary": "Global optimization of multiply enzyme synergic treatment in the pulp and  paper industry through machine learning methodology Manli Yang a , Hui Zhao b , Chenyang Zhang a , Shipeng Gao c , Haorui Wan",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:54:50.381Z"
+    },
+    {
+      "id": 150,
+      "title": "1-s2.0-S0961953425002089-main",
+      "entry_type": "tech",
+      "summary": "Valorization of agave bagasse as a bio-template for circular economy:  Applications in energy conversion, metabolite production, and sustainable  material synthesis Walter M. Warren-Vega a , b , c , R",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:54:51.913Z"
+    },
+    {
+      "id": 151,
+      "title": "1-s2.0-S0961953425005720-main",
+      "entry_type": "tech",
+      "summary": "Fermentation of sugarcane bagasse for production of value-added phenolic  compounds using potential bacterial strains: A comparative analysis Bhabjit Pattnaik a , Preeti b , * , Dolly Gupta b , Dipanw",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:54:53.427Z"
+    },
+    {
+      "id": 152,
+      "title": "1-s2.0-S0961953425006968-main",
+      "entry_type": "tech",
+      "summary": "Integrated assessment of bio-oil catalytic hydrocracking for diesel and  gasoline production in the sugarcane industry Edvan Vin?cius Gon?alves a , Bruno Bertolo Caetano a , Melissa Gurgel Adeodato Vi",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:54:54.758Z"
+    },
+    {
+      "id": 153,
+      "title": "1-s2.0-S0961953425008979-main",
+      "entry_type": "tech",
+      "summary": "Maximizing wheat straw utilization: An integrated, near-zero-waste  sequential biorefining approach Harmeet Kaur 1 , Dinesh Goyal * Department of Biotechnology, Thapar Institute of Engineering & Techn",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:54:55.870Z"
+    },
+    {
+      "id": 154,
+      "title": "1-s2.0-S1369703X25000646-main",
+      "entry_type": "tech",
+      "summary": "Regular article Simultaneous enzymatic hydrolysis and bioconversion of deacetylated and  disk refined sugarcane bagasse to single-cell protein: An experimental  investigation and techno-economic analy",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:54:57.205Z"
+    },
+    {
+      "id": 155,
+      "title": "1-s2.0-S1385894725049903-main",
+      "entry_type": "tech",
+      "summary": "Exploring exopolysaccharide production from sugarcane bagasse:  Mechanisms and processes involving Leuconostoc mesenteroides Yi Yang , Ziwen Wang , Zehai Chen , Yang Qiu , Dan Zhao , Renpeng Du * , Ji",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:54:58.715Z"
+    },
+    {
+      "id": 156,
+      "title": "1-s2.0-S2351978919303488-main",
+      "entry_type": "tech",
+      "summary": "ScienceDirect Available online at www.sciencedirect.com Available online at www.sciencedirect.com ScienceDirect? Procedia Manufacturing 00 (2017) 000?000    www.elsevier.com/locate/procedia  * Paulo A",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:54:59.230Z"
+    },
+    {
+      "id": 157,
+      "title": "1-s2.0-S2589014X25002361-main",
+      "entry_type": "tech",
+      "summary": "Agro-industrial waste valorization through solid-state fermentation by  Lentinula edodes for high-protein and ? -glucans flour development for  human diet: Chemical characterization, drying kinetics e",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:55:10.561Z"
+    },
+    {
+      "id": 158,
+      "title": "1-s2.0-S2589014X25003044-main",
+      "entry_type": "tech",
+      "summary": "Techno-economic evaluation of multiple product scenarios from pineapple  leaf waste in integrated biorefinery Poornima Vengaprath Bhattathiri a , b , Warren Batchelor c , Antonio Patti d , Amit Arora",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:55:11.814Z"
+    },
+    {
+      "id": 159,
+      "title": "1-s2.0-S2590123025012368-main",
+      "entry_type": "tech",
+      "summary": "Research paper Sustainable lactic acid production: Optimization yield from sugarcane and  beet molasses through fermentation Nahla M. Salatein a , Rawan K. Hassan a , * , Rana Adel Ibrahim a , Said E.",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:55:13.300Z"
+    },
+    {
+      "id": 160,
+      "title": "1-s2.0-S266615432300056X-main",
+      "entry_type": "tech",
+      "summary": "Journal of Agriculture and Food Research 12 (2023) 100549 Available online 6 March 2023 2666-1543/? 2023 The Authors. Published by Elsevier B.V. This is an open access article under the CC BY-NC-ND li",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:55:14.616Z"
+    },
+    {
+      "id": 161,
+      "title": "2025-12-12甘蔗渣生物炼制与高值化利用场景验证平台",
+      "entry_type": "tech",
+      "summary": "项目名称：甘蔗渣生物炼制与高值化利用场景验证平台 一、 总体工艺流程设计 我们将整个流程分为三个主要模块：前处理与分离（酶解中心）、纤维利用（造纸/材料中心）、滤液利用（发酵中心）。 1. 第一阶段：生物-化学联合预处理与分离 目标： 温和地把甘蔗渣的三大组分（纤维素、半纤维素、木质素）拆解开，尽量避免破坏纤维结构。 工艺步骤： 原料预处理： 甘蔗渣除杂、清洗、切断。在切断时，需要保持较大块段，比",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:55:14.875Z"
+    },
+    {
+      "id": 162,
+      "title": "2025-12-15甘蔗渣生物炼制与高值化利用场景验证平台",
+      "entry_type": "tech",
+      "summary": "一、 行业领军企业是如何利用非粮生物质的？（四大模式） 1. “三素分离”是核心，全组分利用是趋势 案例代表：新乡化纤（案例7）、济南圣泉（案例11）、黑龙江秸乐（案例23）、南乐集聚区（特色2）。 做法：不再只盯着纤维素（造纸），而是通过物理、化学或生物手段，将纤维素、半纤维素、木质素彻底分离，分别通过不同工艺转化。 利用方式： 纤维素  纺织纤维、纸浆、乙醇。 半纤维素  糠醛、木糖、木糖醇。",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:55:24.529Z"
+    },
+    {
+      "id": 163,
+      "title": "2025-Transparent wood",
+      "entry_type": "tech",
+      "summary": "Academic Editors: Rodolphe Sonnier and Roland El Hage Received: 22 February 2025 Revised: 18 March 2025 Accepted: 26 March 2025 Published: 28 March 2025 Citation: Hai, L.V .; Srikanth, N.; Le, T.D.T.;",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:55:30.548Z"
+    },
+    {
+      "id": 164,
+      "title": "2025-enzyme-food",
+      "entry_type": "tech",
+      "summary": "1 of 35Food Science & Nutrition, 2025; 13:e70927 https://doi.org/10.1002/fsn3.70927 Food Science & Nutrition REVIEW OPEN ACCESS Enzyme Technology in the Food Industry: Molecular  Mechanisms, Applicati",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:55:37.421Z"
+    },
+    {
+      "id": 165,
+      "title": "2025-ligini",
+      "entry_type": "tech",
+      "summary": "Review From black to green - A critical review of thermochemical valorization of  black liquor Quan Liu , Xuesong Zhang , Lujia Han * Engineering Laboratory for AgroBiomass Recycling & Valorizing, Col",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:56:17.412Z"
+    },
+    {
+      "id": 166,
+      "title": "2025-lignin-oiland water separate",
+      "entry_type": "tech",
+      "summary": "Review A mini-review on lignin isolation and modification based on sorbent  materials with porous nature as demulsifier for oil/water separations Maged M. Basuliman a , b , Zakariyya Uba Zango c , Dja",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:56:19.945Z"
+    },
+    {
+      "id": 167,
+      "title": "2025-lignin2",
+      "entry_type": "tech",
+      "summary": "REVIEW Open Access ? The Author(s) 2025. Open Access  This article is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International  License, which permits any non-commer",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:56:21.192Z"
+    },
+    {
+      "id": 168,
+      "title": "2025.07.21.665674v1.full",
+      "entry_type": "tech",
+      "summary": "Alp haGEM Enables Precise Genome-Scale Metabolic Modelling by Integrating Protein 1  Struct ure Alignment with deep-learning-based Dark Metabolism Mining 2   3  Weish ang Han 1* , Luchi Xiao 1* , Haoc",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:56:30.549Z"
+    },
+    {
+      "id": 169,
+      "title": "2025_ Orange peel composition-mono",
+      "entry_type": "tech",
+      "summary": "橙皮成分、生物聚合物提取及其在造纸与包装领域的应用：综述 瓦卢雷迪·雷瓦蒂，苏斯米塔·博拉，努林·阿夫齐娅，塔布利·戈什 * Department of Food Engineering and Technology, School of Engineering, Tezpur University, Tezpur, Assam, 784028, India 论文信息 Keywords: 橙皮 可",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:10.837Z"
+    },
+    {
+      "id": 170,
+      "title": "2025_ Orange peel composition",
+      "entry_type": "tech",
+      "summary": "Orange peel composition, biopolymer extraction, and applications  in paper and packaging sector: A review Valureddi Revathi , Susmita Bora , Nurin Afzia , Tabli Ghosh * Department of Food Engineering",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:12.432Z"
+    },
+    {
+      "id": 171,
+      "title": "2025_Chimeric enzymes",
+      "entry_type": "tech",
+      "summary": "Chimeric enzymes in the pulp and paper making industry:  Current developments Abdullah Arsalan a , 1 , Yuvaraj Ravikumar a , c , 1 , Xinrui Tang a , Zijing Cao a , Mei Zhao a , ** ,   Wenjing Sun a ,",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:14.085Z"
+    },
+    {
+      "id": 172,
+      "title": "2025_Decarbonization pathways",
+      "entry_type": "tech",
+      "summary": "Decarbonization pathways for the pulp and paper industry: A  comprehensive review Farhan Haider Joyo a , * , Benedetto Nastasi b , Davide Astiaso Garcia a a Department of Astronautical, Electrical and",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:16.689Z"
+    },
+    {
+      "id": 173,
+      "title": "2025_lignocellulosic biomass",
+      "entry_type": "tech",
+      "summary": "Review Preparation and applications of nanoparticles from lignocellulosic biomass:  A review Ajay Kumar Chauhan a , Surendra Pratap Singh b , Aman Singh Rajpoot c , Shailja Chauhan d ,   Aatikah Meraj",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:18.427Z"
+    },
+    {
+      "id": 174,
+      "title": "2025_microalgae biodiesel",
+      "entry_type": "tech",
+      "summary": "Impact of oxyhydrogen-enriched, nano-doped microalgae biodiesel on  diesel engine performance, emissions, and thermo-exergetic sustainability Aman Singh Rajpoot a , Ajay Kumar Chauhan b , Amul Jain c",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:21.878Z"
+    },
+    {
+      "id": 175,
+      "title": "2025_waste",
+      "entry_type": "tech",
+      "summary": "Use of industrial pulp and paper waste as agricultural inputs: A systematic literature review1 DOI: http://dx.doi.org/10.1590/1807-1929/agriambi.v29n5e287587 ? Ref. 287587 ? Received 15 Jun, 2024 * Co",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:22.452Z"
+    },
+    {
+      "id": 176,
+      "title": "BC",
+      "entry_type": "tech",
+      "summary": "新生物 30 高效低能耗发酵生产细菌纤维素技术 项目负责人：张海波 技术联络人：张海波 联系方式：0532-58568203 电子邮箱：zhanghb@qibebt.ac.cn 关键词：细菌纤维素、高效低能耗发酵 技术成熟度：应用研究（TRL=6-7）  项目简介 细菌纤维素是重要的塑料替代品，也是重要的食品原料。针对细菌纤维素的生产对椰子 水依赖性强、生产成本高、生产效率低等问题，研究采用合成",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:22.934Z"
+    },
+    {
+      "id": 177,
+      "title": "CN201410834523.6_一种2,5-呋喃二甲酸的制备方法",
+      "entry_type": "patent",
+      "summary": "(10)申请公布号                (43)申请公布日                 (21)申请号 201410834523.6 (22)申请日 2014.12.26 C07D 307/68(2006.01) (71)申请人 中国科学技术大学先进技术研究院 地址 230088 安徽省合肥市高新区望江西路 5089 号 申请人 合肥利夫生物科技有限公司 (72)发明人 邓晋  徐海",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:24.652Z"
+    },
+    {
+      "id": 178,
+      "title": "CN201410834527.4_一种催化体系可循环使用的2,5-呋喃二甲醛的制备方法",
+      "entry_type": "patent",
+      "summary": "(10)申请公布号                (43)申请公布日                 (21)申请号 201410834527.4 (22)申请日 2014.12.26 C07D 307/46(2006.01) B01J 31/28(2006.01) (71)申请人 合肥利夫生物科技有限公司 地址 230031 安徽省合肥市高新区望江西路 800 号科技产业园 A3 楼 310 室",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:25.629Z"
+    },
+    {
+      "id": 179,
+      "title": "CN201410834559.4_一种2,5-呋喃二甲醛的制备方法",
+      "entry_type": "patent",
+      "summary": "(10)申请公布号                (43)申请公布日                 (21)申请号 201410834559.4 (22)申请日 2014.12.26 C07D 307/46(2006.01) (71)申请人 合肥利夫生物科技有限公司 地址 230031 安徽省合肥市高新区望江西路 800 号科技产业园 A3 楼 310 室 (72)发明人 邓晋  徐海  汪鹏 ",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:26.836Z"
+    },
+    {
+      "id": 180,
+      "title": "CN201510616697.X_一种由生物质衍生物5-HMF或糠醛制备长链烷烃的方法",
+      "entry_type": "patent",
+      "summary": "(10)申请公布号                (43)申请公布日                 (21)申请号 201510616697.X (22)申请日 2015.09.24 C07C 1/20(2006.01) C07C 9/16(2006.01) C07C 9/15(2006.01) (71)申请人 合肥利夫生物科技有限公司 地址 230031 安徽省合肥市高新区望江西路 800 号",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:28.086Z"
+    },
+    {
+      "id": 181,
+      "title": "CN201610040983.0_合成奈妥吡坦中间体杂质2-(3,5-双三氟甲基苯基)丙酸的方法",
+      "entry_type": "patent",
+      "summary": "(10)申请公布号                (43)申请公布日                 (21)申请号 201610040983.0 (22)申请日 2016.01.21 C07C 57/58(2006.01) C07C 51/08(2006.01) (71)申请人 中国科学技术大学先进技术研究院 地址 230088 安徽省合肥市望江西路 5089 号 申请人 浙江海洲制药有限公司 ",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:29.265Z"
+    },
+    {
+      "id": 182,
+      "title": "CN201610101663.1_一种奈妥吡坦中间体的合成方法",
+      "entry_type": "patent",
+      "summary": "(10)申请公布号                (43)申请公布日                 (21)申请号 201610101663.1 (22)申请日 2016.02.24 C07C 51/353(2006.01) C07C 57/58(2006.01) (71)申请人 合肥利夫生物科技有限公司 地址 230031 安徽省合肥市高新区望江西路 800 号科技产业园 A3 楼 310 室",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:30.517Z"
+    },
+    {
+      "id": 183,
+      "title": "CN201610101681.X_一种药物中间体的合成方法",
+      "entry_type": "patent",
+      "summary": "(10)申请公布号                (43)申请公布日                 (21)申请号 201610101681.X (22)申请日 2016.02.24 C07C 51/08(2006.01) C07C 57/58(2006.01) (71)申请人 合肥利夫生物科技有限公司 地址 230031 安徽省合肥市高新区望江西路 800 号科技产业园 A3 楼 310 室 ",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:31.627Z"
+    },
+    {
+      "id": 184,
+      "title": "CN201610101682.4_一种奈妥吡坦中间体2-(3,5-双三氟甲基苯基)-2-甲基丙酸的合成方法",
+      "entry_type": "patent",
+      "summary": "(10)申请公布号                (43)申请公布日                 (21)申请号 201610101682.4 (22)申请日 2016.02.24 C07C 51/08(2006.01) C07C 57/58(2006.01) (71)申请人 合肥利夫生物科技有限公司 地址 230031 安徽省合肥市高新区望江西路 800 号科技产业园 A3 楼 310 室 ",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:32.692Z"
+    },
+    {
+      "id": 185,
+      "title": "CN201610326841.0_一种由糖制备5-羟甲基糠醛的方法",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 201610326841.0 (22)申请日 2016.05.13 (71)申请人 中盐安徽红四方股份有限公司 地址 230022 安徽省合肥市祁门路12号 申请人 合肥利夫生物科技有限公司 (72)发明人 傅尧　方立贵　谢中平　刘红梅　 陶小洲　邓晋　徐海　李兴龙　 吴江江　汪",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:33.909Z"
+    },
+    {
+      "id": 186,
+      "title": "CN201611079757.X_一种利用乙酰丙酸制备吡咯烷酮的方法",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 201611079757.X (22)申请日 2016.11.30 (71)申请人 合肥利夫生物科技有限公司 地址 230000 安徽省合肥市创新产业园二 期E3楼A区8层、 9层 （即801、 901室） (72)发明人 邓晋　金梦　徐海　李兴龙　徐强　 (74)专利代理机构 ",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:35.041Z"
+    },
+    {
+      "id": 187,
+      "title": "CN201611116066.2_一种γ‑己内酯的制备方法",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 201611116066.2 (22)申请日 2016.12.07 (71)申请人 合肥利夫生物科技有限公司 地址 230000 安徽省合肥市创新产业园二 期E3楼A区8层、 9层 (72)发明人 邓晋　张坤　朱瑞　丁飞焦　徐海　 (74)专利代理机构 合肥市长远专利代理事务所 ",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:36.208Z"
+    },
+    {
+      "id": 188,
+      "title": "CN201611131088.6_一种由γ‑戊内酯制备戊酸及戊酸酯的方法",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 201611131088.6 (22)申请日 2016.12.09 (71)申请人 合肥利夫生物科技有限公司 地址 230000 安徽省合肥市创新产业园二 期E3楼A区8层、 9层 (72)发明人 邓晋　常善伟　朱瑞　徐海　周剑　 张坤　谢中玉　 (74)专利代理机构 合肥市长远",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:37.347Z"
+    },
+    {
+      "id": 189,
+      "title": "CN201611131667.0_一种由乙酰丙酸制备戊酸及戊酸酯的方法",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 201611131667.0 (22)申请日 2016.12.09 (71)申请人 合肥利夫生物科技有限公司 地址 230000 安徽省合肥市创新产业园二 期E3楼A区8层、 9层 (72)发明人 邓晋　周剑　朱瑞　徐海　张坤　 谢中玉　 (74)专利代理机构 合肥市长远专利代理",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:38.593Z"
+    },
+    {
+      "id": 190,
+      "title": "CN201710079914.5_一种2,5‑呋喃二甲醛的制备方法",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 201710079914.5 (22)申请日 2017.02.15 (71)申请人 合肥利夫生物科技有限公司 地址 230000 安徽省合肥市创新产业园二 期E3楼A区8层、 9层 （即801、 901室） (72)发明人 邓晋　张坤　杨平　徐强　徐海　 丁飞焦　余三喜　汪鹏　郑",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:39.894Z"
+    },
+    {
+      "id": 191,
+      "title": "CN201710389333.1_一种噻唑‑4‑甲酸的制备方法",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 201710389333.1 (22)申请日 2017.05.27 (71)申请人 合肥利夫生物科技有限公司 地址 230000 安徽省合肥市创新产业园二 期E3楼A区8层、 9层 (72)发明人 李锋　徐海　孙青松　牛多龙　 姜娜　 (74)专利代理机构 合肥市长远专利代理事务",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:41.072Z"
+    },
+    {
+      "id": 192,
+      "title": "CN201710396195.X_一种美罗培南侧链中间体硫醇内酯的制备方法",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 201710396195.X (22)申请日 2017.05.27 (71)申请人 合肥利夫生物科技有限公司 地址 230000 安徽省合肥市创新产业园二 期E3楼A区8层、 9层 (72)发明人 李玉喜　徐海　方奇　尹为伟　 吴凡　姜娜　 (74)专利代理机构 合肥市长远专利代",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:42.152Z"
+    },
+    {
+      "id": 193,
+      "title": "CN201710768965.9_一种正癸酸的制备方法",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 201710768965.9 (22)申请日 2017.08.31 (71)申请人 合肥利夫生物科技有限公司 地址 230000 安徽省合肥市创新产业园二 期E3楼A区8层、 9层 (72)发明人 邓晋　谢中玉　李兴龙　徐海　 彭浩　 (74)专利代理机构 合肥市长远专利代理事务",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:43.322Z"
+    },
+    {
+      "id": 194,
+      "title": "CN201810320426.3_一种1,13-十三烷二醇酯及其1,13-十三烷二醇的制备方法",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 201810320426.3 (22)申请日 2018.04.11 (71)申请人 合肥利夫生物科技有限公司 地址 230000 安徽省合肥市创新产业园二 期E3楼A区8层、9层(即801、901室) (72)发明人 邓晋　刘煦旸　姜娜　徐强　 牛多龙　 (74)专利代理机构 成",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:44.742Z"
+    },
+    {
+      "id": 195,
+      "title": "CN201810916648.1_一种二氟磷酸锂的生产装置及生产方法",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 201810916648.1 (22)申请日 2018.08.13 (71)申请人 合肥天徽新材料有限公司 地址 231202 安徽省合肥市肥西县桃花镇 铭传路235号 (72)发明人 曹文兵　夏波纹　 (74)专利代理机构 合肥中博知信知识产权代理 有限公司 34142 代理人",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:46.050Z"
+    },
+    {
+      "id": 196,
+      "title": "CN201821301208.7_一种二氟磷酸锂的生产装置",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)实用新型专利 (10)授权公告号  (45)授权公告日  (21)申请号 201821301208.7 (22)申请日 2018.08.13 (73)专利权人 合肥天徽新材料有限公司 地址 231202 安徽省合肥市肥西县桃花镇 铭传路235号 (72)发明人 曹文兵　夏波纹　 (74)专利代理机构 合肥中博知信知识产权代理 有限公司 34142 代理",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:47.315Z"
+    },
+    {
+      "id": 197,
+      "title": "CN201910695504.2_一种对羟基苯海因的制备方法",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 201910695504.2 (22)申请日 2019.07.30 (71)申请人 中国科学技术大学 地址 230000 安徽省合肥市包河区金寨路 96号     申请人 合肥利夫生物科技有限公司 (72)发明人 傅尧　刘涛　徐海　李玉喜　 余三喜　徐强　 (74)专利代理机构 ",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:48.610Z"
+    },
+    {
+      "id": 198,
+      "title": "CN202110399634.9_一种生物基隔膜涂敷液及其制备方法和在锂电池中的应用",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号   (43)申请公布日  (21)申请号  202110399634.9 (22)申请日 2021.04.14 (71)申请人  合肥利夫生物科技有限公司 地址  230000  安徽省合肥市创新产业园二 期E3楼A区8层、 9层 (72)发明人  李锋　傅尧　柯卓　徐海　徐强　 刘涛　姜娜　 (74)专利代理机构  ",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:49.680Z"
+    },
+    {
+      "id": 199,
+      "title": "CN202110400674.0_一种基于生物质呋喃基聚合物的锂电池隔膜及其制备方法",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号   (43)申请公布日  (21)申请号  202110400674.0 (22)申请日 2021.04.14 (71)申请人  合肥利夫生物科技有限公司 地址  230000  安徽省合肥市创新产业园二 期E3楼A区8层、 9层 (72)发明人  徐海　柯卓　傅尧　李锋　徐强　 周业欣　徐康　 (74)专利代理机构 ",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:50.931Z"
+    },
+    {
+      "id": 200,
+      "title": "CN202110400675.5_一种S-(+)-3-羟基四氢呋喃的纯化和异构体检测方法",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号   (43)申请公布日  (21)申请号  202110400675.5 (22)申请日 2021.04.14 (71)申请人  合肥利夫生物科技有限公司 地址  230000  安徽省合肥市创新产业园二 期E3楼A区8层、 9层 (72)发明人  刘涛　张中涛　徐海　尤晴　张伟　 汤浩　 (74)专利代理机构  合肥",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:52.307Z"
+    },
+    {
+      "id": 201,
+      "title": "CN202110448463.4_一种高手性纯度(S)-1-(2-氯乙酰基)吡咯烷-2-甲腈的制备方法",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号   (43)申请公布日  (21)申请号  202110448463.4 (22)申请日 2021.04.25 (71)申请人  合肥利夫生物科技有限公司 地址  230000  安徽省合肥市创新产业园二 期E3楼A区8层、 9层 (72)发明人  刘涛　张中涛　徐海　张伟　 项建华　姜娜　 (74)专利代理机构  合",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:53.825Z"
+    },
+    {
+      "id": 202,
+      "title": "CN202111026582.7_一种酪氨酸激酶抑制剂关键中间体的合成方法",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号   (43)申请公布日  (21)申请号  202111026582.7 (22)申请日 2021.09.02 (71)申请人  合肥利夫生物科技有限公司 地址  230000  安徽省合肥市创新产业园二 期E3楼A区8层、 9层 (72)发明人  刘涛　张中涛　徐海　张伟　 项建华　姜娜　 (74)专利代理机构  合",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:55.199Z"
+    },
+    {
+      "id": 203,
+      "title": "CN202111368937.0_一种吡咯吡啶激酶抑制剂关键中间体的合成方法",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号   (43)申请公布日  (21)申请号  202111368937.0 (22)申请日 2021.11.18 (71)申请人  合肥利夫生物科技有限公司 地址  230000  安徽省合肥市创新产业园二 期E3楼A区8层、 9层 (72)发明人  刘涛　张中涛　徐海　姜娜　张伟　 李柏欣　 (74)专利代理机构  合",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:56.450Z"
+    },
+    {
+      "id": 204,
+      "title": "CN202111478797.2_一种纯呋喃基聚合物膜材料及其在锂电池中的应用",
+      "entry_type": "patent",
+      "summary": "(19)中华人民共和国国家知识产权局 (12)发明专利申请 (10)申请公布号   (43)申请公布日  (21)申请号  202111478797.2 (22)申请日 2021.12.06 (71)申请人  合肥利夫生物科技有限公司 地址  230031  安徽省合肥市高新区创新产 业园二期E3楼A区8层、 9层 （即801、 901 室） (72)发明人  徐海　刘涛　李锋　姜娜　葛磊　 王志",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:57.623Z"
+    },
+    {
+      "id": 205,
+      "title": "CN202210424424.5_一种由5-羟甲基糠醛制备2,5-呋喃二甲酸的生产方法",
+      "entry_type": "patent",
+      "summary": "(19)国家知识产权局 (12)发明专利申请 (10)申请公布号   (43)申请公布日  (21)申请号  202210424424.5 (22)申请日 2022.04.21 (71)申请人  合肥利夫生物科技有限公司 地址  230000  安徽省合肥市创新产业园二 期E3楼A区8层、 9层(即801、 901室) (72)发明人  余三喜　徐海　徐强　李兴龙　 (74)专利代理机构  合肥正",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:57:58.869Z"
+    },
+    {
+      "id": 206,
+      "title": "CN202210493713.0_一种高纯度5-羟甲基糠醛的制备方法",
+      "entry_type": "patent",
+      "summary": "(19)国家知识产权局 (12)发明专利申请 (10)申请公布号   (43)申请公布日  (21)申请号  202210493713.0 (22)申请日 2022.04.27 (71)申请人  合肥利夫生物科技有限公司 地址  230000  安徽省合肥市创新产业园二 期E3楼A区8层、 9层(即801、 901室) (72)发明人  徐强　徐海　余三喜　李兴龙　 (74)专利代理机构  合肥正",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:58:00.213Z"
+    },
+    {
+      "id": 207,
+      "title": "CN202210877671.0_一种无金属催化果糖一锅法制备呋喃二甲酸的方法",
+      "entry_type": "patent",
+      "summary": "(19)国家知识产权局 (12)发明专利申请 (10)申请公布号   (43)申请公布日  (21)申请号  202210877671.0 (22)申请日 2022.07.25 (71)申请人  合肥利夫生物科技有限公司 地址  230000  安徽省合肥市创新产业园二 期E3楼A区8层、 9层(即801、 901室) (72)发明人  徐海　徐强　余三喜　李兴龙　 (74)专利代理机构  合肥正",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:58:01.386Z"
+    },
+    {
+      "id": 208,
+      "title": "CN202211173701.6_法匹拉韦中间体3,6-二氟-2-吡嗪甲腈的制备方法",
+      "entry_type": "patent",
+      "summary": "(19)国家知识产权局 (12)发明专利申请 (10)申请公布号   (43)申请公布日  (21)申请号  202211173701.6 (22)申请日 2022.09.26 (71)申请人  合肥利夫生物科技有限公司 地址  230000  安徽省合肥市创新产业园二 期E3楼A区8层、 9层 (72)发明人  刘涛　徐海　张中涛　魏训　 牛多龙　尤晴　王海夫　王秋侠　 (74)专利代理机构  ",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:58:02.590Z"
+    },
+    {
+      "id": 209,
+      "title": "CN202211414220.X_一种5-羟甲基糠醛的制备方法",
+      "entry_type": "patent",
+      "summary": "(19)国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 202211414220.X (22)申请日 2022.11.11 (71)申请人 合肥利夫生物科技有限公司 地址 230000 安徽省合肥市创新产业园二 期E3楼A区8层、9层(即801、901室) (72)发明人 傅尧　徐强　徐海　余三喜　 李兴龙　 (74)专利代理机构 合肥正则元起专利",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:58:03.773Z"
+    },
+    {
+      "id": 210,
+      "title": "CN202311420375.9_一种5-羟甲基糠醛的制备方法",
+      "entry_type": "patent",
+      "summary": "(19)国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 202311420375.9 (22)申请日 2023.10.30 (71)申请人 合肥利夫生物科技有限公司 地址 230000 安徽省合肥市创新产业园二 期E3楼A区8层、9层(即801、901室) (72)发明人 徐海　徐强　余三喜　李兴龙　 (74)专利代理机构 合肥正则元起专利代理事务",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:58:05.170Z"
+    },
+    {
+      "id": 211,
+      "title": "CN202311732340.9_一种5-羟甲基糠醛的合成方法",
+      "entry_type": "patent",
+      "summary": "(19)国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 202311732340.9 (22)申请日 2023.12.16 (71)申请人 合肥利夫生物科技有限公司 地址 230000 安徽省合肥市创新产业园二 期E3楼A区8层、9层(即801、901室) (72)发明人 徐海　徐强　余三喜　李兴龙　 (74)专利代理机构 合肥正则元起专利代理事务",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:58:06.440Z"
+    },
+    {
+      "id": 212,
+      "title": "CN202410337429.3_催化5-羟甲基糠醛合成2,5-二羟甲基四氢呋喃的方法",
+      "entry_type": "patent",
+      "summary": "(19)国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 202410337429.3 (22)申请日 2024.03.20 (71)申请人 合肥利夫生物科技有限公司 地址 230088 安徽省合肥市合肥市创新产 业园二期E3楼A区8层、9层 (72)发明人 陈钢　徐海　余三喜　徐强　 孙丽雅　 (74)专利代理机构 中科专利商标代理有限责任 公司 ",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:58:08.027Z"
+    },
+    {
+      "id": 213,
+      "title": "CN202410455919.3_一种2,5-呋喃二甲酸颗粒及其制备方法和应用",
+      "entry_type": "patent",
+      "summary": "(19)国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 202410455919.3 (22)申请日 2024.04.16 (71)申请人 合肥利夫生物科技有限公司 地址 230000 安徽省合肥市创新产业园二 期E3楼A区8层、9层(即801、901室) (72)发明人 徐海　陈钢　余三喜　徐强　 (74)专利代理机构 合肥正则元起专利代理事务 ",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:58:09.223Z"
+    },
+    {
+      "id": 214,
+      "title": "CN202411727615.4_一种生物基聚酰胺纳滤膜及其应用",
+      "entry_type": "patent",
+      "summary": "(19)国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 202411727615.4 (22)申请日 2024.11.28 (71)申请人 合肥利夫生物科技有限公司 地址 230000 安徽省合肥市高新区创新产 业园二期E3楼A区8层、9层(即801、901 室) (72)发明人 徐强　李兴龙　徐海　余三喜　 (74)专利代理机构 合肥正则元起专利",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:58:10.783Z"
+    },
+    {
+      "id": 215,
+      "title": "CN202510726786.3_一种呋喃二甲酸的合成方法",
+      "entry_type": "patent",
+      "summary": "(19)国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 202510726786.3 (22)申请日 2025.06.03 (71)申请人 合肥利夫生物科技有限公司 地址 230000 安徽省合肥市高新区创新产 业园二期E3楼A区8层、9层(即801、901 室) (72)发明人 徐强　傅尧　徐海　李兴龙　 余三喜　 (74)专利代理机构 合肥正则",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:58:12.407Z"
+    },
+    {
+      "id": 216,
+      "title": "CN202511322703.0_一种5-羟甲基糠醛的纯化方法",
+      "entry_type": "patent",
+      "summary": "(19)国家知识产权局 (12)发明专利申请 (10)申请公布号  (43)申请公布日  (21)申请号 202511322703.0 (22)申请日 2025.09.16 (71)申请人 合肥利夫生物科技有限公司 地址 230000 安徽省合肥市高新区创新产 业园二期E3楼A区8层、9层(即801、901 室) (72)发明人 陈钢　李墨　余三喜　徐海　徐强　 周正　刘明颉　胡志乐　 (74)专",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:58:13.839Z"
+    },
+    {
+      "id": 217,
+      "title": "EP24203247.2_METHOD FOR PREPARING 5-HYDROXYMETHYLFURFURAL",
+      "entry_type": "tech",
+      "summary": "(19) *EP004549434A1* (1 1) EP 4 549 434 A1 (12) EUROPEAN P A TENT APPLICA TION (43) Date of publication: 07.05.2025 Bulletin 2025/19 (21) Application number: 24203247.2 (22) Date of filing: 27.09.2024",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:58:15.294Z"
+    },
+    {
+      "id": 218,
+      "title": "Energy Science   Engineering - 2025 - Buthelezi - Techno‐Economic Assessment of Biofuels Production From Sugarcane Bagasse",
+      "entry_type": "tech",
+      "summary": "Energy Science & Engineering MODELLING AND ANALYSIS Techno?Economic Assessment of Biofuels Production From Sugarcane Bagasse Ayanda S. Buthelezi 1 | Manimagalay Chetty 2 | Amir H. Mohammadi 3 1Departm",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:58:16.450Z"
+    },
+    {
+      "id": 219,
+      "title": "Engineering Ligninolytic Consortium for Bioconversion of Lignocelluloses to Ethanol and Chemicals(科研通-ablesci.com)",
+      "entry_type": "tech",
+      "summary": "Protein & Peptide Letters /MT66/MT69/MT78/MT84/MT72/MT65/MT77 /MT83/MT67/MT73/MT69/MT78/MT67/MT69 /MT69/MT100/MT105/MT116/MT111/MT114/MT45/MT105/MT110/MT45/MT67/MT104/MT105/MT101/MT102/MT58 /MT66/MT10",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:58:54.323Z"
+    },
+    {
+      "id": 220,
+      "title": "Green synthesis of ZnO-NPs using sugarcane bagasse waste_ Phytochemical assessment of extract and biological study of nanopartic(科研通-ablesci.com)",
+      "entry_type": "tech",
+      "summary": "Dalton Transactions PAPER Cite this: Dalton Trans., 2024, 53, 18494 Received 28th August 2024, Accepted 15th October 2024 DOI: 10.1039/d4dt02449d rsc.li/dalton Green synthesis of ZnO-NPs using sugarca",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:59:00.728Z"
+    },
+    {
+      "id": 221,
+      "title": "JP2024145580_５－ヒドロキシメチルフルフラールの製造方法",
+      "entry_type": "tech",
+      "summary": "10 20 JP 2025-74934 A 2025.5.14 (19)日本国特許庁(JP) (12)公開特許公報(A) (11)公開番号　　 特開2025-74934 (P2025-74934A) (43)公開日　 令和7年5月14日(2025.5.14) (54)【発明の名称】　 ５－ヒドロキシメチルフルフラールの製造方法 (51)国際特許分類 　   Ｃ０７Ｄ 307/46 (2006.01",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:59:00.968Z"
+    },
+    {
+      "id": 222,
+      "title": "Noor_2020_IOP_Conf._Ser.__Earth_Environ._Sci._599_012051",
+      "entry_type": "tech",
+      "summary": "IOP Conference Series: Earth and Environmental Science        PAPER • OPEN ACCESS Bio-packaging based on a composite of paper waste and coconut fiber To cite this article: A Noor et al 2020 IOP Conf. ",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:59:01.822Z"
+    },
+    {
+      "id": 223,
+      "title": "bbae409",
+      "entry_type": "tech",
+      "summary": "Received: May 15, 2024. Revised: July 13, 2024. Accepted: August 4, 2024  ? The Author(s) 2024. Published by Oxford University Press.  This is an Open Access article distributed under the terms of the",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:59:07.990Z"
+    },
+    {
+      "id": 224,
+      "title": "bio-based paper&pulp by MQE 2025.10.29",
+      "entry_type": "asset",
+      "summary": "结合量子计算的生物法造纸解决方案 Quantum Computing + AI for bio-based dyes design and more 项目摘要 生物基功能材料 (e.g. 比色生物传感器) 量子计算 酶工程 细胞工厂 生物基染料系列 生物基功能材料 全球首个量子计算染料领域应用实例 开辟通向百亿级、高利润率的新市场通道 造纸用酶制剂 新型染料研发中心 …… 经典 | 制浆造纸用酶制",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:59:32.068Z"
+    },
+    {
+      "id": 225,
+      "title": "bio-based paper&pulp by MQE 2025.10.30",
+      "entry_type": "tech",
+      "summary": "结合量子计算的 生物 法造纸 解 决 方 案 Quantum Computing + AI  for bio -based dyes design and more 项目摘要 生物基高性能纸 量子计算 酶工程 细胞工厂 • 造纸用酶制剂系 • 生物基高性能纸 全球首个量子计算造纸领域应用实例 开辟通向百亿级、高利润率的新市场通道 造纸用酶制剂 • 椰树基制品 • …… 研发中心 椰树基制品 经典 ",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:59:34.942Z"
+    },
+    {
+      "id": 226,
+      "title": "bio-based paper&pulp by MQE 2025.10.30",
+      "entry_type": "asset",
+      "summary": "结合量子计算的生物法造纸解决方案 Quantum Computing + AI for bio-based dyes design and more 项目摘要 生物基高性能纸 量子计算 酶工程 细胞工厂 造纸用酶制剂系 生物基高性能纸 全球首个量子计算造纸领域应用实例 开辟通向百亿级、高利润率的新市场通道 造纸用酶制剂 椰树基制品 …… 椰树基制品 经典 | 制浆造纸用酶制剂解决方案 传统造纸在制",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:59:40.576Z"
+    },
+    {
+      "id": 227,
+      "title": "bio-based paper&pulp by MQE 2025.10.31",
+      "entry_type": "asset",
+      "summary": "结合量子计算的生物法造纸解决方案 Quantum Computing + AI for bio-based dyes design and more 项目摘要 生物基高性能纸 量子计算 酶工程 细胞工厂 造纸用酶制剂系列 生物基高性能纸 全球首个量子计算造纸领域应用实例 开辟通向百亿级、高利润率的新市场通道 造纸用酶制剂 椰树基制品 …… 椰树基制品 经典 | 制浆造纸用酶制剂解决方案 传统造纸在",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:59:45.199Z"
+    },
+    {
+      "id": 228,
+      "title": "bio-based paper&pulp by MQE 2025.10",
+      "entry_type": "asset",
+      "summary": "结合量子计算的生物法造纸解决方案 Quantum Computing + AI for bio-based dyes design and more 项目摘要 生物基功能材料 (e.g. 比色生物传感器) 量子计算 菌株与酶工程 金属有机复合 多孔材料 生物基染料系列 生物基功能材料 全球首个量子计算染料领域应用实例 开辟通向百亿级、高利润率的新市场通道 生物基染料 新型染料研发中心 …… 关于我",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:59:48.956Z"
+    },
+    {
+      "id": 229,
+      "title": "csirEnzymeApplicationsinPulpandPaperrav",
+      "entry_type": "tech",
+      "summary": "Endo-Beta 1,4 Xylanase Enzyme Applications in Pulp and Paper:  An Introduction to Applications Dr. Richard Venditti Associate Professor - Director of Graduate Programs Department of Wood and Paper Sci",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:59:52.685Z"
+    },
+    {
+      "id": 230,
+      "title": "f2121195da604aab89e06cbdd8b6cc43",
+      "entry_type": "tech",
+      "summary": "- 1 - 附件 非粮生物基材料产业创新发展典型案例入围名单（公示稿） 关键技术创新 序 号 典型案例名称 推荐 地区 单位名称 案例简介 1 非粮生物基材 料制备硅碳负 极材料技术 山东省 山东埃尔派 粉体科技股 份有限公司 以农业秸秆、生活有机废弃物等为原料，自主研发高效汽爆工艺技 术、精准多孔结构调控技术和硅碳均匀复合技术，制备具有优异性 能的硅碳负极材料，有效解决硅基材料体积膨胀、导电性差",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:59:58.702Z"
+    },
+    {
+      "id": 231,
+      "title": "fenrg-4-1549247",
+      "entry_type": "tech",
+      "summary": "TYPE Original Research PUBLISHED 19 March 2025 DOI 10.3389/fenrg.2025.1549247 OPEN ACCESS EDITED BY Tingting You, Beijing Forestry University, China REVIEWED BY Koray Alper, B?lent Ecevit University,",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T01:59:59.902Z"
+    },
+    {
+      "id": 232,
+      "title": "fermentation-09-00789",
+      "entry_type": "tech",
+      "summary": "Citation: Alves, W.R.; da Silva, T.A.; Zandon? Filho, A.; Pereira Ramos, L. Lactic Acid Production from Steam-Exploded Sugarcane Bagasse Using Bacillus coagulans DSM2314. Fermentation 2023, 9, 789. ht",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:00:00.632Z"
+    },
+    {
+      "id": 233,
+      "title": "fermentation-11-00489",
+      "entry_type": "tech",
+      "summary": "Academic Editors: Massimiliano Fabbricino and Bart?omiej Zieniuk Received: 24 June 2025 Revised: 11 August 2025 Accepted: 20 August 2025 Published: 22 August 2025 Citation: Nhleko, L.; Sekoai, P .T. S",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:00:02.328Z"
+    },
+    {
+      "id": 234,
+      "title": "foaf038",
+      "entry_type": "tech",
+      "summary": "FEMS Yeast Resear c h , 2025, 25 , foaf038  DOI: 10.1093/femsyr/foaf038  Ad v ance access publication date: 22 July 2025  Minire vie w ?Industrial & environmental biotechnolog  Gl ycerol biocon versio",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:00:05.734Z"
+    },
+    {
+      "id": 235,
+      "title": "foods-14-02158",
+      "entry_type": "tech",
+      "summary": "Academic Editor: Charis M. Galanakis Received: 30 April 2025 Revised: 11 June 2025 Accepted: 18 June 2025 Published: 20 June 2025 Citation: Chang, Y.; Zhao, X.-Q.; Zhang, X.; Jiao, Y. Corn Steep Liquo",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:00:17.766Z"
+    },
+    {
+      "id": 236,
+      "title": "ijms-26-09906-v2",
+      "entry_type": "tech",
+      "summary": "Academic Editor: Francesco Trotta Received: 10 September 2025 Revised: 30 September 2025 Accepted: 8 October 2025 Published: 11 October 2025 Citation: Farcas, A.; Farcas, A.-A.; Janosi, L. The Importa",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:00:19.651Z"
+    },
+    {
+      "id": 237,
+      "title": "jcs-09-00503",
+      "entry_type": "tech",
+      "summary": "Academic Editor: Mahdi Bodaghi Received: 20 August 2025 Revised: 12 September 2025 Accepted: 14 September 2025 Published: 18 September 2025 Citation: Sakura, R.R.; Sugiharto, B.; Sawitri, W.D.; Asrofi",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:00:20.258Z"
+    },
+    {
+      "id": 238,
+      "title": "jingxing-驱动",
+      "entry_type": "asset",
+      "summary": "驱动力:成本、市场、社会 社会总体需求 绿色环保理念深入人心 市场消费风向 化学合成染料常含有偶氮键，被活化后易诱发DNA突变致癌 糖尿病、肥胖症、抑郁症、注意力缺陷多动障碍 … 生物基染料不含高活性致癌骨架，可生物降解 “低污染、可持续、高价值” 新生代对色彩的消费和审美不断攀升，强调差异化、健康环保 微生物染料、聚酮类化合物年复合增速突出 成本波动影响 受林地砍伐与碳排政策影响，价格波动显著。",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:00:20.436Z"
+    },
+    {
+      "id": 239,
+      "title": "lactic-acid-production-from-sugarcane-bagasse-hydrolysates-by-lactiplantibacillus-strains",
+      "entry_type": "tech",
+      "summary": "Lactic Acid Production from Sugarcane Bagasse Hydrolysates by Lactiplantibacillus Strains Michelle C. A. Xavier,* Giancarlo S. Dias, Saartje Hernalsteens, and Telma T. Franco Cite This: ACS Omega 2025",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:00:21.573Z"
+    },
+    {
+      "id": 240,
+      "title": "main",
+      "entry_type": "tech",
+      "summary": "Journal of Cleaner Production 418 (2023) 138196 Available online 21 July 2023 0959-6526/? 2023 Elsevier Ltd. All rights reserved. Review  Status and trends of enzyme cocktails for efficient and ecolog",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:00:44.885Z"
+    },
+    {
+      "id": 241,
+      "title": "main2",
+      "entry_type": "tech",
+      "summary": "Chimeric enzymes in the pulp and paper making industry:  Current developments Abdullah Arsalan a , 1 , Yuvaraj Ravikumar a , c , 1 , Xinrui Tang a , Zijing Cao a , Mei Zhao a , ** ,   Wenjing Sun a ,",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:00:46.580Z"
+    },
+    {
+      "id": 242,
+      "title": "main3",
+      "entry_type": "tech",
+      "summary": "A unique Equisetum enzyme, hetero-trans- ? -glucanase (HTG), enhances  industrially and environmentally important cellulose-rich materials Lenka Frankov ?a a , Eric Whale b , David Hepworth b , Stephe",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:00:47.760Z"
+    },
+    {
+      "id": 243,
+      "title": "maximizing-polylactic-acid-bioplastic-yield-from-lactobacillus-rhamnosus-l6-via-response-surface-methodology-evaluating",
+      "entry_type": "tech",
+      "summary": "Maximizing Polylactic Acid Bioplastic Yield from Lactobacillus rhamnosus L6 via Response Surface Methodology: Evaluating Antimicrobial Effectiveness, Physical, and Chemical Properties of PLA Khadiga A",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:00:49.104Z"
+    },
+    {
+      "id": 244,
+      "title": "paper_retrieval",
+      "entry_type": "tech",
+      "summary": "Abstract  The pulp and paper (P&P) industry plays a vital role in supporting the social and economic  progress of a country by supplying essential commodities. Conventional P&P processing  often consu",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:01:22.829Z"
+    },
+    {
+      "id": 245,
+      "title": "polymers-17-00322",
+      "entry_type": "tech",
+      "summary": "Academic Editor: Hu Li Received: 21 December 2024 Revised: 20 January 2025 Accepted: 22 January 2025 Published: 24 January 2025 Citation: D?az-Orozco, L.; Moscosa Santill?n, M.; Delgado Portales, R.E.",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:01:24.081Z"
+    },
+    {
+      "id": 246,
+      "title": "s10570-023-05333-2",
+      "entry_type": "tech",
+      "summary": "Vol.: (0123456789) 1 3 Cellulose (2023) 30:7393–7425  https://doi.org/10.1007/s10570-023-05333-2 REVIEW PAPER Innovations in papermaking using enzymatic intervention:  an ecofriendly approach Aiman Ta",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:01:36.585Z"
+    },
+    {
+      "id": 247,
+      "title": "s10668-024-05154-8",
+      "entry_type": "tech",
+      "summary": "REVIEW Received: 9 February 2024 / Accepted: 15 June 2024 / Published online: 1 July 2024 ? The Author(s), under exclusive licence to Springer Nature B.V. 2024 Extended author information available on",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:01:37.864Z"
+    },
+    {
+      "id": 248,
+      "title": "s12649-025-03057-x",
+      "entry_type": "tech",
+      "summary": "ORIGINAL PAPER Waste and Biomass Valorization (2025) 16:6247?6256 https://doi.org/10.1007/s12649-025-03057-x suitable starting material for a variety of biotechnological  conversion processes based on",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:01:48.808Z"
+    },
+    {
+      "id": 249,
+      "title": "s13068-025-02646-1",
+      "entry_type": "tech",
+      "summary": "Barrios et al.  Biotechnology for Biofuels and Bioproducts           (2025) 18:48   https://doi.org/10.1186/s13068-025-02646-1 RESEARCH Open Access © The Author(s) 2025. Open Access  This article is l",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:01:53.681Z"
+    },
+    {
+      "id": 250,
+      "title": "s13762-024-06270-8",
+      "entry_type": "tech",
+      "summary": "Vol.:(0123456789) International Journal of Environmental Science and Technology (2025) 22:9303–9318  https://doi.org/10.1007/s13762-024-06270-8 ORIGINAL PAPER Valorization of waste from coconut palm c",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:02:14.422Z"
+    },
+    {
+      "id": 251,
+      "title": "s40643-025-00905-5",
+      "entry_type": "tech",
+      "summary": "RESEARCH Open Access ? The Author(s) 2025. Open Access    This article is licensed under a Creative Commons Attribution 4.0 International License, which permits use,  sharing, adaptation, distribution",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:02:15.688Z"
+    },
+    {
+      "id": 252,
+      "title": "s41598-025-00610-5",
+      "entry_type": "tech",
+      "summary": "Transforming waste into value:  Single-step in situ synthesis of  magnetic porous carbon composite  adsorbents from sugarcane  bagasse and iron scrap Sirinad Mahawong1,8, Parichart Onsri2,8, Piyatida",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:02:16.973Z"
+    },
+    {
+      "id": 253,
+      "title": "s42452-025-07560-7",
+      "entry_type": "tech",
+      "summary": "REVIEW Open Access ? The Author(s) 2025. Open Access  This article is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International  License, which permits any non-commer",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:02:29.722Z"
+    },
+    {
+      "id": 254,
+      "title": "s44320-024-00060-7",
+      "entry_type": "tech",
+      "summary": "Article Yeast9: a consensus genome-scale metabolic model for S. cerevisiae curated by the community Chengyu Zhang 1,2, Benjam?n J S?nchez 3,4,F e i r a nL i 5, Cheng Wei Quan Eiden 6, William T Scott",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:02:35.602Z"
+    },
+    {
+      "id": 255,
+      "title": "sustainability-16-03066",
+      "entry_type": "tech",
+      "summary": "Citation: Vieira, F.; Santana, H.E.P .; Jesus, M.; Santos, J.; Pires, P .; Vaz-Velho, M.; Silva, D.P .; Ruzene, D.S. Coconut Waste: Discovering Sustainable Approaches to Advance a Circular Economy. Su",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:02:36.655Z"
+    },
+    {
+      "id": 256,
+      "title": "sustainable-production-of-high-performance-bioplastics-from-agricultural-and-industrial-biomass-waste-by-integrating",
+      "entry_type": "tech",
+      "summary": "Sustainable Production of High-Performance Bioplastics from Agricultural and Industrial Biomass Waste by Integrating Deep Eutectic Solvent (DES) Pretreatment and Acetylation Processes Natcha Chyerocha",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:02:47.220Z"
+    },
+    {
+      "id": 257,
+      "title": "technoeconomics-of-sugar-cane-bagasse-valorization-to-lactic-acid-using-pinch-technology-distillation-vs-reactive",
+      "entry_type": "tech",
+      "summary": "Technoeconomics of Sugar Cane Bagasse Valorization to Lactic Acid Using Pinch Technology: Distillation vs Reactive Distillation Sunil K. Maity,* Deepti Agrawal, Siddharth Gadkari, Kumar Raja Vanapalli",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:03:25.002Z"
+    },
+    {
+      "id": 258,
+      "title": "technologies-13-00238",
+      "entry_type": "tech",
+      "summary": "Academic Editor: Miklas Scholz Received: 14 April 2025 Revised: 22 May 2025 Accepted: 3 June 2025 Published: 10 June 2025 Citation: Castillo Alvarez, Y.; Jim?nez Borges, R.; Alfonso-Francia, G.; Rodr?",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:04:00.914Z"
+    },
+    {
+      "id": 259,
+      "title": "关于造纸酶的产业化导向",
+      "entry_type": "tech",
+      "summary": "关于造纸酶的产业化导向 1. 创新研发能力：自动酶优化 Agent 平台 平台特点： 全自动化酶设计与优化，结合实验自动化与算法迭代 可实现从初始酶筛选 → 突变设计 → 活性评估的闭环优化 典型成果： 苹果酸酶活性提升案例： 三个月内活性提升 5 倍 验证了平台的迭代速度与方向准确性 价值： 缩短研发周期，显著提升酶性能 提供可复制的模式，适用于多种工业酶种 2. 产业放大化能力：纤维素降解酶（",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:04:01.172Z"
+    },
+    {
+      "id": 260,
+      "title": "关于造纸酶的产业化导向_V2",
+      "entry_type": "tech",
+      "summary": "关于造纸酶的产业化导向 1. 创新研发能力：自动酶优化 Agent 平台 平台特点： 全自动化酶设计与优化，结合实验自动化与算法迭代 可实现从初始酶筛选 → 突变设计 → 活性评估的闭环优化 典型成果： 苹果酸酶活性提升案例： 三个月内活性提升 5 倍 验证了平台的迭代速度与方向准确性 价值： 缩短研发周期，显著提升酶性能 提供可复制的模式，适用于多种工业酶种 2. 产业放大化能力：纤维素降解酶（",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:04:02.157Z"
+    },
+    {
+      "id": 261,
+      "title": "参观准备",
+      "entry_type": "tech",
+      "summary": "这是一个非常典型且关键的“跨越死亡之谷”的问题。合成生物学企业（SynBio）常常死在从实验室（Lab）到工厂（Fab）的放大过程中，不仅是因为技术放大难，更是因为商业逻辑的断层。 造纸行业是一个重资产、低毛利、高度连续化生产、对成本极其敏感的传统行业。老板们不关心你的菌株构建多么精妙，他们只关心：每吨纸成本能降多少？良品率能提多少？环保罚款能不能免掉？ 既然你们要建“场景验证实验室”，这次参观的",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:04:03.837Z"
+    },
+    {
+      "id": 262,
+      "title": "合成生物学研究员-造纸",
+      "entry_type": "tech",
+      "summary": "职位名称：合成生物学研究员（造纸/生物质应用方向） 岗位职责 1. 搭建与运行应用验证平台 负责“造纸场景验证实验室”的日常运行，搭建小型的制浆、抄造或污水处理模拟实验环境。 建立酶制剂在造纸浆料中的性能评估方法（如酶活检测、纸张物理强度测试、滤水性能测试等）。 2. 酶制剂的筛选与评价（应用端） 对上游合成生物学团队改造出的酶（如纤维素酶、半纤维素酶、木质素酶、淀粉酶等）进行针对性筛选。 设计并",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:04:07.071Z"
+    },
+    {
+      "id": 263,
+      "title": "市售产品",
+      "entry_type": "asset",
+      "summary": "造纸酶 产品介绍——助漂酶 产品介绍 助漂酶通过降解纸浆中的木聚糖和半纤维素，增大纤维间的孔隙，使纤维细胞壁结构变 得疏松，有利于漂液的渗透，提高纸浆的白度和生产能力。 原理 植物纤维中的主要成份之一是木聚糖。硫酸盐法制浆过程中，木聚糖会溶解但是随着蒸 煮过程酸碱度的下降，部分已经溶解的木聚糖又重新析出并附着在纤维的表面形成一层“膜”; 另外，还有部分木聚糖与木素以木素-聚糖复合体存在。 这些形式",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:04:08.057Z"
+    },
+    {
+      "id": 264,
+      "title": "平台设计_v1.0",
+      "entry_type": "tech",
+      "summary": "1. 酶改造平台 1.1 AI驱动的酶设计模块 现代酶改造平台集成了人工智能和机器学习技术，实现了自主酶工程。2025年Nature Communications报道了一个通用平台，将机器学习和大语言模型与生物铸造自动化相结合，用于自主酶工程1。该平台的核心功能包括： 蛋白质语言模型：利用深度学习预测酶的序列-功能关系 结构预测：基于AlphaFold等工具进行蛋白质三维结构建模 活性位点优化：计",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:04:15.700Z"
+    },
+    {
+      "id": 265,
+      "title": "方向评估",
+      "entry_type": "tech",
+      "summary": "# **甘蔗渣高值化六条技术路线评估报告** 从**资本效率、市场窗口、技术护城河**三个维度，为您评估六条路线的真实可行性： --- ## **评估框架（投资人视角）** | 维度 | 权重 | 评价标准 | |------|------|----------| | **资本效率** | 30% | ¥500万能否验证核心技术？多久造血？ | | **市场窗口** | 25% | 蓝海/红海？客",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:04:18.526Z"
+    },
+    {
+      "id": 266,
+      "title": "景兴纸业初次沟通材料-v1.0",
+      "entry_type": "asset",
+      "summary": "造纸行业绿色制造解决方案 2025.10.27 时代机遇与共同愿景 一起抢占生物基染料高增赛道——从现金产能到长期平台 全球造纸行业正面临“木浆依赖、成本波动与可持续压力”三重挑战：  木浆成本不稳：受林地砍伐与碳排政策影响，价格波动显著；  绿色需求上升：环保与可降解包装成为出口与电商供应链的新基准；  政策导向变化：“零毁林供应链”（No Deforestation）推动企业寻找非木纤维替代来",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:04:25.541Z"
+    },
+    {
+      "id": 267,
+      "title": "景兴纸业沟通材料-v0.5",
+      "entry_type": "tech",
+      "summary": "椰子树废弃物增值利用与可降解纸制品合作方向建议 一、背景与契机 浙江景兴纸业在绿色制造与国际合作方面深耕多年，与东南亚国家（尤其是马来西亚）合作基础稳固。当前全球纸浆行业面临“木浆依赖、成本波动与可持续压力”三重挑战：  木浆成本受林地砍伐和碳排政策影响大，价格波动频繁；  消费者和品牌方对环保、可降解包装材料需求持续增长（尤其在出口包装和电商快消领域）；  “零毁林供应链”（No Defores",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:04:29.887Z"
+    },
+    {
+      "id": 268,
+      "title": "景兴纸业沟通材料-v1.0",
+      "entry_type": "tech",
+      "summary": "椰子树废弃物增值利用与可降解纸制品合作方向建议 一、背景与契机 浙江景兴纸业在绿色制造与国际合作方面深耕多年，与东南亚国家（尤其是马来西亚）合作基础坚实。 此外，全球纸浆行业正面临“木浆依赖、成本波动与可持续压力”三重挑战：  木浆成本不稳：受林地砍伐与碳排政策影响，价格波动显著；  绿色需求上升：环保与可降解包装成为出口与电商供应链的新基准；  政策导向变化：“零毁林供应链”（No Defore",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:04:31.652Z"
+    },
+    {
+      "id": 269,
+      "title": "景兴纸业沟通材料-v2.0",
+      "entry_type": "tech",
+      "summary": "椰子树废弃物增值利用与可降解纸制品合作方向建议 一、背景与契机 浙江景兴纸业在绿色制造与国际合作方面深耕多年，与东南亚国家（尤其是马来西亚）合作基础坚实。此外，全球纸浆行业正面临“木浆依赖、成本波动与可持续压力”三重挑战：  木浆成本不稳：受林地砍伐与碳排政策影响，价格波动显著；  绿色需求上升：环保与可降解包装成为出口与电商供应链的新基准；  政策导向变化：“零毁林供应链”（No Defores",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:04:33.482Z"
+    },
+    {
+      "id": 270,
+      "title": "木质素",
+      "entry_type": "tech",
+      "summary": "Microbiological Research 287 (2024) 127835 Available online 17 July 2024 0944-5013/? 2024 Elsevier GmbH. All rights are reserved, including those for text and data mining, AI training, and similar tec",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:04:38.647Z"
+    },
+    {
+      "id": 271,
+      "title": "机器学习驱动的基因组规模代谢模型构建与优化",
+      "entry_type": "tech",
+      "summary": "2025  年  第  6  卷  第  3 期  |  www . synbioj . comS yn thetic  Bio logy  J ournal    2025 ， 6 （ 3 ） ： 566 - 584 机器学习驱动的基因组规模代谢模型构建与优化 吴柯 1 ， 2 ， 罗家豪 1 ， 2 ， 李斐然 1 ， 2 （ 1  清华大学深圳国际研究生院 ， 生物医药与健康工程研究院 ， ",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:04:41.523Z"
+    },
+    {
+      "id": 272,
+      "title": "椰树-造纸",
+      "entry_type": "tech",
+      "summary": "Original Article Bio-based papers from seaweed and coconut fiber: sustainable materials for  a greener future Nida Khan a , d , K. Sudhakar b , c , e , * , R. Mamat b , c a Faculty of Civil Engineerin",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:04:46.797Z"
+    },
+    {
+      "id": 273,
+      "title": "椰树造纸分析",
+      "entry_type": "tech",
+      "summary": "# 椰子种植废弃物的增值利用：作为造纸用纤维素来源 ## 摘要 废弃物的增值利用可通过制造新产品来减轻环境影响。本研究的主要目标是为椰子产业废弃物的综合利用奠定基础。本文分析了椰子（*Cocos nucifera L.*）废弃物的化学成分、纤维素提取方法及其在造纸中的应用。研究将废弃物分为叶片（CPL）、叶柄（CPP）、树干（CPT）和果实（CPF）四类，依据TAPPI（美国制浆造纸技术协会）标准",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:04:47.000Z"
+    },
+    {
+      "id": 274,
+      "title": "生物智能体-完整路线",
+      "entry_type": "asset",
+      "summary": "Ⅰ 用户输入 基于大肠杆菌苹果酸酶（NP_415996.1），提升催化丙酮酸生成  L-苹果酸 的效率，目标为提高催化效率30% EnzMaster Ⅱ 规划阶段 Plan RAG Gromacs ProteinMPNN …… 计算工具 Plan Agent 生成能实现用户目标的生产路线 Ⅲ 执行阶段 Tool Manager Tool RAG 生成使用工具的脚本 Task Agent Debug",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:04:58.907Z"
+    },
+    {
+      "id": 275,
+      "title": "硬碳材料",
+      "entry_type": "tech",
+      "summary": "DOI: 10.16725/j.1673-808X.2022331 引用本文：王绍东, 葛猛, 周怀营, 等. 生物质硬碳材料作为二次电池负极的研究进展 [J]. 桂林电子科技大 学学报, 2024, 44(5): 544-550. WANG Shaodong, GE Meng, ZHOU Huaiying, et al. Research progress of biomass-derived ",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:04:59.769Z"
+    },
+    {
+      "id": 276,
+      "title": "荣晟bio-based paper&pulp by MQE 2025.11.25",
+      "entry_type": "asset",
+      "summary": "结合量子计算的生物法造纸解决方案 Quantum-Powered Biological Solutions for Paper and Pulp Industry 经典 | 制浆造纸用酶制剂解决方案 传统造纸在制浆、漂白、精炼等环节普遍依赖高温、高碱及强氧化工艺，能耗与化学品消耗巨大。 酶制剂可作为一种“生物技术插件”，在不改变现有造纸核心设备的情况下，嵌入到关键工艺环节中，从而实现降本、增效、提",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:05:09.578Z"
+    },
+    {
+      "id": 277,
+      "title": "荣晟造纸拜访 2025.11.26",
+      "entry_type": "asset",
+      "summary": "结合量子计算的生物法造纸解决方案 Quantum-Powered Biological Solutions for Paper and Pulp Industry 流程 | 制浆造纸用酶制剂解决方案 酶制剂可作为一种“生物技术插件”，在不改变现有造纸核心设备的情况下，嵌入到关键工艺环节中，从而实现降本、增效、提质、环保等多重价值。 造纸工业中常用的主要酶类及其应用 酶的活性、选择性和稳定性的工程化",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T02:05:12.435Z"
+    },
+    {
+      "id": 278,
+      "title": "Demo上传测试文档（示例）",
+      "entry_type": "tech",
+      "summary": "用于内部展示的示例文档，展示上传管道功能。",
+      "visibility": "public",
+      "updated_at": "2026-07-15T03:02:54.913Z"
+    },
+    {
+      "id": 279,
+      "title": "Friday Demo - Upload Test",
+      "entry_type": "tech",
+      "summary": "Demo test document",
+      "visibility": "public",
+      "updated_at": "2026-07-15T02:47:50.950Z"
+    },
+    {
+      "id": 280,
+      "title": "Friday Demo Upload Test",
+      "entry_type": "tech",
+      "summary": "Upload test document",
+      "visibility": "public",
+      "updated_at": "2026-07-15T02:51:47.955Z"
+    },
+    {
+      "id": 281,
+      "title": "Friday Check",
+      "entry_type": "tech",
+      "summary": "Check",
+      "visibility": "public",
+      "updated_at": "2026-07-15T03:05:35.540Z"
+    },
+    {
+      "id": 282,
+      "title": "Friday File Upload",
+      "entry_type": "asset",
+      "summary": "File test",
+      "visibility": "public",
+      "updated_at": "2026-07-15T03:05:53.533Z"
+    },
+    {
+      "id": 283,
+      "title": "MOF-VOCs市场深度评估报告",
+      "entry_type": "asset",
+      "summary": "🏆 MOF-VOCs 市场深度评估报告 ⾦属有机框架（ MOF ）材料作为⼀种超⾼⽐表⾯积、孔隙率和化学可定制的新型多孔配位聚合物，其在挥发性有机物（ VOCs ）的超低浓度捕集、强⽔汽竞争、⾼沸点极性溶剂脱附等极端复杂⼯况下，表现出传统活性炭和沸⽯分⼦筛难以企及的技术代差。然⽽，⾼昂的原材料、合成与成型成本是制约其全⾯⾛向⼯业化的关键瓶颈。 为给该⾼效吸附 MOF 材料制定精准的商业化推⼴路线",
+      "visibility": "public",
+      "updated_at": "2026-07-15T03:45:21.683Z"
+    },
+    {
+      "id": 284,
+      "title": "飞书文档-知识库首页",
+      "entry_type": "tech",
+      "summary": "论文文献库 来源: Web of Science, 共50篇论文 Chimeric enzymes in the pulp and paper making industry: Curr | Arsalan, A; Ravikuma | 2025 | DOI: 10.1016/j.biotechadv.2025.108530 Decarbonization pathways for the pul",
+      "visibility": "internal",
+      "updated_at": "2026-07-15T05:49:49.339Z"
+    }
+  ]
+}
