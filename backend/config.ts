@@ -35,6 +35,13 @@ export const config = {
     password: process.env.SANDBOX_PASSWORD || '123456',
   },
 
+  /** Feishu document connector */
+  feishu: {
+    appId: process.env.FEISHU_APP_ID || '',
+    appSecret: process.env.FEISHU_APP_SECRET || '',
+    wikiSpaceId: process.env.FEISHU_WIKI_SPACE_ID || '',
+  },
+
   dataDir: process.env.DATA_DIR || './backend/data',
 
   databaseUrl: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/microera_wiki',
