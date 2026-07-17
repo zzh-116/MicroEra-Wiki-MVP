@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { entriesApi } from '../api/entriesApi';
 import { filesApi } from '../api/filesApi';
@@ -22,17 +22,17 @@ import Unauthorized from '../components/Unauthorized';
 import MetadataCard from '../components/MetadataCard';
 import RecordCard from '../components/RecordCard';
 import ReferenceView from '../components/ReferenceView';
-import ExpandableContent from '../components/ExpandableContent';
+import ContentPaginator from '../components/ContentPaginator';
 import ConversationPanel from '../components/ConversationPanel';
 import { EntryVersionMeta, EntryVersionHistory } from '../components/VersionComponents';
-import { mockReferences } from '../mock/mockData';
 import {
-  Bookmark, User, Share2, History, Database, Network,
-  List, Terminal, Cpu, FileText, MessageSquare,
+  Bookmark, User, History, Database, Network,
+  List, Terminal, Cpu, FileText, MessageSquare, ChevronRight,
 } from 'lucide-react';
 
 export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { isLoggedIn } = useAuth();
   const [entry, setEntry] = useState<any>(null);
   const [viewModel, setViewModel] = useState<DetailViewModel | null>(null);
@@ -43,6 +43,18 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
   const [bookmarked, setBookmarked] = useState(false);
   const [relatedEntries, setRelatedEntries] = useState<any[]>([]);
   const [showDebug, setShowDebug] = useState(false);
+
+  // Paginated reading
+  const contentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
+  const [headings, setHeadings] = useState<Array<{ text: string; page: number; level: number }>>([]);
+  const [navHeading, setNavHeading] = useState<string | null>(null);
+
+  const handlePageChange = useCallback((p: number) => {
+    const next = new URLSearchParams(searchParams);
+    if (p > 1) next.set('page', String(p));
+    else next.delete('page');
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams]);
 
   // Multi-turn chat
   const chat = useConversation(entryId);
@@ -127,25 +139,33 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* LEFT: TOC */}
+        {/* LEFT: Dynamic TOC from content headings */}
         <div className="lg:col-span-2 hidden lg:block border-r border-gray-100 pr-3 space-y-3 select-none">
           <h4 className="font-extrabold text-xs text-gray-400 uppercase tracking-wider flex items-center pb-1.5 border-b border-gray-100">
             <List className="w-3.5 h-3.5 mr-1" />
             <span>条目目录</span>
           </h4>
-          <nav className="space-y-1 text-xs">
-            {[
-              { id: 'overview', label: '1. 概览' },
-              { id: 'content', label: '2. 正文' },
-              ...(viewModel.records.length > 0 ? [{ id: 'records', label: '3. 数据记录' }] : []),
-              ...(viewModel.references.length > 0 ? [{ id: 'refs', label: '4. 参考文献' }] : []),
-              { id: 'chat', label: '5. AI 问答' },
-            ].map((item) => (
-              <button key={item.id} onClick={() => document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' })}
-                className="w-full text-left py-1 text-gray-600 hover:text-blue-700 hover:underline font-medium block truncate">
-                {item.label}
+          <nav className="space-y-1 text-xs max-h-[calc(100vh-200px)] overflow-y-auto">
+            {headings.map((h, i) => (
+              <button
+                key={i}
+                onClick={() => {
+                  setNavHeading(h.text);
+                  setTimeout(() => setNavHeading(null), 100);
+                }}
+                className={`w-full text-left py-1 text-gray-600 hover:text-[#DB5F5B] hover:underline font-medium block truncate transition-colors ${
+                  h.level === 1 ? 'font-bold text-gray-800' : h.level === 2 ? 'pl-2' : 'pl-4 text-[11px]'
+                }`}
+              >
+                <span className="flex items-center gap-1">
+                  {h.level === 1 && <ChevronRight className="w-3 h-3 text-[#DB5F5B]" />}
+                  <span>{h.text.slice(0, 40)}</span>
+                </span>
               </button>
             ))}
+            {headings.length === 0 && (
+              <p className="text-[10px] text-gray-400 italic">正文解析中...</p>
+            )}
           </nav>
         </div>
 
@@ -174,13 +194,20 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
           {/* Metadata Card */}
           <MetadataCard items={viewModel.metadata.items} />
 
-          {/* Content */}
+          {/* Content — paginated reader */}
           <section id="content" className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
             <h2 className="text-sm font-extrabold text-[#2B3150] uppercase tracking-wider pb-1.5 border-b border-gray-100 mb-3 flex items-center select-none">
               <FileText className="w-4 h-4 mr-1 text-gray-500" />
               正文内容
             </h2>
-            <ExpandableContent content={viewModel.content} maxHeight={400} />
+            <ContentPaginator
+              content={viewModel.content}
+              currentPage={contentPage}
+              onPageChange={handlePageChange}
+              onHeadings={setHeadings}
+              scrollToHeading={navHeading}
+              onNavigated={() => setNavHeading(null)}
+            />
           </section>
 
           {/* Sandbox Data Records */}

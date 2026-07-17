@@ -622,16 +622,3 @@ field: metadata (JSON string, 可选)
 
 - **Method**: `GET`
 - **Auth**: Optional
-
----
-
-## 8.3 Swagger 文档
-
-项目包含 Swagger UI（如 `backend/swagger/` 目录存在）：
-
-```
-http://localhost:3001/api/docs
-```
-
-> **TODO**: Swagger spec 文件（`backend/swagger/`）未在仓库中找到。
-> 如果需要 OpenAPI 规范，建议平台组基于本文档和路由定义生成。

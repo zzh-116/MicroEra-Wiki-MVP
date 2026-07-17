@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { History, Award, CheckCircle, ShieldAlert, ArrowLeftRight, Clock, User, FileText, RotateCcw, HelpCircle } from 'lucide-react';
+import { History, Award, CheckCircle, Clock, User, FileText, RotateCcw, HelpCircle } from 'lucide-react';
 import { WikiEntry, EntryVersionHistoryItem } from '../types/wiki';
-import { mockSystemVersionInfo } from '../mock/mockData';
 import { stripDataUriImages } from '../utils/adapter';
 
 // Component 1: VersionBadge
@@ -39,9 +38,28 @@ export function VersionBadge({
   );
 }
 
+interface VersionInfoPanelProps {
+  projectName?: string;
+  demander?: string;
+  productStage?: string;
+  productVersion?: string;
+  documentVersion?: string;
+  documentLastUpdated?: string;
+  productVersionDescription?: string;
+  documentVersionDescription?: string;
+}
+
 // Component 2: VersionInfoPanel (Wikipedia / gov.uk style, clean, structured, low-distraction)
-export function VersionInfoPanel() {
-  const info = mockSystemVersionInfo;
+export function VersionInfoPanel({
+  projectName = '',
+  demander = '',
+  productStage = 'alpha',
+  productVersion = 'v0.1',
+  documentVersion = 'v0.1',
+  documentLastUpdated = '',
+  productVersionDescription = '',
+  documentVersionDescription = '',
+}: VersionInfoPanelProps) {
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4 shadow-sm" id="system-version-info-panel">
@@ -64,16 +82,16 @@ export function VersionInfoPanel() {
           <div className="space-y-2 leading-relaxed">
             <div>
               <span className="text-gray-400">项目名称：</span>
-              <span className="font-bold text-gray-800">{info.projectName}</span>
+              <span className="font-bold text-gray-800">{projectName || '—'}</span>
             </div>
             <div>
               <span className="text-gray-400">提出需求方：</span>
-              <span className="font-bold text-gray-800">{info.demander}</span>
+              <span className="font-bold text-gray-800">{demander || '—'}</span>
             </div>
             <div>
               <span className="text-gray-400">当前所处阶段：</span>
               <span className="px-1.5 py-0.2 bg-purple-50 text-purple-700 border border-purple-100 rounded text-[10px] font-bold font-mono">
-                {info.productStage.toUpperCase()} ({info.productStage === 'alpha' ? '原型验证阶段' : '测试阶段'})
+                {productStage.toUpperCase()} ({productStage === 'alpha' ? '原型验证阶段' : '测试阶段'})
               </span>
             </div>
           </div>
@@ -87,15 +105,15 @@ export function VersionInfoPanel() {
           <div className="space-y-2 leading-relaxed">
             <div className="flex items-center justify-between">
               <span className="text-gray-400">产品总版本：</span>
-              <VersionBadge version={info.productVersion} type="product" />
+              <VersionBadge version={productVersion} type="product" />
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-400">设计文档版本：</span>
-              <VersionBadge version={info.documentVersion} type="document" />
+              <VersionBadge version={documentVersion} type="document" />
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-400">文档核准时间：</span>
-              <span className="font-mono text-gray-700 font-bold">{info.documentLastUpdated}</span>
+              <span className="font-mono text-gray-700 font-bold">{documentLastUpdated || '—'}</span>
             </div>
           </div>
         </div>
@@ -108,7 +126,7 @@ export function VersionInfoPanel() {
             🚀 现行产品版本说明 (Product Release Note):
           </span>
           <p className="text-gray-700 leading-relaxed font-sans text-xs">
-            {info.productVersionDescription}
+            {productVersionDescription || '暂无版本说明'}
           </p>
         </div>
 
@@ -117,7 +135,7 @@ export function VersionInfoPanel() {
             📄 对应需求设计说明 (PRD Specification Note):
           </span>
           <p className="text-gray-700 leading-relaxed font-sans text-xs">
-            {info.documentVersionDescription}
+            {documentVersionDescription || '暂无需求设计说明'}
           </p>
         </div>
       </div>

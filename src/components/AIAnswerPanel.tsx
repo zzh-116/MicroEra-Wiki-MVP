@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Calendar, BookOpen, Quote, ChevronRight, ThumbsUp, MessageSquare } from 'lucide-react';
-import { Reference } from '../types/wiki';
-import { stripDataUriImages } from '../utils/adapter';
+import type { Reference } from '../types/wiki';
 
 interface AIAnswerPanelProps {
   question: string;
@@ -99,7 +98,8 @@ export default function AIAnswerPanel({
       {/* Answer Paragraph */}
       <div className="text-xs text-gray-700 leading-relaxed font-sans bg-gray-50/50 p-3.5 rounded-lg border border-gray-100 select-text">
         {/* Render paragraphs cleanly */}
-        {stripDataUriImages(answer).split('\n\n').map((para, i) => (
+        {/* Remove data: URIs silently — never show [Embedded image] noise */}
+        {answer.replace(/!\[[^\]]*\]\(data:image\/[^)]+\)/g, '').replace(/data:image\/[^)\s]+/g, '').split('\n\n').map((para, i) => (
           <p key={i} className="mb-2 last:mb-0">
             {para.split('**').map((chunk, j) => {
               if (j % 2 === 1) {

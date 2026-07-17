@@ -183,21 +183,42 @@ export class ImportService {
     if (!skipped && chunks.length > 0) {
       try {
         const texts = chunks.map((c) => c.text);
-        const vecs = await ollamaEmbedder.embedBatch(texts);
-        const valid = vecs.filter((v) => v.length > 0);
+        const { vectors, failed } = await ollamaEmbedder.embedBatch(texts);
+        const valid = vectors.filter((v) => v.length > 0);
+
+        // Record every failed chunk so the user knows what's missing
+        for (const f of failed) {
+          const chunk = chunks[f.index];
+          errors.push(`Embedding: chunk #${f.index}${chunk ? ` (${chunk.id})` : ''} — ${f.error}`);
+          console.error(`[Import] Embed | entry=${entry!.id} | chunk=${f.index}${chunk ? ` id=${chunk.id}` : ''} | FAILED: ${f.error}`);
+        }
 
         if (valid.length > 0) {
           dimension = valid[0].length;
           const records = chunks.map((c, i) => ({
-            chunk_id: c.id, entry_id: entry.id, embedding: vecs[i] || [],
+            chunk_id: c.id, entry_id: entry.id, embedding: vectors[i] || [],
           }));
           await vectorRepository.insert(records);
           vectorCount = valid.length;
         }
+
         const embedMs = Date.now() - tEmbed;
-        stages.push({ stage: 'embed', status: 'success', ms: embedMs,
-          detail: `${vectorCount} vectors (${config.ollama.embeddingModel})` });
-        console.log(`[Import] Embed | entry=${entry.id} | vectors=${vectorCount} | ms=${embedMs} | SUCCESS`);
+
+        if (failed.length === 0) {
+          // Complete success — all chunks embedded
+          stages.push({ stage: 'embed', status: 'success', ms: embedMs,
+            detail: `${vectorCount} vectors (${config.ollama.embeddingModel})` });
+          console.log(`[Import] Embed | entry=${entry.id} | vectors=${vectorCount} | ms=${embedMs} | SUCCESS`);
+        } else if (valid.length === 0) {
+          // Complete failure — no chunks embedded
+          stages.push({ stage: 'embed', status: 'failed', ms: embedMs,
+            detail: `0/${chunks.length} embedded — ${failed.length} chunks failed` });
+        } else {
+          // Partial success — some chunks embedded, some failed
+          stages.push({ stage: 'embed', status: 'success', ms: embedMs,
+            detail: `${vectorCount}/${chunks.length} vectors — ${failed.length} chunks failed (${config.ollama.embeddingModel})` });
+          console.log(`[Import] Embed | entry=${entry.id} | vectors=${vectorCount}/${chunks.length} | failed=${failed.length} | ms=${embedMs} | PARTIAL`);
+        }
       } catch (err: any) {
         errors.push(`Embedding: ${err.message}`);
         stages.push({ stage: 'embed', status: 'failed', ms: Date.now() - tEmbed, detail: err.message });

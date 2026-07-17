@@ -9,4 +9,4 @@ Write-Host "[OK] Python: $(& $pythonDir\python.exe --version)"
 Write-Host "[OK] Docling: $(& $scriptsDir\docling.exe --version)" -NoNewline
 Write-Host ""
 Write-Host "Starting backend..."
-npx tsx backend/main.ts
+npx tsx server/index.ts

@@ -96,15 +96,21 @@ adminRouter.post('/rebuild-embeddings', async (req: Request, res: Response) => {
 
         // Generate embeddings
         const texts = chunks.map((c) => c.text);
-        const vecs = await ollamaEmbedder.embedBatch(texts);
-        const valid = vecs.filter((v) => v.length > 0);
+        const { vectors, failed } = await ollamaEmbedder.embedBatch(texts);
+        const valid = vectors.filter((v) => v.length > 0);
+
+        if (failed.length > 0) {
+          for (const f of failed) {
+            console.error(`[Admin] Embed | entry=${entry.id} | chunk=${f.index} | FAILED: ${f.error}`);
+          }
+        }
 
         // Store vectors
         if (valid.length > 0) {
           const records = chunks.map((c, i) => ({
             chunk_id: c.id,
             entry_id: entry.id,
-            embedding: vecs[i] || [],
+            embedding: vectors[i] || [],
           }));
           await vectorRepository.insert(records);
           totalVectors += valid.length;
@@ -158,7 +164,7 @@ adminRouter.post('/rebuild-embeddings', async (req: Request, res: Response) => {
       totalChunks,
       totalVectors,
       model: config.ollama.embeddingModel,
-      dimension: validVectorsDimension(totalVectors > 0 ? config.milvus.dimension : 0),
+      dimension: validVectorsDimension(totalVectors > 0 ? config.embeddingDimension : 0),
       timing: {
         clearMs: clearedMs,
         totalMs,
@@ -188,7 +194,7 @@ adminRouter.get('/stats', async (_req: Request, res: Response) => {
       entries: { total: totalEntries },
       embedding: {
         model: config.ollama.embeddingModel,
-        dimension: config.milvus.dimension,
+        dimension: config.embeddingDimension,
       },
       llm: {
         provider: config.llmProvider,
@@ -202,5 +208,5 @@ adminRouter.get('/stats', async (_req: Request, res: Response) => {
 });
 
 function validVectorsDimension(dim: number): number {
-  return dim > 0 ? dim : config.milvus.dimension;
+  return dim > 0 ? dim : config.embeddingDimension;
 }
