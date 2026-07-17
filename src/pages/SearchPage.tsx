@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { searchApi, SearchResult } from '../api/searchApi';
+import { storage } from '../lib/storage';
 import { Search, CornerDownRight, Filter, Calendar, Shield, ArrowRight, ExternalLink } from 'lucide-react';
 import EntryTypeBadge from '../components/EntryTypeBadge';
 import VisibilityBadge from '../components/VisibilityBadge';
@@ -60,13 +61,13 @@ export default function SearchPage() {
 
   // Initial load
   useEffect(() => {
-    const storedQuery = localStorage.getItem('miqro_wiki_search_query') || localStorage.getItem('miqro_wiki_quick_q');
+    const storedQuery = storage.getSearchQuery() || storage.getQuickQuestion();
     let q = query;
     if (storedQuery) {
       q = storedQuery;
       setQuery(storedQuery);
-      localStorage.removeItem('miqro_wiki_search_query');
-      localStorage.removeItem('miqro_wiki_quick_q');
+      storage.removeSearchQuery();
+      storage.removeQuickQuestion();
     }
     executeSearch(q, typeFilter, page, pageSize);
   }, [isLoggedIn]);

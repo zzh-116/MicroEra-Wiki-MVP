@@ -21,12 +21,7 @@ export const config = {
     chatModel: process.env.DEEPSEEK_CHAT_MODEL || 'deepseek-v4-flash',
   },
 
-  milvus: {
-    host: process.env.MILVUS_HOST || 'localhost',
-    port: parseInt(process.env.MILVUS_PORT || '19530', 10),
-    collection: process.env.MILVUS_COLLECTION || 'wiki_entries',
-    dimension: parseInt(process.env.EMBEDDING_DIM || '1024', 10),
-  },
+  embeddingDimension: parseInt(process.env.EMBEDDING_DIM || '1024', 10),
 
   /** Sandbox data platform connector */
   sandbox: {

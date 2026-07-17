@@ -67,7 +67,6 @@
 | 文档解析 | Docling CLI：PDF / DOCX / PPTX / XLSX / HTML / 图片 (OCR) |
 | 认证 | JWT (HS256) + bcrypt |
 | 容器化 | Docker + Docker Compose（Alpine 多阶段构建） |
-| API 文档 | Swagger UI（`/api/docs`） |
 
 ## 功能
 
@@ -200,7 +199,6 @@ npm run dev            # Vite 前端 :3000（热重载）
 
 # 6. 访问
 # 前端: http://localhost:3000
-# API 文档: http://localhost:3000/api/docs
 # 健康检查: http://localhost:3001/api/pipeline/health
 
 # 7. 同步 Sandbox 数据
@@ -318,10 +316,6 @@ npm run db:studio      # 启动 Drizzle Studio（可视化数据库管理）
 | `GET` | `/api/spaces` | — | 知识空间列表 |
 | `GET` | `/api/admin/stats` | Bearer | 管理统计（条目数/模型配置） |
 | `POST` | `/api/admin/rebuild-embeddings` | Bearer | 一键重建所有向量嵌入 |
-
-### 📖 API 文档
-
-Swagger UI 已集成，访问 `http://localhost:3001/api/docs` 可直接在浏览器中交互式调用所有 API。
 
 ## 项目结构
 

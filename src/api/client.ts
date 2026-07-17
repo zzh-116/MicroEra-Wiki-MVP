@@ -2,22 +2,22 @@
  * Unified API HTTP client.
  *
  * Talks to the Express backend (dev: proxied by Vite to localhost:3001;
- * production: same origin). Manages JWT token in localStorage under
- * the key 'miqro_wiki_token'.
+ * production: same origin). Token persistence is delegated to storage.ts.
  */
+import { storage } from '../lib/storage';
+
 const API_BASE = '/api';
-const TOKEN_KEY = 'miqro_wiki_token';
 
 export function getToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY);
+  return storage.getToken();
 }
 
 export function setToken(token: string): void {
-  localStorage.setItem(TOKEN_KEY, token);
+  storage.setToken(token);
 }
 
 export function clearToken(): void {
-  localStorage.removeItem(TOKEN_KEY);
+  storage.removeToken();
 }
 
 /** Build headers with optional auth */

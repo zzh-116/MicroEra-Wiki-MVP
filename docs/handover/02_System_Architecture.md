@@ -76,13 +76,12 @@ graph TB
 
 | 组件 | 路径 | 说明 |
 |------|------|------|
-| 入口 | `server/index.ts` | 启动 Express + 静态文件服务 |
-| 独立入口 | `backend/main.ts` | 仅 API（无前端 SPA） |
+| 入口 | `server/index.ts` | 启动 Express（API + 可选静态文件服务） |
 | App 工厂 | `backend/app.ts` | 创建 Express 实例，注册路由 |
 
-两个入口的区别：
-- `server/index.ts`: 完整服务 = API + 前端 SPA（生产部署用）
-- `backend/main.ts`: 纯 API 服务（API-only 部署 / 开发调试用）
+`server/index.ts` 是唯一的应用入口点。通过环境变量 `SERVE_STATIC` 控制模式：
+- `SERVE_STATIC=false`（默认）：仅 API，开发时 Vite 独立提供前端
+- `SERVE_STATIC=true`：API + 前端 SPA（生产部署用）
 
 ### 2.2.2 路由模块
 

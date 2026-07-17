@@ -107,12 +107,12 @@ pipelineRouter.post('/embed', async (req: Request, res: Response) => {
     if (inputTexts.length === 0) { res.status(400).json({ error: 'MISSING_INPUT' }); return; }
     let chunks = inputTexts;
     if (inputTexts.length === 1 && inputTexts[0].length > 1024) chunks = chunkService.chunk(inputTexts[0], 'embed_input').map((c) => c.text);
-    const vectors = await ollamaEmbedder.embedBatch(chunks);
+    const { vectors, failed } = await ollamaEmbedder.embedBatch(chunks);
     const valid = vectors.filter((v) => v.length > 0);
     if (valid.length > 0 && entryId) {
       await vectorRepository.insert(valid.map((v) => ({ chunk_id: '', entry_id: entryId, embedding: v })));
     }
-    res.json({ success: true, inputCount: inputTexts.length, chunkCount: chunks.length, vectorCount: valid.length, dimension: valid[0]?.length || 0, model: config.ollama.embeddingModel });
+    res.json({ success: true, inputCount: inputTexts.length, chunkCount: chunks.length, vectorCount: valid.length, failedCount: failed.length, dimension: valid[0]?.length || 0, model: config.ollama.embeddingModel });
   } catch (err: any) { res.status(503).json({ error: 'EMBED_FAILED', message: err.message }); }
 });
 

@@ -1,5 +1,7 @@
 // Server-Sent Events helpers for Express
 // Produces standard SSE format: "event: name\ndata: json\n\n"
+// The event name comes exclusively from the SSE protocol's "event:" field.
+// The JSON payload contains ONLY business data — no transport metadata.
 import type { Response } from 'express';
 
 /** Set SSE headers and return a send function */
@@ -24,14 +26,7 @@ export function sseStart(res: Response): (event: string, data: unknown) => void 
   res.write(':ok\n\n');
 
   return (event: string, data: unknown) => {
-    // Inject the event type into the JSON payload so the frontend
-    // can switch on data.type (the SSE event: line is ignored by
-    // the ReadableStream-based parser in queryApi.ts).
-    const payload =
-      typeof data === 'object' && data !== null && !Array.isArray(data)
-        ? { type: event, ...(data as Record<string, unknown>) }
-        : data;
-    res.write(`event: ${event}\ndata: ${JSON.stringify(payload)}\n\n`);
+    res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
   };
 }
 
