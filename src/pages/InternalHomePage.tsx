@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Search, Sparkles, Clock, Bookmark, ChevronRight, ArrowRight, Cpu, Database, Network, Activity } from 'lucide-react';
 import { WikiEntry } from '../types/wiki';
 import { entriesApi } from '../api/entriesApi';
+import { storage } from '../lib/storage';
 
 interface InternalHomePageProps {
   onNavigate: (view: string, id?: string) => void}
@@ -30,12 +31,12 @@ export default function InternalHomePage() {
   const handleAskSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchInput.trim()) {
-      localStorage.setItem('miqro_wiki_quick_q', searchInput);
+      storage.setQuickQuestion(searchInput);
       navigate('/ai-query')}
   };
 
   const handleQuickQuestion = (q: string) => {
-    localStorage.setItem('miqro_wiki_quick_q', q);
+    storage.setQuickQuestion(q);
     navigate('/ai-query')};
 
   return (

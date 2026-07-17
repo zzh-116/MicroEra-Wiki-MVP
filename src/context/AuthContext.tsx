@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { User } from '../types/wiki';
 import { authApi } from '../api/authApi';
+import { storage } from '../lib/storage';
 
 interface AuthContextType {
   user: User | null;
@@ -13,18 +14,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(() => {
-    // Initial state from localStorage
-    const saved = localStorage.getItem('miqro_wiki_user');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  });
+  const [user, setUser] = useState<User | null>(() => storage.getUser<User>());
   const [loading, setLoading] = useState(true);
 
   // Verify token on mount
@@ -32,10 +22,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     authApi.getMe().then((u) => {
       if (u) {
         setUser(u);
-        localStorage.setItem('miqro_wiki_user', JSON.stringify(u));
+        storage.setUser(u);
       } else {
         setUser(null);
-        localStorage.removeItem('miqro_wiki_user');
+        storage.removeUser();
       }
       setLoading(false);
     });
@@ -62,7 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoggedIn: true,
       };
       setUser(fallbackUser);
-      localStorage.setItem('miqro_wiki_user', JSON.stringify(fallbackUser));
+      storage.setUser(fallbackUser);
       return { success: true };
     }
     return { success: false, error: '用户名或密码错误。演示账号：admin / admin123' };
@@ -70,8 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('miqro_wiki_user');
-    localStorage.removeItem('miqro_wiki_token');
+    storage.clearAll();
   };
 
   return (

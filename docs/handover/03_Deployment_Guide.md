@@ -150,14 +150,11 @@ docling --version
 
 ```bash
 # 方式 A: 启动完整服务（API + 前端 SPA）
-npm run server
+# 方式 A: 生产模式（API + 前端）
+SERVE_STATIC=true npm run server
 # 访问 http://localhost:3001
 
-# 方式 B: 仅启动 API 服务
-npm run backend
-# 访问 http://localhost:3001/api/pipeline/health
-
-# 方式 C: 开发模式 — API + 前端分别启动
+# 方式 B: 开发模式 — API + 前端分别启动
 npm run server:dev &   # 后端
 npm run dev             # 前端 (port 3000)
 ```

@@ -1,6 +1,18 @@
 // Ollama Embedding Service — BGE-M3 / nomic-embed-text via Ollama
-// Uses Ollama's native batch API: one request for all texts
+// Uses Ollama's native batch API: one request for all texts.
+//
+// embedBatch returns structured results — callers can distinguish partial
+// success from complete failure, and failed chunks are explicitly recorded
+// rather than silently dropped.
+//
 import { config } from '../config.js';
+
+export interface EmbedBatchResult {
+  /** Successfully generated embeddings (same indices as input texts) */
+  vectors: number[][];
+  /** Every failed chunk with its index and error message */
+  failed: Array<{ index: number; error: string }>;
+}
 
 export class OllamaEmbedder {
   private url: string;
@@ -47,7 +59,7 @@ export class OllamaEmbedder {
     console.log(`[Embedder] Keep-warm started (interval: ${intervalMs / 1000}s)`);
   }
 
-  /** Embed a single text */
+  /** Embed a single text — throws on failure */
   async embed(text: string): Promise<number[]> {
     const clean = text.replace(/\x00/g, '');
     const response = await fetch(`${this.url}/api/embeddings`, {
@@ -61,14 +73,26 @@ export class OllamaEmbedder {
     return data.embedding;
   }
 
-  /** Embed multiple texts — uses Ollama native batch API (single HTTP request) */
-  async embedBatch(texts: string[]): Promise<number[][]> {
-    if (texts.length === 0) return [];
+  /**
+   * Embed multiple texts — returns structured result with per-chunk status.
+   *
+   * Never silently discards failures. Callers MUST inspect `result.failed`
+   * to decide whether to proceed with partial data.
+   */
+  async embedBatch(texts: string[]): Promise<EmbedBatchResult> {
+    if (texts.length === 0) return { vectors: [], failed: [] };
+
+    // Single-text path: collect structured failure instead of returning [[]]
     if (texts.length === 1) {
-      try { return [await this.embed(texts[0])]; } catch { return [[]]; }
+      try {
+        const vec = await this.embed(texts[0]);
+        return { vectors: [vec], failed: [] };
+      } catch (err: any) {
+        console.warn(`[Embedder] Chunk 0 failed: ${err.message}`);
+        return { vectors: [], failed: [{ index: 0, error: err.message }] };
+      }
     }
 
-    // Ollama batch: pass array as `input`, get back `embeddings` array
     const cleanTexts = texts.map((t) => t.replace(/\x00/g, ''));
     const startTime = Date.now();
 
@@ -92,7 +116,7 @@ export class OllamaEmbedder {
       // Ollama batch: { embeddings: [[...], [...], ...] }
       if (data.embeddings && Array.isArray(data.embeddings)) {
         console.log(`[Embedder] Batch done: ${texts.length} texts → ${(data.embeddings as unknown[]).length} vectors in ${Date.now() - startTime}ms (native batch)`);
-        return data.embeddings as number[][];
+        return { vectors: data.embeddings as number[][], failed: [] };
       }
 
       // Ollama single: { embedding: [...] }
@@ -108,39 +132,46 @@ export class OllamaEmbedder {
     return this.embedConcurrent(cleanTexts);
   }
 
-  /** Fallback: concurrent individual requests (8 parallel) */
-  private async embedConcurrent(texts: string[]): Promise<number[][]> {
+  /** Fallback: concurrent individual requests (8 parallel) — collects failures */
+  private async embedConcurrent(texts: string[]): Promise<EmbedBatchResult> {
     const start = Date.now();
-    const results: number[][] = new Array(texts.length);
+    const vectors: number[][] = new Array(texts.length);
+    const failed: EmbedBatchResult['failed'] = [];
     let cursor = 0;
     let successCount = 0;
-    let failCount = 0;
+
     const workers = Array.from({ length: Math.min(8, texts.length) }, async () => {
       while (cursor < texts.length) {
         const i = cursor++;
         try {
-          results[i] = await this.embed(texts[i]);
+          vectors[i] = await this.embed(texts[i]);
           successCount++;
         } catch (err: any) {
-          console.warn(`[Embedder] Chunk ${i} failed: ${err.message}`);
-          results[i] = [];
-          failCount++;
+          console.warn(`[Embedder] Chunk ${i}/${texts.length} failed: ${err.message}`);
+          vectors[i] = []; // empty placeholder — caller knows this is failed via `failed` array
+          failed.push({ index: i, error: err.message });
         }
       }
     });
     await Promise.all(workers);
-    console.log(`[Embedder] Concurrent done: ${texts.length} texts → ${successCount} ok, ${failCount} failed in ${Date.now() - start}ms`);
-    return results;
+    console.log(`[Embedder] Concurrent done: ${texts.length} texts → ${successCount} ok, ${failed.length} failed in ${Date.now() - start}ms`);
+    return { vectors, failed };
   }
 
-  /** Fallback: sequential (slowest, most reliable) */
-  private async embedSequential(texts: string[]): Promise<number[][]> {
-    const results: number[][] = [];
-    for (const text of texts) {
-      try { results.push(await this.embed(text)); }
-      catch { results.push([]); }
+  /** Fallback: sequential (slowest, most reliable) — collects failures */
+  private async embedSequential(texts: string[]): Promise<EmbedBatchResult> {
+    const vectors: number[][] = [];
+    const failed: EmbedBatchResult['failed'] = [];
+    for (let i = 0; i < texts.length; i++) {
+      try {
+        vectors.push(await this.embed(texts[i]));
+      } catch (err: any) {
+        console.warn(`[Embedder] Chunk ${i}/${texts.length} failed (sequential): ${err.message}`);
+        vectors.push([]); // placeholder — flagged in `failed`
+        failed.push({ index: i, error: err.message });
+      }
     }
-    return results;
+    return { vectors, failed };
   }
 }
 

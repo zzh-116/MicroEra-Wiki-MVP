@@ -64,13 +64,6 @@ export async function createApp(options: AppOptions = {}) {
 
   for (const { path: p, router } of extraRoutes) app.use(p, router);
 
-  // Swagger UI
-  const swaggerDir = path.resolve(import.meta.dirname, 'swagger');
-  if (fs.existsSync(swaggerDir)) {
-    app.use('/api/docs', express.static(swaggerDir));
-    console.log('[App] Swagger UI at /api/docs');
-  }
-
   // Static files (production)
   if (serveStatic) {
     const distPath = path.resolve(import.meta.dirname, '..', 'dist');
@@ -104,7 +97,8 @@ export async function runBootstrap() {
   });
 
   console.log(`[Bootstrap] PostgreSQL ready — ${config.databaseUrl.replace(/\/\/.*@/, '//***@')}`);
-  console.log(`[Bootstrap] Ollama: ${config.ollama.url} (chat: ${config.ollama.chatModel}, embed: ${config.ollama.embeddingModel})`);
+  console.log(`[Bootstrap] LLM Provider: ${config.llmProvider} (Ollama chat config: ${config.ollama.chatModel}, Embed: ${config.ollama.embeddingModel})`);
+  if (config.llmProvider === 'deepseek') console.log(`[Bootstrap] DeepSeek model: ${config.deepseek.chatModel}`);
 }
 
 /** Execute migration SQL files in order */

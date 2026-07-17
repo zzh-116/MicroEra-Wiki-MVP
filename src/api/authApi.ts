@@ -1,6 +1,7 @@
 import { User } from '../types/wiki';
 import { post, get } from './client';
 import { setToken } from './client';
+import { storage } from '../lib/storage';
 
 export const authApi = {
   async login(
@@ -23,7 +24,7 @@ export const authApi = {
         department: '',
         isLoggedIn: true,
       };
-      localStorage.setItem('miqro_wiki_user', JSON.stringify(user));
+      storage.setUser(user);
       return { success: true, user };
     } catch (err: any) {
       return { success: false, user: null as any, error: err.message || '登录失败' };
@@ -48,7 +49,7 @@ export const authApi = {
       }
       return null;
     } catch {
-      localStorage.removeItem('miqro_wiki_user');
+      storage.removeUser();
       return null;
     }
   },

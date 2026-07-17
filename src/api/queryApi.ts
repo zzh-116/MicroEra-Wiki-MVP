@@ -90,6 +90,7 @@ export const queryApi = {
 
         const decoder = new TextDecoder();
         let buffer = '';
+        let currentEvent = '';
         let receivedDone = false;
         let chunkCount = 0;
 
@@ -112,25 +113,32 @@ export const queryApi = {
             buffer = lines.pop() || '';
 
             for (const line of lines) {
-              if (!line.startsWith('data: ')) {
-                if (line.startsWith('event: ') && chunkCount <= 3) {
-                  console.log(`[SSE-client]   ${line}`);
+              // Track event name from SSE "event:" field
+              if (line.startsWith('event: ')) {
+                currentEvent = line.slice(7).trim();
+                if (chunkCount <= 3) {
+                  console.log(`[SSE-client]   event: ${currentEvent}`);
                 }
                 continue;
               }
-              try {
-                const data = JSON.parse(line.slice(6));
-                // Log every event type for debug
-                if (data.type === 'token') {
-                  // Log first 3 tokens and every 100th
-                  if (!receivedDone && chunkCount <= 3) {
-                    console.log(`[SSE-client]   data: type=${data.type} content="${data.content?.slice(0, 30)}"`);
-                  }
-                } else {
-                  console.log(`[SSE-client]   data: type=${data.type} keys=${Object.keys(data).join(',')}`);
-                }
 
-                switch (data.type) {
+              // Skip non-data lines
+              if (!line.startsWith('data: ')) continue;
+
+              // Dispatch by the last seen SSE event name, not by a "type" field in JSON
+              const rawData = line.slice(6);
+              if (!currentEvent) {
+                // First data line before any event: — skip or treat as comment
+                if (chunkCount <= 3) {
+                  console.log(`[SSE-client]   data (no event): "${rawData.slice(0, 60)}"`);
+                }
+                continue;
+              }
+
+              try {
+                const data = JSON.parse(rawData);
+
+                switch (currentEvent) {
                   case 'start':
                     callbacks.onStart?.(data.conversationId);
                     break;
@@ -148,11 +156,11 @@ export const queryApi = {
                     callbacks.onError?.(data.message);
                     break;
                   default:
-                    console.warn(`[SSE-client] UNKNOWN event type: "${data.type}"`, data);
+                    console.warn(`[SSE-client] UNKNOWN event: "${currentEvent}"`, data);
                 }
               } catch {
                 if (chunkCount <= 3) {
-                  console.warn(`[SSE-client] unparseable data line: "${line.slice(0, 100)}"`);
+                  console.warn(`[SSE-client] unparseable data line: "${rawData.slice(0, 100)}"`);
                 }
               }
             }

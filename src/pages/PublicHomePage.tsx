@@ -1,11 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, ChevronRight, ArrowRight, Activity, Award, HelpCircle, FileText, ExternalLink } from 'lucide-react';
-import { mockEntries } from '../mock/mockData';
+import { Search, ChevronRight, Activity, Award } from 'lucide-react';
+import { WikiEntry } from '../types/wiki';
+import { entriesApi } from '../api/entriesApi';
 
 export default function PublicHomePage() {
   const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState('');
+  const [publicEntries, setPublicEntries] = useState<WikiEntry[]>([]);
+  const [entriesLoading, setEntriesLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPublic = async () => {
+      setEntriesLoading(true);
+      try {
+        const data = await entriesApi.getEntries({ visibility: 'public' });
+        setPublicEntries(data);
+      } catch {
+        setPublicEntries([]);
+      }
+      setEntriesLoading(false);
+    };
+    fetchPublic();
+  }, []);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -420,7 +437,43 @@ export default function PublicHomePage() {
         </div>
       </div>
 
-      {/* 6. More on Miqro Wiki (更多内容) */}
+      {/* 6. Public Entries (最新公开条目) */}
+      <div className="space-y-4">
+        <h2 className="text-sm font-extrabold text-[#2B3150] uppercase tracking-wider border-b border-gray-200 pb-1.5 select-none">
+          最新公开知识条目
+        </h2>
+        {entriesLoading ? (
+          <div className="py-8 text-center text-gray-400 text-xs">正在加载公开条目...</div>
+        ) : publicEntries.length === 0 ? (
+          <div className="py-8 text-center text-gray-400 text-xs italic">暂无公开知识条目</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            {publicEntries.slice(0, 6).map((entry) => (
+              <button
+                key={entry.id}
+                onClick={() => navigate(`/entry/${entry.id}`)}
+                className="bg-white border border-gray-200 rounded-lg p-4 text-left hover:border-[#DB5F5B]/30 hover:shadow-sm transition-all group"
+              >
+                <h3 className="font-bold text-[#1D70B8] group-hover:text-[#DB5F5B] transition-colors leading-snug">
+                  {entry.title}
+                </h3>
+                {entry.summary && (
+                  <p className="text-gray-500 text-[11px] leading-relaxed mt-1.5 line-clamp-2">
+                    {entry.summary}
+                  </p>
+                )}
+                <div className="flex items-center space-x-2 mt-2 text-[10px] text-gray-400">
+                  <span>{entry.owner}</span>
+                  <span>·</span>
+                  <span>{entry.latestUpdatedAt?.substring(0, 10)}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* 7. More on Miqro Wiki (更多内容) */}
       <div className="space-y-4 pt-4 border-t border-gray-200">
         <h2 className="text-sm font-extrabold text-[#2B3150] uppercase tracking-wider select-none">
           更多内容 (More on Miqro Wiki)

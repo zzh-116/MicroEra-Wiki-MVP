@@ -1,35 +1,26 @@
 // useConversation — manages multi-turn RAG chat state for a knowledge entry.
 // Each entry gets its own conversation (keyed by entryId).
 // Sends full message history to backend for true multi-turn RAG.
+// Persistence is delegated to the storage abstraction layer.
 
 import { useState, useRef, useCallback } from 'react';
 import { queryApi } from '../api/queryApi';
+import { storage } from '../lib/storage';
 import type { ChatMessage, ChatSource, ConversationState } from '../types/viewModels';
 
-const CONV_PREFIX = 'miqro_wiki_conv_';
-
-function storageKey(entryId: string): string {
-  return `${CONV_PREFIX}${entryId}`;
-}
-
 function loadState(entryId: string): ConversationState {
-  try {
-    const raw = sessionStorage.getItem(storageKey(entryId));
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      return {
-        conversationId: parsed.conversationId,
-        messages: parsed.messages || [],
-      };
-    }
-  } catch { /* ignore corrupt data */ }
+  const parsed = storage.getConversation<any>(entryId);
+  if (parsed) {
+    return {
+      conversationId: parsed.conversationId,
+      messages: parsed.messages || [],
+    };
+  }
   return { messages: [] };
 }
 
 function saveState(entryId: string, state: ConversationState): void {
-  try {
-    sessionStorage.setItem(storageKey(entryId), JSON.stringify(state));
-  } catch { /* ignore */ }
+  storage.setConversation(entryId, state);
 }
 
 let _msgId = 0;

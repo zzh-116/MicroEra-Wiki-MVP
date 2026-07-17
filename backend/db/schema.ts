@@ -4,26 +4,9 @@
 import {
   pgTable, serial, text, integer, timestamp,
   primaryKey, index, jsonb, uniqueIndex,
-  customType,
+  vector,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-
-// ---- pgvector type ----
-// Drizzle doesn't have a built-in vector type yet. Use customType for pgvector.
-// Embedding is stored as a string representation (JSON array) that pgvector accepts.
-const vector = customType<{
-  data: number[];
-  driverData: string;
-}>({
-  dataType() { return 'vector(1024)'; },
-  toDriver(val: number[]): string {
-    return `[${val.join(',')}]`;
-  },
-  fromDriver(val: string): number[] {
-    // pgvector returns comma-separated values
-    return val.replace(/[\[\]]/g, '').split(',').map(Number);
-  },
-});
 
 // ---- Users ----
 export const users = pgTable('users', {
@@ -160,7 +143,7 @@ export const vectors = pgTable(
     entryId: integer('entry_id')
       .notNull()
       .references(() => entries.id, { onDelete: 'cascade' }),
-    embedding: vector('embedding'),
+    embedding: vector('embedding', { dimensions: 1024 }),
     store: text('store').notNull().default('pgvector'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },

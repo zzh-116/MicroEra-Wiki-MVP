@@ -83,8 +83,12 @@ export class ChunkService {
         index++;
       }
 
+      // If we've consumed all text, break regardless — prevents infinite
+      // loop when the final sliver is below minChunkSize and overlap>0
+      if (end >= text.length) break;
+
       offset = end - cfg.overlap;
-      if (offset <= 0 || offset >= text.length) break;
+      if (offset <= 0) break;
     }
 
     return chunks;

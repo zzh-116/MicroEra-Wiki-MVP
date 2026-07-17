@@ -151,7 +151,6 @@ MicroEra-Wiki-MVP/
 │   │   ├── ollama.provider.ts
 │   │   ├── deepseek.provider.ts
 │   │   └── sse.ts            # SSE 响应工具
-│   ├── main.ts               # 后端独立入口
 │   ├── parser/               # 文档解析器
 │   │   ├── base.ts           # 解析器抽象接口
 │   │   ├── docling.ts        # Docling 实现
