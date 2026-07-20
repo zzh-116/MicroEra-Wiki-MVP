@@ -1,4 +1,4 @@
-node_modules/
+﻿node_modules/
 build/
 dist/
 coverage/
@@ -13,3 +13,9 @@ backend/data/tmp/
 backend/data/vectors.json
 backend/data/documents/
 backend/data/metadata/
+backend/data/laiguanxue/
+backend/data/zaozhi/
+backend/data/imports/
+
+# Temp files
+C:\Users\CAIHUI\AppData\Local\Temp
