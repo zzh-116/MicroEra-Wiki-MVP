@@ -20,7 +20,8 @@ authRouter.post('/login', async (req: Request, res: Response) => {
 });
 
 authRouter.get('/me', requireAuth, async (req: Request, res: Response) => {
+  if (!req.user?.userId) { res.json({ isLoggedIn: false }); return; }
   const user = await authService.getUserById(req.user!.userId);
-  if (!user) { res.status(404).json({ error: 'USER_NOT_FOUND' }); return; }
+  if (!user) { res.json({ isLoggedIn: false }); return; }
   res.json({ isLoggedIn: true, user: { id: user.id, username: user.username, display_name: user.displayName, role: user.role } });
 });

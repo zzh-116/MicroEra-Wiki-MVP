@@ -7,6 +7,8 @@ import { Router, Request, Response } from 'express';
 import { ConnectorRegistry } from '../../backend/connectors/index.js';
 import { importService } from '../../backend/services/import.service.js';
 import { sandboxConnector } from '../../backend/connectors/sandbox/index.js';
+import '../../backend/connectors/crossref/index.js';
+import '../../backend/connectors/feishu/index.js';
 
 export const connectorsRouter = Router();
 
