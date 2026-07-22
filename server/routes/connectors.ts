@@ -155,6 +155,18 @@ connectorsRouter.post('/:name/sync', async (req: Request, res: Response) => {
   }
 });
 
+// ---- Feishu-specific: list spaces ----
+
+connectorsRouter.get('/feishu/spaces', async (_req: Request, res: Response) => {
+  try {
+    const { listSpaces } = await import('../../backend/connectors/feishu/client.js');
+    const spaces = await listSpaces();
+    res.json({ spaces });
+  } catch (err: any) {
+    res.status(500).json({ error: 'SPACES_FAILED', message: err.message });
+  }
+});
+
 // ---- Sandbox-specific: list projects ----
 
 connectorsRouter.get('/sandbox/projects', async (_req: Request, res: Response) => {

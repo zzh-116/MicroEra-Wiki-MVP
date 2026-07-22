@@ -45,6 +45,7 @@ pipelineRouter.get('/formats', (_req: Request, res: Response) => {
 
 // Parse
 pipelineRouter.post('/parse', async (req: Request, res: Response) => {
+  const wallStart = performance.now();
   try {
     const { content, fileName, filePath } = req.body || {};
     const parser = getParser();
@@ -62,6 +63,8 @@ pipelineRouter.post('/parse', async (req: Request, res: Response) => {
       ? await parser.parseString(content, fileName || 'input.md', { extractProperties: true })
       : await parser.parseFile(fileName || filePath, { extractProperties: true });
 
+    const wallMs = Math.round((performance.now() - wallStart) * 100) / 100;
+
     res.json({
       success: true,
       format: result.sourceFormat,
@@ -71,7 +74,7 @@ pipelineRouter.post('/parse', async (req: Request, res: Response) => {
       propertyCount: result.properties?.length || 0,
       properties: (result.properties || []).slice(0, 20),
       warnings: result.warnings,
-      timing: result.timing,
+      timing: { ...result.timing, wallMs },
     });
   } catch (err: any) {
     if (err instanceof ParserError) {
