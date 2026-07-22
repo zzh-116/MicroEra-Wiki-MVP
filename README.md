@@ -1,25 +1,25 @@
 # 微观纪元 Wiki (MicroEra Wiki MVP)
 
-企业知识资产目录与 AI 知识平台，集成**企业数据源管道** + **Knowledge Parsing Layer** + **多轮 RAG 问答**：多格式导入 → 统一解析 → 知识标准化 → 分块嵌入 → 混合检索 → 多轮 RAG 问答。
+企业知识资产目录与 AI 知识平台，集成**企业数据源管道** + **Knowledge Parsing Layer** + **多轮 RAG 问答** + **学术文献检索导入**：多格式导入 → 统一解析 → 知识标准化 → 分块嵌入 → 混合检索 → 多轮 RAG 问答。
 
 ## 企业数据源架构
 
 ```
-     ┌─────────────────────────────────────────────────────┐
-     │          Data Sources                              │
-     │  Sandbox  │  PDF  │  Word  │  Markdown  │  TXT  │  PNG  │
-     └──────────┬──────────────────┬────────────────────────┘
-                │                  │
-                ▼                  ▼
-        Connector Layer      Parser (Docling)
-        (结构化数据)          (非结构化文档)
-                │                  │
-                ▼                  ▼
-     ┌──────────────────────────────────────────────┐
-     │       Knowledge Parsing Layer                │
-     │  Parser → Resolver → Formatter → Markdown    │
-     │  (统一 ViewModel, ID 解析, 去 [object Object]) │
-     └──────────────────────┬───────────────────────┘
+     ┌─────────────────────────────────────────────────────────────┐
+     │          Data Sources                                      │
+     │  Sandbox  │  arXiv  │  CrossRef  │  Feishu  │  PDF  │ ... │
+     └──────────┬──────────┬──────────┬──────────┬─────────────────┘
+                │          │          │          │
+                ▼          ▼          ▼          ▼
+        Connector Layer (结构化 API)    Parser (Docling)
+        arXiv / CrossRef / Feishu      (非结构化文档)
+                │          │                  │
+                ▼          ▼                  ▼
+     ┌──────────────────────────────────────────────────┐
+     │       Knowledge Parsing Layer                    │
+     │  Parser → Resolver → Formatter → Markdown        │
+     │  (统一 ViewModel, ID 解析, 去 [object Object])     │
+     └──────────────────────┬───────────────────────────┘
                             │
                             ▼
                    Chunk Service
@@ -71,7 +71,8 @@
 ## 功能
 
 ### 平台功能
-- **React Router SPA** — 14 条路由，URL 导航、浏览器历史、深链接、返回按钮、面包屑
+- **React Router SPA** — 15 条路由，URL 导航、浏览器历史、深链接、返回按钮、面包屑
+- **文献检索与导入** — arXiv + CrossRef 双源搜索，一键导入论文到知识库（`/literature`）
 - **公开首页** — 产品/技术/专利展示，免登录
 - **内部首页** — 最近更新、星标收藏、AI 快速问答
 - **知识索引** — 多条件筛选（类型/可见度/分类），分页展示
@@ -86,7 +87,8 @@
 
 | 步骤 | 功能 | 实现 |
 |------|------|------|
-| Connect | Sandbox API 连接器（Token 认证 + 自动刷新） | `backend/connectors/sandbox/` |
+| Connect | Sandbox / arXiv / CrossRef / Feishu 连接器 | `backend/connectors/` |
+| Literature | 学术文献检索：arXiv 预印本 + CrossRef 150M+ 论文 | `backend/connectors/arxiv/`, `crossref/` |
 | Import | 文件上传 / API 提交 / Connector 同步 / 目录批量导入 | `backend/services/import.service.ts` |
 | Parse | Docling：PDF/Word/PPT/Excel/HTML/MD/TXT/图片(OCR) → 统一 Markdown | `backend/parser/docling.ts` |
 | Chunk | 4 种策略：fixed / paragraph / sentence / markdown-aware | `backend/chunk/service.ts` |
@@ -201,17 +203,25 @@ npm run dev            # Vite 前端 :3000（热重载）
 # 前端: http://localhost:3000
 # 健康检查: http://localhost:3001/api/pipeline/health
 
-# 7. 同步 Sandbox 数据
+# 7. 检索学术文献
+curl "http://localhost:3001/api/connectors/arxiv/documents?keyword=transformer"
+
+# 8. 导入论文到知识库
+curl -X POST http://localhost:3001/api/connectors/arxiv/sync \
+  -H "Content-Type: application/json" \
+  -d '{"keyword":"attention is all you need"}'
+
+# 9. 同步 Sandbox 数据
 curl -X POST http://localhost:3001/api/connectors/sandbox/sync \
   -H "Content-Type: application/json" \
   -d '{"projectId":"155"}'
 
-# 8. 测试语义搜索
+# 10. 测试语义搜索
 curl -X POST http://localhost:3001/api/search \
   -H "Content-Type: application/json" \
   -d '{"query":"MOF 材料的可及表面积"}'
 
-# 9. 测试 RAG 问答（SSE 流式）
+# 11. 测试 RAG 问答（SSE 流式）
 curl -N -X POST http://localhost:3001/api/ai/chat/stream \
   -H "Content-Type: application/json" \
   -d '{"question":"什么是量子计算材料设计？"}'
@@ -253,15 +263,17 @@ npm run db:studio      # 启动 Drizzle Studio（可视化数据库管理）
 
 | Method | Path | 说明 |
 |--------|------|------|
+| `GET` | `/api/connectors` | 列出所有已注册连接器（arxiv/crossref/feishu/sandbox） |
 | `GET` | `/api/connectors/health` | 连接器健康检查 + 已注册列表 |
-| `GET` | `/api/connectors` | 列出所有已注册连接器 |
 | `POST` | `/api/connectors/:name/connect` | 连接/认证 |
-| `GET` | `/api/connectors/:name/documents` | 列出文档（?projectId/keyword/type） |
-| `GET` | `/api/connectors/:name/documents/:id` | 获取文档详情 |
-| `POST` | `/api/connectors/:name/sync/preview` | 预览同步 |
-| `POST` | `/api/connectors/:name/sync` | 完整同步 → Entry → Chunk → Embed |
+| `GET` | `/api/connectors/:name/documents` | 文献搜索（?keyword=transformer） |
+| `GET` | `/api/connectors/:name/documents/:id` | 获取文献详情 |
+| `POST` | `/api/connectors/:name/sync/preview` | 预览同步（?keyword/dois） |
+| `POST` | `/api/connectors/:name/sync` | 导入文献 → Entry → Chunk → Embed |
 | `GET` | `/api/connectors/sandbox/projects` | Sandbox 项目列表 |
 | `GET` | `/api/connectors/sandbox/last-sync` | 上次同步时间 |
+
+> **文献导入示例**: `POST /api/connectors/arxiv/sync` `{"keyword":"machine learning"}` 或 `{"dois":["10.xxx"]}`
 
 ### 📊 Pipeline（企业数据管道）
 
@@ -330,22 +342,15 @@ npm run db:studio      # 启动 Drizzle Studio（可视化数据库管理）
 │   │   ├── types.ts                  # Connector 接口 + Unified Document Model
 │   │   ├── registry.ts               # ConnectorRegistry（同 ParserFactory 模式）
 │   │   ├── index.ts                  # 公共导出
-│   │   └── sandbox/                  # Sandbox 连接器
-│   │       ├── types.ts              # Sandbox API 响应类型
-│   │       ├── auth.ts               # Token 登录 + 自动刷新
-│   │       ├── client.ts             # HTTP Client（全部 API 封装）
-│   │       ├── assets.ts             # 分页循环拉取
-│   │       ├── detail.ts             # 按类型路由详情
-│   │       ├── markdown.ts           # JSON → Markdown + getDisplayTitle()
-│   │       ├── sync.ts               # 全量/增量同步
-│   │       ├── index.ts              # SandboxConnector 实现
-│   │       └── knowledge/            # 🆕 Knowledge Parsing Layer
-│   │           ├── types.ts          # KnowledgeDocument 类型
-│   │           ├── parser.ts         # Sandbox JSON → KnowledgeDocument
-│   │           ├── resolver.ts       # ID 解析（UUID → 可读名称）
-│   │           ├── formatter.ts      # 属性格式化（防 [object Object]）
-│   │           ├── markdown.ts       # 统一 Markdown 生成器
-│   │           └── index.ts          # 统一导出
+│   │   ├── sandbox/                  # Sandbox 连接器
+│   │   │   ├── types.ts / auth.ts / client.ts / assets.ts
+│   │   │   ├── detail.ts / markdown.ts / sync.ts / index.ts
+│   │   │   └── knowledge/            # Knowledge Parsing Layer
+│   │   ├── crossref/                 # 🆕 CrossRef 学术文献（DOI/标题搜索）
+│   │   │   ├── types.ts / client.ts / markdown.ts / index.ts
+│   │   ├── arxiv/                    # 🆕 arXiv 预印本（关键词/ID 搜索）
+│   │   │   ├── types.ts / client.ts / markdown.ts / index.ts
+│   │   └── feishu/                   # 🆕 飞书文档连接器
 │   │
 │   ├── db/                           # 数据库层
 │   │   ├── connection.ts             # PostgreSQL + Drizzle
@@ -432,6 +437,7 @@ npm run db:studio      # 启动 Drizzle Studio（可视化数据库管理）
 | `/` | HomePage (auth-conditional) | public |
 | `/login` | LoginPage | guest |
 | `/search` | SearchPage | public |
+| `/literature` | LiteratureSearchPage | public |
 | `/entry/:id` | EntryDetailPage (← 返回按钮) | public |
 | `/ai-query` | AIQueryPage | public |
 | `/graph` | KnowledgeGraphPage | public |
