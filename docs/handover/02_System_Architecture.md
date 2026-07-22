@@ -42,6 +42,9 @@ graph TB
 
     subgraph External["External"]
         Sandbox["Sandbox Platform<br/>Data Connector"]
+        Arxiv["arXiv API<br/>Preprints"]
+        CrossRef["CrossRef API<br/>150M+ Papers"]
+        Feishu["Feishu Wiki<br/>Docs"]
         Users["Users<br/>Browser Clients"]
     end
 
@@ -65,6 +68,9 @@ graph TB
     PG --> Vectors
     PG --> Entries
     Sandbox --> Import
+    Arxiv --> Import
+    CrossRef --> Import
+    Feishu --> Import
     Frontend -->|Vite Proxy| Express
 ```
 
@@ -99,7 +105,7 @@ graph TB
 | `/api/data-items` | `routes/dataItems.ts` | 混合 | 数据条目 |
 | `/api/graph` | `routes/graph.ts` | optional | 知识图谱数据 |
 | `/api/spaces` | `routes/spaces.ts` | optional | 空间/分类视图 |
-| `/api/connectors` | `routes/connectors.ts` | require | 外部连接器管理 |
+| `/api/connectors` | `routes/connectors.ts` | 公开 | 文献检索 + 外部连接器 (arXiv/CrossRef/Sandbox/Feishu) |
 
 ### 2.2.3 认证中间件
 
