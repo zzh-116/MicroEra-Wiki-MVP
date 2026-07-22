@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Sparkles, Search, LogIn, LogOut, User, FolderKanban, Network, Layout, Settings } from 'lucide-react';
+import { Sparkles, Search, LogIn, LogOut, User, FolderKanban, Network, Layout, Settings, BookOpen } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function TopNav() {
@@ -67,6 +67,17 @@ export default function TopNav() {
             >
               <Search className="w-3.5 h-3.5" />
               <span>知识索引</span>
+            </button>
+            <button
+              onClick={() => navigate('/literature')}
+              className={`px-2.5 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
+                isActive('/literature')
+                  ? 'bg-white/10 text-[#F2D760]'
+                  : 'text-gray-200 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>文献检索</span>
             </button>
             <button
               onClick={() => navigate('/ai-query')}

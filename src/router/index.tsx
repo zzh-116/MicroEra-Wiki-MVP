@@ -14,6 +14,7 @@ import EntryDetailPage from '../pages/EntryDetailPage';
 import SystemVersionPage from '../pages/SystemVersionPage';
 import AdminImportPage from '../pages/AdminImportPage';
 import AdminContentManagePage from '../pages/AdminContentManagePage';
+import LiteratureSearchPage from '../pages/LiteratureSearchPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
 export default function AppRoutes() {
@@ -24,6 +25,7 @@ export default function AppRoutes() {
         <Route index element={<HomePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="search" element={<SearchPage />} />
+        <Route path="literature" element={<LiteratureSearchPage />} />
         <Route path="ai-query" element={<AIQueryPage />} />
         <Route path="graph" element={<KnowledgeGraphPage />} />
         <Route path="entry/:id" element={<EntryDetailPage />} />

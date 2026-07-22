@@ -594,23 +594,206 @@ field: metadata (JSON string, 可选)
 
 ---
 
-### Connectors — 外部连接器
+### Connectors — 文献检索与数据源连接器
 
 #### `GET /api/connectors`
 
 获取可用连接器列表。
 
 - **Method**: `GET`
-- **Auth**: Bearer Token（requireAuth）
+- **Auth**: 无
+
+**Response** (200):
+```json
+{
+  "connectors": [
+    { "name": "arxiv", "label": "arXiv 预印本", "version": "1.0" },
+    { "name": "crossref", "label": "CrossRef 学术文献", "version": "1.0" },
+    { "name": "feishu", "label": "飞书文档", "version": "1.0" },
+    { "name": "sandbox", "label": "Sandbox 数字资产平台", "version": "1.0.0" }
+  ]
+}
+```
+
+---
+
+#### `GET /api/connectors/health`
+
+连接器健康检查。
+
+- **Method**: `GET`
+- **Auth**: 无
+
+**Response** (200):
+```json
+{
+  "status": "ok",
+  "registered": ["arxiv", "crossref", "feishu", "sandbox"],
+  "timestamp": "2026-07-22T..."
+}
+```
+
+---
+
+#### `GET /api/connectors/:name/documents`
+
+搜索文献（支持 arXiv / CrossRef）。
+
+- **Method**: `GET`
+- **Auth**: 无
+
+**Query Parameters**:
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `keyword` | string | 是 | 搜索关键词。arXiv: 支持 ID (如 `1706.03762`) 或标题关键词。CrossRef: 支持 DOI 或标题关键词 |
+
+**示例 — arXiv 关键词搜索**:
+```bash
+curl "http://localhost:3001/api/connectors/arxiv/documents?keyword=attention+is+all+you+need"
+```
+
+**Response** (200):
+```json
+{
+  "connector": "arxiv",
+  "total": 20,
+  "documents": [
+    {
+      "id": "1706.03762v7",
+      "title": "Attention Is All You Need",
+      "type": "preprint",
+      "updatedAt": "2023-08-02T00:41:18Z",
+      "description": "Ashish Vaswani, Noam Shazeer, ... — cs.CL",
+      "metadata": { "arxivId": "1706.03762v7", "source": "arxiv" }
+    }
+  ]
+}
+```
+
+**示例 — CrossRef DOI 搜索**:
+```bash
+curl "http://localhost:3001/api/connectors/crossref/documents?keyword=10.1038/nature14539"
+```
+
+---
+
+#### `GET /api/connectors/:name/documents/:id`
+
+获取文献详情（含完整 Markdown 内容）。
+
+- **Method**: `GET`
+- **Auth**: 无
+
+**示例**:
+```bash
+curl "http://localhost:3001/api/connectors/arxiv/documents/1706.03762"
+```
+
+**Response** (200):
+```json
+{
+  "connector": "arxiv",
+  "document": {
+    "id": "1706.03762v7",
+    "title": "Attention Is All You Need",
+    "author": "Ashish Vaswani, Noam Shazeer, ...",
+    "content": "# Attention Is All You Need\n\n> **作者**: ...\n\n## 摘要\n\nThe dominant sequence transduction models...",
+    "tags": ["preprint", "cs_cl"],
+    "attachments": [{ "name": "PDF", "url": "https://arxiv.org/pdf/1706.03762v7", "mimeType": "application/pdf" }],
+    "metadata": {
+      "arxivId": "1706.03762v7",
+      "categories": ["cs.CL", "cs.LG"],
+      "primaryCategory": "cs.CL",
+      "published": "2017-06-12T17:57:34Z",
+      "pdfUrl": "https://arxiv.org/pdf/1706.03762v7",
+      "comment": "15 pages, 5 figures",
+      "source": "arxiv"
+    }
+  }
+}
+```
+
+---
+
+#### `POST /api/connectors/:name/sync/preview`
+
+预览同步结果（不实际导入）。
+
+- **Method**: `POST`
+- **Auth**: 无
+
+**Request Body**:
+```json
+{
+  "keyword": "graph neural network"
+}
+```
+
+**Response** (200):
+```json
+{
+  "connector": "arxiv",
+  "total": 20,
+  "documents": [...]
+}
+```
 
 ---
 
 #### `POST /api/connectors/:name/sync`
 
-触发连接器同步。
+导入文献到知识库（完整管道：connector → Document → Entry → Chunk → Embed）。
 
 - **Method**: `POST`
-- **Auth**: Bearer Token（requireAuth）
+- **Auth**: 无
+
+**Request Body**:
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `keyword` | string | 条件 | 关键词搜索后导入 |
+| `dois` | string[] | 条件 | CrossRef: DOI 列表批量导入 |
+| `idList` | string[] | 条件 | arXiv: ID 列表批量导入 |
+| `dryRun` | boolean | 否 | 仅预览，不实际导入（默认 false） |
+
+**示例 — 关键词导入**:
+```bash
+curl -X POST http://localhost:3001/api/connectors/arxiv/sync \
+  -H "Content-Type: application/json" \
+  -d '{"keyword":"transformer attention"}'
+```
+
+**示例 — DOI 批量导入**:
+```bash
+curl -X POST http://localhost:3001/api/connectors/crossref/sync \
+  -H "Content-Type: application/json" \
+  -d '{"dois":["10.1038/nature14539","10.1126/science.1058040"]}'
+```
+
+**Response** (200):
+```json
+{
+  "connector": "arxiv",
+  "total": 20,
+  "succeeded": 18,
+  "failed": 2,
+  "durationMs": 45230,
+  "results": [
+    { "id": "1706.03762v7", "title": "Attention Is All You Need", "entryId": 256 },
+    { "id": "1810.04805v2", "title": "BERT: Pre-training...", "error": "parse failed" }
+  ]
+}
+```
+
+---
+
+#### Sandbox 专用接口
+
+| Method | Path | 说明 |
+|--------|------|------|
+| `GET` | `/api/connectors/sandbox/projects` | 获取 Sandbox 项目列表 |
+| `GET` | `/api/connectors/sandbox/last-sync` | 上次同步时间 |
 
 ---
 
