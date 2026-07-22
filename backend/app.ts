@@ -75,6 +75,17 @@ export async function createApp(options: AppOptions = {}) {
   if (serveStatic) {
     const distPath = path.resolve(import.meta.dirname, '..', 'dist');
     app.use(express.static(distPath));
+
+    // Return JSON 404 for unmatched /api/* requests instead of serving index.html
+    app.use((_req, res, next) => {
+      if (_req.path.startsWith('/api/')) {
+        res.status(404).json({ error: 'NOT_FOUND', message: `Unknown API endpoint: ${_req.method} ${_req.originalUrl}` });
+        return;
+      }
+      next();
+    });
+
+    // SPA fallback: serve index.html for all other non-API routes
     app.get('*', (_req, res) => {
       const indexPath = path.join(distPath, 'index.html');
       if (fs.existsSync(indexPath)) res.sendFile(indexPath);
