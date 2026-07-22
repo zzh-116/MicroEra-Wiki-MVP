@@ -12,6 +12,7 @@
 
 export { ConnectorRegistry } from './registry.js';
 export { sandboxConnector, SandboxConnector } from './sandbox/index.js';
+export { ArxivConnector } from './arxiv/index.js';
 export type {
   Connector,
   Document,
