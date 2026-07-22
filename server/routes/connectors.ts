@@ -9,6 +9,7 @@ import { importService } from '../../backend/services/import.service.js';
 import { sandboxConnector } from '../../backend/connectors/sandbox/index.js';
 import '../../backend/connectors/crossref/index.js';
 import '../../backend/connectors/feishu/index.js';
+import '../../backend/connectors/arxiv/index.js';
 
 export const connectorsRouter = Router();
 
@@ -86,8 +87,8 @@ connectorsRouter.post('/:name/sync/preview', async (req: Request, res: Response)
   try {
     const connector = ConnectorRegistry.get(req.params.name);
     await connector.connect();
-    const { projectId } = req.body || {};
-    const docs = await connector.list({ projectId });
+    const { projectId, keyword } = req.body || {};
+    const docs = await connector.list({ projectId, keyword });
     res.json({ connector: connector.name, total: docs.length, documents: docs });
   } catch (err: any) {
     res.status(500).json({ error: 'SYNC_PREVIEW_FAILED', message: err.message });
@@ -102,10 +103,10 @@ connectorsRouter.post('/:name/sync', async (req: Request, res: Response) => {
     const connector = ConnectorRegistry.get(req.params.name);
     await connector.connect();
 
-    const { projectId, dryRun } = req.body || {};
+    const { projectId, dryRun, keyword, dois } = req.body || {};
 
     // 1. List all documents from the connector
-    const summaries = await connector.list({ projectId });
+    const summaries = await connector.list({ projectId, keyword, ...(dois ? { dois } as any : {}) });
 
     if (dryRun) {
       res.json({

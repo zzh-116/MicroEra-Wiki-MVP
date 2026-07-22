@@ -1,11 +1,11 @@
-﻿// CrossRef API Client - no authentication needed
+// CrossRef API Client - no authentication needed
 import type { CrossRefWork } from './types.js';
 
 const BASE = 'https://api.crossref.org';
 
 export async function fetchByDOI(doi: string): Promise<CrossRefWork | null> {
   try {
-    const res = await fetch(${BASE}/works/, {
+    const res = await fetch(`${BASE}/works/${encodeURIComponent(doi)}`, {
       headers: { 'User-Agent': 'MicroEraWiki/1.0' }
     });
     if (!res.ok) return null;
@@ -16,7 +16,7 @@ export async function fetchByDOI(doi: string): Promise<CrossRefWork | null> {
 
 export async function searchByTitle(title: string): Promise<CrossRefWork[]> {
   try {
-    const res = await fetch(${BASE}/works?query=&rows=5, {
+    const res = await fetch(`${BASE}/works?query=${encodeURIComponent(title)}&rows=20`, {
       headers: { 'User-Agent': 'MicroEraWiki/1.0' }
     });
     if (!res.ok) return [];
@@ -29,10 +29,10 @@ function transformWork(msg: any, doi: string): CrossRefWork {
   return {
     DOI: doi || msg.DOI || '',
     title: (msg.title || [''])[0],
-    author: (msg.author || []).map((a: any) => ${a.given || ''} .trim()).join('; '),
+    author: (msg.author || []).map((a: any) => `${a.given || ''} ${a.family || ''}`.trim()).join('; '),
     publishedYear: (msg['published-print']?.['date-parts']?.[0]?.[0]) || (msg['issued']?.['date-parts']?.[0]?.[0]) || 0,
     journal: (msg['container-title'] || [''])[0],
     abstract: (msg.abstract || '').replace(/<[^>]*>/g, ''),
-    url: msg.URL || https://doi.org/,
+    url: msg.URL || `https://doi.org/${doi}`,
   };
 }
