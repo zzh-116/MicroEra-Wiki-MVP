@@ -142,7 +142,7 @@ ollama pull qwen2.5:7b      # 对话模型，~4.7GB
 ```bash
 # .env 中配置
 LLM_PROVIDER=deepseek
-DEEPSEEK_API_KEY=sk-9cec7c58349f4cdc9d2badcfdb7cf22f
+DEEPSEEK_API_KEY=sk-your-deepseek-api-key
 DEEPSEEK_CHAT_MODEL=deepseek-v4-flash
 ```
 
@@ -169,7 +169,7 @@ OLLAMA_CHAT_MODEL=qwen2.5:7b
 OLLAMA_EMBED_MODEL=bge-m3
 
 # DeepSeek（如果 LLM_PROVIDER=deepseek）
-DEEPSEEK_API_KEY=sk-9cec7c58349f4cdc9d2badcfdb7cf22f
+DEEPSEEK_API_KEY=sk-your-deepseek-api-key
 DEEPSEEK_BASE_URL=https://api.deepseek.com
 DEEPSEEK_CHAT_MODEL=deepseek-v4-flash
 
