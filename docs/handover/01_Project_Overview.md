@@ -22,14 +22,16 @@
 | 功能模块 | 说明 |
 |----------|------|
 | 文档导入 | 支持文件上传、API 提交、批量目录导入 |
+| 文献检索导入 | arXiv + CrossRef 双源文献搜索，一键导入知识库 |
 | 文档解析 | Docling 引擎解析 PDF/DOCX/PPTX 等格式为 Markdown |
 | 智能分块 | Markdown-aware 分块策略（fixed/paragraph/sentence/markdown） |
 | 向量嵌入 | Ollama `bge-m3` 模型，1024 维向量 |
 | 语义搜索 | pgvector 向量检索 + 关键词混合检索（Hybrid Search） |
-| RAG 问答 | 流式 SSE 输出 |
+| RAG 问答 | 流式 SSE 输出，多轮对话 |
 | 知识图谱 | 基于标签共享关系的可视化图谱 |
 | 权限管理 | JWT 认证，public/internal 可见度控制 |
 | Sandbox 连接器 | 对接外部 Sandbox 数据平台自动同步 |
+| 学术连接器 | arXiv 预印本 + CrossRef 150M+ 学术文献 |
 
 ---
 
@@ -99,7 +101,7 @@
 ## 1.5 数据流
 
 ```
-企业数据源 (PDF/DOCX/PPTX/MD)
+企业数据源 (arXiv / CrossRef / PDF / DOCX / PPTX / MD / Sandbox)
     │
     ▼
 [1. Import]  上传文件 → Docling 解析 → 提取 Markdown + 属性
@@ -133,10 +135,13 @@ MicroEra-Wiki-MVP/
 │   ├── chunk/                # 文档分块服务
 │   │   └── service.ts        # 4 种分块策略
 │   ├── config.ts             # 集中配置（环境变量读取）
-│   ├── connectors/           # 外部系统连接器
+│   ├── connectors/           # 外部系统连接器（Sandbox / arXiv / CrossRef / Feishu）
 │   │   ├── registry.ts       # 连接器注册表
 │   │   ├── types.ts          # 连接器类型定义
-│   │   └── sandbox/          # Sandbox 平台连接器
+│   │   ├── sandbox/          # Sandbox 平台连接器
+│   │   ├── arxiv/            # arXiv 预印本（Atom XML 解析）
+│   │   ├── crossref/         # CrossRef 学术文献（DOI/标题搜索）
+│   │   └── feishu/           # 飞书文档连接器
 │   ├── db/                   # 数据库
 │   │   ├── connection.ts     # PostgreSQL 连接池
 │   │   ├── migrate.ts        # 迁移任务
@@ -199,7 +204,7 @@ MicroEra-Wiki-MVP/
 │   ├── components/           # React 组件（19 个）
 │   ├── context/              # React Context（Auth）
 │   ├── mock/                 # Mock 数据
-│   ├── pages/                # 页面组件（18 个页面）
+│   ├── pages/                # 页面组件（19 个页面）
 │   ├── types/                # TypeScript 类型
 │   └── utils/                # 工具函数
 ├── api/                      # Vercel Serverless API（兼容层）
