@@ -184,14 +184,14 @@ export class DoclingParser implements DocumentParser {
   private _available: boolean | null = null;
 
   async isAvailable(): Promise<boolean> {
-    if (this._available !== null) return this._available;
     try {
       await resolveDoclingCommand();
-      this._available = true;
+      return true;
     } catch {
-      this._available = false;
+      // Don't cache failure — retry on next call
+      // resolveDoclingCommand has its own 60s retry window
+      return false;
     }
-    return this._available;
   }
 
   getCapabilities(): ParserCapability[] {
@@ -229,7 +229,7 @@ export class DoclingParser implements DocumentParser {
   // ======================== Parse File ========================
 
   async parseFile(filePath: string, options: ParseOptions = {}): Promise<ParseResult> {
-    const t0 = Date.now();
+    const t0 = performance.now();
     const maxSize = options.maxFileSize || 50 * 1024 * 1024;
     const timeout = options.timeout || 300000; // 5 min — first run downloads HF models (~2GB)
 
@@ -260,10 +260,59 @@ export class DoclingParser implements DocumentParser {
     const format = (options.format && options.format !== 'auto')
       ? options.format
       : detectFormat(fileName);
-    const detectMs = Date.now() - t0;
+    const detectMs = performance.now() - t0;
     const warnings: string[] = [];
 
-    // Check parser availability
+    // Fast path: text-based formats (csv, txt, md) are parsed inline without
+    // invoking Docling CLI.  The work is the same as parseString but the timing
+    // stays inside parseFile's scope so detectMs / parseMs / totalMs form a
+    // coherent whole.  HTML still goes through Docling for structured conversion.
+    if (TEXT_FORMATS.has(format) && format !== 'html') {
+      const content = fs.readFileSync(filePath, 'utf-8');
+      if (!content || !content.trim()) {
+        throw new ParserError(
+          `File is empty: ${fileName}`,
+          'EMPTY_FILE', fileName, format,
+        );
+      }
+
+      const parseStart = performance.now();
+
+      // --- same processing as parseString ---
+      let markdown = content.replace(/\x00/g, '');
+      markdown = stripDataUriImages(markdown);
+
+      // Extract structured properties
+      let properties: ParsedProperty[] | undefined;
+      if (options.extractProperties) {
+        try {
+          properties = markdownParser.parse(markdown);
+          if (properties.length > 0) warnings.push(`Extracted ${properties.length} structured properties`);
+        } catch (err: any) {
+          warnings.push(`Property extraction skipped: ${err.message}`);
+        }
+      }
+
+      // Extract metadata (same pipeline as the Docling branch)
+      const metadata = this.extractMetadata(markdown, fileName, stat.size, format);
+      metadata.wordCount = countWords(markdown);
+
+      const parseMs = Math.round((performance.now() - parseStart) * 100) / 100;
+      const totalMs = Math.round((performance.now() - t0) * 100) / 100;
+
+      console.log(`[Docling] ${fileName} | format=${format} (text) | size=${formatFileSize(stat.size)} | words=${metadata.wordCount} | detect=${detectMs.toFixed(1)}ms parse=${parseMs.toFixed(1)}ms | SUCCESS`);
+
+      return {
+        markdown,
+        sourceFormat: format,
+        metadata,
+        properties,
+        warnings,
+        timing: { detectMs: Math.round(detectMs * 100) / 100, parseMs, totalMs },
+      };
+    }
+
+    // For HTML and binary formats, Docling CLI is required
     const available = await this.isAvailable();
     if (!available) {
       throw new ParserError(
@@ -293,7 +342,7 @@ export class DoclingParser implements DocumentParser {
     const tmpDir = path.join('./backend/data/tmp', `docling_${Date.now()}`);
     fs.mkdirSync(tmpDir, { recursive: true });
 
-    const parseStart = Date.now();
+    const parseStart = performance.now();
     let markdown = '';
 
     try {
@@ -406,7 +455,7 @@ export class DoclingParser implements DocumentParser {
       );
     }
 
-    const parseMs = Date.now() - parseStart;
+    const parseMs = Math.round((performance.now() - parseStart) * 100) / 100;
 
     // Strip null bytes
     markdown = markdown.replace(/\x00/g, '');
@@ -438,8 +487,8 @@ export class DoclingParser implements DocumentParser {
     const metadata = this.extractMetadata(markdown, fileName, stat.size, format);
     metadata.wordCount = countWords(markdown);
 
-    const totalMs = Date.now() - t0;
-    console.log(`[Docling] ${fileName} | format=${format} | size=${formatFileSize(stat.size)} | words=${metadata.wordCount} | detect=${detectMs}ms parse=${parseMs}ms | SUCCESS`);
+    const totalMs = Math.round((performance.now() - t0) * 100) / 100;
+    console.log(`[Docling] ${fileName} | format=${format} | size=${formatFileSize(stat.size)} | words=${metadata.wordCount} | detect=${detectMs.toFixed(1)}ms parse=${parseMs.toFixed(1)}ms | SUCCESS`);
 
     return {
       markdown,
@@ -447,14 +496,14 @@ export class DoclingParser implements DocumentParser {
       metadata,
       properties,
       warnings,
-      timing: { detectMs, parseMs, totalMs },
+      timing: { detectMs: Math.round(detectMs * 100) / 100, parseMs, totalMs },
     };
   }
 
   // ======================== Parse String ========================
 
   async parseString(content: string, fileName = 'input.md', options: ParseOptions = {}): Promise<ParseResult> {
-    const t0 = Date.now();
+    const t0 = performance.now();
     const format = (options.format && options.format !== 'auto')
       ? options.format
       : detectFormat(fileName);
@@ -504,8 +553,8 @@ export class DoclingParser implements DocumentParser {
       }
     }
 
-    const totalMs = Date.now() - t0;
-    console.log(`[Docling] ${fileName} | format=${format} (string) | chars=${content.length} | ms=${totalMs} | SUCCESS`);
+    const totalMs = Math.round((performance.now() - t0) * 100) / 100;
+    console.log(`[Docling] ${fileName} | format=${format} (string) | chars=${content.length} | ms=${totalMs.toFixed(2)} | SUCCESS`);
 
     return {
       markdown,
