@@ -23,11 +23,23 @@ export const config = {
 
   embeddingDimension: parseInt(process.env.EMBEDDING_DIM || '1024', 10),
 
-  /** Sandbox data platform connector */
+  /** Sandbox data platform connector (HTTP API) */
   sandbox: {
     baseUrl: process.env.SANDBOX_BASE_URL || 'http://139.196.211.120:6810',
     username: process.env.SANDBOX_USERNAME || 'admin',
     password: process.env.SANDBOX_PASSWORD || '123456',
+  },
+
+  /** Sandbox MySQL direct connection (preferred over HTTP API).
+   *  Read-only access — only SELECT queries, no writes.
+   *  Set SANDBOX_DB_ENABLED=true to use DB mode instead of HTTP connector. */
+  sandboxDB: {
+    enabled: process.env.SANDBOX_DB_ENABLED === 'true',
+    host: process.env.SANDBOX_DB_HOST || '10.36.160.33',
+    port: parseInt(process.env.SANDBOX_DB_PORT || '3306', 10),
+    database: process.env.SANDBOX_DB_NAME || 'miqroproject',
+    user: process.env.SANDBOX_DB_USER || 'root',
+    password: process.env.SANDBOX_DB_PASSWORD || '',
   },
 
   /** Feishu document connector */

@@ -138,14 +138,18 @@ MicroEra-Wiki-MVP/
 │   ├── connectors/           # 外部系统连接器（Sandbox / arXiv / CrossRef / Feishu）
 │   │   ├── registry.ts       # 连接器注册表
 │   │   ├── types.ts          # 连接器类型定义
-│   │   ├── sandbox/          # Sandbox 平台连接器
+│   │   ├── sandbox/          # Sandbox 连接器（HTTP + DB 双模式）
+│   │   │   ├── index.ts      # SandboxConnector + SandboxDBConnector
+│   │   │   ├── db-client.ts  # MySQL 连接池（只读）
+│   │   │   ├── db-sync.ts    # SQL 查询 + fetchAll + syncAll
+│   │   │   └── knowledge/    # Knowledge Parsing Layer
 │   │   ├── arxiv/            # arXiv 预印本（Atom XML 解析）
 │   │   ├── crossref/         # CrossRef 学术文献（DOI/标题搜索）
 │   │   └── feishu/           # 飞书文档连接器
 │   ├── db/                   # 数据库
 │   │   ├── connection.ts     # PostgreSQL 连接池
 │   │   ├── migrate.ts        # 迁移任务
-│   │   ├── migrations/       # SQL 迁移文件
+│   │   ├── migrations/       # SQL 迁移（0000 初始 + 0001 users + 0002 connector_sync_log）
 │   │   ├── schema.ts         # Drizzle ORM Schema
 │   │   └── seed.ts           # 种子数据
 │   ├── embedding/            # 向量嵌入
@@ -176,8 +180,9 @@ MicroEra-Wiki-MVP/
 │   ├── services/             # 业务服务层
 │   │   ├── ai.service.ts     # AI 聊天 / RAG 流式服务
 │   │   ├── auth.service.ts   # 认证服务
-│   │   ├── import.service.ts # 导入管道服务
-│   │   └── search.service.ts # 搜索服务（混合检索）
+│   │   ├── import.service.ts # 导入管道服务（含 importFromConnector + 去重）
+│   │   ├── search.service.ts # 搜索服务（混合检索）
+│   │   └── sync-log.service.ts # Connector 同步去重日志
 │   ├── types.ts              # 共享类型定义
 │   └── vector/               # Milvus 向量数据库
 │       └── milvus.ts
@@ -241,10 +246,14 @@ MicroEra-Wiki-MVP/
 1. Docker Compose 启动 PostgreSQL + pgvector (port 5432)
 2. npm run server 启动 Express API (port 3001)
    ├── 连接 PostgreSQL
-   ├── 运行数据库迁移（自动）
+   ├── 运行数据库迁移（自动，含 connector_sync_log 去重表）
    ├── 执行种子数据（幂等）
    ├── 创建管理员用户（幂等）
    ├── 预热 Embedding 模型（bge-m3）
+   ├── [SANDBOX_DB_ENABLED=true] 自动同步 Sandbox MySQL →
+   │     fetchAll() 单查询 → Connector Sync → importFromConnector()
+   │     → Entry → Chunk → Embed → pgvector
+   │     (connector_sync_log 保证重启幂等)
    └── 监听 HTTP 请求
 3. npm run dev 启动 Vite 前端 (port 3000)
    └── API 请求代理到 port 3001

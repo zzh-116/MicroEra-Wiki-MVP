@@ -1,0 +1,39 @@
+project:
+  name: MiQroSandbox
+  version: 1.2.1
+  logoUrl: "https://i.postimg.cc/6QqKZgmW/miqro-icon-light.png"
+  login:
+    check:
+      # 密码重试次数，超过该次数启用验证码校验
+      retryCount: 3
+      # 密码最大重试次数，超过该次数登录锁定
+      maxRetryCount: 5
+      # 登录锁定时间，单位：分钟
+      lockTime: 10
+  captcha:
+    daySendLimit: 5
+    expireTime: 5m
+  cache:
+    onStartupClean: false
+  # 不分页列表最大查询量
+  listMaxSize: 10000
+  # 业务工作组
+  businessWorkGroup:
+    - lvchuan
+  # 匿名访问角色
+  anonymousAccessRoleKeys:
+    - non_member
+  # 审核员角色
+  auditorRoleKeys:
+    - auditor
+  approval:
+    ccRecipients:
+      - huangyuehua
+  # 战略任务点数
+  strategicTaskPoint: 10
+  # 邮件线程数量
+  emailThreads: 4
+  
+  miqrosheet:
+    url: http://139.196.211.120:6811
+    layoutEditTimeoutSeconds: 60

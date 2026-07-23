@@ -11,7 +11,7 @@
 //   const result = await c.sync({ projectId: '155' });
 
 export { ConnectorRegistry } from './registry.js';
-export { sandboxConnector, SandboxConnector } from './sandbox/index.js';
+export { sandboxConnector, SandboxConnector, SandboxDBConnector } from './sandbox/index.js';
 export { ArxivConnector } from './arxiv/index.js';
 export type {
   Connector,
