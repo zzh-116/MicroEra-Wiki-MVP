@@ -97,38 +97,34 @@
 | Retrieve | 语义搜索：Embedding → TopK → Context | `backend/services/search.service.ts` |
 | LLM | RAG 流式问答 + AI 摘要，Provider 抽象层 | `backend/services/ai.service.ts` |
 
-### Sandbox 数据连接器 + Knowledge Parsing Layer
+### Sandbox 数据连接器（双模式：DB 直连 + HTTP API）
 
-Sandbox 作为结构化数据源接入 Wiki，经四层 Knowledge Parsing 处理：
+支持两种模式接入 Sandbox 数据平台：
 
 ```
-Sandbox REST API (Bearer Token)
-    │  POST /api/login
-    │  GET  /api/da/asset/project-select
-    │  POST /api/da/asset/page          ← 分页循环拉取
-    │  GET  /api/da/asset/operator/:id  ← 按类型取详情
-    ▼
-┌──────────────────────────────────────────────────┐
-│         Knowledge Parsing Layer                  │
-│                                                  │
-│  KnowledgeParser   →  Sandbox JSON → Document   │
-│  ReferenceResolver →  ID → 可读名称              │
-│  PropertyFormatter →  防 [object Object]         │
-│  MarkdownGenerator →  统一嵌入优化 Markdown       │
-└──────────────────┬───────────────────────────────┘
-                   ▼
-         importFromConnector() → Entry → Chunk → Embed → pgvector
-                   │
-                   ▼
-         前端 ViewModel → 卡片化渲染
-         (MetadataCard / RecordCard / ReferenceView)
+DB 模式 (SANDBOX_DB_ENABLED=true)     HTTP 模式 (默认)
+     │                                      │
+     │ MySQL 直连 (只读)                     │ REST API
+     │ asset_version + project +            │ 分页爬取
+     │ project_wiki + sys_user              │ 无 wiki/task 数据
+     │                                      │
+     ▼                                      ▼
+  fetchAll() 单 SQL 查询              list + detail (N+1)
+     │                                      │
+     └────────────┬─────────────────────────┘
+                  ▼
+     ┌──────────────────────────────────────┐
+     │     Knowledge Parsing Layer          │
+     │  Parser → Resolver → Formatter       │
+     │  → Markdown (嵌入优化)                │
+     └──────────────────┬───────────────────┘
+                        ▼
+           importFromConnector() → Entry → Chunk → Embed → pgvector
+                        │
+                        ▼
+              connector_sync_log (去重表)
+              启动自动同步 + 重启幂等
 ```
-
-- **可插拔架构** — `ConnectorRegistry` 模式，后续 Feishu/Confluence/Notion 只需注册新 Connector
-- **增量同步** — 基于 `updateTime` + `lastSyncTime` 持久化
-- **智能标题** — 从 `name` / `originalName` / `description` 自动生成可读标题
-- **Knowledge Layer** — 禁止前端直接渲染 Sandbox 原始 JSON，所有数据经 formatter 转 ViewModel
-- **优雅降级** — 未解析的 ID 不显示，UUID/ObjectId 自动过滤
 
 ### AI 功能
 
@@ -272,8 +268,14 @@ npm run db:studio      # 启动 Drizzle Studio（可视化数据库管理）
 | `POST` | `/api/connectors/:name/sync` | 导入文献 → Entry → Chunk → Embed |
 | `GET` | `/api/connectors/sandbox/projects` | Sandbox 项目列表 |
 | `GET` | `/api/connectors/sandbox/last-sync` | 上次同步时间 |
+| `GET` | `/api/connectors/sandbox/db-test` | 🆕 Sandbox DB 连通性测试 + 统计 |
+| `GET` | `/api/connectors/sandbox/wikis` | 🆕 项目 Wiki 列表（DB 模式） |
+| `GET` | `/api/connectors/sandbox/wikis/:projectId` | 🆕 Wiki 详情（DB 模式） |
+| `POST` | `/api/connectors/sandbox/wikis/:projectId/sync` | 🆕 导入单个 Wiki |
+| `GET` | `/api/connectors/sandbox/tasks` | 🆕 项目任务列表（DB 模式） |
+| `GET` | `/api/connectors/sandbox/tasks/:taskId` | 🆕 任务详情（DB 模式） |
 
-> **文献导入示例**: `POST /api/connectors/arxiv/sync` `{"keyword":"machine learning"}` 或 `{"dois":["10.xxx"]}`
+> **Sandbox DB 模式**: 设置 `SANDBOX_DB_ENABLED=true` 后，服务器启动时自动从 MySQL 同步全部资产、Wiki、任务到知识库。`connector_sync_log` 表保证重启幂等。全部导入内容标记为 `internal` + `sandbox` 标签。
 
 ### 📊 Pipeline（企业数据管道）
 
@@ -342,9 +344,11 @@ npm run db:studio      # 启动 Drizzle Studio（可视化数据库管理）
 │   │   ├── types.ts                  # Connector 接口 + Unified Document Model
 │   │   ├── registry.ts               # ConnectorRegistry（同 ParserFactory 模式）
 │   │   ├── index.ts                  # 公共导出
-│   │   ├── sandbox/                  # Sandbox 连接器
-│   │   │   ├── types.ts / auth.ts / client.ts / assets.ts
-│   │   │   ├── detail.ts / markdown.ts / sync.ts / index.ts
+│   │   ├── sandbox/                  # Sandbox 连接器（双模式）
+│   │   │   ├── index.ts              # SandboxConnector (HTTP) + SandboxDBConnector (MySQL)
+│   │   │   ├── types.ts / auth.ts / client.ts / sync.ts
+│   │   │   ├── db-client.ts          # 🆕 MySQL 连接池 (mysql2, 只读)
+│   │   │   ├── db-sync.ts            # 🆕 DB 模式：SQL 查询 + fetchAll + syncAll
 │   │   │   └── knowledge/            # Knowledge Parsing Layer
 │   │   ├── crossref/                 # 🆕 CrossRef 学术文献（DOI/标题搜索）
 │   │   │   ├── types.ts / client.ts / markdown.ts / index.ts
@@ -367,7 +371,8 @@ npm run db:studio      # 启动 Drizzle Studio（可视化数据库管理）
 │   │   ├── auth.service.ts           # JWT 认证
 │   │   ├── search.service.ts         # 语义 + 关键词检索
 │   │   ├── ai.service.ts             # RAG 问答
-│   │   └── import.service.ts         # 数据导入管道（含 importFromConnector）
+│   │   ├── import.service.ts         # 数据导入管道（含 importFromConnector）
+│   │   └── sync-log.service.ts       # 🆕 Connector 同步去重日志
 │   │
 │   ├── parser/                       # 文档解析
 │   │   ├── base.ts                   # DocumentParser 接口
@@ -473,10 +478,18 @@ DEEPSEEK_CHAT_MODEL=deepseek-v4-flash
 # PostgreSQL
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/microera_wiki
 
-# Sandbox 数据源
+# Sandbox 数据源（HTTP 模式）
 SANDBOX_BASE_URL=http://139.196.211.120:6810
 SANDBOX_USERNAME=admin
 SANDBOX_PASSWORD=123456
+
+# Sandbox 数据源（DB 直连模式 — 推荐）
+SANDBOX_DB_ENABLED=true             # 启用 MySQL 直连
+SANDBOX_DB_HOST=10.36.160.33        # MySQL 主机
+SANDBOX_DB_PORT=3306                # MySQL 端口
+SANDBOX_DB_NAME=miqroproject        # 数据库名
+SANDBOX_DB_USER=root                # 用户名
+SANDBOX_DB_PASSWORD=your-password   # 密码
 
 # 向量数据库
 EMBEDDING_DIM=1024
