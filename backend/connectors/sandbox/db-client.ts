@@ -9,14 +9,19 @@ let pool: mysql.Pool | null = null;
 
 function getPool(): mysql.Pool {
   if (!pool) {
-    const dbConfig = config.sandboxDB;
-    console.log(`[Sandbox:DB] Connecting to MySQL at ${dbConfig.host}:${dbConfig.port}/${dbConfig.database}`);
+    // Use env vars directly to avoid import-order issues with dotenv/config
+    const host = process.env.SANDBOX_DB_HOST || config.sandboxDB?.host || 'localhost';
+    const port = parseInt(process.env.SANDBOX_DB_PORT || '3307', 10);
+    const database = process.env.SANDBOX_DB_NAME || config.sandboxDB?.database || 'miqroproject';
+    const user = process.env.SANDBOX_DB_USER || config.sandboxDB?.user || 'root';
+    const password = process.env.SANDBOX_DB_PASSWORD || config.sandboxDB?.password || 'root';
+    console.log(`[Sandbox:DB] Connecting to MySQL at ${host}:${port}/${database}`);
     pool = mysql.createPool({
-      host: dbConfig.host,
-      port: dbConfig.port,
-      database: dbConfig.database,
-      user: dbConfig.user,
-      password: dbConfig.password,
+      host,
+      port,
+      database,
+      user,
+      password,
       waitForConnections: true,
       connectionLimit: 5,       // Read-only, keep it low
       maxIdle: 3,

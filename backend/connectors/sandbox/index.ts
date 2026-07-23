@@ -1,18 +1,10 @@
-// Sandbox Connector — implements the Connector interface for the Sandbox data platform.
-// Two modes:
-//   1. DB mode (SANDBOX_DB_ENABLED=true): Direct MySQL reads, single SQL JOIN
-//   2. HTTP mode (default): REST API crawling through the existing HTTP connector
+// Sandbox Connector — DB-only connector for the Sandbox data platform.
+// Direct MySQL reads, single SQL JOIN. No HTTP API dependency.
 //
-// DB mode is preferred when the sandbox MySQL is accessible — it eliminates N+1 HTTP
-// requests and provides access to project_wiki, project_task, and sys_user data.
+// Provides access to: assets (asset_version), projects, project_wiki, project_task, sys_user.
+// All data sources are synced to Wiki on startup via autoSyncSandbox().
 
 import type { Connector, Document, DocumentSummary, SyncResult, ListParams, SyncParams } from '../types.js';
-import { config } from '../../config.js';
-
-// ---- HTTP mode imports ----
-import { listDocuments as httpListDocuments, fetchDocument as httpFetchDocument, syncAll as httpSyncAll, syncIncremental as httpSyncIncremental, getLastSyncTime as httpGetLastSyncTime } from './sync.js';
-import { getToken, login as httpLogin } from './auth.js';
-import { getProjects as httpGetProjects } from './client.js';
 
 // ---- DB mode imports ----
 import {
@@ -31,10 +23,9 @@ import {
 
 /**
  * SandboxDBConnector — direct MySQL connector.
- * Implements the same Connector interface but uses SQL instead of HTTP.
  */
 export class SandboxDBConnector implements Connector {
-  readonly name = 'sandbox-db';
+  readonly name = 'sandbox';
   readonly label = 'Sandbox 数字资产平台 (直连数据库)';
   readonly version = '2.0.0';
 
@@ -54,10 +45,8 @@ export class SandboxDBConnector implements Connector {
   }
 
   async detail(id: string): Promise<Document> {
-    // Try snapshot ObjectId first, then numeric asset_id
     let doc = await dbFetchDocument(id);
     if (!doc) {
-      // If the id looks like a number, try asset_id lookup
       if (/^\d+$/.test(id)) {
         doc = await dbFetchDocumentByAssetId(id);
       }
@@ -75,10 +64,7 @@ export class SandboxDBConnector implements Connector {
     });
   }
 
-  /**
-   * Bulk fetch all documents in one query — eliminates N+1 detail() calls.
-   * Preferred for bulk import over list() + loop detail().
-   */
+  /** Bulk fetch all asset documents in one query — no N+1. */
   async fetchAll(params?: ListParams): Promise<Document[]> {
     return dbFetchAllDocuments(params);
   }
@@ -88,7 +74,7 @@ export class SandboxDBConnector implements Connector {
     return dbListProjects();
   }
 
-  /** List project wikis as documents */
+  /** List project wikis as document summaries */
   async listWikis(params?: ListParams): Promise<DocumentSummary[]> {
     return dbListProjectWikis(params);
   }
@@ -100,7 +86,7 @@ export class SandboxDBConnector implements Connector {
     return doc;
   }
 
-  /** List project tasks as documents */
+  /** List project tasks as document summaries */
   async listTasks(params?: ListParams): Promise<DocumentSummary[]> {
     return dbListProjectTasks(params);
   }
@@ -117,63 +103,11 @@ export class SandboxDBConnector implements Connector {
     return dbTestConnection();
   }
 
-  /** For DB mode, last sync is tracked by the caller (not file-based) */
   getLastSync(): string | null {
-    return null; // DB mode uses the caller's sync tracking
+    return null;
   }
 }
 
-/**
- * SandboxConnector — HTTP API connector (original, kept as fallback).
- */
-export class SandboxConnector implements Connector {
-  readonly name = 'sandbox';
-  readonly label = 'Sandbox 数字资产平台 (HTTP API)';
-  readonly version = '1.0.0';
-
-  async connect(): Promise<void> {
-    await httpLogin();
-  }
-
-  async list(params?: ListParams): Promise<DocumentSummary[]> {
-    await getToken();
-    return httpListDocuments(params);
-  }
-
-  async detail(id: string): Promise<Document> {
-    await getToken();
-    return httpFetchDocument(id);
-  }
-
-  async sync(params?: SyncParams): Promise<SyncResult> {
-    await getToken();
-
-    if (params?.since) {
-      return httpSyncAll({ since: params.since, projectId: params.projectId });
-    }
-
-    return httpSyncIncremental();
-  }
-
-  async listProjects() {
-    await getToken();
-    return httpGetProjects();
-  }
-
-  getLastSync(): string | null {
-    return httpGetLastSyncTime();
-  }
-}
-
-/** Auto-select the best connector based on config */
-function createConnector(): Connector {
-  if (config.sandboxDB.enabled) {
-    console.log('[Sandbox] Using DB connector (direct MySQL)');
-    return new SandboxDBConnector();
-  }
-  console.log('[Sandbox] Using HTTP connector (REST API)');
-  return new SandboxConnector();
-}
-
-export const sandboxConnector = createConnector();
-
+// Always use DB connector
+console.log('[Sandbox] Using DB connector (direct MySQL)');
+export const sandboxConnector = new SandboxDBConnector();

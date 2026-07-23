@@ -312,13 +312,20 @@ export class ImportService {
       return { ...result, success: true };
     }
 
-    // Map Sandbox asset types to Wiki entry types
-    // 'product' → frontend 'project' → search filter "Sandbox 项目"
+    // Map connector document types to Wiki entry types
+    // Frontend filter mapping: paper → tech, project → product, data_item → data_item
     const entryTypeMap: Record<string, string> = {
+      // Sandbox asset types → product (shows as "Sandbox 项目")
       operator: 'product',
       dot: 'product',
       dataset: 'product',
       post: 'product',
+      // Sandbox wiki/task → product
+      wiki: 'product',
+      task: 'product',
+      // Literature import types → tech (shows as "学术论文")
+      preprint: 'tech',        // arXiv
+      academic_paper: 'tech',  // CrossRef
     };
     const entryType = (entryTypeMap[doc.type] || 'product') as Entry['entry_type'];
 
