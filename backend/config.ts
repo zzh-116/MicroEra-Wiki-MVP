@@ -23,14 +23,7 @@ export const config = {
 
   embeddingDimension: parseInt(process.env.EMBEDDING_DIM || '1024', 10),
 
-  /** Sandbox data platform connector (HTTP API) */
-  sandbox: {
-    baseUrl: process.env.SANDBOX_BASE_URL || 'http://139.196.211.120:6810',
-    username: process.env.SANDBOX_USERNAME || 'admin',
-    password: process.env.SANDBOX_PASSWORD || '123456',
-  },
-
-  /** Sandbox MySQL direct connection (preferred over HTTP API).
+  /** Sandbox MySQL direct connection.
    *  Read-only access — only SELECT queries, no writes.
    *  Set SANDBOX_DB_ENABLED=true to use DB mode instead of HTTP connector. */
   sandboxDB: {
