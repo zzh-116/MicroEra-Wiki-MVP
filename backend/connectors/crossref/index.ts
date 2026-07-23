@@ -27,10 +27,32 @@ class CrossRefConnector implements Connector {
     status?: string;
     author?: string;
     since?: string;
+    dois?: string[]; // Batch DOI import
   }): Promise<DocumentSummary[]> {
     const keyword = params?.keyword?.trim();
 
-    // 1. Keyword looks like a DOI → single-paper lookup
+    // 1. Batch DOI lookup (for import)
+    if (params?.dois && params.dois.length > 0) {
+      const summaries: DocumentSummary[] = [];
+      for (const doi of params.dois) {
+        try {
+          const work = await fetchByDOI(doi.trim());
+          if (work) {
+            summaries.push({
+              id: work.DOI,
+              title: work.title,
+              type: "academic_paper",
+              updatedAt: String(work.publishedYear || ""),
+              description: `${work.author} — ${work.journal}`,
+              metadata: { doi: work.DOI, source: "crossref" },
+            });
+          }
+        } catch { /* skip failed DOI */ }
+      }
+      return summaries;
+    }
+
+    // 2. Keyword looks like a DOI → single-paper lookup
     if (keyword && looksLikeDOI(keyword)) {
       const match = keyword.match(DOI_RE);
       if (match) {
@@ -49,7 +71,7 @@ class CrossRefConnector implements Connector {
       return [];
     }
 
-    // 2. Keyword search
+    // 3. Keyword search
     if (keyword) {
       const works = await searchByTitle(keyword);
       return works.map((w) => ({
@@ -62,7 +84,7 @@ class CrossRefConnector implements Connector {
       }));
     }
 
-    // 3. No keyword — nothing to list (CrossRef is a search engine)
+    // 4. No keyword — nothing to list (CrossRef is a search engine)
     return [];
   }
 
