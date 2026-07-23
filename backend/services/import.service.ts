@@ -14,6 +14,7 @@ import { ollamaEmbedder } from '../embedding/ollama.js';
 import type { ParsedProperty, Entry } from '../types.js';
 import { config } from '../config.js';
 import type { Document } from '../connectors/types.js';
+import { findSyncedEntry, recordSync } from './sync-log.service.js';
 
 export type ImportMode = 'upload' | 'api' | 'batch';
 
@@ -300,6 +301,17 @@ export class ImportService {
     const stages: StageResult[] = [];
     const errors: string[] = [];
 
+    // ── Idempotency check: skip if already imported ──
+    const existingEntryId = await findSyncedEntry(doc.source, doc.id);
+    if (existingEntryId !== null) {
+      stages.push({ stage: 'parse', status: 'skipped', ms: 0, detail: `already imported — entry #${existingEntryId}` });
+      const result = this.buildResult(
+        { mode: 'api', source: `${doc.source}:${doc.id}`, content: doc.content, fileName: `${doc.title}.md` },
+        stages, errors, existingEntryId, t0,
+      );
+      return { ...result, success: true };
+    }
+
     // Map Sandbox asset types to Wiki entry types
     // 'product' → frontend 'project' → search filter "Sandbox 项目"
     const entryTypeMap: Record<string, string> = {
@@ -310,11 +322,13 @@ export class ImportService {
     };
     const entryType = (entryTypeMap[doc.type] || 'product') as Entry['entry_type'];
 
-    // Map Sandbox project → Wiki category (default to category 1 = 首页)
-    // Category IDs come from the seed data; adjust as needed
+    // Map Sandbox project → Wiki category.
+    // TODO: Populate this map from config or DB so each Sandbox project lands in its
+    //       own Wiki category. Until then all imports go to category 1 (首页).
+    // Example: { '155': 2, '200': 3 }
     const projectCategoryMap: Record<string, number> = {};
     const categoryId = (doc.metadata?.projectId && projectCategoryMap[String(doc.metadata.projectId)])
-      || 1; // Default: category 1
+      || 1;
 
     // Build import input so we can reuse the existing pipeline logic
     const input: ImportInput = {
@@ -326,8 +340,9 @@ export class ImportService {
         title: doc.title,
         entry_type: entryType,
         summary: doc.description || `Imported from ${doc.source}: ${doc.title}`,
+        // Sandbox content MUST be internal — never public
         visibility: 'internal',
-        tags: doc.tags,
+        tags: [...new Set([doc.source, ...(doc.tags || [])])],
         category_id: categoryId,
       },
       chunkConfig: { strategy: 'markdown', chunkSize: 1024, overlap: 128 },
@@ -338,8 +353,18 @@ export class ImportService {
     console.log(`[Import] Connector | source=${doc.source} | id=${doc.id} | title=${doc.title}`);
 
     // Reuse the existing import pipeline (entry → chunk → embed → vector)
-    // except we skip the parse stage by calling import() with pre-built content
-    return this.import(input);
+    const result = await this.import(input);
+
+    // Record sync log so auto-sync on next restart skips this document
+    if (result.success && result.entryId > 0) {
+      try {
+        await recordSync(doc.source, doc.id, result.entryId, doc.title);
+      } catch (err: any) {
+        console.error(`[Import] Failed to record sync log for ${doc.source}:${doc.id}: ${err.message}`);
+      }
+    }
+
+    return result;
   }
 
   async importBatch(dirPath: string, globPattern = '*', options: { skipEmbedding?: boolean; chunkConfig?: Partial<ChunkConfig> } = {}): Promise<BatchImportResult> {

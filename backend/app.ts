@@ -107,9 +107,66 @@ export async function runBootstrap() {
     ollamaEmbedder.startKeepWarm();
   });
 
+  // 5. Auto-sync Sandbox data if DB mode is enabled (async, non-blocking)
+  if (config.sandboxDB.enabled) {
+    console.log('[Bootstrap] Sandbox DB auto-sync enabled — starting in background...');
+    autoSyncSandbox().catch((err) => {
+      console.error('[Bootstrap] Sandbox auto-sync failed:', err.message);
+    });
+  }
+
   console.log(`[Bootstrap] PostgreSQL ready — ${config.databaseUrl.replace(/\/\/.*@/, '//***@')}`);
   console.log(`[Bootstrap] LLM Provider: ${config.llmProvider} (Ollama chat config: ${config.ollama.chatModel}, Embed: ${config.ollama.embeddingModel})`);
   if (config.llmProvider === 'deepseek') console.log(`[Bootstrap] DeepSeek model: ${config.deepseek.chatModel}`);
+}
+
+/** Auto-sync Sandbox DB documents into the Wiki knowledge base on startup */
+async function autoSyncSandbox() {
+  const { sandboxConnector } = await import('./connectors/sandbox/index.js');
+  const { countSynced } = await import('./services/sync-log.service.js');
+
+  // Connect to Sandbox MySQL (logs asset/project/wiki counts)
+  await sandboxConnector.connect();
+
+  // Fetch all documents in one query
+  const connectorAny = sandboxConnector as any;
+  const docs = await (connectorAny.fetchAll
+    ? connectorAny.fetchAll({})
+    : (async () => {
+        const summaries = await sandboxConnector.list({});
+        const result: any[] = [];
+        for (const s of summaries) {
+          try { result.push(await sandboxConnector.detail(s.id)); } catch {}
+        }
+        return result;
+      })());
+
+  console.log(`[AutoSync] ${docs.length} documents fetched from Sandbox`);
+
+  // Import each document (importFromConnector handles dedup)
+  const { importService } = await import('./services/import.service.js');
+  let imported = 0;
+  let skipped = 0;
+  let failed = 0;
+
+  for (const doc of docs) {
+    try {
+      const result = await importService.importFromConnector(doc);
+      if (result.stages[0]?.detail?.startsWith('already imported')) {
+        skipped++;
+      } else if (result.success) {
+        imported++;
+      } else {
+        failed++;
+      }
+    } catch (err: any) {
+      failed++;
+      console.error(`[AutoSync] Import failed for ${doc.id}: ${err.message}`);
+    }
+  }
+
+  const totalSynced = await countSynced('sandbox');
+  console.log(`[AutoSync] Complete — ${docs.length} from Sandbox → ${imported} new, ${skipped} already synced, ${failed} failed | ${totalSynced} total entries in sync log`);
 }
 
 /** Execute migration SQL files in order */

@@ -1,0 +1,843 @@
+# ========================================
+# 数字资产大厅 - 三大域配置
+# 对象域、性质域、方法域
+# ========================================
+da:
+  domain:
+
+    # ========================================
+    # 一、对象域（Object Domain）
+    # 三级架构：L1 分子域 → L2 器件域 → L3 产品系统域
+    # ========================================
+    object:
+      - code: material
+        name: 分子域
+        nameEn: Material
+        level: 1
+        description: 具有周期性结构或可重复制备的多孔/功能材料
+        children:
+          - code: mof
+            name: MOF
+            children:
+              - code: zr-mof
+                name: Zr-MOF
+                aliases: [ UiO-66, MOF-808, NU-1000 ]
+              - code: zn-mof
+                name: Zn-MOF
+                aliases: [ ZIF-8, MOF-74, ZIF-67 ]
+              - code: cu-mof
+                name: Cu-MOF
+                aliases: [ HKUST-1, Cu-BTC ]
+              - code: fe-mof
+                name: Fe-MOF
+                aliases: [ MIL-101-Fe, MIL-53-Fe ]
+              - code: al-mof
+                name: Al-MOF
+                aliases: [ MIL-53-Al, MIL-96 ]
+              - code: cr-mof
+                name: Cr-MOF
+                aliases: [ MIL-101-Cr ]
+              - code: other-mof
+                name: 其他MOF
+          - code: cof
+            name: COF
+            children:
+              - code: imine-cof
+                name: 亚胺型COF
+              - code: boroxine-cof
+                name: 硼氧六环型COF
+              - code: triazine-cof
+                name: 三嗪型COF
+              - code: other-cof
+                name: 其他COF
+          - code: polymer
+            name: 聚合物
+            children:
+              - code: porous-polymer
+                name: 多孔聚合物
+              - code: film-polymer
+                name: 薄膜聚合物
+              - code: conductive-polymer
+                name: 导电聚合物
+          - code: molecular-sieve
+            name: 分子筛
+            children:
+              - code: zeolite
+                name: 沸石分子筛
+                aliases: [ ZSM-5, Beta, Y-type ]
+              - code: mesoporous-silica
+                name: 介孔二氧化硅
+                aliases: [ MCM-41, SBA-15 ]
+          - code: catalyst
+            name: 催化剂
+            children:
+              - code: metal-catalyst
+                name: 金属催化剂
+                aliases: [ Pd/C, Pt/C ]
+              - code: oxide-catalyst
+                name: 氧化物催化剂
+              - code: enzyme-catalyst
+                name: 酶催化剂
+              - code: photocatalyst
+                name: 光催化剂
+          - code: metal
+            name: 金属
+            children:
+              - code: noble-metal
+                name: 贵金属
+                aliases: [ Au, Ag, Pt, Pd ]
+              - code: transition-metal
+                name: 过渡金属
+              - code: alloy
+                name: 合金
+          - code: 2d-material
+            name: 二维材料
+            children:
+              - code: graphene
+                name: 石墨烯
+              - code: mxene
+                name: MXene
+              - code: tmd
+                name: 过渡金属二硫化物
+                aliases: [ MoS2, WS2 ]
+          - code: perovskite
+            name: 钙钛矿
+            children:
+              - code: halide-perovskite
+                name: 卤化物钙钛矿
+              - code: oxide-perovskite
+                name: 氧化物钙钛矿
+          - code: quantum-dot
+            name: 量子点
+          - code: other-material
+            name: 其他分子材料
+
+      - code: device
+        name: 器件域
+        nameEn: Device
+        level: 2
+        description: 将材料/样品集成到可工作的功能单元
+        children:
+          - code: membrane-electrode
+            name: 膜电极
+          - code: sensor-chip
+            name: 传感芯片
+          - code: fixed-bed-reactor
+            name: 固定床反应器
+          - code: test-strip
+            name: 检测卡条
+          - code: mea
+            name: 膜电极组件
+            aliases: [ MEA ]
+          - code: microfluidic-chip
+            name: 微流控芯片
+
+      - code: product-system
+        name: 产品系统域
+        nameEn: Product/System
+        level: 3
+        description: 面向客户交付的完整解决方案或商业化产品
+        children:
+          - code: gas-separation-module
+            name: 气体分离膜组件
+          - code: sensor-probe
+            name: 传感器探头
+          - code: catalytic-reactor
+            name: 催化反应器
+          - code: pharmaceutical-formulation
+            name: 药物制剂
+          - code: water-treatment-device
+            name: 水处理装置
+          - code: gas-detector
+            name: 气体检测仪
+
+    # ========================================
+    # 二、性质域（Property Domain）
+    # 六大分组：结构、能量电子、吸附分离、传感、催化、工艺
+    # ========================================
+    property:
+      # ---- 1. 结构性质 ----
+      - code: structural
+        name: 结构性质
+        nameEn: Structural
+        description: 所有材料的基础结构性质
+        groups:
+          - code: porosity
+            name: 孔隙结构
+            properties:
+              - code: surface-area-bet
+                name: 比表面积 (BET)
+                units: ["m²/g", "cm²/g"]
+              - code: surface-area-langmuir
+                name: 比表面积 (Langmuir)
+                units: ["m²/g", "cm²/g"]
+              - code: surface-area-asa-mass
+                name: 可及表面积 (ASA_mass)
+                units: ["m²/g"]
+              - code: pore-volume-total
+                name: 总孔容
+                units: ["cm³/g", "mL/g"]
+              - code: pore-volume-micro
+                name: 微孔孔容
+                units: ["cm³/g", "mL/g"]
+              - code: pore-volume-meso
+                name: 介孔孔容
+                units: ["cm³/g", "mL/g"]
+              - code: pld
+                name: PLD
+                units: ["Å", "nm"]
+              - code: lcd
+                name: LCD
+                units: ["Å", "nm"]
+              - code: psd
+                name: PSD 平均孔径
+                units: ["Å", "nm"]
+              - code: porosity
+                name: 孔隙率
+                units: ["%", "—"]
+              - code: accessible-volume-fraction
+                name: 可及体积分数
+                units: ["%", "—"]
+              - code: channel-dimension
+                name: 通道维度
+                units: ["—"]
+              - code: framework-density
+                name: 骨架密度
+                units: ["g/cm³", "kg/m³"]
+              - code: crystal-density
+                name: 晶体密度
+                units: ["g/cm³", "kg/m³"]
+              - code: particle-density
+                name: 颗粒密度
+                units: ["g/cm³", "kg/m³"]
+
+          - code: crystal
+            name: 晶体结构
+            properties:
+              - code: cell-a
+                name: 晶胞参数 a
+                units: ["Å", "nm"]
+              - code: cell-b
+                name: 晶胞参数 b
+                units: ["Å", "nm"]
+              - code: cell-c
+                name: 晶胞参数 c
+                units: ["Å", "nm"]
+              - code: cell-alpha
+                name: 晶胞角度 α
+                units: ["°"]
+              - code: cell-beta
+                name: 晶胞角度 β
+                units: ["°"]
+              - code: cell-gamma
+                name: 晶胞角度 γ
+                units: ["°"]
+              - code: cell-volume
+                name: 晶胞体积
+                units: ["Å³", "nm³"]
+              - code: crystallite-size
+                name: 晶粒尺寸
+                units: ["nm", "μm"]
+              - code: particle-size
+                name: 颗粒尺寸
+                units: ["nm", "μm"]
+              - code: metal-content
+                name: 金属含量
+                units: ["wt%", "at%"]
+              - code: crystal-system
+                name: 晶系
+                units: ["—"]
+              - code: space-group
+                name: 空间群
+                units: ["—"]
+              - code: topology
+                name: 拓扑
+                units: ["—"]
+
+          - code: stability
+            name: 稳定性
+            properties:
+              - code: thermal-decomposition-temp
+                name: 热分解温度
+                units: ["°C", "K"]
+              - code: hydrothermal-stability
+                name: 水热稳定性
+                units: ["°C", "K"]
+              - code: chemical-stability
+                name: 化学稳定性
+                units: ["—"]
+              - code: cycling-stability
+                name: 循环稳定性
+                units: ["%"]
+
+      # ---- 2. 能量电子性质 ----
+      - code: electronic
+        name: 能量电子性质
+        nameEn: Electronic
+        description: 计算为主，实验验证
+        groups:
+          - code: electronic-structure
+            name: 电子结构
+            properties:
+              - code: bandgap
+                name: 带隙
+                units: ["eV", "kJ/mol"]
+              - code: homo
+                name: HOMO
+                units: ["eV", "kJ/mol"]
+              - code: lumo
+                name: LUMO
+                units: ["eV", "kJ/mol"]
+              - code: homo-lumo-gap
+                name: HOMO-LUMO 能隙
+                units: ["eV", "kJ/mol"]
+              - code: work-function
+                name: 功函数
+                units: ["eV", "kJ/mol"]
+              - code: fermi-level
+                name: 费米能级
+                units: ["eV", "kJ/mol"]
+              - code: ionization-potential
+                name: 电离势
+                units: ["eV", "kJ/mol"]
+              - code: electron-affinity
+                name: 电子亲和能
+                units: ["eV", "kJ/mol"]
+              - code: dielectric-constant
+                name: 介电常数
+                units: ["—"]
+              - code: density-of-states
+                name: 态密度
+                units: ["—"]
+              - code: charge-density
+                name: 电荷密度
+                units: ["—"]
+
+          - code: interaction
+            name: 相互作用
+            properties:
+              - code: adsorption-energy
+                name: 吸附能
+                units: ["kJ/mol", "eV", "kcal/mol"]
+              - code: binding-energy
+                name: 结合能
+                units: ["kJ/mol", "eV", "kcal/mol"]
+              - code: diffusion-barrier
+                name: 扩散能垒
+                units: ["kJ/mol", "eV", "kcal/mol"]
+              - code: coordination-bond-energy
+                name: 配位键能
+                units: ["kJ/mol", "eV", "kcal/mol"]
+              - code: isosteric-heat
+                name: 等量吸附热 (Q_st)
+                units: ["kJ/mol", "eV"]
+              - code: formation-energy
+                name: 形成能
+                units: ["kJ/mol", "eV/atom"]
+              - code: cohesive-energy
+                name: 内聚能
+                units: ["kJ/mol", "eV/atom"]
+              - code: surface-energy
+                name: 表面能
+                units: ["J/m²"]
+              - code: solvation-energy
+                name: 溶剂化能
+                units: ["kJ/mol"]
+              - code: defect-formation-energy
+                name: 缺陷形成能
+                units: ["eV"]
+              - code: point-zero-charge
+                name: 零电荷点 (pH_pzc)
+                units: ["pH"]
+              - code: zeta-potential
+                name: ζ 电位
+                units: ["mV"]
+
+          - code: spectroscopy
+            name: 光谱性质
+            properties:
+              - code: uv-vis-edge
+                name: UV-Vis 吸收边/峰
+                units: ["nm", "eV"]
+              - code: ir-frequency
+                name: 红外振动频率
+                units: ["cm⁻¹"]
+              - code: raman-shift
+                name: Raman 位移
+                units: ["cm⁻¹"]
+              - code: xps-binding-energy
+                name: XPS 结合能
+                units: ["eV"]
+              - code: fluorescence-wavelength
+                name: 荧光发射波长
+                units: ["nm"]
+              - code: fluorescence-quantum-yield
+                name: 荧光量子产率
+                units: ["%"]
+
+      # ---- 3. 吸附分离性质 ----
+      - code: adsorption
+        name: 吸附分离性质
+        nameEn: Adsorption
+        description: 核心应用方向 — 吸附分离
+        groups:
+          - code: static-adsorption
+            name: 静态吸附
+            properties:
+              - code: gas-uptake
+                name: 气体吸附量
+                units: ["mmol/g", "cm³(STP)/g", "mg/g", "mol/kg"]
+              - code: saturated-uptake
+                name: 饱和吸附量
+                units: ["mmol/g", "cm³(STP)/g", "mg/g", "mol/kg"]
+              - code: liquid-uptake
+                name: 液相吸附量
+                units: ["mg/g", "mmol/g"]
+              - code: water-vapor-uptake
+                name: 水蒸气吸附量
+                units: ["g/g", "mmol/g", "wt%"]
+              - code: voc-uptake
+                name: VOC 吸附量
+                units: ["mg/g", "mmol/g"]
+              - code: henry-constant
+                name: Henry 常数
+                units: ["mmol/(g·bar)"]
+              - code: isosteric-heat-ads
+                name: 等量吸附热
+                units: ["kJ/mol", "eV"]
+              - code: adsorption-isotherm
+                name: 吸附等温线
+                units: ["—"]
+
+          - code: dynamic-separation
+            name: 动态分离
+            properties:
+              - code: breakthrough-time
+                name: 穿透时间
+                units: ["min", "s"]
+              - code: half-breakthrough-time
+                name: 半穿透时间
+                units: ["min", "s"]
+              - code: breakthrough-uptake
+                name: 穿透吸附量
+                units: ["mmol/g", "cm³/g"]
+              - code: working-capacity
+                name: 工作容量
+                units: ["mmol/g", "cm³/g"]
+              - code: selectivity-iast
+                name: 选择性 (IAST)
+                units: ["—"]
+              - code: selectivity-henry
+                name: 选择性 (Henry)
+                units: ["—"]
+              - code: selectivity-ideal
+                name: 选择性 (理想)
+                units: ["—"]
+              - code: selectivity-breakthrough
+                name: 选择性 (穿透)
+                units: ["—"]
+              - code: diffusion-coefficient
+                name: 扩散系数
+                units: ["m²/s", "cm²/s"]
+              - code: self-diffusion-coefficient
+                name: 自扩散系数
+                units: ["m²/s", "cm²/s"]
+              - code: transport-diffusion-coefficient
+                name: 传输扩散系数
+                units: ["m²/s", "cm²/s"]
+              - code: mass-transfer-coefficient
+                name: 传质系数
+                units: ["s⁻¹", "min⁻¹"]
+              - code: regenerability
+                name: 再生度
+                units: ["%"]
+              - code: membrane-permeance
+                name: 膜渗透率
+                units: ["GPU", "Barrer"]
+              - code: membrane-selectivity
+                name: 膜选择性
+                units: ["—"]
+
+          - code: mass-transfer
+            name: 传质性质
+            properties:
+              - code: mass-transfer-resistance
+                name: 传质阻力
+                units: ["—"]
+              - code: axial-dispersion
+                name: 轴向扩散系数
+                units: ["—"]
+
+      # ---- 4. 传感性质 ----
+      - code: sensing
+        name: 传感性质
+        nameEn: Sensing
+        description: 核心应用方向 — 传感检测
+        groups:
+          - code: response-performance
+            name: 响应性能
+            properties:
+              - code: response-value
+                name: 响应值
+                units: ["%"]
+              - code: sensitivity
+                name: 灵敏度
+                units: ["%"]
+              - code: response-time
+                name: 响应时间
+                units: ["s", "min"]
+              - code: recovery-time
+                name: 恢复时间
+                units: ["s", "min"]
+              - code: baseline-resistance
+                name: 基线电阻
+                units: ["Ω", "kΩ", "MΩ"]
+              - code: impedance
+                name: 阻抗值
+                units: ["Ω", "kΩ", "MΩ"]
+              - code: charge-transfer-resistance
+                name: 电荷转移阻抗
+                units: ["Ω", "kΩ", "MΩ"]
+
+          - code: detection-performance
+            name: 检测性能
+            properties:
+              - code: lod
+                name: 检测限 (LOD)
+                units: ["ppm", "ppb", "mg/m³"]
+              - code: loq
+                name: 定量限 (LOQ)
+                units: ["ppm", "ppb", "mg/m³"]
+              - code: sensitivity-slope
+                name: 灵敏度/斜率
+                units: ["%/ppm", "Ω/ppm"]
+              - code: linear-range
+                name: 线性范围
+                units: ["—"]
+              - code: sensing-selectivity
+                name: 传感选择性
+                units: ["—"]
+              - code: cross-sensitivity
+                name: 交叉灵敏度
+                units: ["—"]
+
+          - code: sensing-stability
+            name: 传感稳定性
+            properties:
+              - code: long-term-drift
+                name: 长期漂移
+                units: ["%/月"]
+              - code: cycling-stability-sensing
+                name: 循环稳定性
+                units: ["%"]
+              - code: repeatability
+                name: 重复性
+                units: ["%"]
+              - code: reproducibility
+                name: 再现性
+                units: ["%"]
+              - code: operating-temp-range
+                name: 操作温度范围
+                units: ["°C", "K"]
+              - code: anti-interference
+                name: 抗干扰性
+                units: ["—"]
+
+      # ---- 5. 催化性质 ----
+      - code: catalysis
+        name: 催化性质
+        nameEn: Catalysis
+        description: 核心应用方向 — 催化反应
+        groups:
+          - code: catalytic-activity
+            name: 催化活性
+            properties:
+              - code: conversion
+                name: 转化率
+                units: ["%"]
+              - code: reaction-rate
+                name: 反应速率
+                units: ["mmol/(g·h)", "μmol/(g·min)"]
+              - code: tof
+                name: TOF
+                units: ["h⁻¹", "s⁻¹", "min⁻¹"]
+              - code: ton
+                name: TON
+                units: ["—"]
+              - code: apparent-activation-energy
+                name: 表观活化能
+                units: ["kJ/mol", "eV"]
+              - code: mass-specific-activity
+                name: 质量比活性
+                units: ["mmol/(g·h)"]
+              - code: area-specific-activity
+                name: 面积比活性
+                units: ["mmol/(m²·h)"]
+
+          - code: catalytic-selectivity
+            name: 催化选择性
+            properties:
+              - code: product-selectivity
+                name: 产物选择性
+                units: ["%"]
+              - code: byproduct-distribution
+                name: 副产物分布
+                units: ["%"]
+              - code: carbon-balance
+                name: 碳平衡
+                units: ["%"]
+              - code: yield
+                name: 收率
+                units: ["%"]
+              - code: enantioselectivity
+                name: 对映选择性
+                units: ["%"]
+
+          - code: catalytic-stability
+            name: 催化稳定性
+            properties:
+              - code: deactivation-rate
+                name: 失活速率
+                units: ["%/h"]
+              - code: regeneration-performance
+                name: 再生性能
+                units: ["%"]
+              - code: anti-poisoning
+                name: 抗中毒性
+                units: ["%"]
+              - code: carbon-deposition
+                name: 积碳量
+                units: ["wt%"]
+
+      # ---- 6. 工艺性质 ----
+      - code: process
+        name: 工艺性质
+        nameEn: Process
+        description: 器件/产品级工艺性质
+        groups:
+          - code: forming-mechanical
+            name: 成型与机械性质
+            properties:
+              - code: film-thickness
+                name: 膜厚
+                units: ["μm", "nm"]
+              - code: compressive-strength
+                name: 抗压强度
+                units: ["MPa", "GPa"]
+              - code: hardness
+                name: 硬度
+                units: ["MPa", "GPa"]
+              - code: young-modulus
+                name: 杨氏模量
+                units: ["GPa"]
+              - code: shear-modulus
+                name: 剪切模量
+                units: ["GPa"]
+              - code: bulk-modulus
+                name: 体积模量
+                units: ["GPa"]
+              - code: film-forming-property
+                name: 成膜性
+                units: ["—"]
+              - code: adhesion
+                name: 附着力
+                units: ["—"]
+
+          - code: thermal-property
+            name: 热学性质
+            properties:
+              - code: thermal-expansion-coefficient
+                name: 热膨胀系数
+                units: ["10⁻⁶/K"]
+              - code: thermal-conductivity
+                name: 热导率
+                units: ["W/(m·K)"]
+              - code: specific-heat-capacity
+                name: 比热容
+                units: ["J/(g·K)"]
+
+          - code: operational-performance
+            name: 操作性能
+            properties:
+              - code: pressure-drop
+                name: 压降
+                units: ["kPa", "bar"]
+              - code: flux
+                name: 通量
+                units: ["L/(m²·h)"]
+              - code: ghsv
+                name: 空速 (GHSV)
+                units: ["h⁻¹"]
+              - code: packing-density
+                name: 堆积密度
+                units: ["g/cm³", "kg/m³"]
+              - code: energy-consumption
+                name: 能耗
+                units: ["kWh/kg", "kJ/mol"]
+
+          - code: economics
+            name: 经济性
+            properties:
+              - code: operating-life
+                name: 操作寿命
+                units: ["h", "天"]
+              - code: cost
+                name: 成本
+                units: ["—"]
+              - code: maintenance-cycle
+                name: 维护周期
+                units: ["天", "月"]
+              - code: theoretical-yield
+                name: 理论产率
+                units: ["%"]
+              - code: actual-yield
+                name: 实际产率
+                units: ["%"]
+
+    # ========================================
+    # 三、方法域（Method Domain）
+    # 计算驱动 / 实验验证 / 文献调研 / 外部数据
+    # ========================================
+    method:
+      - code: computational
+        name: 计算驱动
+        nameEn: Computational
+        children:
+          - code: dft
+            name: DFT
+            children:
+              - code: dft-periodic
+                name: 周期性DFT
+                aliases: [ VASP, CP2K, Quantum ESPRESSO ]
+              - code: dft-molecular
+                name: 分子DFT
+                aliases: [ Gaussian, ORCA, Turbomole ]
+              - code: dftb
+                name: DFTB
+                aliases: [ DFTB+ ]
+          - code: md
+            name: MD
+            children:
+              - code: classical-md
+                name: 经典MD
+                aliases: [ LAMMPS, GROMACS ]
+              - code: ab-initio-md
+                name: 从头算MD
+                aliases: [ CP2K-AIMD ]
+              - code: coarse-grained-md
+                name: 粗粒化MD
+          - code: machine-learning
+            name: 机器学习
+            children:
+              - code: ml-potential
+                name: 机器学习势函数
+                aliases: [ NequIP, MACE, CHGNet ]
+              - code: deep-learning
+                name: 深度学习
+              - code: high-throughput-screening
+                name: 高通量筛选
+          - code: quantum-computing
+            name: 量子计算
+            children:
+              - code: vqe
+                name: VQE
+              - code: qaoa
+                name: QAOA
+          - code: simulation
+            name: 模拟仿真
+            children:
+              - code: finite-element
+                name: 有限元分析
+                aliases: [ COMSOL, ANSYS ]
+              - code: cfd
+                name: 计算流体力学
+              - code: monte-carlo
+                name: 蒙特卡洛
+                aliases: [ GCMC ]
+              - code: phase-field
+                name: 相场模拟
+
+      - code: experimental
+        name: 实验验证
+        nameEn: Experimental
+        children:
+          - code: synthesis
+            name: 合成制备
+            children:
+              - code: hydrothermal
+                name: 水热/溶剂热合成
+              - code: microwave
+                name: 微波合成
+              - code: mechanochemical
+                name: 机械化学合成
+              - code: electrochemical
+                name: 电化学合成
+              - code: sol-gel
+                name: 溶胶-凝胶法
+              - code: chemical-vapor-deposition
+                name: 化学气相沉积 (CVD)
+          - code: characterization
+            name: 表征测试
+            children:
+              - code: xrd
+                name: XRD
+              - code: sem
+                name: SEM
+              - code: tem
+                name: TEM
+              - code: bet
+                name: BET
+              - code: xps
+                name: XPS
+              - code: ftir
+                name: FTIR
+              - code: raman
+                name: Raman
+              - code: uv-vis
+                name: UV-Vis
+              - code: nmr
+                name: NMR
+              - code: tga
+                name: TGA
+              - code: dsc
+                name: DSC
+              - code: exafs
+                name: EXAFS/XANES
+          - code: performance-test
+            name: 性能测试
+            children:
+              - code: adsorption-test
+                name: 吸附测试
+              - code: separation-test
+                name: 分离测试
+              - code: catalytic-test
+                name: 催化测试
+              - code: sensing-test
+                name: 传感测试
+              - code: mechanical-test
+                name: 力学测试
+
+      - code: literature
+        name: 文献调研
+        nameEn: Literature
+        children:
+          - code: journal-article
+            name: 期刊论文
+          - code: patent
+            name: 专利
+          - code: thesis
+            name: 学位论文
+          - code: database
+            name: 公开数据库
+            aliases: [ CSD, COD, MOF DB ]
+
+      - code: external
+        name: 外部数据
+        nameEn: External
+        children:
+          - code: third-party-report
+            name: 第三方检测报告
+          - code: industrial-data
+            name: 工业数据
+          - code: field-test
+            name: 现场测试数据
