@@ -44,6 +44,8 @@ cp .env.example .env
 # - OLLAMA_URL          (如果 LLM_PROVIDER=ollama 则必填)
 # - OLLAMA_CHAT_MODEL   (如果 LLM_PROVIDER=ollama 则必填)
 # - OLLAMA_EMBED_MODEL  (必填 — Embedding 模型)
+# - SANDBOX_DB_ENABLED  (推荐 true — 启用 Sandbox MySQL 直连自动同步)
+# - SANDBOX_DB_HOST/PORT/NAME/USER/PASSWORD  (DB 模式必填)
 ```
 
 详细环境变量说明见 [06_Environment_Variables](./06_Environment_Variables.md)。
