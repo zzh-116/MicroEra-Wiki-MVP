@@ -14,13 +14,10 @@ import '../../backend/connectors/arxiv/index.js';
 
 export const connectorsRouter = Router();
 
-// Register connectors at startup — prefer DB connector when enabled
-if (config.sandboxDB.enabled) {
-  ConnectorRegistry.register('sandbox', () => sandboxConnector);
-  ConnectorRegistry.register('sandbox-db', () => sandboxConnector);
-} else {
-  ConnectorRegistry.register('sandbox', () => sandboxConnector);
-}
+// Register sandbox connector (DB mode)
+ConnectorRegistry.register('sandbox', () => sandboxConnector);
+ConnectorRegistry.register('sandbox-db', () => sandboxConnector);
+console.log('[Connectors] Sandbox DB connector registered');
 
 // ---- Health / Status ----
 
@@ -109,10 +106,16 @@ connectorsRouter.post('/:name/sync', async (req: Request, res: Response) => {
     const connector = ConnectorRegistry.get(req.params.name);
     await connector.connect();
 
-    const { projectId, dryRun, keyword, dois } = req.body || {};
+    const { projectId, dryRun, keyword, dois, idList } = req.body || {};
 
     // 1. List all documents from the connector
-    const summaries = await connector.list({ projectId, keyword, ...(dois ? { dois } as any : {}) });
+    //    arXiv uses idList, CrossRef uses dois — pass both so all connectors work
+    const summaries = await connector.list({
+      projectId,
+      keyword,
+      ...(dois ? { dois } as any : {}),
+      ...(idList ? { idList } as any : {}),
+    });
 
     if (dryRun) {
       res.json({
@@ -134,7 +137,7 @@ connectorsRouter.post('/:name/sync', async (req: Request, res: Response) => {
     const connectorAny = connector as any;
     if (typeof connectorAny.fetchAll === 'function') {
       // ── Bulk path (DB connector) — single query, all documents ──
-      const docs = await connectorAny.fetchAll({ projectId, keyword, ...(dois ? { dois } as any : {}) });
+      const docs = await connectorAny.fetchAll({ projectId, keyword, ...(dois ? { dois } as any : {}), ...(idList ? { idList } as any : {}) });
       for (const doc of docs) {
         try {
           const result = await importService.importFromConnector(doc);

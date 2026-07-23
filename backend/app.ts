@@ -125,31 +125,56 @@ async function autoSyncSandbox() {
   const { sandboxConnector } = await import('./connectors/sandbox/index.js');
   const { countSynced } = await import('./services/sync-log.service.js');
 
-  // Connect to Sandbox MySQL (logs asset/project/wiki counts)
   await sandboxConnector.connect();
 
-  // Fetch all documents in one query
   const connectorAny = sandboxConnector as any;
-  const docs = await (connectorAny.fetchAll
-    ? connectorAny.fetchAll({})
-    : (async () => {
-        const summaries = await sandboxConnector.list({});
-        const result: any[] = [];
-        for (const s of summaries) {
-          try { result.push(await sandboxConnector.detail(s.id)); } catch {}
-        }
-        return result;
-      })());
 
-  console.log(`[AutoSync] ${docs.length} documents fetched from Sandbox`);
+  // 1. Fetch all asset documents
+  const assetDocs: any[] = connectorAny.fetchAll
+    ? await connectorAny.fetchAll({})
+    : [];
+  console.log(`[AutoSync] ${assetDocs.length} assets fetched from Sandbox`);
 
-  // Import each document (importFromConnector handles dedup)
+  // 2. Fetch all project wikis as documents
+  let wikiDocs: any[] = [];
+  try {
+    const wikiSummaries = await connectorAny.listWikis({});
+    for (const s of wikiSummaries) {
+      try { wikiDocs.push(await connectorAny.fetchWiki(String(s.metadata?.projectId || s.id))); } catch {}
+    }
+    console.log(`[AutoSync] ${wikiDocs.length} project wikis fetched from Sandbox`);
+  } catch (err: any) {
+    console.warn(`[AutoSync] Wiki fetch skipped: ${err.message}`);
+  }
+
+  // 3. Fetch project tasks as documents (limit to 200 to avoid overload)
+  let taskDocs: any[] = [];
+  try {
+    const taskSummaries = await connectorAny.listTasks({});
+    const limited = taskSummaries.slice(0, 200);
+    for (const s of limited) {
+      try {
+        // s.id format: "task:123" — extract numeric ID for fetchTask
+        const numericId = String(s.id).replace(/^task:/, '');
+        taskDocs.push(await connectorAny.fetchTask(numericId));
+      } catch {}
+    }
+    console.log(`[AutoSync] ${taskDocs.length} project tasks fetched from Sandbox`);
+  } catch (err: any) {
+    console.warn(`[AutoSync] Task fetch skipped: ${err.message}`);
+  }
+
+  // 4. Combine all documents
+  const allDocs = [...assetDocs, ...wikiDocs, ...taskDocs];
+  console.log(`[AutoSync] ${allDocs.length} total documents fetched from Sandbox (${assetDocs.length} assets + ${wikiDocs.length} wikis + ${taskDocs.length} tasks)`);
+
+  // 5. Import each document
   const { importService } = await import('./services/import.service.js');
   let imported = 0;
   let skipped = 0;
   let failed = 0;
 
-  for (const doc of docs) {
+  for (const doc of allDocs) {
     try {
       const result = await importService.importFromConnector(doc);
       if (result.stages[0]?.detail?.startsWith('already imported')) {
@@ -166,7 +191,7 @@ async function autoSyncSandbox() {
   }
 
   const totalSynced = await countSynced('sandbox');
-  console.log(`[AutoSync] Complete — ${docs.length} from Sandbox → ${imported} new, ${skipped} already synced, ${failed} failed | ${totalSynced} total entries in sync log`);
+  console.log(`[AutoSync] Complete — ${allDocs.length} from Sandbox → ${imported} new, ${skipped} already synced, ${failed} failed | ${totalSynced} total entries in sync log`);
 }
 
 /** Execute migration SQL files in order */
