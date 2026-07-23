@@ -63,11 +63,28 @@
 
 ### Sandbox 连接器
 
+#### HTTP 模式（原有）
+
 | 变量 | 默认值 | 必填 | 说明 |
 |------|--------|------|------|
-| `SANDBOX_BASE_URL` | `http://139.196.211.120:6810` | 否 | Sandbox 数据平台地址 |
+| `SANDBOX_BASE_URL` | `http://139.196.211.120:6810` | 否 | Sandbox 数据平台 REST API 地址 |
 | `SANDBOX_USERNAME` | `admin` | 否 | Sandbox 登录用户名 |
 | `SANDBOX_PASSWORD` | `123456` | 否 | Sandbox 登录密码 |
+
+#### DB 直连模式（推荐）
+
+设置 `SANDBOX_DB_ENABLED=true` 启用 MySQL 直连，消除 N+1 HTTP 请求，并解锁 `project_wiki`、`project_task`、`sys_user` 数据。启动时自动同步全部资产到 Wiki 知识库。
+
+| 变量 | 默认值 | 必填 | 说明 |
+|------|--------|------|------|
+| `SANDBOX_DB_ENABLED` | `false` | 否 | 设为 `true` 启用 DB 直连模式（推荐） |
+| `SANDBOX_DB_HOST` | `10.36.160.33` | DB 模式必填 | Sandbox MySQL 主机 |
+| `SANDBOX_DB_PORT` | `3306` | 否 | MySQL 端口 |
+| `SANDBOX_DB_NAME` | `miqroproject` | 否 | 数据库名 |
+| `SANDBOX_DB_USER` | `root` | 否 | MySQL 用户名 |
+| `SANDBOX_DB_PASSWORD` | （空） | 推荐 | MySQL 密码 |
+
+> **模式选择**: `SANDBOX_DB_ENABLED=true` 时自动使用 DB 直连，否则回退 HTTP API。DB 模式是单向只读（SELECT only），不会修改 Sandbox 数据。
 
 ### Data（数据目录）
 

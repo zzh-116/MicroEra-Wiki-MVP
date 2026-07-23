@@ -31,6 +31,7 @@ graph TB
         Chunks["document_chunks<br/>Chunk Texts"]
         Vectors["vectors<br/>1024-dim Embeddings"]
         Entries["entries<br/>Wiki Entries"]
+        SyncLog["connector_sync_log<br/>Import Dedup"]
     end
 
     subgraph AI_Infra["AI Infrastructure"]
@@ -41,7 +42,7 @@ graph TB
     end
 
     subgraph External["External"]
-        Sandbox["Sandbox Platform<br/>Data Connector"]
+        Sandbox["Sandbox Platform<br/>HTTP API / MySQL Direct"]
         Arxiv["arXiv API<br/>Preprints"]
         CrossRef["CrossRef API<br/>150M+ Papers"]
         Feishu["Feishu Wiki<br/>Docs"]

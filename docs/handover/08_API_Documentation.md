@@ -790,10 +790,18 @@ curl -X POST http://localhost:3001/api/connectors/crossref/sync \
 
 #### Sandbox 专用接口
 
-| Method | Path | 说明 |
-|--------|------|------|
-| `GET` | `/api/connectors/sandbox/projects` | 获取 Sandbox 项目列表 |
-| `GET` | `/api/connectors/sandbox/last-sync` | 上次同步时间 |
+| Method | Path | DB 模式 | 说明 |
+|--------|------|---------|------|
+| `GET` | `/api/connectors/sandbox/projects` | ✅ | 获取 Sandbox 项目列表 |
+| `GET` | `/api/connectors/sandbox/last-sync` | HTTP | 上次同步时间（HTTP 模式） |
+| `GET` | `/api/connectors/sandbox/db-test` | ✅ DB | 测试 MySQL 连通性，返回资产/项目/wiki 统计 |
+| `GET` | `/api/connectors/sandbox/wikis` | ✅ DB | 列出项目 Wiki 文档（`?projectId=155`） |
+| `GET` | `/api/connectors/sandbox/wikis/:projectId` | ✅ DB | 获取单个项目 Wiki 详情 |
+| `POST` | `/api/connectors/sandbox/wikis/:projectId/sync` | ✅ DB | 导入单个 Wiki 到知识库 |
+| `GET` | `/api/connectors/sandbox/tasks` | ✅ DB | 列出项目任务（`?projectId=155`） |
+| `GET` | `/api/connectors/sandbox/tasks/:taskId` | ✅ DB | 获取单个任务详情 |
+
+> **DB 直连模式**（`SANDBOX_DB_ENABLED=true`）还支持 `POST /api/connectors/sandbox/sync` 批量导入，内部走 `fetchAll()` 单次查询全量文档，消除 N+1 问题。导入通过 `connector_sync_log` 表去重，重启后自动跳过已导入文档。
 
 ---
 
