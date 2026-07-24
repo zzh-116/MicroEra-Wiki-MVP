@@ -16,7 +16,7 @@ export interface CreateEntryInput {
 
 export interface UpdateEntryInput extends Partial<CreateEntryInput> {}
 
-const VALID_ENTRY_TYPES = ['asset', 'product', 'tech', 'patent', 'data_item'] as const;
+const VALID_ENTRY_TYPES = ['sandbox_project', 'academic_paper', 'patent', 'data_standard', 'tech_doc', 'template', 'business_material', 'handwritten_note'] as const;
 
 export class EntryRepository extends BaseRepository {
   /** Hydrate entry rows with their tags */
