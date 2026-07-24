@@ -99,7 +99,7 @@ export class ImportService {
         const tChunk = Date.now();
         const e = await entryRepository.create({
           title,
-          entry_type: input.entryMetadata?.entry_type || 'data_item',
+    entry_type: input.entryMetadata?.entry_type || 'handwritten_note',
           summary: input.entryMetadata?.summary
             || `Imported from ${parseResult.sourceFormat}: ${parseResult.metadata.fileName}`,
           content: entryContent.slice(0, 50000),
