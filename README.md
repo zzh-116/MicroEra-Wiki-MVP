@@ -236,12 +236,42 @@ docker compose up -d   # PostgreSQL + App 容器 → http://localhost:3001
 
 ### NUC 自动部署
 
-NUC 服务器支持轮询式自动部署（push 代码后 ≤2 分钟生效），详见 [NUC 部署指南 §11.7](docs/handover/11_NUC_Deployment.md#117-自动部署polling-auto-deploy)。
+NUC 服务器 (`192.168.40.60`) 已配置 GitLab 轮询自动部署 — `git push` 后 ≤2 分钟自动生效。
 
-```bash
-# 在 NUC 上一次配置，之后每次 git push 自动部署
-sudo systemctl enable --now auto-deploy.timer
+**架构：**
 ```
+本地 git push → GitLab (git.miqroera.com)
+                         │
+       NUC 每 2 分钟 git fetch (systemd timer)
+                         │
+              有新 commit? ──是──→ pull → npm install → build → restart
+                         │
+                        否──→ 静默跳过
+```
+
+**当前配置：**
+| 项目 | 值 |
+|------|-----|
+| NUC IP | `192.168.40.60` |
+| Git Remote | `ssh://git@git.miqroera.com:12222/intership/microera-wiki-mvp.git` |
+| 部署目录 | `/data/code-project/microera-wiki` |
+| Timer | `auto-deploy.timer`（每 2 分钟） |
+| SSH 用户 | `devops` |
+| GitLab 账号 | `@zhouzihan` |
+
+**运维命令：**
+```bash
+# 查看部署日志
+ssh devops@192.168.40.60 journalctl -u auto-deploy.service -f
+
+# 手动立即部署
+ssh devops@192.168.40.60 sudo systemctl start auto-deploy.service
+
+# 查看 timer 状态
+ssh devops@192.168.40.60 systemctl status auto-deploy.timer
+```
+
+详细配置步骤见 [NUC 部署指南 §11.7](docs/handover/11_NUC_Deployment.md#117-自动部署polling-auto-deploy)。
 
 ## 数据库管理
 
