@@ -1,0 +1,11 @@
+[Unit]
+Description=MicroEra Wiki Auto Deploy Timer (every 2 min)
+Requires=auto-deploy.service
+
+[Timer]
+OnUnitActiveSec=2min
+OnBootSec=1min
+Unit=auto-deploy.service
+
+[Install]
+WantedBy=timers.target

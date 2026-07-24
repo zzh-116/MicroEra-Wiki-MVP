@@ -74,7 +74,7 @@
 - **React Router SPA** — 15 条路由，URL 导航、浏览器历史、深链接、返回按钮、面包屑
 - **文献检索与导入** — arXiv + CrossRef 双源搜索，一键导入论文到知识库（`/literature`）
 - **公开首页** — 产品/技术/专利展示，免登录
-- **内部首页** — 最近更新、星标收藏、AI 快速问答
+- **内部首页** — 最近更新、我的星标收藏（持久化到数据库）、AI 快速问答
 - **知识索引** — 多条件筛选（类型/可见度/分类），分页展示
 - **条目详情** — ViewModel 驱动的卡片化渲染 + 知识图谱 + 版本历史 + 多轮 AI 问答
 - **Knowledge Parsing Layer** — Sandbox JSON → 统一 ViewModel → 结构化卡片（不再渲染原始 JSON）
@@ -234,6 +234,45 @@ npm run server         # Express serve dist/ + API → http://localhost:3001
 docker compose up -d   # PostgreSQL + App 容器 → http://localhost:3001
 ```
 
+### NUC 自动部署
+
+NUC 服务器 (`192.168.40.60`) 已配置 GitLab 轮询自动部署 — `git push` 后 ≤2 分钟自动生效。
+
+**架构：**
+```
+本地 git push → GitLab (git.miqroera.com)
+                         │
+       NUC 每 2 分钟 git fetch (systemd timer)
+                         │
+              有新 commit? ──是──→ pull → npm install → build → restart
+                         │
+                        否──→ 静默跳过
+```
+
+**当前配置：**
+| 项目 | 值 |
+|------|-----|
+| NUC IP | `192.168.40.60` |
+| Git Remote | `ssh://git@git.miqroera.com:12222/intership/microera-wiki-mvp.git` |
+| 部署目录 | `/data/code-project/microera-wiki` |
+| Timer | `auto-deploy.timer`（每 2 分钟） |
+| SSH 用户 | `devops` |
+| GitLab 账号 | `@zhouzihan` |
+
+**运维命令：**
+```bash
+# 查看部署日志
+ssh devops@192.168.40.60 journalctl -u auto-deploy.service -f
+
+# 手动立即部署
+ssh devops@192.168.40.60 sudo systemctl start auto-deploy.service
+
+# 查看 timer 状态
+ssh devops@192.168.40.60 systemctl status auto-deploy.timer
+```
+
+详细配置步骤见 [NUC 部署指南 §11.7](docs/handover/11_NUC_Deployment.md#117-自动部署polling-auto-deploy)。
+
 ## 数据库管理
 
 ```bash
@@ -316,6 +355,8 @@ npm run db:studio      # 启动 Drizzle Studio（可视化数据库管理）
 | `GET` | `/api/auth/me` | Bearer | 当前用户 |
 | `GET` | `/api/entries` | optional | 列表（?page/pageSize/keyword/type/visibility/category/tag） |
 | `GET` `/POST` `/PUT` `/DELETE` | `/api/entries/:id` | Bearer | 条目 CRUD |
+| `GET` `/POST` `/DELETE` | `/api/bookmarks` | Bearer | 🆕 收藏管理 |
+| `GET` | `/api/bookmarks/:id/status` | optional | 🆕 收藏状态查询 |
 | `GET` | `/api/categories` | — | 分类列表 |
 | `GET` | `/api/tags` | — | 标签列表 |
 | `GET` `/POST` `/DELETE` | `/api/files` | optional | 文件管理 |
@@ -364,6 +405,7 @@ npm run db:studio      # 启动 Drizzle Studio（可视化数据库管理）
 │   │
 │   ├── repositories/                 # Repository 层
 │   │   ├── entry.repository.ts       # 条目 CRUD + 分页搜索
+│   │   ├── bookmark.repository.ts    # 🆕 收藏管理
 │   │   ├── vector.repository.ts      # pgvector 向量存储
 │   │   └── ...                       # category/tag/user/file/chunk/conversation
 │   │
@@ -391,6 +433,7 @@ npm run db:studio      # 启动 Drizzle Studio（可视化数据库管理）
 │   └── routes/
 │       ├── connectors.ts             # /api/connectors/*
 │       ├── admin.ts                  # 🆕 /api/admin/*（重建 Embedding 等）
+│       ├── bookmarks.ts              # 🆕 /api/bookmarks/*（收藏管理）
 │       ├── search.ts                 # /api/search
 │       ├── pipeline.ts               # /api/pipeline/*
 │       ├── ai.ts                     # /api/ai/*
