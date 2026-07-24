@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { entriesApi } from '../api/entriesApi';
+import { bookmarksApi } from '../api/bookmarksApi';
 import { filesApi } from '../api/filesApi';
 import { markdownApi } from '../api/markdownApi';
 import { graphApi } from '../api/graphApi';
@@ -68,7 +69,13 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
       try {
         const loadedEntry = await entriesApi.getEntryById(entryId);
         setEntry(loadedEntry);
-        setBookmarked(loadedEntry.id === 'e-stabilizer-project');
+        // Check real bookmark status
+        try {
+          const status = await bookmarksApi.isBookmarked(entryId);
+          setBookmarked(status);
+        } catch {
+          setBookmarked(false);
+        }
 
         // Build ViewModel
         const vm = toDetailViewModel(loadedEntry);
@@ -128,7 +135,18 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 pb-3 gap-2 select-none">
         <Breadcrumbs paths={breadcrumbPaths} />
         <div className="flex items-center space-x-2 shrink-0">
-          <button onClick={() => setBookmarked(!bookmarked)}
+          <button onClick={async () => {
+            try {
+              if (bookmarked) {
+                await bookmarksApi.removeBookmark(entryId);
+              } else {
+                await bookmarksApi.addBookmark(entryId);
+              }
+              setBookmarked(!bookmarked);
+            } catch (err) {
+              console.error('Bookmark toggle failed:', err);
+            }
+          }}
             className={`px-3 py-1.5 rounded border text-xs font-bold transition-all flex items-center space-x-1.5 ${
               bookmarked ? 'bg-yellow-50 border-yellow-200 text-yellow-700' : 'bg-white border-gray-300 text-gray-600'}`}>
             <Bookmark className={`w-3.5 h-3.5 ${bookmarked ? 'fill-yellow-500 text-yellow-500' : ''}`} />
