@@ -116,6 +116,12 @@ export interface RetrievalResult {
 
 // ---- AI ----
 
+export interface Bookmark {
+  userId: number;
+  entryId: number;
+  createdAt: string;
+}
+
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;

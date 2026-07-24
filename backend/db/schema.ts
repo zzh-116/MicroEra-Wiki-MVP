@@ -177,7 +177,31 @@ export const chatMessages = pgTable(
   (table) => [index('chat_messages_conv_idx').on(table.conversationId)],
 );
 
+// ---- Bookmarks ----
+export const bookmarks = pgTable(
+  'bookmarks',
+  {
+    userId: integer('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    entryId: integer('entry_id')
+      .notNull()
+      .references(() => entries.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.entryId] }),
+    index('bookmarks_user_idx').on(table.userId),
+    index('bookmarks_entry_idx').on(table.entryId),
+  ],
+);
+
 // ---- Relations ----
+export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
+  user: one(users, { fields: [bookmarks.userId], references: [users.id] }),
+  entry: one(entries, { fields: [bookmarks.entryId], references: [entries.id] }),
+}));
+
 export const entriesRelations = relations(entries, ({ one, many }) => ({
   category: one(categories, { fields: [entries.categoryId], references: [categories.id] }),
   createdByUser: one(users, { fields: [entries.createdBy], references: [users.id] }),
