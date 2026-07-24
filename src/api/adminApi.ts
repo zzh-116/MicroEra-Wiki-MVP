@@ -32,9 +32,11 @@ const API_BASE = '/api';
 
 function mapSpaceToEntryType(spaceId: string): string {
   const map: Record<string, string> = {
-    's-sandbox': 'tech', 's-papers': 'tech', 's-data': 'data_item',
-    's-tech': 'tech', 's-business': 'asset', 's-template': 'asset',
-    's-product': 'product',
+    's-sandbox': 'sandbox_project', 's-papers': 'academic_paper', 's-data': 'data_standard',
+    's-tech': 'tech_doc', 's-business': 'business_material', 's-template': 'template',
+    's-product': 'tech_doc',
+    's-patent': 'patent',
+    's-handwritten': 'handwritten_note',
   };
   return map[spaceId] || 'tech';
 }

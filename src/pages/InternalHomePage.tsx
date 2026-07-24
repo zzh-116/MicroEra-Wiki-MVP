@@ -5,6 +5,7 @@ import { WikiEntry } from '../types/wiki';
 import { entriesApi } from '../api/entriesApi';
 import { bookmarksApi } from '../api/bookmarksApi';
 import { storage } from '../lib/storage';
+import EntryTypeBadge from '../components/EntryTypeBadge';
 
 interface InternalHomePageProps {
   onNavigate: (view: string, id?: string) => void}
@@ -238,7 +239,7 @@ export default function InternalHomePage() {
                 </div>
                 <div className="flex items-center space-x-2 shrink-0">
                   <span className="text-[10px] px-1.5 py-0.5 font-semibold bg-gray-100 text-gray-600 rounded whitespace-nowrap">
-                    {entry.entryType.toUpperCase()}
+                    <EntryTypeBadge type={entry.entryType} />
                   </span>
                   <Bookmark className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500 flex-shrink-0" />
                 </div>

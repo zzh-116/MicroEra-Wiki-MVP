@@ -14,48 +14,48 @@ export default function EntryTypeBadge({ type }: EntryTypeBadgeProps) {
   let colorClass = 'bg-gray-100 text-gray-700 border-gray-200';
 
   switch (type) {
-    case 'project':
-      label = 'Sandbox 项目';
+    case 'sandbox_project':
+      label = 'Sandbox项目';
       icon = <FolderKanban className="w-3.5 h-3.5 mr-1" />;
       colorClass = 'bg-blue-50 text-blue-700 border-blue-100';
       break;
-    case 'paper':
-      label = '论文文献';
+    case 'academic_paper':
+      label = '学术论文';
       icon = <BookOpen className="w-3.5 h-3.5 mr-1" />;
       colorClass = 'bg-emerald-50 text-emerald-700 border-emerald-100';
       break;
     case 'patent':
-      label = '发明专利';
+      label = '专利成果';
       icon = <Key className="w-3.5 h-3.5 mr-1" />;
       colorClass = 'bg-yellow-50 text-yellow-700 border-yellow-200';
       break;
-    case 'data_item':
-      label = '数据结构';
+    case 'data_standard':
+      label = '数据标准';
       icon = <Database className="w-3.5 h-3.5 mr-1" />;
       colorClass = 'bg-purple-50 text-purple-700 border-purple-100';
       break;
-    case 'concept':
-      label = '技术优势';
+    case 'tech_doc':
+      label = '技术文档';
       icon = <Lightbulb className="w-3.5 h-3.5 mr-1" />;
       colorClass = 'bg-orange-50 text-orange-700 border-orange-100';
       break;
     case 'template':
-      label = '标准模板';
+      label = '模板规范';
       icon = <FileSignature className="w-3.5 h-3.5 mr-1" />;
       colorClass = 'bg-teal-50 text-teal-700 border-teal-100';
       break;
-    case 'business_value':
-      label = '商业价值';
+    case 'business_material':
+      label = '商业资料';
       icon = <Briefcase className="w-3.5 h-3.5 mr-1" />;
       colorClass = 'bg-rose-50 text-rose-700 border-rose-100';
       break;
-    case 'service':
-      label = '知识服务';
-      icon = <Settings className="w-3.5 h-3.5 mr-1" />;
-      colorClass = 'bg-[#F5F6E5] text-[#2B3150] border-[#DB5F5B]/30';
+      case 'handwritten_note':
+      label = '手写笔记';
+      icon = <HelpCircle className="w-3.5 h-3.5 mr-1" />;
+      colorClass = 'bg-gray-100 text-gray-700 border-gray-200';
       break;
     default:
-      label = '一般概念';
+      label = '手写笔记';
       icon = <HelpCircle className="w-3.5 h-3.5 mr-1" />;
       colorClass = 'bg-gray-100 text-gray-700 border-gray-200';
   }

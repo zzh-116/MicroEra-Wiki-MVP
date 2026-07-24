@@ -17,18 +17,14 @@ export interface WikiSpace {
 }
 
 export type EntryType =
-  | 'project'
-  | 'paper'
+  | 'sandbox_project'
+  | 'academic_paper'
   | 'patent'
-  | 'data_item'
-  | 'concept'
+  | 'data_standard'
+  | 'tech_doc'
   | 'template'
-  | 'business_value'
-  | 'source_file'
-  | 'service'
-  | 'api'
-  | 'person'
-  | 'general';
+  | 'business_material'
+  | 'handwritten_note';
 
 export interface EntryVersionHistoryItem {
   version: string;
