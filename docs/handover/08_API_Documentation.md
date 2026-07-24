@@ -805,6 +805,76 @@ curl -X POST http://localhost:3001/api/connectors/crossref/sync \
 
 ---
 
+### Bookmarks — 收藏管理 🆕
+
+#### `GET /api/bookmarks`
+
+获取当前用户的收藏列表。
+
+- **Method**: `GET`
+- **Auth**: Bearer Token（requireAuth）
+
+**Response** (200):
+```json
+[
+  {
+    "id": 1,
+    "title": "量子计算材料设计平台",
+    "entry_type": "product",
+    "summary": "...",
+    "content": "...",
+    "visibility": "public",
+    "tags": ["产品介绍", "材料计算"],
+    "created_at": "2026-06-10T...",
+    "updated_at": "2026-07-24T..."
+  }
+]
+```
+
+---
+
+#### `POST /api/bookmarks/:entryId`
+
+收藏条目（幂等 — 重复收藏不报错）。
+
+- **Method**: `POST`
+- **Auth**: Bearer Token（requireAuth）
+
+**Response** (201):
+```json
+{ "success": true }
+```
+
+---
+
+#### `DELETE /api/bookmarks/:entryId`
+
+取消收藏。
+
+- **Method**: `DELETE`
+- **Auth**: Bearer Token（requireAuth）
+
+**Response** (200):
+```json
+{ "success": true }
+```
+
+---
+
+#### `GET /api/bookmarks/:entryId/status`
+
+查询条目是否已被收藏。
+
+- **Method**: `GET`
+- **Auth**: Optional（未登录返回 `{"bookmarked": false}`）
+
+**Response** (200):
+```json
+{ "bookmarked": true }
+```
+
+---
+
 ### Spaces — 知识空间
 
 #### `GET /api/spaces`
