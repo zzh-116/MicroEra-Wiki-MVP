@@ -1,16 +1,10 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
 import TopNav from '../components/TopNav';
 import WikiSidebar from '../components/WikiSidebar';
 import Footer from '../components/Footer';
 
 export default function AppLayout() {
   const location = useLocation();
-
-  // Scroll to top on route change (replaces old handleNavigate behavior)
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [location.pathname]);
 
   // Sidebar visibility: same as old showSidebar logic
   const sidebarPaths = [

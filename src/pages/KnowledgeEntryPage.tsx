@@ -68,6 +68,8 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
 
       try {
         const loadedEntry = await entriesApi.getEntryById(entryId);
+        // Force scroll to top — overrides any accidental scroll from child components
+        setTimeout(() => window.scrollTo(0, 0), 0);
         setEntry(loadedEntry);
         // Check real bookmark status
         try {
