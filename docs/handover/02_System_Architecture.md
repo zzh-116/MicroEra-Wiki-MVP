@@ -105,6 +105,7 @@ graph TB
 | `/api/data-items` | `routes/dataItems.ts` | 混合 | 数据条目 |
 | `/api/graph` | `routes/graph.ts` | optional | 知识图谱数据 |
 | `/api/spaces` | `routes/spaces.ts` | optional | 空间/分类视图 |
+| `/api/bookmarks` | `routes/bookmarks.ts` | Bearer | 🆕 收藏管理（增删查） |
 | `/api/connectors` | `routes/connectors.ts` | 公开 | 文献检索 + 外部连接器 (arXiv/CrossRef/Sandbox/Feishu) |
 
 ### 2.2.3 认证中间件
@@ -235,6 +236,7 @@ vectorRepository
 | `vectors` | 向量嵌入 | chunk_id(PK), entry_id, embedding(vector 1024) |
 | `conversations` | AI 对话 | id, user_id, title |
 | `chat_messages` | 对话消息 | id, conversation_id, role, content, sources(jsonb) |
+| `bookmarks` | 🆕 用户收藏 | user_id, entry_id (联合主键) |
 
 ### Entry Type 枚举
 
@@ -270,3 +272,5 @@ vectorRepository
 | `document_chunks_entry_idx` | document_chunks | entry_id | 分块关联查询 |
 | `vectors_entry_idx` | vectors | entry_id | 向量关联查询 |
 | `chat_messages_conv_idx` | chat_messages | conversation_id | 对话消息查询 |
+| `bookmarks_user_idx` | bookmarks | user_id | 🆕 用户收藏列表 |
+| `bookmarks_entry_idx` | bookmarks | entry_id | 🆕 条目收藏状态 |

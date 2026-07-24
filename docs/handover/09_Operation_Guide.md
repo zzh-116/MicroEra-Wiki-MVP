@@ -66,6 +66,8 @@ npm run server 2>&1 | tee app.log
 | `[DeepSeek]` | DeepSeek API 请求 |
 | `[SSE]` | SSE 流式连接 |
 | `[Migrate]` | 数据库迁移 |
+| `[Bookmarks]` | 🆕 收藏操作 |
+| `[Docling]` | 🆕 文档解析（含错误恢复） |
 
 ### PostgreSQL 日志
 
@@ -127,6 +129,11 @@ SELECT count(*), pg_size_pretty(pg_total_relation_size('document_chunks')) FROM 
 
 -- 对话统计
 SELECT count(*) FROM conversations;
+
+-- 收藏统计 🆕
+SELECT u.username, count(b.entry_id) as bookmarks
+FROM bookmarks b JOIN users u ON b.user_id = u.id
+GROUP BY u.username;
 
 -- 数据库总大小
 SELECT pg_size_pretty(pg_database_size('microera_wiki'));
@@ -338,6 +345,30 @@ docker exec microera-postgres psql -U postgres -c "ALTER USER postgres PASSWORD 
 docker compose down && docker compose up -d
 npm run server
 ```
+
+## 9.10 自动部署监控 🆕
+
+> 适用于 NUC 服务器。详见 [NUC 部署指南 §11.7](11_NUC_Deployment.md#117-自动部署polling-auto-deploy)。
+
+```bash
+# 查看 timer 状态
+systemctl status auto-deploy.timer
+
+# 查看部署日志（实时跟踪）
+journalctl -u auto-deploy.service -f
+
+# 查看最近 1 小时的部署记录
+journalctl -u auto-deploy.service --since "1 hour ago"
+
+# 手动触发一次部署
+sudo systemctl start auto-deploy.service
+
+# 暂停/恢复自动部署
+sudo systemctl stop auto-deploy.timer
+sudo systemctl start auto-deploy.timer
+```
+
+---
 
 ### 审计日志
 
