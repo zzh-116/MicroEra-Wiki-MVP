@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Search, Sparkles, Clock, Bookmark, ChevronRight, ArrowRight, Cpu, Database, Network, Activity } from 'lucide-react';
 import { WikiEntry } from '../types/wiki';
 import { entriesApi } from '../api/entriesApi';
+import { bookmarksApi } from '../api/bookmarksApi';
 import { storage } from '../lib/storage';
 
 interface InternalHomePageProps {
@@ -22,8 +23,13 @@ export default function InternalHomePage() {
         const sorted = [...list].sort((a, b) => b.latestUpdatedAt.localeCompare(a.latestUpdatedAt));
         setRecentEntries(sorted.slice(0, 5));
 
-        // Mock favorites (e.g. project and schemas)
-        setFavorites(list.filter(e => e.id === 'e-stabilizer-project' || e.id === 'e-data-stabilizer-schema'))} catch (err) {
+        // Load real favorites from backend
+        try {
+          const favs = await bookmarksApi.getBookmarks();
+          setFavorites(favs);
+        } catch {
+          setFavorites([]);
+        }} catch (err) {
         console.error('Error loading internal home:', err)}
     };
     loadEntries()}, []);

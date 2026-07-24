@@ -6,6 +6,7 @@ import type { DetailViewModel } from '../types/viewModels';
 import { toDetailViewModel } from '../utils/knowledgeFormatter';
 import { useConversation } from '../hooks/useConversation';
 import { entriesApi } from '../api/entriesApi';
+import { bookmarksApi } from '../api/bookmarksApi';
 import { filesApi } from '../api/filesApi';
 import { markdownApi } from '../api/markdownApi';
 import { graphApi } from '../api/graphApi';
@@ -50,7 +51,7 @@ export default function SandboxProjectPage({ entryId }: { entryId: string }) {
   const [mdFile, setMdFile] = useState<MarkdownFile | null>(null);
   const [metrics, setMetrics] = useState<{ id: string; projectEntryId: string; metricName: string; metricValue: string; unit?: string; source: string; updatedAt: string }[]>([]);
   const [errorState, setErrorState] = useState<string | null>(null);
-  const [bookmarked, setBookmarked] = useState(true);
+  const [bookmarked, setBookmarked] = useState(false);
   const [showDebug, setShowDebug] = useState(false);
 
   const chat = useConversation(entryId);
@@ -75,6 +76,14 @@ export default function SandboxProjectPage({ entryId }: { entryId: string }) {
         setGraph(subGraph);
 
         setMetrics([]);
+
+        // Check real bookmark status
+        try {
+          const status = await bookmarksApi.isBookmarked(entryId);
+          setBookmarked(status);
+        } catch {
+          setBookmarked(false);
+        }
       } catch (err: any) {
         if (err.message === 'FORBIDDEN_INTERNAL_ACCESS') setErrorState('FORBIDDEN');
         else setErrorState(err.message || '加载错误');
@@ -108,7 +117,18 @@ export default function SandboxProjectPage({ entryId }: { entryId: string }) {
           <span className="text-[10px] text-green-700 bg-green-50 border border-green-200 px-2.5 py-1 rounded font-mono font-bold uppercase">
             项目状态: 仿真完成并归档
           </span>
-          <button onClick={() => setBookmarked(!bookmarked)}
+          <button onClick={async () => {
+            try {
+              if (bookmarked) {
+                await bookmarksApi.removeBookmark(entryId);
+              } else {
+                await bookmarksApi.addBookmark(entryId);
+              }
+              setBookmarked(!bookmarked);
+            } catch (err) {
+              console.error('Bookmark toggle failed:', err);
+            }
+          }}
             className={`px-3 py-1.5 rounded border text-xs font-bold transition-all flex items-center space-x-1.5 ${
               bookmarked ? 'bg-yellow-50 border-yellow-200 text-yellow-700' : 'bg-white border-gray-300 text-gray-600'}`}>
             <Bookmark className={`w-3.5 h-3.5 ${bookmarked ? 'fill-yellow-500 text-yellow-500' : ''}`} />
