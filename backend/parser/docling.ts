@@ -422,8 +422,12 @@ export class DoclingParser implements DocumentParser {
       }
 
       const rawMsg: string = err.stderr || err.message || String(err);
-      // Strip ANSI escape codes (e.g. [32m, [0m) from Python logging output
+      // Strip ANSI escape codes (e.g. \x1b[32m, \x1b[0m) from Python logging output
       const msg = rawMsg.replace(/\x1b\[[0-9;]*m/g, '');
+
+      // Extract exit code if available (Node child_process attaches it)
+      const exitCode = err.code || err.exitCode;
+      const exitInfo = exitCode != null ? ` (exit code ${exitCode})` : '';
 
       if (msg.includes('encrypted') || msg.includes('password')) {
         throw new ParserError(
@@ -463,9 +467,14 @@ export class DoclingParser implements DocumentParser {
       } else {
         // Extract the last meaningful lines from stderr (Python CLIs put errors at the end)
         const lines = msg.split('\n').filter((l: string) => l.trim());
-        const tail = lines.slice(-5).join(' | ').slice(-400);
+        const tail = lines.slice(-8).join('\n').slice(-500);
+
+        // Log full stderr for server-side debugging (truncated)
+        console.error(`[Docling] CLI failed${exitInfo} for "${fileName}" (${format}, ${formatFileSize(stat.size)}):`);
+        console.error(`[Docling] stderr (${lines.length} lines):`, msg.slice(0, 2000));
+
         throw new ParserError(
-          `Docling parse failed: ${tail || 'Unknown error (check file integrity)'}`,
+          `Docling parse failed${exitInfo}: ${tail || 'No output — check server logs for details'}`,
           'PARSE_FAILED', fileName, format,
         );
       }
