@@ -9,6 +9,10 @@ BRANCH="main"
 GITLAB_REMOTE="ssh://git@git.miqroera.com:12222/intership/microera-wiki-mvp.git"
 LOCK_FILE="/tmp/microera-deploy.lock"
 
+# ── Load NVM (systemd has no shell profile) ──────────────────
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
 # ── Prevent concurrent deploys ──────────────────────────────
 if [ -f "$LOCK_FILE" ]; then
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] Deploy already in progress, skipping."
