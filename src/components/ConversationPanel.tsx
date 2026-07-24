@@ -28,16 +28,22 @@ export default function ConversationPanel({
 }: ConversationPanelProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const canAutoScroll = useRef(false);
-  useEffect(() => {
-    const t = setTimeout(() => { canAutoScroll.current = true; }, 500);
-    return () => clearTimeout(t);
-  }, []);
 
-  // Auto-scroll to bottom when messages change or loading state toggles
+  // Only auto-scroll the chat panel internally when new messages arrive,
+  // and only if the user was already scrolled near the bottom.
+  // Never scroll the outer page — just the chat's scrollable div.
   useEffect(() => {
-    if (!canAutoScroll.current || messages.length === 0) return;
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const container = scrollRef.current;
+    if (!container || messages.length === 0) return;
+
+    // Check if user is already near the bottom (within 120px)
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    const isNearBottom = scrollHeight - scrollTop - clientHeight < 120;
+
+    if (isNearBottom) {
+      // Scroll the chat container itself, not the page
+      container.scrollTop = container.scrollHeight;
+    }
   }, [messages, isLoading]);
 
   const isEmpty = messages.length === 0;
