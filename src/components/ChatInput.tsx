@@ -20,7 +20,7 @@ export default function ChatInput({
     if (!trimmed || disabled) return;
     onSubmit(trimmed);
     setValue('');
-    inputRef.current?.focus();
+    inputRef.current?.focus({ preventScroll: true });
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
