@@ -5,6 +5,20 @@
  * v0.1.1 frontend's camelCase / string-ID format.
  */
 
+/** Convert a UTC ISO timestamp string to Beijing time (UTC+8) display string */
+export function toBeijingTime(isoString: string | undefined | null): string {
+  if (!isoString) return '';
+  const d = new Date(isoString);
+  if (isNaN(d.getTime())) return isoString; // fallback: return as-is
+  const beijing = new Date(d.getTime() + 8 * 60 * 60 * 1000);
+  return beijing.toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, '');
+}
+
+/** Shorthand: current Beijing time as "YYYY-MM-DD HH:mm:ss" */
+export function beijingNow(): string {
+  return toBeijingTime(new Date().toISOString());
+}
+
 // ── Markdown sanitization ───────────────────────────────────────
 
 /**
@@ -164,8 +178,8 @@ export function mvpEntryToWikiEntry(mvp: MvpEntry): Record<string, unknown> {
     tags: mvp.tags,
     owner: '',
     ownerDepartment: '',
-    latestUpdatedAt: mvp.updated_at,
-    createdAt: mvp.created_at,
+    latestUpdatedAt: toBeijingTime(mvp.updated_at),
+    createdAt: toBeijingTime(mvp.created_at),
     sourceFileIds: [],
     markdownFileIds: [],
     referenceIds: [],
@@ -242,7 +256,7 @@ export function mvpDataItemToDataItem(mvp: {
     schemaVersion: mvp.schema_version,
     storageDescription: mvp.storage_description || '',
     responsiblePerson: mvp.responsible_person,
-    latestUpdatedAt: mvp.updated_at,
+    latestUpdatedAt: toBeijingTime(mvp.updated_at),
   };
 }
 

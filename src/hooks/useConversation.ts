@@ -6,6 +6,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { queryApi } from '../api/queryApi';
 import { storage } from '../lib/storage';
+import { beijingNow } from '../utils/adapter';
 import type { ChatMessage, ChatSource, ConversationState } from '../types/viewModels';
 
 function loadState(entryId: string): ConversationState {
@@ -45,14 +46,14 @@ export function useConversation(entryId: string) {
       id: nextId(),
       role: 'user',
       content: question.trim(),
-      timestamp: new Date().toISOString(),
+      timestamp: beijingNow(),
     };
 
     const assistantMsg: ChatMessage = {
       id: nextId(),
       role: 'assistant',
       content: '',
-      timestamp: new Date().toISOString(),
+      timestamp: beijingNow(),
     };
 
     // Optimistic update — add user + empty assistant bubble

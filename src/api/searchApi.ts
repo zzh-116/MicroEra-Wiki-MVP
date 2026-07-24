@@ -31,11 +31,15 @@ export const searchApi = {
     searchMode: "keyword" | "nlp" | "title" = "keyword",
     page = 1,
     pageSize = 10,
+    visibility?: string,
   ): Promise<SearchResponse> {
     try {
       const body: any = { query, page, pageSize, searchMode };
       if (typeFilter !== "all") {
         body.type = reverseEntryType(typeFilter);
+      }
+      if (visibility && visibility !== "all") {
+        body.visibility = visibility;
       }
 
       const data = await post<any>("/search", body);
