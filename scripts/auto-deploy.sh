@@ -1,11 +1,12 @@
 #!/bin/bash
 # auto-deploy.sh — Polling-based auto deploy for MicroEra Wiki MVP
-# Runs via systemd timer every 2 min. Fetches remote, deploys if new commits.
+# Runs via systemd timer every 2 min. Fetches GitLab, deploys if new commits.
 # Logs to journald (visible via: journalctl -u auto-deploy -f)
 set -e
 
 REPO_DIR="/data/code-project/microera-wiki"
 BRANCH="main"
+GITLAB_REMOTE="ssh://git@git.miqroera.com:12222/intership/microera-wiki-mvp.git"
 LOCK_FILE="/tmp/microera-deploy.lock"
 
 # ── Prevent concurrent deploys ──────────────────────────────
@@ -18,10 +19,23 @@ touch "$LOCK_FILE"
 
 cd "$REPO_DIR"
 
+# ── Ensure remote points to GitLab ───────────────────────────
+CURRENT_URL=$(git remote get-url origin 2>/dev/null || echo "")
+if [ "$CURRENT_URL" != "$GITLAB_REMOTE" ]; then
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] Fixing remote origin → GitLab"
+  git remote set-url origin "$GITLAB_REMOTE" 2>/dev/null || true
+fi
+
+# ── Add GitLab SSH host key if missing ───────────────────────
+if ! grep -q "git.miqroera.com" ~/.ssh/known_hosts 2>/dev/null; then
+  mkdir -p ~/.ssh
+  ssh-keyscan -p 12222 git.miqroera.com >> ~/.ssh/known_hosts 2>/dev/null || true
+fi
+
 # ── Fetch remote ────────────────────────────────────────────
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Fetching origin/$BRANCH..."
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Fetching origin/$BRANCH from GitLab..."
 git fetch origin "$BRANCH" --quiet 2>&1 || {
-  echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: git fetch failed — network down?"
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: git fetch failed — check SSH key and network"
   exit 1
 }
 
@@ -30,7 +44,6 @@ REMOTE=$(git rev-parse "origin/$BRANCH")
 
 # ── No new commits → skip ───────────────────────────────────
 if [ "$LOCAL" = "$REMOTE" ]; then
-  # Silent exit — don't spam logs when nothing changed
   exit 0
 fi
 
