@@ -421,7 +421,10 @@ export class DoclingParser implements DocumentParser {
         );
       }
 
-      const msg: string = err.stderr || err.message || String(err);
+      const rawMsg: string = err.stderr || err.message || String(err);
+      // Strip ANSI escape codes (e.g. [32m, [0m) from Python logging output
+      const msg = rawMsg.replace(/\x1b\[[0-9;]*m/g, '');
+
       if (msg.includes('encrypted') || msg.includes('password')) {
         throw new ParserError(
           'Document is encrypted/password-protected',
@@ -432,15 +435,40 @@ export class DoclingParser implements DocumentParser {
 
       if (msg.includes('corrupt') || msg.includes('invalid') || msg.includes('not a valid')) {
         throw new ParserError(
-          `Document appears to be corrupted: ${msg.slice(0, 200)}`,
+          `Document appears to be corrupted: ${msg.slice(-300)}`,
           'CORRUPTED', fileName, format,
         );
       }
 
-      throw new ParserError(
-        `Docling parse failed: ${msg.slice(0, 300)}`,
-        'PARSE_FAILED', fileName, format,
-      );
+      // Try to recover: Docling may have produced output despite non-zero exit
+      // (e.g. non-fatal warnings on some pages). Check for markdown output.
+      const inputBase = path.basename(filePath, path.extname(filePath));
+      const expectedOutput = path.join(tmpDir, `${inputBase}.md`);
+      if (fs.existsSync(expectedOutput)) {
+        markdown = fs.readFileSync(expectedOutput, 'utf-8');
+      } else {
+        try {
+          const mdFiles = fs.readdirSync(tmpDir).filter((f) => f.endsWith('.md'));
+          if (mdFiles.length > 0) {
+            markdown = fs.readFileSync(path.join(tmpDir, mdFiles[0]), 'utf-8');
+          }
+        } catch { /* no output to recover */ }
+      }
+
+      if (markdown && markdown.trim()) {
+        // Recovery succeeded — accept the output with a warning
+        warnings.push(`Docling exited with error but produced parseable output (${markdown.length} chars)`);
+        console.log(`[Docling] ${fileName} | recovered output despite CLI error (${markdown.length} chars)`);
+        // Fall through to post-processing below
+      } else {
+        // Extract the last meaningful lines from stderr (Python CLIs put errors at the end)
+        const lines = msg.split('\n').filter((l: string) => l.trim());
+        const tail = lines.slice(-5).join(' | ').slice(-400);
+        throw new ParserError(
+          `Docling parse failed: ${tail || 'Unknown error (check file integrity)'}`,
+          'PARSE_FAILED', fileName, format,
+        );
+      }
     } finally {
       // Clean up temp directory
       try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch { /* ignore */ }
