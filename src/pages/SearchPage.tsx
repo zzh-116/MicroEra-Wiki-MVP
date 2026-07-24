@@ -37,11 +37,11 @@ export default function SearchPage() {
     setSearchParams(next, { replace: true });
   };
 
-  // Run search
-  const executeSearch = async (currentQuery: string, currentType: string, currentPage: number, currentPageSize: number) => {
+  // Run search (pass visibility to server-side filter)
+  const executeSearch = async (currentQuery: string, currentType: string, currentVisibility: string, currentPage: number, currentPageSize: number) => {
     setLoading(true);
     try {
-      const data = await searchApi.search(currentQuery, currentType, 'nlp', currentPage, currentPageSize);
+      const data = await searchApi.search(currentQuery, currentType, 'nlp', currentPage, currentPageSize, currentVisibility);
       setResults(data.results);
       setTotal(data.total);
       setTotalPages(data.totalPages);
@@ -56,7 +56,7 @@ export default function SearchPage() {
     const p = newPage ?? page;
     const ps = newPageSize ?? pageSize;
     updateUrlParams({ q: query, type: typeFilter, page: String(p), pageSize: ps !== 10 ? String(ps) : '' });
-    executeSearch(query, typeFilter, p, ps);
+    executeSearch(query, typeFilter, visibilityFilter, p, ps);
   };
 
   // Initial load
@@ -69,7 +69,7 @@ export default function SearchPage() {
       storage.removeSearchQuery();
       storage.removeQuickQuestion();
     }
-    executeSearch(q, typeFilter, page, pageSize);
+    executeSearch(q, typeFilter, visibilityFilter, page, pageSize);
   }, [isLoggedIn]);
 
   const handleSearchFormSubmit = (e: React.FormEvent) => {
@@ -83,13 +83,23 @@ export default function SearchPage() {
     setTimeFilter('all');
     setQuery('');
     setSearchParams({}, { replace: true });
-    executeSearch('', 'all', 1, pageSize);
+    executeSearch('', 'all', 'all', 1, pageSize);
   };
 
   const handleTypeChange = (newType: string) => {
     setTypeFilter(newType);
     updateUrlParams({ type: newType, page: '' });
-    executeSearch(query, newType, 1, pageSize);
+    executeSearch(query, newType, visibilityFilter, 1, pageSize);
+  };
+
+  const handleVisibilityChange = (newVis: string) => {
+    setVisibilityFilter(newVis);
+    executeSearch(query, typeFilter, newVis, 1, pageSize);
+  };
+
+  const handleTimeChange = (newTime: string) => {
+    setTimeFilter(newTime);
+    // Time filter is client-side — no API re-fetch needed
   };
 
   const handlePageChange = (p: number) => doSearch(p);
@@ -100,7 +110,7 @@ export default function SearchPage() {
     if (visibilityFilter !== 'all' && res.visibility !== visibilityFilter) return false;
     if (timeFilter !== 'all') {
       const resDate = new Date(res.updatedAt);
-      const currentDate = new Date('2026-07-01');
+      const currentDate = new Date();
       const diffDays = Math.ceil(Math.abs(currentDate.getTime() - resDate.getTime()) / (1000 * 60 * 60 * 24));
       if (timeFilter === '7days' && diffDays > 7) return false;
       if (timeFilter === '30days' && diffDays > 30) return false;
@@ -189,7 +199,7 @@ export default function SearchPage() {
                     type="radio"
                     name="visibilityFilter"
                     checked={visibilityFilter === opt.value}
-                    onChange={() => setVisibilityFilter(opt.value)}
+                    onChange={() => handleVisibilityChange(opt.value)}
                     disabled={opt.value === 'internal' && !isLoggedIn}
                     className="h-3.5 w-3.5 text-[#DB5F5B] focus:ring-[#DB5F5B] disabled:opacity-50"
                   />
@@ -219,7 +229,7 @@ export default function SearchPage() {
                     type="radio"
                     name="timeFilter"
                     checked={timeFilter === opt.value}
-                    onChange={() => setTimeFilter(opt.value)}
+                    onChange={() => handleTimeChange(opt.value)}
                     className="h-3.5 w-3.5 text-[#DB5F5B] focus:ring-[#DB5F5B]"
                   />
                   <span>{opt.label}</span>
