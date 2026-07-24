@@ -110,11 +110,14 @@ export function toStrId(id: number): string {
  */
 export function mapEntryType(mvpType: string): string {
   const map: Record<string, string> = {
-    asset: 'source_file',
-    product: 'project',
-    tech: 'concept',
+    sandbox_project: 'sandbox_project',
+    academic_paper: 'academic_paper',
     patent: 'patent',
-    data_item: 'data_item',
+    data_standard: 'data_standard',
+    tech_doc: 'tech_doc',
+    template: 'template',
+    business_material: 'business_material',
+    handwritten_note: 'handwritten_note',
   };
   return map[mvpType] || 'general';
 }
@@ -122,18 +125,14 @@ export function mapEntryType(mvpType: string): string {
 /** Reverse: v0.1.1 → MVP */
 export function reverseEntryType(feType: string): string {
   const map: Record<string, string> = {
-    project: 'product',
-    paper: 'tech',
+    sandbox_project: 'sandbox_project',
+    academic_paper: 'academic_paper',
     patent: 'patent',
-    data_item: 'data_item',
-    concept: 'tech',
-    template: 'asset',
-    business_value: 'asset',
-    source_file: 'asset',
-    service: 'tech',
-    api: 'tech',
-    person: 'tech',
-    general: 'tech',
+    data_standard: 'data_standard',
+    tech_doc: 'tech_doc',
+    template: 'template',
+    business_material: 'business_material',
+    handwritten_note: 'handwritten_note',
   };
   return map[feType] || 'tech';
 }

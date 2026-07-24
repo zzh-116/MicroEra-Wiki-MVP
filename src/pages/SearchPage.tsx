@@ -149,13 +149,14 @@ export default function SearchPage() {
             <div className="space-y-1.5 text-xs text-gray-700">
               {[
                 { value: 'all', label: '全部内容' },
-                { value: 'project', label: 'Sandbox 项目' },
-                { value: 'paper', label: '学术论文' },
-                { value: 'data_item', label: '数据条目' },
-                { value: 'template', label: '标准模板' },
-                { value: 'service', label: '服务说明' },
+              { value: 'sandbox_project', label: 'Sandbox项目' },
+              { value: 'academic_paper', label: '学术论文' },
+              { value: 'data_standard', label: '数据标准' },
+              { value: 'template', label: '模板规范' },
+              { value: 'business_material', label: '商业资料' },
                 { value: 'patent', label: '专利成果' },
-                { value: 'concept', label: '技术概念' }
+              { value: 'tech_doc', label: '技术文档' },
+              { value: 'handwritten_note', label: '手写笔记' }
               ].map((opt) => (
                 <label key={opt.value} className="flex items-center space-x-2 cursor-pointer py-0.5">
                   <input

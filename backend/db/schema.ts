@@ -41,9 +41,7 @@ export const entries = pgTable(
   {
     id: serial('id').primaryKey(),
     title: text('title').notNull(),
-    entryType: text('entry_type', {
-      enum: ['asset', 'product', 'tech', 'patent', 'data_item'],
-    }).notNull(),
+    entryType: text('entry_type').notNull(),
     summary: text('summary').notNull().default(''),
     content: text('content').notNull().default(''),
     visibility: text('visibility', { enum: ['public', 'internal'] })
