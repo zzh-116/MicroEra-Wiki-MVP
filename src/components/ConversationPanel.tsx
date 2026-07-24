@@ -27,24 +27,30 @@ export default function ConversationPanel({
   className = '',
 }: ConversationPanelProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const prevLength = useRef(0);
 
-  // Only auto-scroll the chat panel internally when new messages arrive,
-  // and only if the user was already scrolled near the bottom.
-  // Never scroll the outer page — just the chat's scrollable div.
+  // Only scroll the chat container when a new message is added (not on
+  // every streaming token update).  Streaming updates the last message's
+  // content in-place, so messages.length stays the same — no scroll jank.
   useEffect(() => {
     const container = scrollRef.current;
     if (!container || messages.length === 0) return;
 
-    // Check if user is already near the bottom (within 120px)
-    const { scrollTop, scrollHeight, clientHeight } = container;
-    const isNearBottom = scrollHeight - scrollTop - clientHeight < 120;
+    const isNewMessage = messages.length > prevLength.current;
+    prevLength.current = messages.length;
 
-    if (isNearBottom) {
-      // Scroll the chat container itself, not the page
-      container.scrollTop = container.scrollHeight;
+    if (!isNewMessage) return; // streaming token — stay still
+
+    container.scrollTop = container.scrollHeight;
+  }, [messages]);
+
+  // When loading starts (AI begins responding), scroll to show the new
+  // assistant bubble that was just added.
+  useEffect(() => {
+    if (isLoading && scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages, isLoading]);
+  }, [isLoading]);
 
   const isEmpty = messages.length === 0;
 
@@ -110,7 +116,7 @@ export default function ConversationPanel({
         )}
 
         {/* Scroll anchor */}
-        <div ref={bottomRef} />
+        <div />
       </div>
 
       {/* Input area */}
