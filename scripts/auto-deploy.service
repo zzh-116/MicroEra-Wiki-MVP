@@ -1,0 +1,11 @@
+[Unit]
+Description=MicroEra Wiki Auto Deploy
+After=network.target
+
+[Service]
+Type=oneshot
+User=devops
+WorkingDirectory=/data/code-project/microera-wiki
+ExecStart=/bin/bash /data/code-project/microera-wiki/scripts/auto-deploy.sh
+StandardOutput=journal
+StandardError=journal
