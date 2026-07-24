@@ -1,9 +1,11 @@
 # MicroEra Wiki MVP — Handover 文档
 
-> **文档版本**: v1.0
-> **生成日期**: 2026-07-14
+> **文档版本**: v1.1
+> **生成日期**: 2026-07-24
 > **目标读者**: Platform Team / DevOps / SRE（平台组）
 > **项目移交方**: AI开发组 → 平台组
+>
+> **v1.1 更新**: 新增收藏功能（Bookmarks API + 数据库表）、NUC 自动部署（systemd timer）、Docling 错误报告修复
 
 ---
 
@@ -26,6 +28,7 @@
 | 8 | [08_API_Documentation](./08_API_Documentation.md) | API 接口文档 | SRE / 集成方 |
 | 9 | [09_Operation_Guide](./09_Operation_Guide.md) | 日常运维操作 | SRE |
 | 10 | [10_Troubleshooting](./10_Troubleshooting.md) | 故障排查手册 | SRE / On-Call |
+| 11 | [11_NUC_Deployment](./11_NUC_Deployment.md) | 🆕 NUC 服务器部署 + 自动部署 | DevOps / SRE |
 
 ## 快速启动
 
