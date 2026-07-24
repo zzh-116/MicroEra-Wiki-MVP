@@ -28,9 +28,15 @@ export default function ConversationPanel({
 }: ConversationPanelProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const canAutoScroll = useRef(false);
+  useEffect(() => {
+    const t = setTimeout(() => { canAutoScroll.current = true; }, 500);
+    return () => clearTimeout(t);
+  }, []);
 
   // Auto-scroll to bottom when messages change or loading state toggles
   useEffect(() => {
+    if (!canAutoScroll.current || messages.length === 0) return;
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
 
