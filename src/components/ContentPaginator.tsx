@@ -86,11 +86,6 @@ export default function ContentPaginator({
     }
   }, [scrollToHeading]);
 
-  // Scroll to top on page change
-  useEffect(() => {
-    containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, [currentPage]);
-
   const safePage = Math.min(currentPage, totalPages) || 1;
   const page = pages[safePage - 1];
 

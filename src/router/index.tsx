@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import ScrollToTop from '../components/ScrollToTop';
 import AppLayout from '../layouts/AppLayout';
 import ProtectedRoute from '../components/ProtectedRoute';
 import HomePage from '../pages/HomePage';
@@ -19,7 +20,9 @@ import NotFoundPage from '../pages/NotFoundPage';
 
 export default function AppRoutes() {
   return (
-    <Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
       <Route element={<AppLayout />}>
         {/* Public & home routes */}
         <Route index element={<HomePage />} />
@@ -44,6 +47,7 @@ export default function AppRoutes() {
         {/* 404 */}
         <Route path="*" element={<NotFoundPage />} />
       </Route>
-    </Routes>
+      </Routes>
+    </>
   );
 }
