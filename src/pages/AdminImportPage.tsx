@@ -327,9 +327,14 @@ export default function AdminImportPage() {
                     onChange={(e) => setTargetSpaceId(e.target.value)}
                     className="w-full border-2 border-gray-900 rounded p-2.5 bg-white font-medium focus:outline-none focus:ring-1 focus:ring-[#DB5F5B]"
                   >
-                    <option value="s-sandbox">Sandbox 物理计算项目知识库</option>
-                    <option value="s-papers">前沿科研文献白皮书库</option>
-                    <option value="s-data">企业研发数据结构定义规范</option>
+                    <option value="s-sandbox">Sandbox项目</option>
+                    <option value="s-papers">学术论文</option>
+                    <option value="s-data">数据标准</option>
+                    <option value="s-business">商业资料</option>
+                    <option value="s-template">模板规范</option>
+                    <option value="s-product">技术文档</option>
+                    <option value="s-patent">专利成果</option>
+                    <option value="s-handwritten">手写笔记</option>
                   </select>
                 </div>
               </div>
