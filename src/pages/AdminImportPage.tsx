@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { adminApi, ImportJob } from '../api/adminApi';
@@ -86,21 +86,12 @@ export default function AdminImportPage() {
   const [dragOver, setDragOver] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const pendingFileData = useRef<ArrayBuffer | string | undefined>(undefined);
-  const jobTriggered = useRef<boolean>(false);
+  const pendingFile = useRef<File | null>(null);
 
   // ── Auth guard ─────────────────────────────────────────────────────────────
   if (!isLoggedIn) {
     return <Unauthorized requiredRole="admin" />;
   }
-
-  // ── Effects ────────────────────────────────────────────────────────────────
-  useEffect(() => {
-    if (uploadProgress !== null && uploadProgress >= 100 && !jobTriggered.current) {
-      jobTriggered.current = true;
-      triggerJob();
-    }
-  }, [uploadProgress]);
 
   // ── Handlers ───────────────────────────────────────────────────────────────
   const handleDragOver = (e: React.DragEvent) => {
@@ -152,74 +143,143 @@ export default function AdminImportPage() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  const handleStartImport = async () => {
+  const handleStartImport = () => {
     if (!mockFileName || !selectedFile) return;
 
     setCurrentStep(3);
-    setUploadProgress(10);
+    setUploadProgress(0);
     setJobState(null);
     setPipelineError(null);
-    jobTriggered.current = false;
+    pendingFile.current = selectedFile;
 
-    try {
-      const isText = /\.(md|txt|csv|json|xml|yaml|yml)$/i.test(selectedFile.name);
-      if (isText) {
-        pendingFileData.current = await selectedFile.text();
-      } else {
-        pendingFileData.current = await selectedFile.arrayBuffer();
-      }
-    } catch (err: any) {
-      setPipelineError(`文件读取失败: ${err.message || '未知错误'}`);
+    // Trigger real upload — the upload progress comes from XHR events
+    triggerJob();
+  };
+
+  const triggerJob = () => {
+    const file = pendingFile.current;
+    if (!file) {
+      setPipelineError('文件丢失，请重新选择');
       setUploadProgress(null);
       return;
     }
 
-    const data = pendingFileData.current;
-    const isEmpty =
-      !data ||
-      (typeof data === 'string' && data.length === 0) ||
-      (data instanceof ArrayBuffer && data.byteLength === 0);
+    const isText = /\.(md|txt|csv|json|xml|yaml|yml|log|html|htm|adoc|asciidoc)$/i.test(file.name);
 
-    if (isEmpty) {
-      console.log('[Import] File is empty — will use sample content generator');
+    if (isText) {
+      // Small text files — read as text (fast, no memory issue)
+      const reader = new FileReader();
+      reader.onload = () => {
+        const text = reader.result as string;
+        adminApi.startImportJob(
+          { name: file.name, size: file.size, data: text },
+          targetSpaceId,
+        ).then((job) => {
+          setJobState(job);
+          setUploadProgress(null);
+          if (job.status === 'success') setHistoryJobs((prev) => [job, ...prev]);
+          else if (job.status === 'failed') {
+            setHistoryJobs((prev) => [job, ...prev]);
+            const failedStep = job.steps.find((s) => s.status === 'failed');
+            setPipelineError(failedStep?.error || '管道执行失败');
+          }
+        }).catch((err: any) => {
+          setPipelineError(`API 调用失败: ${err.message || '网络错误'}`);
+          setUploadProgress(null);
+        });
+      };
+      reader.onerror = () => {
+        setPipelineError('文件读取失败');
+        setUploadProgress(null);
+      };
+      // Simulate read progress since FileReader has no progress event
+      setUploadProgress(25);
+      setTimeout(() => setUploadProgress(50), 50);
+      setTimeout(() => setUploadProgress(75), 100);
+      reader.readAsText(file);
+      return;
     }
 
-    const uploadInterval = setInterval(() => {
-      setUploadProgress((prev) => {
-        if (prev === null) return 10;
-        const next = prev + 25;
-        if (next >= 100) {
-          clearInterval(uploadInterval);
-          return 100;
-        }
-        return next;
-      });
-    }, 100);
-  };
+    // Binary/large files — stream via XHR with real upload progress
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    formData.append('metadata', JSON.stringify({
+      title: file.name.replace(/\.[^.]+$/, ''),
+      entry_type: mapSpaceToEntryType(targetSpaceId),
+      summary: `Auto-imported: ${file.name}`,
+      visibility: 'internal',
+      tags: ['auto-import'],
+    }));
+    formData.append('chunkConfig', JSON.stringify({ strategy: 'markdown', chunkSize: 1024, overlap: 128 }));
 
-  const triggerJob = async () => {
-    const fileData = pendingFileData.current;
-    try {
-      const job = await adminApi.startImportJob(
-        { name: mockFileName, size: selectedFile?.size || 0, data: fileData },
-        targetSpaceId
-      );
-      setJobState(job);
-      setUploadProgress(null);
+    const xhr = new XMLHttpRequest();
 
-      if (job.status === 'success') {
-        setHistoryJobs((prev) => [job, ...prev]);
-      } else if (job.status === 'failed') {
-        setHistoryJobs((prev) => [job, ...prev]);
-        const failedStep = job.steps.find((s) => s.status === 'failed');
-        setPipelineError(failedStep?.error || '管道执行失败');
+    xhr.upload.addEventListener('progress', (e) => {
+      if (e.lengthComputable) {
+        const pct = Math.round((e.loaded / e.total) * 100);
+        setUploadProgress(pct);
       }
-    } catch (err: any) {
-      setPipelineError(`API 调用失败: ${err.message || '网络错误'}`);
+    });
+
+    xhr.addEventListener('load', () => {
       setUploadProgress(null);
-      setJobState(null);
+      try {
+        const data = JSON.parse(xhr.responseText);
+        // Build a job object from the API response
+        const steps: ImportJob['steps'] = [
+          { id: 1, name: '解析文档', description: 'MarkItDown → 统一 Markdown', status: data.success ? 'success' : 'failed' },
+          { id: 2, name: '智能分块', description: '语义分块 + 元数据提取', status: data.success ? 'success' : 'failed' },
+          { id: 3, name: '向量嵌入', description: 'BGE-M3 → pgvector 存储', status: data.success ? 'success' : 'failed' },
+        ];
+        const job: ImportJob = {
+          id: `job-${Date.now()}`,
+          filename: file.name,
+          fileSize: file.size > 1024 * 1024 ? (file.size / (1024 * 1024)).toFixed(2) + ' MB' : (file.size / 1024).toFixed(1) + ' KB',
+          targetType: targetSpaceId,
+          currentStepIndex: data.success ? 2 : 0,
+          status: data.success ? 'success' : 'failed',
+          steps,
+          startedAt: new Date().toISOString().replace('T', ' ').substring(0, 19),
+          entryId: data.entryId,
+        };
+        setJobState(job);
+        if (job.status === 'success') setHistoryJobs((prev) => [job, ...prev]);
+        else {
+          setHistoryJobs((prev) => [job, ...prev]);
+          setPipelineError(data.message || data.error || '导入失败');
+        }
+      } catch (err: any) {
+        setPipelineError('响应解析失败: ' + (err.message || '未知错误'));
+      }
+    });
+
+    xhr.addEventListener('error', () => {
+      setUploadProgress(null);
+      setPipelineError('网络错误，上传失败');
+    });
+
+    xhr.addEventListener('abort', () => {
+      setUploadProgress(null);
+      setPipelineError('上传已取消');
+    });
+
+    xhr.open('POST', '/api/pipeline/import');
+    const token = localStorage.getItem('miqro_wiki_token');
+    if (token) {
+      try { xhr.setRequestHeader('Authorization', `Bearer ${JSON.parse(token)}`); } catch {}
     }
+    xhr.send(formData);
   };
+
+  // Helper: map space to entry type (mirrors adminApi)
+  function mapSpaceToEntryType(spaceId: string): string {
+    const map: Record<string, string> = {
+      's-sandbox': 'sandbox_project', 's-papers': 'academic_paper', 's-data': 'data_standard',
+      's-tech': 'tech_doc', 's-business': 'business_material', 's-template': 'template',
+      's-product': 'tech_doc', 's-patent': 'patent', 's-handwritten': 'handwritten_note',
+    };
+    return map[spaceId] || 'tech_doc';
+  }
 
   const handleResetAndNew = () => {
     setCurrentStep(1);
@@ -228,7 +288,6 @@ export default function AdminImportPage() {
     setJobState(null);
     setPipelineError(null);
     setUploadProgress(null);
-    jobTriggered.current = false;
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -758,7 +817,6 @@ export default function AdminImportPage() {
                         setJobState(null);
                         setCurrentStep(2);
                         setUploadProgress(null);
-                        jobTriggered.current = false;
                       }}
                       className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#2B3150] hover:bg-[#2B3150]/90
                                  text-white text-sm font-medium rounded-md
