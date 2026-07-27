@@ -1,4 +1,5 @@
-import { User, Bot } from 'lucide-react';
+import { useState } from 'react';
+import { User, Bot, ChevronDown, ChevronRight, ArrowRight, Sparkles, FileText, BookOpen, ThumbsUp } from 'lucide-react';
 
 interface MessageBubbleProps {
   role: 'user' | 'assistant' | 'system';
@@ -6,6 +7,11 @@ interface MessageBubbleProps {
   timestamp?: string;
   sources?: Array<{ id: number; title: string; entry_type: string }>;
   onSourceClick?: (id: number) => void;
+  /** Show thinking process steps (AIQueryPage) */
+  thinkingSteps?: string[];
+  /** Follow-up suggestions after assistant answer */
+  followUps?: string[];
+  onFollowUp?: (question: string) => void;
 }
 
 export default function MessageBubble({
@@ -14,14 +20,18 @@ export default function MessageBubble({
   timestamp,
   sources,
   onSourceClick,
+  thinkingSteps,
+  followUps,
+  onFollowUp,
 }: MessageBubbleProps) {
+  const [thinkingOpen, setThinkingOpen] = useState(true);
   const isUser = role === 'user';
   const isAssistant = role === 'assistant';
 
   if (role === 'system') {
     return (
-      <div className="flex justify-center my-2">
-        <span className="text-[10px] text-gray-400 bg-gray-50 px-3 py-1 rounded-full border border-gray-100">
+      <div className="flex justify-center my-3">
+        <span className="text-[11px] text-gray-400 bg-gray-100 px-3 py-1 rounded-full border border-gray-200 font-medium">
           {content}
         </span>
       </div>
@@ -29,53 +39,113 @@ export default function MessageBubble({
   }
 
   return (
-    <div className={`flex items-start gap-2 mb-4 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
+    <div className={`flex items-start gap-3 mb-5 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
       {/* Avatar */}
       <div
-        className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center ${
-          isUser ? 'bg-[#2B3150]' : 'bg-[#DB5F5B]/10'
+        className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+          isUser
+            ? 'bg-[#2B3150] text-white'
+            : 'bg-gradient-to-br from-[#DB5F5B]/10 to-[#DB5F5B]/20 text-[#DB5F5B]'
         }`}
       >
         {isUser ? (
-          <User className="w-3.5 h-3.5 text-white" />
+          <User className="w-4 h-4" aria-hidden="true" />
         ) : (
-          <Bot className="w-3.5 h-3.5 text-[#DB5F5B]" />
+          <Sparkles className="w-4 h-4" aria-hidden="true" />
         )}
       </div>
 
-      {/* Bubble */}
-      <div className={`max-w-[80%] ${isUser ? 'items-end' : 'items-start'}`}>
-        <div
-          className={`px-3 py-2 text-xs leading-relaxed whitespace-pre-wrap break-words ${
-            isUser
-              ? 'bg-[#2B3150] text-white rounded-xl rounded-br-sm ml-auto'
-              : 'bg-gray-100 text-gray-800 rounded-xl rounded-bl-sm'
-          }`}
-        >
-          {content}
+      {/* Content area */}
+      <div className={`flex-1 min-w-0 ${isUser ? 'flex flex-col items-end' : ''}`}>
+        {/* Role label */}
+        <div className={`text-[10px] font-semibold text-gray-400 mb-1 ${isUser ? 'text-right' : 'text-left'}`}>
+          {isUser ? 'You' : 'MiQi AI'}
         </div>
 
-        {/* Sources for assistant */}
+        {/* Thinking process (assistant only, when provided) */}
+        {isAssistant && thinkingSteps && thinkingSteps.length > 0 && (
+          <div className="mb-3">
+            <button
+              onClick={() => setThinkingOpen(!thinkingOpen)}
+              className="flex items-center gap-1.5 text-[11px] font-medium text-gray-500 hover:text-gray-700 transition-colors mb-1.5"
+            >
+              {thinkingOpen ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+              <Sparkles className="w-3 h-3 text-[#F2D760]" />
+              思考过程
+            </button>
+            {thinkingOpen && (
+              <div className="space-y-0.5 pl-2 border-l-2 border-[#F2D760]/30">
+                {thinkingSteps.map((step, i) => (
+                  <div key={i} className="flex items-center gap-2 text-[11px] text-gray-500 py-0.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#F2D760]/60 shrink-0" />
+                    <span>{step}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Message bubble */}
+        <div
+          className={`inline-block px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap break-words ${
+            isUser
+              ? 'bg-[#2B3150] text-white rounded-2xl rounded-br-sm max-w-[85%]'
+              : 'bg-white text-gray-800 rounded-2xl rounded-bl-sm border border-gray-200 max-w-[90%]'
+          }`}
+        >
+          {content || (isAssistant && ' ')}
+        </div>
+
+        {/* Sources / Citations (assistant only) */}
         {isAssistant && sources && sources.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-1.5">
-            {sources.map((source) => (
-              <button
-                key={source.id}
-                onClick={() => onSourceClick?.(source.id)}
-                className="text-[10px] bg-white border border-gray-200 rounded-md px-1.5 py-0.5 text-[#1D70B8] hover:border-[#1D70B8]/40 hover:bg-[#F5F6E5] transition-all cursor-pointer"
-                title={source.title}
-              >
-                {'\u{1F4C4}'} {source.title}
-              </button>
-            ))}
+          <div className="mt-2.5 space-y-1">
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide flex items-center gap-1">
+              <BookOpen className="w-3 h-3" />
+              引用来源
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {sources.map((source) => (
+                <button
+                  key={source.id}
+                  onClick={() => onSourceClick?.(source.id)}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium
+                             bg-[#F5F6E5]/40 text-[#1D70B8] border border-[#F5F6E5] rounded-lg
+                             hover:border-[#DB5F5B]/30 hover:bg-[#DB5F5B]/5 transition-all"
+                  title={source.title}
+                >
+                  <FileText className="w-3 h-3 shrink-0" aria-hidden="true" />
+                  <span className="truncate max-w-[160px]">{source.title}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Follow-up suggestions (assistant only) */}
+        {isAssistant && followUps && followUps.length > 0 && (
+          <div className="mt-3 space-y-1">
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">继续追问</p>
+            <div className="flex flex-wrap gap-1.5">
+              {followUps.map((q) => (
+                <button
+                  key={q}
+                  onClick={() => onFollowUp?.(q)}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] text-gray-600
+                             bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full
+                             transition-all duration-150"
+                >
+                  {q}
+                  <ArrowRight className="w-3 h-3" aria-hidden="true" />
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
         {/* Timestamp */}
         {timestamp && (
-          <div
-            className={`text-[10px] text-gray-400 mt-1 ${isUser ? 'text-right' : 'text-left'}`}
-          >
+          <div className={`text-[10px] text-gray-400 mt-1.5 ${isUser ? 'text-right' : 'text-left'}`}>
             {timestamp}
           </div>
         )}
