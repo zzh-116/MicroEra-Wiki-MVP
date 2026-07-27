@@ -109,11 +109,23 @@ export default function AIQueryPage() {
 
   // ── Handlers ──────────────────────────────────────────────────────────────
   const handleSend = (message: string) => {
+    // Save scroll position before sending — React re-render may shift the view
+    const container = messagesContainerRef.current;
+    const scrollTop = container?.scrollTop ?? 0;
     chat.send(message);
+    // Restore scroll after React commits the new message
+    requestAnimationFrame(() => {
+      if (container) container.scrollTop = scrollTop;
+    });
   };
 
   const handleQuickPrompt = (prompt: string) => {
+    const container = messagesContainerRef.current;
+    const scrollTop = container?.scrollTop ?? 0;
     chat.send(prompt);
+    requestAnimationFrame(() => {
+      if (container) container.scrollTop = scrollTop;
+    });
   };
 
   // ── Render ──────────────────────────────────────────────────────────────────
