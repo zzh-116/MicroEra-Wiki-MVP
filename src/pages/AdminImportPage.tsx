@@ -2,570 +2,914 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { adminApi, ImportJob } from '../api/adminApi';
-import { 
-  FileUp, Settings, Play, CheckCircle, AlertCircle, RefreshCw, 
-  Database, Info, Lock, Globe, FileText, ChevronRight, ArrowLeft, ArrowRight, Activity 
+import {
+  FileUp, Play, CheckCircle, AlertCircle, RefreshCw,
+  Lock, Globe, FileText, X, ArrowUpRight, Clock,
+  FileArchive, FileSpreadsheet, FileImage, FileCode,
+  Presentation
 } from 'lucide-react';
 import Unauthorized from '../components/Unauthorized';
 
 interface AdminImportPageProps {
-  onNavigate: (view: string, id?: string) => void}
+  onNavigate: (view: string, id?: string) => void;
+}
 
+// ─── Format categories for display ───────────────────────────────────────────
+const FORMAT_CATEGORIES = [
+  {
+    label: '文档',
+    icon: FileText,
+    extensions: ['PDF', 'DOCX', 'DOC'],
+  },
+  {
+    label: '表格',
+    icon: FileSpreadsheet,
+    extensions: ['XLSX', 'XLS', 'CSV'],
+  },
+  {
+    label: '演示',
+    icon: Presentation,
+    extensions: ['PPTX', 'PPT'],
+  },
+  {
+    label: '文本与代码',
+    icon: FileCode,
+    extensions: ['MD', 'TXT', 'JSON', 'XML', 'YAML', 'LOG', 'HTML', 'ADOC'],
+  },
+  {
+    label: '图片',
+    icon: FileImage,
+    extensions: ['PNG', 'JPG', 'JPEG', 'GIF', 'WEBP'],
+  },
+];
+
+const SAMPLE_FILES = [
+  'stabilizer_quantum_correction_report_2026.pdf',
+  'biochemical_sandbox_binding_protein.md',
+  'materials_structure_pgvector_schema.md',
+];
+
+const ACCEPT_STRING =
+  '.pdf,.docx,.doc,.xlsx,.xls,.pptx,.ppt,.html,.htm,.md,.adoc,.asciidoc,.csv,.txt,.json,.xml,.yaml,.yml,.log,.png,.jpg,.jpeg,.gif,.webp';
+
+// ─── Helper: derive a display label for a file extension ──────────────────────
+function fileTypeLabel(fileName: string): string {
+  const ext = fileName.split('.').pop()?.toUpperCase() || 'FILE';
+  const map: Record<string, string> = {
+    PDF: 'PDF 文档', DOCX: 'Word 文档', DOC: 'Word 文档',
+    XLSX: 'Excel 表格', XLS: 'Excel 表格', CSV: 'CSV 数据',
+    PPTX: 'PowerPoint', PPT: 'PowerPoint',
+    MD: 'Markdown', TXT: '纯文本', JSON: 'JSON', XML: 'XML',
+    YAML: 'YAML', YML: 'YAML', LOG: '日志',
+    HTML: 'HTML', HTM: 'HTML', ADOC: 'AsciiDoc', ASCIIDOC: 'AsciiDoc',
+    PNG: 'PNG 图片', JPG: 'JPEG 图片', JPEG: 'JPEG 图片',
+    GIF: 'GIF 图片', WEBP: 'WebP 图片',
+  };
+  return map[ext] || `${ext} 文件`;
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
 export default function AdminImportPage() {
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
 
-  // Wizard Step State: 1 = Upload, 2 = Configure, 3 = Pipeline Execution & Audits
+  // ── State ──────────────────────────────────────────────────────────────────
   const [currentStep, setCurrentStep] = useState<number>(1);
-
-  // Form states
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [mockFileName, setMockFileName] = useState('');
   const [visibility, setVisibility] = useState<'public' | 'internal'>('internal');
   const [targetSpaceId, setTargetSpaceId] = useState('s-sandbox');
-
-  // Upload and Job states
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [jobState, setJobState] = useState<ImportJob | null>(null);
   const [historyJobs, setHistoryJobs] = useState<ImportJob[]>([]);
   const [pipelineError, setPipelineError] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pendingFileData = useRef<ArrayBuffer | string | undefined>(undefined);
   const jobTriggered = useRef<boolean>(false);
 
+  // ── Auth guard ─────────────────────────────────────────────────────────────
   if (!isLoggedIn) {
-    return (
-      <Unauthorized requiredRole="admin"
-      />
-    )}
+    return <Unauthorized requiredRole="admin" />;
+  }
 
-  // Watch for upload progress reaching 100%, then trigger the actual import API
+  // ── Effects ────────────────────────────────────────────────────────────────
   useEffect(() => {
     if (uploadProgress !== null && uploadProgress >= 100 && !jobTriggered.current) {
       jobTriggered.current = true;
-      console.log('[Import] Upload animation done → calling API');
-      triggerJob()}
+      triggerJob();
+    }
   }, [uploadProgress]);
 
+  // ── Handlers ───────────────────────────────────────────────────────────────
   const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()};
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOver(false);
+  };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
+    setDragOver(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
       setSelectedFile(file);
-      setMockFileName(file.name)}
+      setMockFileName(file.name);
+      setCurrentStep(2);
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setSelectedFile(file);
-      setMockFileName(file.name)}
+      setMockFileName(file.name);
+      setCurrentStep(2);
+    }
   };
 
   const handleQuickUploadSample = (name: string) => {
     setSelectedFile(new File([''], name));
-    setMockFileName(name)};
+    setMockFileName(name);
+    setCurrentStep(2);
+  };
+
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
+    setMockFileName('');
+    setCurrentStep(1);
+    setJobState(null);
+    setPipelineError(null);
+    setUploadProgress(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   const handleStartImport = async () => {
     if (!mockFileName || !selectedFile) return;
 
-    console.log('[Import] Step 1: Starting import pipeline');
-    console.log('[Import] File:', mockFileName, 'Size:', selectedFile.size, 'Visibility:', visibility, 'Space:', targetSpaceId);
-
-    // Reset states
     setCurrentStep(3);
     setUploadProgress(10);
     setJobState(null);
     setPipelineError(null);
     jobTriggered.current = false;
 
-    // Read file content
     try {
       const isText = /\.(md|txt|csv|json|xml|yaml|yml)$/i.test(selectedFile.name);
       if (isText) {
         pendingFileData.current = await selectedFile.text();
-        console.log('[Import] File read as text:', (pendingFileData.current as string).length, 'chars')} else {
+      } else {
         pendingFileData.current = await selectedFile.arrayBuffer();
-        console.log('[Import] File read as binary:', (pendingFileData.current as ArrayBuffer).byteLength, 'bytes')}
+      }
     } catch (err: any) {
-      console.error('[Import] File read error:', err);
       setPipelineError(`文件读取失败: ${err.message || '未知错误'}`);
       setUploadProgress(null);
-      return}
+      return;
+    }
 
-    // Verify file data is not empty
     const data = pendingFileData.current;
-    const isEmpty = !data ||
+    const isEmpty =
+      !data ||
       (typeof data === 'string' && data.length === 0) ||
       (data instanceof ArrayBuffer && data.byteLength === 0);
 
     if (isEmpty) {
-      console.log('[Import] File is empty — will use sample content generator')}
+      console.log('[Import] File is empty — will use sample content generator');
+    }
 
-    // Upload progress animation — side-effect-free: clamp at 100 to avoid overshoot
-    console.log('[Import] Starting upload progress animation');
     const uploadInterval = setInterval(() => {
-      setUploadProgress(prev => {
+      setUploadProgress((prev) => {
         if (prev === null) return 10;
         const next = prev + 25;
         if (next >= 100) {
           clearInterval(uploadInterval);
-          return 100; // ← clamp to exactly 100, triggers the useEffect once
+          return 100;
         }
-        return next})}, 100)};
+        return next;
+      });
+    }, 100);
+  };
 
   const triggerJob = async () => {
     const fileData = pendingFileData.current;
-    console.log('[Import] Step 2: Calling adminApi.startImportJob...');
     try {
       const job = await adminApi.startImportJob(
         { name: mockFileName, size: selectedFile?.size || 0, data: fileData },
         targetSpaceId
       );
-      console.log('[Import] API response — status:', job.status, 'entryId:', job.entryId);
-      console.log('[Import] Stages:', JSON.stringify(job.steps.map(s => ({ name: s.name, status: s.status, error: s.error }))));
-
       setJobState(job);
       setUploadProgress(null);
 
       if (job.status === 'success') {
-        setHistoryJobs(prev => [job, ...prev])} else if (job.status === 'failed') {
-        setHistoryJobs(prev => [job, ...prev]);
-        const failedStep = job.steps.find(s => s.status === 'failed');
-        setPipelineError(failedStep?.error || '管道执行失败')}
+        setHistoryJobs((prev) => [job, ...prev]);
+      } else if (job.status === 'failed') {
+        setHistoryJobs((prev) => [job, ...prev]);
+        const failedStep = job.steps.find((s) => s.status === 'failed');
+        setPipelineError(failedStep?.error || '管道执行失败');
+      }
     } catch (err: any) {
-      console.error('[Import] API call failed:', err);
       setPipelineError(`API 调用失败: ${err.message || '网络错误'}`);
       setUploadProgress(null);
-      setJobState(null)}
+      setJobState(null);
+    }
   };
 
-  const jobStep = jobState ? jobState.steps[jobState.currentStepIndex] : null;
-  const progressPercent = jobState 
-    ? Math.round(((jobState.currentStepIndex + 1) / jobState.steps.length) * 100) 
+  const handleResetAndNew = () => {
+    setCurrentStep(1);
+    setSelectedFile(null);
+    setMockFileName('');
+    setJobState(null);
+    setPipelineError(null);
+    setUploadProgress(null);
+    jobTriggered.current = false;
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  // ── Derived display state ──────────────────────────────────────────────────
+  const hasFile = !!mockFileName && !!selectedFile;
+  const isUploading = uploadProgress !== null;
+  const isWaitingForApi = currentStep === 3 && uploadProgress === null && !jobState && !pipelineError;
+  const isPipelineRunning = jobState?.status === 'running';
+  const isSuccess = jobState?.status === 'success';
+  const isFailure = jobState?.status === 'failed' || !!pipelineError;
+  const showConfig = hasFile && !isUploading && !isWaitingForApi && !isPipelineRunning && !isSuccess && !isFailure;
+  const showProcessing = isUploading || isWaitingForApi || isPipelineRunning;
+  const showResult = isSuccess || isFailure;
+  const showSamples = !hasFile && !showProcessing && !showResult;
+
+  const failedStep = jobState?.steps.find((s) => s.status === 'failed');
+  const pipelineProgress = jobState
+    ? Math.round(((jobState.currentStepIndex + 1) / jobState.steps.length) * 100)
     : 0;
 
+  // ── Helpers for render ─────────────────────────────────────────────────────
+  const renderFileSize = () => {
+    if (!selectedFile || selectedFile.size === 0) return null;
+    const kb = selectedFile.size / 1024;
+    if (kb < 1024) return `${kb.toFixed(1)} KB`;
+    return `${(kb / 1024).toFixed(1)} MB`;
+  };
+
+  // ── JSX ────────────────────────────────────────────────────────────────────
   return (
     <div className="space-y-6" id="admin-import-panel">
-      
-      {/* Header Info */}
-      <div className="border-b border-gray-200 pb-4 select-none">
-        <h1 className="text-2xl font-extrabold text-[#2B3150] font-sans flex items-center">
-          <Settings className="w-6 h-6 text-[#DB5F5B] mr-2" />
-          <span>知识导入 (Knowledge Import)</span>
+      {/* ═══ Page Header ═══════════════════════════════════════════════════════ */}
+      <header className="border-b border-gray-200 pb-5">
+        <h1 className="text-2xl font-bold text-[#2B3150] font-display flex items-center gap-2.5">
+          <span className="flex items-center justify-center w-9 h-9 rounded bg-[#DB5F5B]/10">
+            <FileUp className="w-5 h-5 text-[#DB5F5B]" aria-hidden="true" />
+          </span>
+          知识导入
         </h1>
-        <p className="text-xs text-gray-500 mt-1">
-          将外部非结构化研究报告（PDF、Docx 等）进行自适应清洗、公式高保真提取、分块索引并全量挂载发布。
+        <p className="mt-2 text-sm text-gray-500 max-w-2xl">
+          将外部非结构化文档（PDF、DOCX、Markdown 等）导入企业知识库，
+          经由 MarkItDown 解析、智能分块与向量嵌入后，挂载至指定空间并激活 RAG 检索。
         </p>
-      </div>
+      </header>
 
-      {/* Wizard Progress Stepper Header */}
-      <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs font-bold border-b border-gray-100 pb-3 select-none">
-        {[
-          { step: 1, name: '1. 选择与导入物理文件' },
-          { step: 2, name: '2. 设定挂载空间与密级' },
-          { step: 3, name: '3. 执行 MarkItDown 提取流水线' }
-        ].map((item) => (
-          <div
-            key={item.step}
-            className={`flex items-center space-x-1 ${
-              currentStep === item.step 
-                ? 'text-[#DB5F5B]' 
-                : currentStep > item.step 
-                ? 'text-[#2B3150]' 
-                : 'text-gray-400'
-            }`}
+      {/* ═══ Main Layout ═══════════════════════════════════════════════════════ */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* ── Left: Main Content ─────────────────────────────────────────── */}
+        <div className="lg:col-span-8 space-y-5">
+          {/* ─── Upload Zone (Hero) ──────────────────────────────────────── */}
+          <section
+            aria-label="文件上传区域"
+            className={`
+              relative border-2 rounded-lg transition-all duration-200
+              ${dragOver
+                ? 'border-[#DB5F5B] border-solid bg-[#DB5F5B]/5 shadow-[0_0_0_4px_rgba(219,95,91,0.1)]'
+                : 'border-dashed border-gray-300 bg-white hover:border-gray-400 hover:bg-gray-50/50'
+              }
+              ${hasFile ? 'p-5' : 'py-14 px-6'}
+            `}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
           >
-            <span>{item.name}</span>
-            {item.step < 3 && <ChevronRight className="w-4 h-4 text-gray-300" />}
-          </div>
-        ))}
-      </div>
+            {/* Hidden file input */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              className="hidden"
+              accept={ACCEPT_STRING}
+              aria-label="选择文件上传"
+            />
 
-      {/* Main interactive area */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
-        {/* LEFT COLUMN: Main Stepper Content */}
-        <div className="lg:col-span-8 space-y-6">
-
-          {/* STEP 1: Upload File */}
-          {currentStep === 1 && (
-            <div className="space-y-5">
-              <div className="space-y-1.5 select-none">
-                <h3 className="text-sm font-extrabold text-gray-900 uppercase">第一步：选择需要分析的物理文件</h3>
-                <p className="text-xs text-gray-500">
-                  支持 PDF / Word / Excel / PPT / HTML / Markdown / CSV / 图片（OCR）及纯文本格式。
+            {/* ── Empty state: drag-and-drop prompt ─────────────────────── */}
+            {!hasFile && (
+              <div
+                className="flex flex-col items-center text-center cursor-pointer"
+                onClick={() => fileInputRef.current?.click()}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') fileInputRef.current?.click(); }}
+                aria-label="点击上传文件"
+              >
+                <div
+                  className={`
+                    flex items-center justify-center w-16 h-16 rounded-full mb-4 transition-all duration-200
+                    ${dragOver ? 'bg-[#DB5F5B]/10 scale-110' : 'bg-gray-100'}
+                  `}
+                >
+                  <FileUp
+                    className={`w-8 h-8 transition-colors duration-200 ${dragOver ? 'text-[#DB5F5B]' : 'text-gray-400'}`}
+                    aria-hidden="true"
+                  />
+                </div>
+                <h2 className="text-base font-semibold text-gray-900 mb-1">
+                  拖拽文件至此处上传
+                </h2>
+                <p className="text-sm text-gray-500 mb-2">
+                  或点击浏览本地文件
+                </p>
+                <p className="text-xs text-gray-400">
+                  支持 PDF、DOCX、MD、CSV、JSON、图片等格式 · 最大 50MB
                 </p>
               </div>
+            )}
 
-              {/* Drag & Drop Frame */}
-              <div
-                onDragOver={handleDragOver}
-                onDrop={handleDrop}
-                onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-gray-300 hover:border-gray-900 bg-white hover:bg-gray-50 rounded py-12 px-4 text-center cursor-pointer transition-all space-y-3 select-none"
-              >
-                <FileUp className="w-10 h-10 text-gray-400 mx-auto" />
-                <div className="text-xs text-gray-700 font-bold">
-                  {mockFileName ? `已装载文件: ${mockFileName}` : '拖拽物理文件至此，或点击浏览本地文件'}
+            {/* ── File card state ────────────────────────────────────────── */}
+            {hasFile && (
+              <div className="flex items-center gap-4">
+                {/* File type icon */}
+                <div className="flex-shrink-0 flex items-center justify-center w-11 h-11 rounded-lg bg-[#2B3150]/5">
+                  <FileText className="w-5 h-5 text-[#2B3150]" aria-hidden="true" />
                 </div>
-                <p className="text-[10px] text-gray-400">支持 *.pdf, *.docx, *.doc, *.xlsx, *.xls, *.pptx, *.ppt, *.html, *.htm, *.md, *.adoc, *.csv, *.txt, *.json, *.xml, *.yaml, *.log, *.png, *.jpg, *.jpeg, *.gif, *.webp</p>
-                
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  className="hidden"
-                  accept=".pdf,.docx,.doc,.xlsx,.xls,.pptx,.ppt,.html,.htm,.md,.adoc,.asciidoc,.csv,.txt,.json,.xml,.yaml,.yml,.log,.png,.jpg,.jpeg,.gif,.webp"
-                />
-              </div>
 
-              {/* Sample files list */}
-              <div className="space-y-2 text-xs select-none">
-                <span className="font-bold text-gray-500 text-[11px] block">快速装载 Sandbox 量子实测样例成果：</span>
-                <div className="space-y-1.5 pl-1">
-                  {[
-                    'stabilizer_quantum_correction_report_2026.pdf',
-                    'biochemical_sandbox_binding_protein.md',
-                    'materials_structure_pgvector_schema.md'
-                  ].map((name) => (
-                    <button
-                      key={name}
-                      onClick={() => handleQuickUploadSample(name)}
-                      className={`w-full text-left p-2 border rounded font-mono text-[11px] block transition-all ${
-                        mockFileName === name 
-                          ? 'border-[#DB5F5B] bg-[#F5F6E5]/40 text-[#DB5F5B] font-bold' 
-                          : 'border-gray-200 hover:border-gray-400 bg-white text-gray-600'
-                      }`}
-                    >
-                      + {name}
-                    </button>
-                  ))}
+                {/* File info */}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-gray-900 truncate font-mono">
+                    {mockFileName}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    {fileTypeLabel(mockFileName)}
+                    {renderFileSize() && (
+                      <span className="ml-2 text-gray-400">{renderFileSize()}</span>
+                    )}
+                  </p>
                 </div>
-              </div>
 
-              {/* Action row */}
-              <div className="flex justify-end pt-4 select-none">
+                {/* Remove button */}
                 <button
-                  onClick={() => setCurrentStep(2)}
-                  disabled={!mockFileName}
-                  className="bg-[#2B3150] hover:bg-[#2B3150]/90 disabled:opacity-50 text-white font-bold text-xs px-5 py-2 border-2 border-gray-900 transition-all flex items-center space-x-1"
+                  onClick={(e) => { e.stopPropagation(); handleRemoveFile(); }}
+                  className="flex-shrink-0 inline-flex items-center gap-1 text-xs font-medium text-gray-400 hover:text-[#DB5F5B] transition-colors px-2 py-1 rounded hover:bg-[#DB5F5B]/5"
+                  aria-label="移除文件"
                 >
-                  <span>下一步：设定挂载空间</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <X className="w-3.5 h-3.5" aria-hidden="true" />
+                  <span>移除</span>
                 </button>
               </div>
-            </div>
+            )}
+          </section>
+
+          {/* ─── Sample Files (when no file selected) ────────────────────── */}
+          {showSamples && (
+            <section aria-label="快速开始">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2.5">
+                快速装载 Sandbox 量子实测样例
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {SAMPLE_FILES.map((name) => (
+                  <button
+                    key={name}
+                    onClick={() => handleQuickUploadSample(name)}
+                    className={`
+                      inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium
+                      border transition-all duration-150
+                      ${mockFileName === name
+                        ? 'border-[#DB5F5B] bg-[#DB5F5B]/5 text-[#DB5F5B]'
+                        : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                      }
+                    `}
+                  >
+                    <FileText className="w-3 h-3" aria-hidden="true" />
+                    <span className="font-mono text-[11px] truncate max-w-[220px]">
+                      {name}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </section>
           )}
 
-          {/* STEP 2: Configure Scope & Space */}
-          {currentStep === 2 && (
-            <div className="space-y-5">
-              <div className="space-y-1.5 select-none">
-                <h3 className="text-sm font-extrabold text-gray-900 uppercase">第二步：设定本条目密级权限与发布空间</h3>
-                <p className="text-xs text-gray-500">
-                  确保选择正确的范围，防止机密算法公开。挂载的空间将决定大模型调用 RAG 时搜寻的默认切片集。
-                </p>
-              </div>
+          {/* ─── Configuration Panel ─────────────────────────────────────── */}
+          {showConfig && (
+            <section
+              aria-label="导入配置"
+              className="bg-white border border-gray-200 rounded-lg p-5 space-y-5 animate-fade-in"
+            >
+              <h3 className="text-sm font-semibold text-[#2B3150] font-display">
+                配置导入选项
+              </h3>
 
-              {/* Form config options */}
-              <div className="bg-white border border-gray-200 rounded p-5 space-y-4 font-sans text-xs">
-                
-                {/* File info */}
-                <div>
-                  <span className="text-gray-400 block text-[10px]">待加工文件:</span>
-                  <span className="font-bold font-mono text-gray-800 text-sm">{mockFileName}</span>
-                </div>
-
-                {/* Scope */}
-                <div className="space-y-1.5">
-                  <label className="block text-[11px] font-extrabold text-gray-800 uppercase tracking-wide">
-                    安全可见性密级 (Visibility Scope)：
-                  </label>
-                  <div className="flex items-center space-x-4 bg-gray-50 p-2.5 rounded border border-gray-150 select-none">
-                    <label className="flex items-center space-x-1.5 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="visibility"
-                        checked={visibility === 'internal'}
-                        onChange={() => setVisibility('internal')}
-                        className="text-[#DB5F5B] h-4 w-4"
-                      />
-                      <span className="font-bold text-gray-700 flex items-center">
-                        <Lock className="w-3.5 h-3.5 mr-0.5 text-red-500" />
-                        内网机密 (Internal - 仅研发可见)
-                      </span>
-                    </label>
-
-                    <label className="flex items-center space-x-1.5 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="visibility"
-                        checked={visibility === 'public'}
-                        onChange={() => setVisibility('public')}
-                        className="text-[#DB5F5B] h-4 w-4"
-                      />
-                      <span className="font-bold text-gray-700 flex items-center">
-                        <Globe className="w-3.5 h-3.5 mr-0.5 text-green-600" />
-                        公开可用 (Public - 访客外部可见)
-                      </span>
-                    </label>
-                  </div>
-                </div>
-
-                {/* Space Node */}
-                <div className="space-y-1.5">
-                  <label className="block text-[11px] font-extrabold text-gray-800 uppercase tracking-wide">
-                    发布挂载空间 (Target Space Node)：
-                  </label>
-                  <select
-                    value={targetSpaceId}
-                    onChange={(e) => setTargetSpaceId(e.target.value)}
-                    className="w-full border-2 border-gray-900 rounded p-2.5 bg-white font-medium focus:outline-none focus:ring-1 focus:ring-[#DB5F5B]"
+              {/* ── Visibility ──────────────────────────────────────────── */}
+              <fieldset className="space-y-2">
+                <legend className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                  可见性范围
+                </legend>
+                <div className="flex flex-wrap gap-3">
+                  <label
+                    className={`
+                      flex items-center gap-2 px-4 py-2.5 rounded-md border-2 cursor-pointer transition-all duration-150
+                      ${visibility === 'internal'
+                        ? 'border-[#2B3150] bg-[#2B3150]/5'
+                        : 'border-gray-200 bg-white hover:border-gray-300'
+                      }
+                    `}
                   >
-                    <option value="s-sandbox">Sandbox项目</option>
-                    <option value="s-papers">学术论文</option>
-                    <option value="s-data">数据标准</option>
-                    <option value="s-business">商业资料</option>
-                    <option value="s-template">模板规范</option>
-                    <option value="s-product">技术文档</option>
-                    <option value="s-patent">专利成果</option>
-                    <option value="s-handwritten">手写笔记</option>
-                  </select>
+                    <input
+                      type="radio"
+                      name="visibility"
+                      value="internal"
+                      checked={visibility === 'internal'}
+                      onChange={() => setVisibility('internal')}
+                      className="sr-only"
+                    />
+                    <Lock className={`w-4 h-4 ${visibility === 'internal' ? 'text-[#DB5F5B]' : 'text-gray-400'}`} aria-hidden="true" />
+                    <span className={`text-sm font-medium ${visibility === 'internal' ? 'text-[#2B3150]' : 'text-gray-600'}`}>
+                      内网机密
+                    </span>
+                    <span className="text-xs text-gray-400">仅研发可见</span>
+                  </label>
+
+                  <label
+                    className={`
+                      flex items-center gap-2 px-4 py-2.5 rounded-md border-2 cursor-pointer transition-all duration-150
+                      ${visibility === 'public'
+                        ? 'border-[#2B3150] bg-[#2B3150]/5'
+                        : 'border-gray-200 bg-white hover:border-gray-300'
+                      }
+                    `}
+                  >
+                    <input
+                      type="radio"
+                      name="visibility"
+                      value="public"
+                      checked={visibility === 'public'}
+                      onChange={() => setVisibility('public')}
+                      className="sr-only"
+                    />
+                    <Globe className={`w-4 h-4 ${visibility === 'public' ? 'text-green-600' : 'text-gray-400'}`} aria-hidden="true" />
+                    <span className={`text-sm font-medium ${visibility === 'public' ? 'text-[#2B3150]' : 'text-gray-600'}`}>
+                      公开可用
+                    </span>
+                    <span className="text-xs text-gray-400">外部可见</span>
+                  </label>
                 </div>
+              </fieldset>
+
+              {/* ── Target Space ─────────────────────────────────────────── */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="target-space-select"
+                  className="text-xs font-semibold text-gray-700 uppercase tracking-wide block"
+                >
+                  挂载空间
+                </label>
+                <select
+                  id="target-space-select"
+                  value={targetSpaceId}
+                  onChange={(e) => setTargetSpaceId(e.target.value)}
+                  className="w-full border-2 border-gray-200 rounded-md px-3 py-2.5 text-sm font-medium bg-white
+                             focus:outline-none focus:border-[#2B3150] focus:ring-2 focus:ring-[#DB5F5B]/20
+                             transition-all duration-150 appearance-none
+                             bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%236B7280%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]
+                             bg-[length:16px] bg-[right_12px_center] bg-no-repeat pr-10"
+                >
+                  <option value="s-sandbox">Sandbox 项目</option>
+                  <option value="s-papers">学术论文</option>
+                  <option value="s-data">数据标准</option>
+                  <option value="s-business">商业资料</option>
+                  <option value="s-template">模板规范</option>
+                  <option value="s-product">技术文档</option>
+                  <option value="s-patent">专利成果</option>
+                  <option value="s-handwritten">手写笔记</option>
+                </select>
               </div>
 
-              {/* Action row */}
-              <div className="flex justify-between pt-4 select-none">
+              {/* ── Action ───────────────────────────────────────────────── */}
+              <div className="flex items-center justify-between pt-2 border-t border-gray-100">
                 <button
-                  onClick={() => setCurrentStep(1)}
-                  className="bg-white hover:bg-gray-50 text-gray-700 font-bold text-xs px-5 py-2 border-2 border-gray-900 transition-all flex items-center space-x-1"
+                  onClick={handleRemoveFile}
+                  className="text-xs font-medium text-gray-500 hover:text-gray-700 transition-colors"
                 >
-                  <ArrowLeft className="w-4 h-4" />
-                  <span>上一步</span>
+                  取消，重新选择文件
                 </button>
-
                 <button
                   onClick={handleStartImport}
-                  className="bg-[#2B3150] hover:bg-[#2B3150]/90 text-white font-bold text-xs px-5 py-2 border-2 border-gray-900 transition-all flex items-center space-x-1.5"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#2B3150] hover:bg-[#2B3150]/90
+                             text-white text-sm font-semibold rounded-md
+                             border-2 border-transparent
+                             focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/40
+                             transition-all duration-150"
                 >
-                  <Play className="w-4 h-4 text-yellow-400" />
-                  <span>一键启动 MarkItDown 加工并发布 &rarr;</span>
+                  <Play className="w-4 h-4 text-[#F2D760]" aria-hidden="true" />
+                  启动导入
                 </button>
               </div>
-            </div>
+            </section>
           )}
 
-          {/* STEP 3: Execution Progress Stream */}
-          {currentStep === 3 && (
-            <div className="space-y-5">
-              <div className="space-y-1.5 select-none">
-                <h3 className="text-sm font-extrabold text-gray-900 uppercase">第三步：实时加工监控及计算日志</h3>
-                <p className="text-xs text-gray-500">
-                  文件二进制正在传输，稍后将由 MarkItDown 工具链自动提取表格、高保真 LaTeX 算子，并将 RAG 活性服务自动注册就绪。
-                </p>
-              </div>
+          {/* ─── Processing View ─────────────────────────────────────────── */}
+          {showProcessing && (
+            <section
+              aria-label="导入处理进度"
+              className="bg-white border border-gray-200 rounded-lg p-5 space-y-5 animate-fade-in"
+            >
+              <h3 className="text-sm font-semibold text-[#2B3150] font-display">
+                {isUploading ? '正在上传文件...' : isWaitingForApi ? '正在启动处理管道...' : '正在处理中...'}
+              </h3>
 
-              {/* Processing Block */}
-              <div className="bg-white border border-gray-200 rounded p-5 space-y-4 font-mono text-xs">
-                
-                <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                  <span className="font-bold text-gray-800">
-                    {uploadProgress !== null ? '二进制挂载传输中...' : 'MarkItDown 解析流水线就绪'}
-                  </span>
-                  <span className="text-[10px] text-gray-400">SESSION: {jobState?.id || 'PENDING'}</span>
-                </div>
-
-                {/* Error state */}
-                {pipelineError && (
-                  <div className="bg-red-50 border border-red-300 rounded p-4 text-xs text-red-800 space-y-2">
-                    <div className="font-extrabold flex items-center">
-                      <AlertCircle className="w-4 h-4 mr-1 text-red-600" />
-                      <span>管道启动失败</span>
-                    </div>
-                    <p className="text-[11px]">{pipelineError}</p>
-                    <button
-                      onClick={() => { setPipelineError(null); setCurrentStep(2)}}
-                      className="bg-white border border-red-300 hover:bg-red-50 text-red-700 font-bold px-3 py-1 rounded text-[11px]"
-                    >
-                      返回重试
-                    </button>
-                  </div>
-                )}
-
-                {/* Upload progress bar — stays visible until jobState arrives */}
-                {!pipelineError && uploadProgress !== null && (
-                  <div className="space-y-2 py-4">
-                    <div className="flex justify-between font-bold text-xs">
-                      <span>传输物理流 (Raw Data Pipeline):</span>
-                      <span>{uploadProgress}%</span>
-                    </div>
-                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden border">
-                      <div className="h-full bg-blue-700 transition-all duration-150" style={{ width: `${uploadProgress}%` }} />
-                    </div>
-                    {uploadProgress >= 100 && (
-                      <p className="text-[10px] text-blue-600 animate-pulse text-center">正在等待后端管道响应...</p>
-                    )}
-                  </div>
-                )}
-
-                {/* API call in progress — no job yet, progress bar done */}
-                {!pipelineError && uploadProgress === null && !jobState && (
-                  <div className="flex items-center justify-center py-8 space-x-2 text-gray-500">
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span className="text-xs">正在启动 Ingestion Pipeline...</span>
-                  </div>
-                )}
-
-                {jobState && jobStep ? (
-                  <div className="space-y-4">
-                    
-                    {/* Live step */}
-                    {jobState.status === 'failed' ? (
-                      <div className="bg-red-50 border border-red-200 rounded p-3 text-[11px] text-red-800 flex items-start">
-                        <AlertCircle className="w-4 h-4 mr-1.5 text-red-600 shrink-0 mt-0.5" />
-                        <div>
-                          <span className="font-bold">管道执行失败</span>
-                          <p className="text-[10px] text-red-700/80 mt-0.5">
-                            {jobState.steps.find((s) => s.status === 'failed')?.error || '未知错误，请检查日志'}
-                          </p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="bg-yellow-50 border border-yellow-200 rounded p-3 text-[11px] text-yellow-800 flex items-start">
-                        <RefreshCw className="w-4 h-4 mr-1.5 text-yellow-600 animate-spin shrink-0 mt-0.5" />
-                        <div>
-                          <span className="font-bold">当前环节：{jobStep?.name || '就绪中...'}</span>
-                          <p className="text-[10px] text-yellow-700/80 mt-0.5">{jobStep?.description || ''}</p>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Progress slider bar */}
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-[11px] text-gray-500 font-bold">
-                        <span>总计算进度 (Task Progress):</span>
-                        <span>{progressPercent}%</span>
-                      </div>
-                      <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden border border-gray-200">
-                        <div className="h-full bg-gradient-to-r from-blue-700 to-green-600 transition-all duration-300" style={{ width: `${progressPercent}%` }} />
-                      </div>
-                    </div>
-
-                    {/* Sequential step timeline representation */}
-                    <div className="space-y-2 text-[11px] pt-2 border-t border-gray-100">
-                      {jobState.steps.map((st, i) => (
-                        <div key={st.id} className="space-y-0.5">
-                          <div className="flex items-center justify-between select-none py-0.5">
-                            <span className={`${
-                              st.status === 'running'
-                                ? 'text-yellow-600 font-bold'
-                                : st.status === 'success'
-                                ? 'text-green-600 font-bold'
-                                : st.status === 'failed'
-                                ? 'text-red-600 font-bold'
-                                : 'text-gray-400'
-                            }`}>
-                              {st.status === 'success' ? '✓' : st.status === 'failed' ? '✗' : st.status === 'running' ? '▶' : '○'} {st.name}
-                            </span>
-                            <span className={`text-[9px] ${
-                              st.status === 'failed' ? 'text-red-500' : 'text-gray-400'
-                            }`}>{st.status === 'failed' ? 'FAILED' : st.status}</span>
-                          </div>
-                          {st.status === 'failed' && st.error && (
-                            <p className="text-[10px] text-red-500 bg-red-50 px-2 py-1 rounded border border-red-100 ml-4">
-                              {st.error}
-                            </p>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-
-                  </div>
-                ) : null}
-
-                {/* Successful Done prompt */}
-                {jobState && jobState.status === 'success' && (
-                  <div className="bg-green-50 border border-green-200 p-3.5 rounded text-[11px] text-green-800 space-y-2 select-none">
-                    <div className="font-extrabold flex items-center">
-                      <CheckCircle className="w-4 h-4 mr-1 text-green-600" />
-                      <span>加工发布就绪 (Task Completed successfully)</span>
-                    </div>
-                    <p className="text-[10px] leading-relaxed">
-                      已将 <strong className="font-mono">{mockFileName}</strong> 物理实体利用 MarkItDown 完成了公式提取，并注册为全新 Wiki 活性大模型 RAG 服务！
-                    </p>
-                    <div className="pt-1 flex gap-2">
-                      <button
-                        onClick={() => {
-                          // reset state
-                          setCurrentStep(1);
-                          setSelectedFile(null);
-                          setMockFileName('');
-                          setJobState(null)}}
-                        className="bg-white border border-green-300 hover:bg-green-100 text-green-800 font-bold px-2 py-1 rounded transition-all"
-                      >
-                        继续上传物理文件 &rarr;
-                      </button>
-                      
-                      <button
-                        onClick={() => navigate('/search')}
-                        className="bg-green-700 hover:bg-green-800 text-white font-bold px-2.5 py-1 rounded transition-all"
-                      >
-                        去搜索页查阅条目 &rarr;
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-        </div>
-
-        {/* RIGHT COLUMN: History logs and Auditing */}
-        <div className="lg:col-span-4 space-y-4">
-          <div className="bg-white border border-gray-200 rounded p-4 space-y-3 select-none">
-            <h3 className="font-extrabold text-xs text-gray-900 pb-1.5 border-b border-gray-100 uppercase tracking-wide">
-              全域上传审计日志 (Ingestion Audits)
-            </h3>
-
-            <div className="space-y-3 text-xs font-sans">
-              {historyJobs.length === 0 && (
-                <p className="text-gray-400 italic text-[11px] py-4 text-center">暂无导入记录</p>
-              )}
-              {historyJobs.map((job) => (
-                <div key={job.id} className={`p-2.5 border rounded ${
-                  job.status === 'success' ? 'bg-green-50 border-green-200' :
-                  job.status === 'failed' ? 'bg-red-50 border-red-200' :
-                  'bg-gray-50 border-gray-200'
-                }`}>
-                  <div className="flex justify-between items-start">
-                    <span className="font-bold text-gray-800 block truncate max-w-[150px]">{job.filename}</span>
-                    <span className={`text-[9px] px-1 rounded font-bold uppercase font-mono ${
-                      job.status === 'success' ? 'text-green-800 bg-green-100' :
-                      job.status === 'failed' ? 'text-red-800 bg-red-100' :
-                      'text-yellow-800 bg-yellow-100'
-                    }`}>
-                      {job.status === 'success' ? '✓ Success' : job.status === 'failed' ? '✗ Failed' : '⋯ Running'}
+              {/* ── Upload progress bar ─────────────────────────────────── */}
+              {isUploading && (
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="font-medium text-gray-600">上传进度</span>
+                    <span className="font-bold text-[#2B3150] font-mono">
+                      {uploadProgress}%
                     </span>
                   </div>
-                  <span className="text-[10px] text-gray-400 block mt-0.5 font-mono">{job.startedAt}</span>
-                  {job.status === 'failed' && job.steps.find((s) => s.status === 'failed')?.error && (
-                    <p className="text-[10px] text-red-600 mt-1 leading-normal bg-red-50 p-1 rounded">
-                      {job.steps.find((s) => s.status === 'failed')!.error}
-                    </p>
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden" role="progressbar" aria-valuenow={uploadProgress!} aria-valuemin={0} aria-valuemax={100}>
+                    <div
+                      className="h-full bg-[#2B3150] rounded-full transition-all duration-150 ease-out"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                  </div>
+                  <p className="text-[11px] text-gray-400">
+                    {uploadProgress! < 100 ? '正在传输文件二进制数据...' : '文件已接收，等待后端管道启动...'}
+                  </p>
+                </div>
+              )}
+
+              {/* ── Waiting for API ──────────────────────────────────────── */}
+              {isWaitingForApi && (
+                <div className="flex items-center justify-center gap-3 py-6 text-gray-500">
+                  <RefreshCw className="w-5 h-5 animate-spin" aria-hidden="true" />
+                  <span className="text-sm font-medium">正在启动 Ingestion Pipeline...</span>
+                </div>
+              )}
+
+              {/* ── Pipeline stages ──────────────────────────────────────── */}
+              {isPipelineRunning && (
+                <div className="space-y-4">
+                  {/* Overall progress */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="font-medium text-gray-600">管道进度</span>
+                      <span className="font-bold text-[#2B3150] font-mono">
+                        {pipelineProgress}%
+                      </span>
+                    </div>
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden" role="progressbar" aria-valuenow={pipelineProgress} aria-valuemin={0} aria-valuemax={100}>
+                      <div
+                        className="h-full bg-gradient-to-r from-[#2B3150] to-[#DB5F5B] rounded-full transition-all duration-500 ease-out"
+                        style={{ width: `${pipelineProgress}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Stage list */}
+                  <ul className="space-y-1.5" role="list">
+                    {jobState!.steps.map((st) => {
+                      const isActive = st.status === 'running';
+                      const isComplete = st.status === 'success';
+                      const isStepFailed = st.status === 'failed';
+                      const isPending = st.status === 'pending';
+
+                      return (
+                        <li
+                          key={st.id}
+                          className={`
+                            flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-300
+                            ${isActive ? 'bg-yellow-50 border border-yellow-200' : ''}
+                            ${isComplete ? 'bg-green-50/50' : ''}
+                            ${isStepFailed ? 'bg-red-50 border border-red-200' : ''}
+                          `}
+                        >
+                          {/* Status icon */}
+                          <span className="flex-shrink-0 flex items-center justify-center w-6 h-6" aria-hidden="true">
+                            {isPending && <span className="w-2 h-2 rounded-full bg-gray-300" />}
+                            {isActive && <RefreshCw className="w-4 h-4 text-yellow-600 animate-spin" />}
+                            {isComplete && <CheckCircle className="w-4 h-4 text-green-600" />}
+                            {isStepFailed && <AlertCircle className="w-4 h-4 text-red-600" />}
+                          </span>
+
+                          {/* Stage info */}
+                          <div className="flex-1 min-w-0">
+                            <p className={`
+                              text-sm font-medium
+                              ${isActive ? 'text-yellow-800' : ''}
+                              ${isComplete ? 'text-green-800' : ''}
+                              ${isStepFailed ? 'text-red-800' : ''}
+                              ${isPending ? 'text-gray-400' : ''}
+                            `}>
+                              {st.name}
+                            </p>
+                            {st.description && (
+                              <p className="text-xs text-gray-400 mt-0.5">{st.description}</p>
+                            )}
+                            {isStepFailed && st.error && (
+                              <p className="text-xs text-red-600 mt-1 bg-red-100/50 px-2 py-1 rounded">
+                                {st.error}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Status label */}
+                          <span className={`
+                            flex-shrink-0 text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded
+                            ${isActive ? 'text-yellow-700 bg-yellow-100' : ''}
+                            ${isComplete ? 'text-green-700 bg-green-100' : ''}
+                            ${isStepFailed ? 'text-red-700 bg-red-100' : ''}
+                            ${isPending ? 'text-gray-400 bg-gray-100' : ''}
+                          `}>
+                            {isPending && '等待'}
+                            {isActive && '进行中'}
+                            {isComplete && '完成'}
+                            {isStepFailed && '失败'}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* ─── Result View ─────────────────────────────────────────────── */}
+          {showResult && (
+            <section
+              aria-label={isSuccess ? '导入成功' : '导入失败'}
+              className={`
+                border rounded-lg p-5 space-y-4 animate-fade-in
+                ${isSuccess ? 'bg-green-50/60 border-green-300' : 'bg-red-50/60 border-red-300'}
+              `}
+            >
+              {/* ── Success ──────────────────────────────────────────────── */}
+              {isSuccess && (
+                <>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-green-100">
+                      <CheckCircle className="w-5 h-5 text-green-600" aria-hidden="true" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-semibold text-green-900">
+                        导入成功
+                      </h3>
+                      <p className="text-sm text-green-700 mt-0.5">
+                        文件已成功解析、分块并嵌入向量数据库，RAG 服务已就绪。
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Pipeline summary — show completed steps */}
+                  {jobState && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {jobState.steps.filter((s) => s.status === 'success').map((st) => (
+                        <span
+                          key={st.id}
+                          className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[11px] font-medium bg-green-100 text-green-800"
+                        >
+                          <CheckCircle className="w-3 h-3" aria-hidden="true" />
+                          {st.name}
+                        </span>
+                      ))}
+                    </div>
                   )}
+
+                  <div className="flex flex-wrap gap-2.5 pt-1">
+                    {jobState?.entryId && (
+                      <button
+                        onClick={() => navigate(`/entry/${jobState.entryId}`)}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#2B3150] hover:bg-[#2B3150]/90
+                                   text-white text-sm font-medium rounded-md
+                                   border-2 border-transparent
+                                   focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/40
+                                   transition-all duration-150"
+                      >
+                        查看条目
+                        <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
+                      </button>
+                    )}
+                    <button
+                      onClick={() => navigate('/search')}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-white hover:bg-gray-50
+                                 text-[#2B3150] text-sm font-medium rounded-md
+                                 border-2 border-gray-200 hover:border-[#2B3150]
+                                 focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/40
+                                 transition-all duration-150"
+                    >
+                      搜索知识库
+                      <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
+                    </button>
+                    <button
+                      onClick={handleResetAndNew}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-white hover:bg-gray-50
+                                 text-gray-700 text-sm font-medium rounded-md
+                                 border-2 border-gray-200 hover:border-gray-400
+                                 focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/40
+                                 transition-all duration-150"
+                    >
+                      继续上传
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {/* ── Failure ──────────────────────────────────────────────── */}
+              {isFailure && (
+                <>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-red-100">
+                      <AlertCircle className="w-5 h-5 text-red-600" aria-hidden="true" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-semibold text-red-900">
+                        导入失败
+                      </h3>
+                      <p className="text-sm text-red-700 mt-0.5">
+                        {pipelineError || failedStep?.error || '管道执行过程中发生未知错误，请重试。'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Show which step failed */}
+                  {failedStep && (
+                    <div className="bg-red-100/50 border border-red-200 rounded-md px-3 py-2 text-xs text-red-800">
+                      <span className="font-semibold">失败环节：</span>
+                      {failedStep.name}
+                      {failedStep.description && ` — ${failedStep.description}`}
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap gap-2.5 pt-1">
+                    <button
+                      onClick={() => {
+                        setPipelineError(null);
+                        setJobState(null);
+                        setCurrentStep(2);
+                        setUploadProgress(null);
+                        jobTriggered.current = false;
+                      }}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#2B3150] hover:bg-[#2B3150]/90
+                                 text-white text-sm font-medium rounded-md
+                                 border-2 border-transparent
+                                 focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/40
+                                 transition-all duration-150"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
+                      重试导入
+                    </button>
+                    <button
+                      onClick={handleRemoveFile}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-white hover:bg-gray-50
+                                 text-gray-700 text-sm font-medium rounded-md
+                                 border-2 border-gray-200 hover:border-gray-400
+                                 focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/40
+                                 transition-all duration-150"
+                    >
+                      重新选择文件
+                    </button>
+                  </div>
+                </>
+              )}
+            </section>
+          )}
+        </div>
+
+        {/* ── Right: Sidebar ─────────────────────────────────────────────── */}
+        <aside className="lg:col-span-4 space-y-5">
+          {/* ─── Recent Uploads ────────────────────────────────────────── */}
+          <section
+            aria-label="最近上传记录"
+            className="bg-white border border-gray-200 rounded-lg p-4"
+          >
+            <h3 className="text-sm font-semibold text-[#2B3150] font-display pb-3 border-b border-gray-100 flex items-center gap-2">
+              <Clock className="w-4 h-4 text-gray-400" aria-hidden="true" />
+              最近导入
+            </h3>
+
+            {historyJobs.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-8 text-center">
+                <FileArchive className="w-8 h-8 text-gray-300 mb-2" aria-hidden="true" />
+                <p className="text-xs text-gray-400">暂无导入记录</p>
+                <p className="text-[11px] text-gray-300 mt-0.5">上传文件后将在此显示</p>
+              </div>
+            ) : (
+              <ul className="divide-y divide-gray-100" role="list">
+                {historyJobs.slice(0, 5).map((job) => (
+                  <li key={job.id} className="py-3 first:pt-3 last:pb-0">
+                    <div className="flex items-start gap-3">
+                      {/* Status dot */}
+                      <span
+                        className={`flex-shrink-0 mt-1 w-2 h-2 rounded-full ${
+                          job.status === 'success'
+                            ? 'bg-green-500'
+                            : job.status === 'failed'
+                              ? 'bg-red-500'
+                              : 'bg-yellow-500 animate-pulse'
+                        }`}
+                        aria-hidden="true"
+                      />
+
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-gray-900 truncate font-mono">
+                          {job.filename}
+                        </p>
+                        <p className="text-[11px] text-gray-400 mt-0.5 font-mono">
+                          {job.startedAt}
+                        </p>
+
+                        {/* Failed step detail */}
+                        {job.status === 'failed' && job.steps.find((s) => s.status === 'failed')?.error && (
+                          <p className="text-[11px] text-red-600 mt-1 line-clamp-2">
+                            {job.steps.find((s) => s.status === 'failed')!.error}
+                          </p>
+                        )}
+
+                        {/* Success: quick link to entry */}
+                        {job.status === 'success' && job.entryId && (
+                          <button
+                            onClick={() => navigate(`/entry/${job.entryId}`)}
+                            className="inline-flex items-center gap-1 text-[11px] text-[#1D70B8] hover:underline mt-1"
+                          >
+                            查看条目
+                            <ArrowUpRight className="w-3 h-3" aria-hidden="true" />
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Status badge */}
+                      <span
+                        className={`flex-shrink-0 text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded ${
+                          job.status === 'success'
+                            ? 'text-green-700 bg-green-50'
+                            : job.status === 'failed'
+                              ? 'text-red-700 bg-red-50'
+                              : 'text-yellow-700 bg-yellow-50'
+                        }`}
+                      >
+                        {job.status === 'success' ? '成功' : job.status === 'failed' ? '失败' : '运行中'}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {/* Pipeline step legend */}
+            {historyJobs.length > 0 && (
+              <p className="text-[10px] text-gray-300 mt-2 pt-2 border-t border-gray-50 text-center">
+                最近 5 条导入记录
+              </p>
+            )}
+          </section>
+
+          {/* ─── Supported Formats ──────────────────────────────────────── */}
+          <section
+            aria-label="支持的文件格式"
+            className="bg-white border border-gray-200 rounded-lg p-4"
+          >
+            <h3 className="text-sm font-semibold text-[#2B3150] font-display pb-3 border-b border-gray-100">
+              支持的文件格式
+            </h3>
+
+            <div className="space-y-3 mt-3">
+              {FORMAT_CATEGORIES.map((cat) => (
+                <div key={cat.label} className="space-y-1.5">
+                  <div className="flex items-center gap-1.5 text-xs font-medium text-gray-500">
+                    <cat.icon className="w-3.5 h-3.5" aria-hidden="true" />
+                    {cat.label}
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {cat.extensions.map((ext) => (
+                      <span
+                        key={ext}
+                        className="inline-block px-2 py-0.5 text-[11px] font-medium text-gray-600 bg-gray-100 rounded font-mono"
+                      >
+                        .{ext.toLowerCase()}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
-          </div>
-        </div>
 
+            <p className="text-[11px] text-gray-400 mt-3 pt-3 border-t border-gray-100">
+              单个文件最大 50MB · 支持 OCR 图片文字识别
+            </p>
+          </section>
+        </aside>
       </div>
-
     </div>
-  )}
+  );
+}
