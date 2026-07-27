@@ -133,7 +133,7 @@ export default function TopNav() {
                   }`}
                 >
                   <Settings className="w-3.5 h-3.5" />
-                  <span>管理维护端</span>
+                  <span>知识导入</span>
                 </button>
               </>
             )}
@@ -191,7 +191,7 @@ export default function TopNav() {
                     }}
                     className="w-full text-left px-3.5 py-1.5 hover:bg-gray-50 transition-colors"
                   >
-                    MarkItDown 上传管理
+                    知识导入
                   </button>
 
                   <button
