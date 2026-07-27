@@ -9,13 +9,16 @@ interface KnowledgeGraphProps {
   edges: KnowledgeGraphEdge[];
   height?: number;
   interactive?: boolean;
+  /** Open entry links in a new tab instead of navigating in-app */
+  openInNewTab?: boolean;
 }
 
 export default function KnowledgeGraph({
   nodes,
   edges,
   height = 320,
-  interactive = true
+  interactive = true,
+  openInNewTab = false,
 }: KnowledgeGraphProps) {
   const navigate = useNavigate();
   const [selectedNode, setSelectedNode] = useState<KnowledgeGraphNode | null>(null);
@@ -237,7 +240,14 @@ export default function KnowledgeGraph({
 
           {selectedNode && (
             <button
-              onClick={() => navigate(`/entry/${selectedNode.entryId}`)}
+              onClick={() => {
+                const url = `/entry/${selectedNode.entryId}`;
+                if (openInNewTab) {
+                  window.open(url, '_blank');
+                } else {
+                  navigate(url);
+                }
+              }}
               className="w-full mt-3 py-1.5 bg-[#2B3150] hover:bg-[#2B3150]/90 text-white font-semibold rounded text-[11px] transition-all flex items-center justify-center space-x-1"
             >
               <ExternalLink className="w-3 h-3 text-[#F2D760]" />
