@@ -148,7 +148,16 @@ export function reverseEntryType(feType: string): string {
     business_material: 'business_material',
     handwritten_note: 'handwritten_note',
   };
-  return map[feType] || 'tech';
+  // Fallback: map legacy/invalid types to a valid default
+  const fallback: Record<string, string> = {
+    tech: 'tech_doc',
+    data_item: 'data_standard',
+    project: 'sandbox_project',
+    paper: 'academic_paper',
+    concept: 'tech_doc',
+    service: 'tech_doc',
+  };
+  return map[feType] || fallback[feType] || 'handwritten_note';
 }
 
 // ── Entry field adapter (MVP Entry → WikiEntry) ───────────────
