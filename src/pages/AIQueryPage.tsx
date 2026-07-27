@@ -67,7 +67,6 @@ export default function AIQueryPage() {
   const [graphPanelOpen, setGraphPanelOpen] = useState(false);
 
   const chat = useConversation(AI_PAGE_ID);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   // ── Load global graph ─────────────────────────────────────────────────────
@@ -84,23 +83,7 @@ export default function AIQueryPage() {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Auto-scroll to bottom only when user adds a new message ────────────────
-  const prevLengthRef = useRef(chat.messages.length);
-  useEffect(() => {
-    const isNewMessage = chat.messages.length > prevLengthRef.current;
-    prevLengthRef.current = chat.messages.length;
-
-    if (!isNewMessage) return; // only scroll on new messages, not initial load
-
-    const container = messagesContainerRef.current;
-    if (!container) return;
-
-    // Only auto-scroll if user is already near the bottom (< 200px from bottom)
-    const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 200;
-    if (isNearBottom || chat.messages[chat.messages.length - 1]?.role === 'user') {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [chat.messages.length]);
+  // ── No auto-scroll — user controls scrolling manually ────────────────────
 
   // ── Auto-open graph panel when sources are referenced ─────────────────────
   const lastMessage = chat.messages.filter((m) => m.role === 'assistant').pop();
@@ -284,7 +267,6 @@ export default function AIQueryPage() {
                 </div>
               )}
 
-              <div ref={messagesEndRef} />
             </div>
           </div>
 
