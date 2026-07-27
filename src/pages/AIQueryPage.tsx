@@ -311,6 +311,7 @@ export default function AIQueryPage() {
                   edges={globalGraph.edges.slice(0, 11)}
                   height={220}
                   interactive={false}
+                  openInNewTab
                 />
               </div>
 
