@@ -1,14 +1,20 @@
-import React, { useState, useCallback } from 'react';
-import { Search, BookOpen, Download, CheckCircle, AlertCircle, Loader2, ExternalLink, Globe, Atom, ChevronDown, ChevronRight, FileText } from 'lucide-react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import {
+  Search, BookOpen, Download, CheckCircle, AlertCircle, Loader2,
+  ExternalLink, Globe, Atom, ChevronDown, ChevronRight, FileText,
+  Sparkles, TrendingUp, Clock, X, ArrowUpRight, Zap, Layers,
+  Database, Cpu, Brain, ArrowRight, Bookmark, Users, Calendar
+} from 'lucide-react';
 import { literatureApi, LiteraturePaper, LiteratureDocument } from '../api/literatureApi';
 
-// ---- Types ----
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface PaperResult extends LiteraturePaper {
   _importing?: boolean;
   _imported?: boolean;
   _importError?: string;
   _entryId?: number;
+  _importStage?: string; // current import pipeline stage
 }
 
 interface ImportHistoryItem {
@@ -20,7 +26,57 @@ interface ImportHistoryItem {
   timestamp: number;
 }
 
-// ---- Helpers ----
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const SOURCE_CARDS = [
+  {
+    key: 'arxiv',
+    name: 'arXiv',
+    icon: Atom,
+    description: '物理学、数学、计算机科学等领域的预印本论文',
+    availability: '开放获取',
+    speed: '< 2s',
+    color: 'red' as const,
+  },
+  {
+    key: 'crossref',
+    name: 'CrossRef',
+    icon: Globe,
+    description: '跨出版商学术文献元数据，覆盖全学科',
+    availability: '开放获取',
+    speed: '< 3s',
+    color: 'blue' as const,
+  },
+];
+
+const TRENDING_TOPICS = [
+  { label: 'Quantum Error Correction', icon: Cpu },
+  { label: 'Stabilizer Codes', icon: Zap },
+  { label: 'Hamiltonian Simulation', icon: Layers },
+  { label: 'MOFs Synthesis', icon: Database },
+  { label: 'Diffusion Models', icon: Brain },
+  { label: 'Battery Materials', icon: Zap },
+  { label: 'DFT Calculations', icon: Atom },
+  { label: 'Machine Learning Potentials', icon: Sparkles },
+];
+
+const SUGGESTED_QUERIES = [
+  'attention is all you need',
+  'quantum error correction stabilizer',
+  'metal organic framework synthesis',
+  'density functional theory battery',
+];
+
+const IMPORT_STAGES = [
+  { key: 'searching', label: '检索文献', icon: Search },
+  { key: 'downloading', label: '下载元数据', icon: Download },
+  { key: 'parsing', label: '解析内容', icon: FileText },
+  { key: 'chunking', label: '智能分块', icon: Layers },
+  { key: 'embedding', label: '向量嵌入', icon: Brain },
+  { key: 'done', label: '入库完成', icon: CheckCircle },
+];
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const SOURCE_CONFIG: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
   arxiv: { label: 'arXiv', icon: <Atom className="w-4 h-4" />, color: 'bg-red-50 text-red-700 border-red-200' },
@@ -36,29 +92,59 @@ function extractYear(paper: LiteraturePaper): string {
   return '';
 }
 
-// ---- Component ----
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function LiteratureSearchPage() {
-  // Search state
+  // ── Search state ──────────────────────────────────────────────────────────
   const [keyword, setKeyword] = useState('');
   const [source, setSource] = useState<'all' | 'arxiv' | 'crossref'>('all');
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<PaperResult[]>([]);
   const [searched, setSearched] = useState(false);
 
-  // Detail preview state
+  // ── Detail state ──────────────────────────────────────────────────────────
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailDoc, setDetailDoc] = useState<LiteratureDocument | null>(null);
 
-  // Import history
+  // ── Import state ──────────────────────────────────────────────────────────
   const [importHistory, setImportHistory] = useState<ImportHistoryItem[]>([]);
+  const [reviewPaper, setReviewPaper] = useState<PaperResult | null>(null);
+  const [reviewVisibility, setReviewVisibility] = useState<'public' | 'internal'>('internal');
+  const [reviewSpace, setReviewSpace] = useState('s-papers');
+  const [importingId, setImportingId] = useState<string | null>(null);
+  const [importStage, setImportStage] = useState(0);
 
-  // ---- Search ----
+  // ── UI state ──────────────────────────────────────────────────────────────
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [recentSearches, setRecentSearches] = useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem('miqro_lit_searches') || '[]'); }
+    catch { return []; }
+  });
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSearch = useCallback(async (e?: React.FormEvent) => {
+  // ── Keyboard shortcut ────────────────────────────────────────────────────
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const saveRecentSearch = (q: string) => {
+    const updated = [q, ...recentSearches.filter((s) => s !== q)].slice(0, 5);
+    setRecentSearches(updated);
+    localStorage.setItem('miqro_lit_searches', JSON.stringify(updated));
+  };
+
+  // ── Search ────────────────────────────────────────────────────────────────
+  const handleSearch = useCallback(async (e?: React.FormEvent, searchKeyword?: string) => {
     e?.preventDefault();
-    const q = keyword.trim();
+    const q = (searchKeyword || keyword).trim();
     if (!q) return;
 
     setLoading(true);
@@ -66,6 +152,7 @@ export default function LiteratureSearchPage() {
     setResults([]);
     setExpandedId(null);
     setDetailDoc(null);
+    if (!searchKeyword) saveRecentSearch(q);
 
     const sources = source === 'all' ? ['arxiv', 'crossref'] : [source];
 
@@ -81,7 +168,6 @@ export default function LiteratureSearchPage() {
         }
       }
 
-      // Sort by year desc (newer first)
       merged.sort((a, b) => {
         const ya = parseInt(extractYear(a)) || 0;
         const yb = parseInt(extractYear(b)) || 0;
@@ -96,42 +182,66 @@ export default function LiteratureSearchPage() {
     }
   }, [keyword, source]);
 
-  // ---- Detail Preview ----
-
+  // ── Detail ────────────────────────────────────────────────────────────────
   const handleToggleDetail = useCallback(async (paper: PaperResult) => {
     if (expandedId === paper.id) {
       setExpandedId(null);
       setDetailDoc(null);
       return;
     }
-
     setExpandedId(paper.id);
     setDetailLoading(true);
     setDetailDoc(null);
-
     const src = paper.metadata?.source || 'arxiv';
     try {
       const doc = await literatureApi.detail(src, paper.id);
       setDetailDoc(doc);
-    } catch {
-      setDetailDoc(null);
-    } finally {
-      setDetailLoading(false);
-    }
+    } catch { setDetailDoc(null); }
+    finally { setDetailLoading(false); }
   }, [expandedId]);
 
-  // ---- Import ----
+  // ── Import review ─────────────────────────────────────────────────────────
+  const handleOpenReview = (paper: PaperResult) => {
+    setReviewPaper(paper);
+    setReviewVisibility('internal');
+    setReviewSpace('s-papers');
+  };
 
-  const handleImport = useCallback(async (paper: PaperResult) => {
+  const handleConfirmImport = useCallback(async () => {
+    if (!reviewPaper) return;
+    const paper = reviewPaper;
+    setReviewPaper(null);
+    setImportingId(paper.id);
+    setImportStage(0);
+
+    // Animate through import stages
+    const stageInterval = setInterval(() => {
+      setImportStage((prev) => {
+        if (prev >= IMPORT_STAGES.length - 2) {
+          clearInterval(stageInterval);
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, 400);
+
     const src = paper.metadata?.source || 'arxiv';
     const idx = results.findIndex((r) => r.id === paper.id);
-    if (idx === -1) return;
 
-    // Mark as importing
-    setResults((prev) => prev.map((r, i) => (i === idx ? { ...r, _importing: true, _importError: undefined } : r)));
+    setResults((prev) => prev.map((r, i) =>
+      i === idx ? { ...r, _importing: true, _importError: undefined, _importStage: 'searching' } : r,
+    ));
 
     try {
       const res = await literatureApi.importPaper(src, paper.id);
+      clearInterval(stageInterval);
+      setImportStage(IMPORT_STAGES.length - 1);
+
+      setTimeout(() => {
+        setImportingId(null);
+        setImportStage(0);
+      }, 800);
+
       setResults((prev) =>
         prev.map((r, i) =>
           i === idx
@@ -140,58 +250,43 @@ export default function LiteratureSearchPage() {
         ),
       );
 
-      setImportHistory((prev) => [
-        {
-          id: paper.id,
-          title: paper.title,
-          source: src,
-          entryId: res.entryId,
-          error: res.error,
-          timestamp: Date.now(),
-        },
-        ...prev.slice(0, 19),
-      ]);
+      setImportHistory((prev) => [{
+        id: paper.id, title: paper.title, source: src,
+        entryId: res.entryId, error: res.error, timestamp: Date.now(),
+      }, ...prev.slice(0, 19)]);
     } catch (err: any) {
+      clearInterval(stageInterval);
+      setImportingId(null);
+      setImportStage(0);
       setResults((prev) =>
         prev.map((r, i) =>
           i === idx ? { ...r, _importing: false, _importError: err.message || 'import failed' } : r,
         ),
       );
     }
-  }, [results]);
+  }, [reviewPaper, results]);
 
-  // ---- Batch import ----
-
+  // ── Batch import ──────────────────────────────────────────────────────────
   const handleBatchImport = useCallback(async () => {
     const unimported = results.filter((r) => !r._imported && !r._importing);
     if (unimported.length === 0) return;
-
     const arxivIds = unimported.filter((r) => (r.metadata?.source || 'arxiv') === 'arxiv').map((r) => r.id);
     const crossrefDois = unimported.filter((r) => r.metadata?.source === 'crossref').map((r) => r.id);
 
-    // Mark all as importing
     setResults((prev) =>
       prev.map((r) => (unimported.some((u) => u.id === r.id) ? { ...r, _importing: true, _importError: undefined } : r)),
     );
 
     try {
-      if (arxivIds.length > 0) {
-        await literatureApi.importPapers('arxiv', arxivIds);
-      }
-      if (crossrefDois.length > 0) {
-        await literatureApi.importPapers('crossref', crossrefDois);
-      }
+      if (arxivIds.length > 0) await literatureApi.importPapers('arxiv', arxivIds);
+      if (crossrefDois.length > 0) await literatureApi.importPapers('crossref', crossrefDois);
       setResults((prev) =>
-        prev.map((r) =>
-          unimported.some((u) => u.id === r.id) ? { ...r, _importing: false, _imported: true } : r,
-        ),
+        prev.map((r) => unimported.some((u) => u.id === r.id) ? { ...r, _importing: false, _imported: true } : r),
       );
     } catch (err: any) {
       setResults((prev) =>
         prev.map((r) =>
-          unimported.some((u) => u.id === r.id)
-            ? { ...r, _importing: false, _importError: err.message }
-            : r,
+          unimported.some((u) => u.id === r.id) ? { ...r, _importing: false, _importError: err.message } : r,
         ),
       );
     }
@@ -200,349 +295,695 @@ export default function LiteratureSearchPage() {
   const unimportedCount = results.filter((r) => !r._imported && !r._importing).length;
   const importedCount = results.filter((r) => r._imported).length;
 
-  // ---- Render helpers ----
+  // ── Derived: show discovery state only before any search ──────────────────
+  const showDiscovery = !searched && !loading;
 
+  // ── Source badge helper ───────────────────────────────────────────────────
   const sourceBadge = (paper: LiteraturePaper) => {
     const src = paper.metadata?.source || 'crossref';
     const cfg = SOURCE_CONFIG[src] || SOURCE_CONFIG.crossref;
     return (
-      <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold border ${cfg.color}`}>
+      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${cfg.color}`}>
         {cfg.icon}
         <span className="ml-1">{cfg.label}</span>
       </span>
     );
   };
 
+  // ── Render ──────────────────────────────────────────────────────────────────
   return (
-    <div className="space-y-6" id="literature-search-page">
-      {/* Page Header */}
-      <div className="border-b border-gray-200 pb-4 select-none">
-        <h1 className="text-2xl font-extrabold text-[#2B3150] font-sans">
-          文献检索与导入 (Literature Import)
-        </h1>
-        <p className="text-xs text-gray-500 mt-1">
-          搜索 arXiv 预印本和 CrossRef 学术文献，一键导入到企业知识库。覆盖 AI、物理、数学、生物等领域。
-        </p>
-      </div>
-
-      {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Sidebar: Source & Stats */}
-        <div className="lg:col-span-3 space-y-5 select-none" id="lit-search-sidebar">
-          {/* Source Selector */}
-          <div className="space-y-2">
-            <h4 className="text-[11px] font-extrabold text-gray-900 uppercase tracking-wide">
-              数据源 (Source)
-            </h4>
-            <div className="space-y-1.5 text-xs text-gray-700">
-              {[
-                { value: 'all', label: '全部来源', icon: <Search className="w-3.5 h-3.5" /> },
-                { value: 'arxiv', label: 'arXiv 预印本', icon: <Atom className="w-3.5 h-3.5" /> },
-                { value: 'crossref', label: 'CrossRef 学术文献', icon: <Globe className="w-3.5 h-3.5" /> },
-              ].map((opt) => (
-                <label key={opt.value} className="flex items-center space-x-2 cursor-pointer py-1">
-                  <input
-                    type="radio"
-                    name="sourceFilter"
-                    checked={source === opt.value}
-                    onChange={() => setSource(opt.value as typeof source)}
-                    className="h-3.5 w-3.5 text-[#DB5F5B] focus:ring-[#DB5F5B]"
-                  />
-                  <span className="flex items-center space-x-1.5">
-                    {opt.icon}
-                    <span>{opt.label}</span>
-                  </span>
-                </label>
-              ))}
+    <div className="space-y-0" id="literature-search-page">
+      {/* ═══════════════════════════════════════════════════════════════════════
+          HERO SECTION
+          ═══════════════════════════════════════════════════════════════════════ */}
+      <section className="bg-white border-b border-gray-200" aria-label="文献检索">
+        <div className="max-w-4xl mx-auto px-4 py-10 sm:py-14">
+          {/* Title */}
+          <div className="text-center mb-7">
+            <div className="inline-flex items-center gap-2 mb-3">
+              <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#DB5F5B]/10">
+                <BookOpen className="w-4 h-4 text-[#DB5F5B]" aria-hidden="true" />
+              </span>
+              <span className="text-xs font-semibold text-[#DB5F5B] uppercase tracking-wider">
+                AI-Powered Discovery
+              </span>
             </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#2B3150] font-display tracking-tight">
+              文献检索与导入
+            </h1>
+            <p className="mt-2 text-sm text-gray-500 max-w-lg mx-auto">
+              搜索 arXiv 预印本与 CrossRef 学术文献，AI 辅助筛选，一键导入企业知识库
+            </p>
           </div>
 
-          {/* Results Summary (after search) */}
-          {searched && !loading && (
-            <div className="space-y-2 pt-3 border-t border-gray-200">
-              <h4 className="text-[11px] font-extrabold text-gray-900 uppercase tracking-wide">
-                检索统计
-              </h4>
-              <div className="text-xs text-gray-600 space-y-1">
-                <div className="flex justify-between">
-                  <span>命中结果</span>
-                  <span className="font-bold text-[#2B3150]">{results.length} 篇</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>已导入</span>
-                  <span className="font-bold text-emerald-600">{importedCount} 篇</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>待导入</span>
-                  <span className="font-bold text-[#DB5F5B]">{unimportedCount} 篇</span>
+          {/* Search box */}
+          <form onSubmit={(e) => handleSearch(e)}>
+            <div
+              className={`
+                relative flex items-center bg-white border-2 rounded-lg transition-all duration-200
+                ${searchFocused
+                  ? 'border-[#DB5F5B] shadow-[0_0_0_4px_rgba(219,95,91,0.12)]'
+                  : 'border-gray-300 hover:border-gray-400'
+                }
+              `}
+            >
+              <span className="absolute left-4 flex items-center pointer-events-none">
+                <BookOpen className={`w-5 h-5 transition-colors duration-200 ${searchFocused ? 'text-[#DB5F5B]' : 'text-gray-400'}`} aria-hidden="true" />
+              </span>
+
+              <input
+                ref={searchInputRef}
+                type="text"
+                className="flex-1 pl-12 pr-24 py-3.5 bg-transparent text-sm text-gray-900 placeholder-gray-400
+                           focus:outline-none font-medium"
+                placeholder="搜索论文标题、关键词、作者，如 attention is all you need..."
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setSearchFocused(false)}
+              />
+
+              <span className="absolute right-[98px] hidden sm:flex items-center gap-0.5 text-[10px] text-gray-400 font-mono pointer-events-none">
+                <kbd className="px-1 py-0.5 rounded bg-gray-100 border border-gray-200 text-[10px] font-sans">⌘</kbd>
+                <span>+</span>
+                <kbd className="px-1 py-0.5 rounded bg-gray-100 border border-gray-200 text-[10px] font-sans">K</kbd>
+              </span>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="m-1.5 px-5 py-2 bg-[#2B3150] hover:bg-[#2B3150]/90 text-white text-sm font-semibold
+                           rounded-md border-2 border-transparent
+                           focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/40
+                           transition-all duration-150 shrink-0 disabled:opacity-60"
+              >
+                {loading ? '搜索中...' : '搜索文献'}
+              </button>
+            </div>
+          </form>
+
+          {/* Suggested + Recent */}
+          <div className="mt-4 space-y-3">
+            {/* Suggested queries */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-[11px] font-semibold text-gray-400 shrink-0">试试：</span>
+              {SUGGESTED_QUERIES.map((q) => (
+                <button
+                  key={q}
+                  type="button"
+                  onClick={() => { setKeyword(q); handleSearch(undefined, q); }}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] text-gray-500
+                             bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full
+                             transition-all duration-150"
+                >
+                  <Search className="w-3 h-3" aria-hidden="true" />
+                  <span className="max-w-[200px] truncate">{q}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Recent searches */}
+            {recentSearches.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[11px] font-semibold text-gray-400 shrink-0 flex items-center gap-1">
+                  <Clock className="w-3 h-3" aria-hidden="true" />
+                  最近：
+                </span>
+                {recentSearches.map((q) => (
+                  <button
+                    key={q}
+                    type="button"
+                    onClick={() => { setKeyword(q); handleSearch(undefined, q); }}
+                    className="text-[11px] text-gray-500 hover:text-[#DB5F5B] transition-colors"
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Source cards */}
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {SOURCE_CARDS.map((src) => {
+              const active = source === src.key || source === 'all';
+              return (
+                <button
+                  key={src.key}
+                  onClick={() => setSource(source === src.key ? 'all' : src.key as typeof source)}
+                  className={`
+                    flex items-start gap-3 p-3.5 rounded-lg border-2 text-left transition-all duration-150
+                    ${active
+                      ? src.color === 'red'
+                        ? 'border-red-200 bg-red-50/30'
+                        : 'border-blue-200 bg-blue-50/30'
+                      : 'border-gray-200 bg-white hover:border-gray-300'
+                    }
+                  `}
+                >
+                  <div className={`flex items-center justify-center w-9 h-9 rounded-lg shrink-0 ${
+                    src.color === 'red' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'
+                  }`}>
+                    <src.icon className="w-4 h-4" aria-hidden="true" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-gray-900">{src.name}</span>
+                      <span className={`w-2 h-2 rounded-full ${active ? 'bg-emerald-500' : 'bg-gray-300'}`} />
+                    </div>
+                    <p className="text-[11px] text-gray-500 mt-0.5">{src.description}</p>
+                    <div className="flex items-center gap-3 mt-1.5 text-[10px] text-gray-400">
+                      <span>{src.availability}</span>
+                      <span aria-hidden="true">·</span>
+                      <span>响应 {src.speed}</span>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          CONTENT AREA
+          ═══════════════════════════════════════════════════════════════════════ */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* ── Left Sidebar ───────────────────────────────────────────────── */}
+          <aside className="lg:col-span-3 space-y-4">
+            {/* Search stats (after search) */}
+            {searched && !loading && (
+              <div className="bg-white border border-gray-100 rounded-lg p-4 space-y-3">
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">检索统计</h3>
+                <div className="space-y-2 text-xs">
+                  <StatRow label="命中结果" value={`${results.length} 篇`} />
+                  <StatRow label="已导入" value={`${importedCount} 篇`} color="emerald" />
+                  <StatRow label="待导入" value={`${unimportedCount} 篇`} color="coral" />
                 </div>
 
+                {/* Batch import */}
+                {unimportedCount > 0 && (
+                  <button
+                    onClick={handleBatchImport}
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2
+                               bg-[#DB5F5B] hover:bg-[#DB5F5B]/90 text-white text-xs font-semibold
+                               rounded-md transition-all duration-150"
+                  >
+                    <Download className="w-3.5 h-3.5" aria-hidden="true" />
+                    一键全部导入
+                  </button>
+                )}
+
+                {/* Import history */}
                 {importHistory.length > 0 && (
-                  <div className="pt-2 mt-2 border-t border-gray-150">
-                    <h5 className="text-[10px] font-extrabold text-gray-500 uppercase mb-1.5">导入记录</h5>
-                    <div className="space-y-1 max-h-40 overflow-y-auto">
-                      {importHistory.map((h, i) => (
-                        <div key={`${h.id}-${h.timestamp}`} className="text-[10px] flex items-start space-x-1">
-                          {h.error ? (
-                            <AlertCircle className="w-3 h-3 text-red-400 shrink-0 mt-0.5" />
-                          ) : (
-                            <CheckCircle className="w-3 h-3 text-emerald-400 shrink-0 mt-0.5" />
-                          )}
-                          <span className="text-gray-500 truncate">{h.title.slice(0, 40)}</span>
+                  <div className="pt-3 border-t border-gray-100">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase mb-2">导入记录</p>
+                    <div className="space-y-1.5 max-h-48 overflow-y-auto">
+                      {importHistory.slice(0, 10).map((h) => (
+                        <div key={`${h.id}-${h.timestamp}`} className="flex items-start gap-1.5 text-[10px]">
+                          {h.error
+                            ? <AlertCircle className="w-3 h-3 text-red-400 shrink-0 mt-0.5" />
+                            : <CheckCircle className="w-3 h-3 text-emerald-400 shrink-0 mt-0.5" />
+                          }
+                          <span className="text-gray-500 truncate">{h.title.slice(0, 35)}</span>
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
               </div>
-            </div>
-          )}
-
-          {/* Info Card */}
-          <div className="bg-[#F5F6E5]/40 border border-gray-200 rounded p-3 text-[10px] text-gray-500 leading-relaxed">
-            <p className="font-bold text-gray-700 mb-1">使用说明</p>
-            <p>1. 输入关键词搜索文献</p>
-            <p>2. 展开查看摘要与详情</p>
-            <p>3. 点击"导入"加入知识库</p>
-            <p className="mt-1">导入后将自动分块、嵌入，可在搜索页面检索。</p>
-          </div>
-        </div>
-
-        {/* Right Main: Search + Results */}
-        <div className="lg:col-span-9 space-y-5">
-          {/* Search Input */}
-          <form onSubmit={handleSearch} className="flex select-none">
-            <div className="relative flex-grow">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <BookOpen className="h-4 w-4 text-gray-400" />
-              </span>
-              <input
-                type="text"
-                className="w-full pl-9 pr-3 py-2 border-2 border-gray-900 focus:outline-none focus:ring-2 focus:ring-[#DB5F5B] text-xs font-sans placeholder-gray-400 font-medium"
-                placeholder="搜索论文标题、关键词、作者，如: attention is all you need..."
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-[#2B3150] hover:bg-[#2B3150]/90 text-white font-bold text-xs px-6 py-2 border-2 border-l-0 border-gray-900 transition-all shrink-0 disabled:opacity-60"
-            >
-              {loading ? '搜索中...' : '搜索文献'}
-            </button>
-          </form>
-
-          {/* Batch Import Bar */}
-          {unimportedCount > 0 && (
-            <div className="flex items-center justify-between bg-[#F5F6E5]/60 border border-[#DB5F5B]/20 rounded px-4 py-2 text-xs select-none">
-              <span className="text-gray-600">
-                <span className="font-bold text-[#DB5F5B]">{unimportedCount}</span> 篇文献可导入
-              </span>
-              <button
-                onClick={handleBatchImport}
-                className="bg-[#DB5F5B] hover:bg-[#DB5F5B]/90 text-white font-bold px-4 py-1.5 rounded text-xs transition-all flex items-center space-x-1"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>一键全部导入</span>
-              </button>
-            </div>
-          )}
-
-          {/* Results Summary */}
-          <div className="flex items-center justify-between pb-1.5 border-b-2 border-gray-900 text-xs select-none">
-            <span className="font-bold text-gray-800">
-              {loading
-                ? '正在检索文献...'
-                : searched
-                  ? `检索结果：共 ${results.length} 篇`
-                  : '输入关键词开始检索'}
-            </span>
-            {searched && !loading && (
-              <span className="text-[10px] text-gray-400 font-mono">
-                arXiv + CrossRef
-              </span>
             )}
-          </div>
 
-          {/* Loading State */}
-          {loading && (
-            <div className="py-16 space-y-3 max-w-sm mx-auto text-center">
-              <div className="flex items-center justify-center space-x-2 text-[#DB5F5B] text-xs font-bold animate-pulse">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>检索外部文献库中...</span>
+            {/* Info card (before search) */}
+            {!searched && (
+              <div className="bg-[#F5F6E5]/30 border border-gray-100 rounded-lg p-4 space-y-2 text-xs text-gray-500">
+                <p className="font-semibold text-gray-700 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[#DB5F5B]" aria-hidden="true" />
+                  使用说明
+                </p>
+                <ol className="space-y-1 list-decimal list-inside text-[11px]">
+                  <li>输入关键词或论文标题搜索</li>
+                  <li>展开卡片查看摘要与详情</li>
+                  <li>点击"导入"选择配置后加入知识库</li>
+                  <li>导入后将自动分块、嵌入，可在搜索页检索</li>
+                </ol>
               </div>
-              <div className="h-1 bg-gray-100 rounded animate-pulse" />
-              <div className="h-1 bg-gray-100 rounded animate-pulse w-5/6 mx-auto" />
-            </div>
-          )}
+            )}
+          </aside>
 
-          {/* Empty State */}
-          {!loading && searched && results.length === 0 && (
-            <div className="text-center py-16 text-gray-400 italic bg-white border border-gray-200 p-6 rounded">
-              未找到与 "{keyword}" 匹配的文献。请尝试其他关键词或切换数据源。
-            </div>
-          )}
+          {/* ── Main Content ────────────────────────────────────────────────── */}
+          <div className="lg:col-span-9 space-y-4">
+            {/* Result header */}
+            {searched && (
+              <div className="flex items-center justify-between pb-2 border-b border-gray-200 text-xs">
+                <span className="font-semibold text-gray-700">
+                  {loading
+                    ? '正在检索文献...'
+                    : `检索结果：共 ${results.length} 篇`
+                  }
+                </span>
+                <span className="text-[10px] text-gray-400 font-mono">arXiv + CrossRef</span>
+              </div>
+            )}
 
-          {/* Results List */}
-          {!loading && results.length > 0 && (
-            <div className="divide-y divide-gray-200">
-              {results.map((paper) => (
-                <div key={paper.id} className="py-4 space-y-2 font-sans first:pt-0">
-                  {/* Title Row */}
-                  <div className="flex items-start justify-between gap-3">
-                    <button
-                      onClick={() => handleToggleDetail(paper)}
-                      className="text-base font-bold text-[#1D70B8] hover:underline hover:text-blue-800 text-left leading-snug flex items-start space-x-2"
-                    >
-                      {expandedId === paper.id ? (
-                        <ChevronDown className="w-4 h-4 shrink-0 mt-0.5" />
-                      ) : (
-                        <ChevronRight className="w-4 h-4 shrink-0 mt-0.5" />
-                      )}
-                      <span>{paper.title}</span>
-                    </button>
+            {/* ── Discovery State ──────────────────────────────────────────── */}
+            {showDiscovery && (
+              <div className="space-y-6 pt-2">
+                {/* Trending topics */}
+                <section>
+                  <div className="flex items-center gap-2 mb-3">
+                    <TrendingUp className="w-4 h-4 text-[#DB5F5B]" aria-hidden="true" />
+                    <h2 className="text-sm font-semibold text-[#2B3150] font-display">热门研究方向</h2>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {TRENDING_TOPICS.map((topic) => (
+                      <button
+                        key={topic.label}
+                        onClick={() => { setKeyword(topic.label); handleSearch(undefined, topic.label); }}
+                        className="group flex items-center gap-2.5 p-3 bg-white border border-gray-200 rounded-lg
+                                   hover:border-[#2B3150]/20 hover:shadow-sm hover:-translate-y-0.5
+                                   transition-all duration-150 text-left"
+                      >
+                        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50
+                                        group-hover:bg-[#DB5F5B]/10 transition-colors">
+                          <topic.icon className="w-4 h-4 text-gray-400 group-hover:text-[#DB5F5B] transition-colors" aria-hidden="true" />
+                        </div>
+                        <span className="text-xs font-medium text-gray-700 group-hover:text-[#2B3150] transition-colors leading-tight">
+                          {topic.label}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </section>
 
-                    <div className="flex items-center space-x-2 shrink-0 mt-0.5">
-                      {sourceBadge(paper)}
-                      {/* Import Status */}
-                      {paper._importing ? (
-                        <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
-                      ) : paper._imported ? (
-                        <CheckCircle className="w-4 h-4 text-emerald-500" />
-                      ) : (
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handleImport(paper); }}
-                          className="inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-bold bg-[#DB5F5B] text-white hover:bg-[#DB5F5B]/90 transition-all"
-                        >
-                          <Download className="w-3 h-3" />
-                          <span>导入</span>
-                        </button>
-                      )}
+                {/* Quick start examples */}
+                <section className="bg-[#F5F6E5]/10 border border-gray-100 rounded-lg p-5">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Sparkles className="w-4 h-4 text-[#F2D760]" aria-hidden="true" />
+                    <h3 className="text-sm font-semibold text-[#2B3150] font-display">快速开始</h3>
+                  </div>
+                  <p className="text-xs text-gray-500 mb-3">
+                    输入论文标题、DOI、作者名或关键词，系统将同时检索 arXiv 和 CrossRef 数据库。
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['quantum computing', 'machine learning', 'materials science', 'error correction', 'neural networks'].map((t) => (
+                      <button
+                        key={t}
+                        onClick={() => { setKeyword(t); handleSearch(undefined, t); }}
+                        className="px-3 py-1.5 text-[11px] text-[#1D70B8] bg-white border border-gray-200
+                                   rounded-full hover:border-[#1D70B8]/30 hover:bg-blue-50/50 transition-all"
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </section>
+              </div>
+            )}
+
+            {/* ── Loading State ────────────────────────────────────────────── */}
+            {loading && (
+              <div className="space-y-3">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="p-4 border border-gray-100 rounded-lg animate-pulse space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="h-5 w-5 bg-gray-200 rounded shrink-0 mt-0.5" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 w-3/4 bg-gray-200 rounded" />
+                        <div className="h-3 w-1/2 bg-gray-100 rounded" />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5 pl-8">
+                      <div className="h-3 w-full bg-gray-100 rounded" />
+                      <div className="h-3 w-2/3 bg-gray-100 rounded" />
+                    </div>
+                    <div className="flex items-center gap-2 pl-8">
+                      <div className="h-5 w-16 bg-gray-100 rounded-full" />
+                      <div className="h-5 w-14 bg-gray-100 rounded" />
                     </div>
                   </div>
+                ))}
+              </div>
+            )}
 
-                  {/* Description */}
-                  <p className="text-xs text-gray-600 leading-relaxed">
-                    {paper.description}
-                    {extractYear(paper) && (
-                      <span className="text-gray-400 ml-1">({extractYear(paper)})</span>
-                    )}
-                  </p>
-
-                  {/* Import Error */}
-                  {paper._importError && (
-                    <div className="bg-red-50 border-l-2 border-red-400 p-2 rounded-r text-[10px] text-red-600">
-                      <AlertCircle className="w-3 h-3 inline mr-1" />
-                      {paper._importError}
-                    </div>
-                  )}
-
-                  {/* Import Success */}
-                  {paper._imported && paper._entryId && (
-                    <div className="bg-emerald-50 border-l-2 border-emerald-400 p-2 rounded-r text-[10px] text-emerald-700">
-                      <CheckCircle className="w-3 h-3 inline mr-1" />
-                      已导入知识库 (Entry #{paper._entryId})
-                    </div>
-                  )}
-
-                  {/* Expanded Detail Preview */}
-                  {expandedId === paper.id && (
-                    <div className="bg-white border border-gray-200 rounded-lg p-4 mt-2 space-y-3">
-                      {detailLoading ? (
-                        <div className="flex items-center space-x-2 text-xs text-gray-400 py-4">
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          <span>加载文献详情...</span>
-                        </div>
-                      ) : detailDoc ? (
-                        <>
-                          {/* Metadata */}
-                          <div className="grid grid-cols-2 gap-2 text-[11px] text-gray-600">
-                            {detailDoc.author && (
-                              <div>
-                                <span className="font-bold text-gray-500">作者：</span>
-                                {detailDoc.author.slice(0, 120)}
-                              </div>
-                            )}
-                            {detailDoc.metadata?.published && (
-                              <div>
-                                <span className="font-bold text-gray-500">发表：</span>
-                                {String(detailDoc.metadata.published)}
-                              </div>
-                            )}
-                            {detailDoc.metadata?.journal && (
-                              <div>
-                                <span className="font-bold text-gray-500">期刊：</span>
-                                {String(detailDoc.metadata.journal)}
-                              </div>
-                            )}
-                            {detailDoc.metadata?.primaryCategory && (
-                              <div>
-                                <span className="font-bold text-gray-500">分类：</span>
-                                {String(detailDoc.metadata.primaryCategory)}
-                              </div>
-                            )}
-                            {detailDoc.tags && detailDoc.tags.length > 0 && (
-                              <div className="col-span-2 flex flex-wrap gap-1">
-                                {detailDoc.tags.map((t) => (
-                                  <span key={t} className="px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded text-[10px]">
-                                    {t}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Abstract Preview */}
-                          <div className="border-t border-gray-100 pt-3">
-                            <h5 className="text-[11px] font-extrabold text-gray-700 mb-1">摘要预览</h5>
-                            <p className="text-xs text-gray-600 leading-relaxed line-clamp-6">
-                              {detailDoc.content
-                                ?.split('## 摘要')[1]
-                                ?.split('## ')[0]
-                                ?.trim()
-                                || detailDoc.content?.slice(0, 500)
-                                || '暂无摘要'}
-                            </p>
-                          </div>
-
-                          {/* External Links */}
-                          <div className="flex items-center space-x-3 text-[10px] pt-1">
-                            {paper.metadata?.doi && (
-                              <a
-                                href={`https://doi.org/${paper.metadata.doi}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center space-x-1 text-[#1D70B8] hover:underline"
-                              >
-                                <ExternalLink className="w-3 h-3" />
-                                <span>DOI: {paper.metadata.doi}</span>
-                              </a>
-                            )}
-                            {detailDoc.attachments?.[0]?.url && (
-                              <a
-                                href={detailDoc.attachments[0].url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center space-x-1 text-[#1D70B8] hover:underline"
-                              >
-                                <FileText className="w-3 h-3" />
-                                <span>查看 PDF</span>
-                              </a>
-                            )}
-                          </div>
-                        </>
-                      ) : (
-                        <div className="text-xs text-gray-400 py-2">无法加载文献详情，请重试。</div>
-                      )}
-                    </div>
-                  )}
+            {/* ── Empty State ──────────────────────────────────────────────── */}
+            {!loading && searched && results.length === 0 && (
+              <div className="text-center py-16">
+                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mx-auto mb-4">
+                  <Search className="w-8 h-8 text-gray-300" aria-hidden="true" />
                 </div>
-              ))}
-            </div>
-          )}
+                <h3 className="text-sm font-semibold text-gray-700 mb-1">
+                  未找到与 "{keyword}" 匹配的文献
+                </h3>
+                <p className="text-xs text-gray-400 mb-5 max-w-md mx-auto">
+                  建议尝试不同的关键词、使用英文搜索，或切换数据源后重试。
+                </p>
+                <div className="flex flex-wrap justify-center gap-2">
+                  <button
+                    onClick={() => { setKeyword(''); setSearched(false); }}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#2B3150] text-white text-sm font-semibold rounded-md
+                               hover:bg-[#2B3150]/90 transition-all duration-150"
+                  >
+                    返回发现页
+                  </button>
+                  <span className="text-xs text-gray-400 flex items-center">或试试：</span>
+                  {SUGGESTED_QUERIES.slice(0, 2).map((q) => (
+                    <button
+                      key={q}
+                      onClick={() => { setKeyword(q); handleSearch(undefined, q); }}
+                      className="px-3 py-1.5 text-xs text-[#1D70B8] bg-white border border-gray-200 rounded-full
+                                 hover:border-[#1D70B8]/30 transition-all"
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* ── Paper Result Cards ────────────────────────────────────────── */}
+            {!loading && results.length > 0 && (
+              <div className="space-y-2">
+                {results.map((paper) => {
+                  const isExpanded = expandedId === paper.id;
+                  const isThisImporting = importingId === paper.id || paper._importing;
+                  return (
+                    <article
+                      key={paper.id}
+                      className={`
+                        bg-white border rounded-lg transition-all duration-150
+                        ${isExpanded
+                          ? 'border-[#2B3150]/20 shadow-sm'
+                          : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
+                        }
+                      `}
+                    >
+                      {/* Card header */}
+                      <div className="p-4">
+                        <div className="flex items-start gap-3">
+                          {/* Expand toggle */}
+                          <button
+                            onClick={() => handleToggleDetail(paper)}
+                            className="shrink-0 mt-0.5 text-gray-400 hover:text-[#DB5F5B] transition-colors"
+                            aria-label={isExpanded ? '收起详情' : '展开详情'}
+                          >
+                            {isExpanded
+                              ? <ChevronDown className="w-4 h-4" />
+                              : <ChevronRight className="w-4 h-4" />
+                            }
+                          </button>
+
+                          <div className="flex-1 min-w-0">
+                            {/* Title */}
+                            <button
+                              onClick={() => handleToggleDetail(paper)}
+                              className="text-sm font-bold text-[#1D70B8] hover:text-[#DB5F5B] transition-colors
+                                         text-left leading-snug"
+                            >
+                              {paper.title}
+                            </button>
+
+                            {/* Meta row */}
+                            <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                              {sourceBadge(paper)}
+                              {extractYear(paper) && (
+                                <span className="text-[11px] text-gray-400 font-mono">{extractYear(paper)}</span>
+                              )}
+                              {paper.metadata?.journal && (
+                                <span className="text-[11px] text-gray-400 truncate max-w-[200px]">
+                                  {String(paper.metadata.journal)}
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Description */}
+                            <p className="text-xs text-gray-500 leading-relaxed mt-1.5 line-clamp-2">
+                              {paper.description}
+                            </p>
+
+                            {/* Action bar */}
+                            <div className="flex items-center gap-2 mt-3">
+                              {/* Preview button */}
+                              <button
+                                onClick={() => handleToggleDetail(paper)}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-gray-600
+                                           bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-md transition-all"
+                              >
+                                <FileText className="w-3 h-3" aria-hidden="true" />
+                                {isExpanded ? '收起' : '预览'}
+                              </button>
+
+                              {/* Import button / status */}
+                              {paper._imported ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold
+                                               text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-md">
+                                  <CheckCircle className="w-3 h-3" aria-hidden="true" />
+                                  已导入
+                                </span>
+                              ) : isThisImporting ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold
+                                               text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-md">
+                                  <Loader2 className="w-3 h-3 animate-spin" aria-hidden="true" />
+                                  导入中...
+                                </span>
+                              ) : (
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); handleOpenReview(paper); }}
+                                  className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold
+                                             text-white bg-[#DB5F5B] hover:bg-[#DB5F5B]/90 rounded-md transition-all"
+                                >
+                                  <Download className="w-3 h-3" aria-hidden="true" />
+                                  导入
+                                </button>
+                              )}
+                            </div>
+
+                            {/* Import error */}
+                            {paper._importError && (
+                              <div className="mt-2 bg-red-50 border border-red-200 rounded-md px-3 py-1.5 text-[11px] text-red-600 flex items-start gap-1.5">
+                                <AlertCircle className="w-3 h-3 shrink-0 mt-0.5" aria-hidden="true" />
+                                {paper._importError}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Expanded detail */}
+                      {isExpanded && (
+                        <div className="border-t border-gray-100 px-4 py-4 bg-gray-50/50 rounded-b-lg">
+                          {detailLoading ? (
+                            <div className="flex items-center justify-center gap-2 py-6 text-xs text-gray-400">
+                              <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                              加载文献详情...
+                            </div>
+                          ) : detailDoc ? (
+                            <div className="space-y-4">
+                              {/* Metadata grid */}
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                                {detailDoc.author && <MetaItem label="作者" value={detailDoc.author.slice(0, 150)} />}
+                                {detailDoc.metadata?.published && <MetaItem label="发表" value={String(detailDoc.metadata.published)} />}
+                                {detailDoc.metadata?.journal && <MetaItem label="期刊" value={String(detailDoc.metadata.journal)} />}
+                                {detailDoc.metadata?.primaryCategory && <MetaItem label="分类" value={String(detailDoc.metadata.primaryCategory)} />}
+                              </div>
+
+                              {/* Tags */}
+                              {detailDoc.tags && detailDoc.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-1">
+                                  {detailDoc.tags.map((t) => (
+                                    <span key={t} className="px-2 py-0.5 text-[10px] font-medium text-gray-600 bg-white border border-gray-200 rounded-full">{t}</span>
+                                  ))}
+                                </div>
+                              )}
+
+                              {/* Abstract */}
+                              <div>
+                                <h5 className="text-[11px] font-semibold text-gray-700 mb-1.5">摘要</h5>
+                                <p className="text-xs text-gray-600 leading-relaxed">
+                                  {detailDoc.content
+                                    ?.split('## 摘要')[1]
+                                    ?.split('## ')[0]
+                                    ?.trim()
+                                    || detailDoc.content?.slice(0, 500)
+                                    || '暂无摘要'}
+                                </p>
+                              </div>
+
+                              {/* External links */}
+                              <div className="flex items-center gap-3 text-[11px] pt-1">
+                                {paper.metadata?.doi && (
+                                  <a href={`https://doi.org/${paper.metadata.doi}`} target="_blank" rel="noopener noreferrer"
+                                     className="inline-flex items-center gap-1 text-[#1D70B8] hover:underline">
+                                    <ExternalLink className="w-3 h-3" aria-hidden="true" />
+                                    DOI: {paper.metadata.doi}
+                                  </a>
+                                )}
+                                {detailDoc.attachments?.[0]?.url && (
+                                  <a href={detailDoc.attachments[0].url} target="_blank" rel="noopener noreferrer"
+                                     className="inline-flex items-center gap-1 text-[#1D70B8] hover:underline">
+                                    <FileText className="w-3 h-3" aria-hidden="true" />
+                                    查看 PDF
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            <p className="text-xs text-gray-400 py-4">无法加载文献详情，请重试。</p>
+                          )}
+                        </div>
+                      )}
+                    </article>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       </div>
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          IMPORT REVIEW MODAL
+          ═══════════════════════════════════════════════════════════════════════ */}
+      {reviewPaper && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/40" onClick={() => setReviewPaper(null)} aria-hidden="true" />
+
+          {/* Modal */}
+          <div className="relative bg-white border border-gray-200 rounded-xl max-w-md w-full p-5 shadow-2xl animate-fade-in space-y-4 max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-[#2B3150] font-display">确认导入</h3>
+                <p className="text-[11px] text-gray-400 mt-0.5">预览元数据并选择导入配置</p>
+              </div>
+              <button onClick={() => setReviewPaper(null)} className="p-1 rounded hover:bg-gray-100 transition-colors" aria-label="关闭">
+                <X className="w-4 h-4 text-gray-400" />
+              </button>
+            </div>
+
+            {/* Paper info */}
+            <div className="bg-gray-50 rounded-lg p-3 space-y-1.5">
+              <p className="text-xs font-semibold text-gray-900 leading-snug">{reviewPaper.title}</p>
+              <div className="flex items-center gap-2 text-[10px] text-gray-500">
+                {sourceBadge(reviewPaper)}
+                {extractYear(reviewPaper) && <span>{extractYear(reviewPaper)}</span>}
+              </div>
+            </div>
+
+            {/* Visibility */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide block">可见性</label>
+              <div className="flex gap-2">
+                {[
+                  { value: 'internal' as const, label: '内部', desc: '仅研发可见' },
+                  { value: 'public' as const, label: '公开', desc: '外部可见' },
+                ].map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setReviewVisibility(opt.value)}
+                    className={`flex-1 px-3 py-2 rounded-md border-2 text-xs font-medium transition-all ${
+                      reviewVisibility === opt.value
+                        ? 'border-[#2B3150] bg-[#2B3150]/5 text-[#2B3150]'
+                        : 'border-gray-200 text-gray-500 hover:border-gray-300'
+                    }`}
+                  >
+                    <span className="block">{opt.label}</span>
+                    <span className="text-[10px] text-gray-400">{opt.desc}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Target space */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide block">目标空间</label>
+              <select
+                value={reviewSpace}
+                onChange={(e) => setReviewSpace(e.target.value)}
+                className="w-full border-2 border-gray-200 rounded-md px-3 py-2 text-xs font-medium bg-white
+                           focus:outline-none focus:border-[#2B3150] focus:ring-2 focus:ring-[#DB5F5B]/20"
+              >
+                <option value="s-papers">学术论文</option>
+                <option value="s-sandbox">Sandbox 项目</option>
+                <option value="s-data">数据标准</option>
+                <option value="s-business">商业资料</option>
+                <option value="s-template">模板规范</option>
+              </select>
+            </div>
+
+            {/* Import progress animation (when importing) */}
+            {importingId === reviewPaper.id && (
+              <div className="space-y-2 py-2">
+                <p className="text-[11px] font-semibold text-gray-600">导入进度</p>
+                <div className="space-y-1">
+                  {IMPORT_STAGES.map((stage, i) => {
+                    const done = i < importStage;
+                    const active = i === importStage;
+                    return (
+                      <div key={stage.key} className="flex items-center gap-2.5 text-xs">
+                        <span className={`flex items-center justify-center w-5 h-5 rounded-full shrink-0 ${
+                          done ? 'bg-emerald-100 text-emerald-600' : active ? 'bg-yellow-100 text-yellow-600' : 'bg-gray-100 text-gray-300'
+                        }`}>
+                          {done ? <CheckCircle className="w-3 h-3" /> : active ? <Loader2 className="w-3 h-3 animate-spin" /> : <stage.icon className="w-3 h-3" />}
+                        </span>
+                        <span className={`${done ? 'text-emerald-700 font-medium' : active ? 'text-yellow-700 font-medium' : 'text-gray-400'}`}>
+                          {stage.label}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="flex gap-2 pt-2 border-t border-gray-100">
+              <button
+                onClick={() => setReviewPaper(null)}
+                className="flex-1 px-4 py-2 text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200
+                           rounded-md transition-all"
+              >
+                取消
+              </button>
+              <button
+                onClick={handleConfirmImport}
+                disabled={importingId === reviewPaper.id}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-semibold
+                           text-white bg-[#2B3150] hover:bg-[#2B3150]/90 rounded-md
+                           transition-all disabled:opacity-60"
+              >
+                <Download className="w-3.5 h-3.5" aria-hidden="true" />
+                确认导入
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Tiny helpers
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function StatRow({ label, value, color }: { label: string; value: string; color?: string }) {
+  const colorClass = color === 'emerald' ? 'text-emerald-600' : color === 'coral' ? 'text-[#DB5F5B]' : 'text-[#2B3150]';
+  return (
+    <div className="flex justify-between items-center">
+      <span className="text-gray-500">{label}</span>
+      <span className={`font-bold ${colorClass}`}>{value}</span>
+    </div>
+  );
+}
+
+function MetaItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <span className="font-semibold text-gray-500">{label}：</span>
+      <span className="text-gray-700">{value}</span>
     </div>
   );
 }
