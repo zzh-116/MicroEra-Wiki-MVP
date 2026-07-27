@@ -33,7 +33,7 @@ export default function Footer() {
               <li><Link to="/system-version" className="hover:underline hover:text-white">MCP 工具 (MCP Sandbox)</Link></li>
               <li><Link to="/ai-query" className="hover:underline hover:text-white">MiQi 智能调用 (MiQi Assistance)</Link></li>
               <li><Link to="/search" className="hover:underline hover:text-white">查询接口 (Search Hub)</Link></li>
-              <li><Link to="/admin/import" className="hover:underline hover:text-white">导入任务 (Import Pipeline)</Link></li>
+              <li><Link to="/admin/import" className="hover:underline hover:text-white">知识导入 (Knowledge Import)</Link></li>
               <li><Link to="/system-version" className="hover:underline hover:text-white">API 文档 (Integrations)</Link></li>
             </ul>
           </div>
@@ -45,7 +45,7 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2 text-[11px] text-gray-300">
               <li><Link to="/admin/manage" className="hover:underline hover:text-white">内容管理 (Content Management)</Link></li>
-              <li><Link to="/admin/import" className="hover:underline hover:text-white">文件入库规范 (Ingestion Specs)</Link></li>
+              <li><Link to="/admin/import" className="hover:underline hover:text-white">知识导入规范 (Import Specs)</Link></li>
               <li><Link to="/system-version" className="hover:underline hover:text-white">Reference 引用规范</Link></li>
               <li><Link to="/system-version" className="hover:underline hover:text-white">权限说明 (Access Control)</Link></li>
               <li><Link to="/system-version" className="hover:underline hover:text-white">数据标准化说明 (Standards)</Link></li>
