@@ -156,10 +156,10 @@ export default function AdminImportPage() {
       <div className="border-b border-gray-200 pb-4 select-none">
         <h1 className="text-2xl font-extrabold text-[#2B3150] font-sans flex items-center">
           <Settings className="w-6 h-6 text-[#DB5F5B] mr-2" />
-          <span>MarkItDown 智能文本加工服务 (Ingestion Service)</span>
+          <span>知识导入 (Knowledge Import)</span>
         </h1>
         <p className="text-xs text-gray-500 mt-1">
-          将外部非结构化研究报告（PDF、Docx、Drizzle schema 脚本）进行自适应清洗、公式高保真提取、分块索引并全量挂载发布。
+          将外部非结构化研究报告（PDF、Docx 等）进行自适应清洗、公式高保真提取、分块索引并全量挂载发布。
         </p>
       </div>
 

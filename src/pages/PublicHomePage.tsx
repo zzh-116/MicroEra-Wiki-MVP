@@ -508,7 +508,7 @@ export default function PublicHomePage() {
             <span>操作日志审计</span> <ChevronRight className="w-3.5 h-3.5 text-gray-400 ml-0.5" />
           </button>
           <button onClick={() => navigate('/admin/import')} className="text-blue-700 hover:underline text-left flex items-center">
-            <span>导入任务流水线</span> <ChevronRight className="w-3.5 h-3.5 text-gray-400 ml-0.5" />
+            <span>知识导入</span> <ChevronRight className="w-3.5 h-3.5 text-gray-400 ml-0.5" />
           </button>
         </div>
       </div>

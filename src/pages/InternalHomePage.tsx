@@ -288,7 +288,7 @@ export default function InternalHomePage() {
         <span className="font-bold text-[#2B3150] block mb-1">💡 物理计算平台指引</span>
         所有在这里修改或导入的实验过程，都会经由后台算子转化为标准 Markdown。
         如需发布新的可外部调用 MCP 接口，请进入
-        <button onClick={() => navigate('/admin/import')} className="text-blue-700 hover:underline mx-1 font-bold">【文件导入】</button>
+        <button onClick={() => navigate('/admin/import')} className="text-blue-700 hover:underline mx-1 font-bold">【知识导入】</button>
         或联系 Xue Yue 进行权限提权。
       </div>
 
