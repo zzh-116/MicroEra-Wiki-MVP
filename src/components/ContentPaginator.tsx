@@ -10,19 +10,49 @@ import { paginateContent, findPageByHeading } from '../utils/contentPaginator';
 function PageBlockRenderer({ block }: { block: ContentBlock }) {
   switch (block.type) {
     case 'heading': {
-      if (block.level <= 1) return <h3 id={`h-${block.text.slice(0,20)}`} className="text-base font-extrabold text-gray-900 mt-5 mb-2">{block.text}</h3>;
-      if (block.level === 2) return <h4 id={`h-${block.text.slice(0,20)}`} className="text-xs font-extrabold text-[#DB5F5B] uppercase tracking-wide mt-4 mb-1">{block.text}</h4>;
-      return <h5 id={`h-${block.text.slice(0,20)}`} className="text-xs font-bold text-gray-800 mt-3 mb-1">{block.text}</h5>;
+      if (block.level <= 1) return <h2 id={`h-${block.text.slice(0, 20)}`} className="text-xl font-bold text-gray-900 font-display mt-10 mb-3 leading-snug">{block.text}</h2>;
+      if (block.level === 2) return <h3 id={`h-${block.text.slice(0, 20)}`} className="text-base font-semibold text-gray-800 mt-8 mb-2 leading-snug">{block.text}</h3>;
+      return <h4 id={`h-${block.text.slice(0, 20)}`} className="text-sm font-semibold text-gray-700 mt-6 mb-1.5 leading-snug">{block.text}</h4>;
     }
-    case 'paragraph': return <p className="my-1.5 text-gray-600 leading-relaxed">{block.text}</p>;
+    case 'paragraph': return <p className="my-3 text-sm text-gray-700 leading-relaxed">{block.text}</p>;
     case 'list':
-      if (block.ordered) return <ol className="space-y-0.5 ml-4 my-1 list-decimal">{block.items.map((item, i) => <li key={i} className="text-gray-600 pl-1">{item}</li>)}</ol>;
-      return <ul className="space-y-0.5 ml-3 my-1">{block.items.map((item, i) => <li key={i} className="flex items-start space-x-1.5 text-gray-600"><span className="text-[#DB5F5B] font-bold shrink-0 mt-0.5">•</span><span>{item}</span></li>)}</ul>;
-    case 'code': return <pre className="my-2 p-3 bg-gray-50 border border-gray-200 rounded-lg overflow-x-auto"><code className="text-[11px] font-mono text-gray-700 whitespace-pre-wrap">{block.code}</code></pre>;
-    case 'image': return <figure className="my-3"><img src={block.src} alt={block.alt} className="max-w-full rounded-lg border border-gray-200 cursor-pointer" loading="lazy" onClick={(e) => { const el = e.currentTarget; el.classList.toggle('max-w-full'); el.classList.toggle('max-w-[200%]'); }} />{block.alt && block.alt !== 'Image' && <figcaption className="text-[10px] text-gray-400 text-center mt-1">{block.alt}</figcaption>}</figure>;
-    case 'table': return <div className="my-2 overflow-x-auto"><table className="min-w-full text-[11px] border-collapse"><thead><tr className="bg-gray-50">{block.headers.map((h, i) => <th key={i} className="border border-gray-200 px-2 py-1 text-left font-bold text-gray-700">{h}</th>)}</tr></thead><tbody>{block.rows.map((row, ri) => <tr key={ri} className="even:bg-gray-50/50">{row.map((cell, ci) => <td key={ci} className="border border-gray-200 px-2 py-1 text-gray-600">{cell}</td>)}</tr>)}</tbody></table></div>;
-    case 'blockquote': return <blockquote className="border-l-4 border-[#DB5F5B]/30 bg-[#F5F6E5]/30 px-3 py-1.5 my-2 text-gray-600 italic">{block.text}</blockquote>;
-    case 'divider': return <hr className="my-3 border-gray-200" />;
+      if (block.ordered) return <ol className="space-y-1 ml-5 my-3 list-decimal text-sm text-gray-700 leading-relaxed">{block.items.map((item, i) => <li key={i} className="pl-1">{item}</li>)}</ol>;
+      return <ul className="space-y-1 ml-4 my-3 text-sm text-gray-700 leading-relaxed">{block.items.map((item, i) => <li key={i} className="flex items-start gap-2"><span className="text-[#DB5F5B] font-bold shrink-0 mt-[3px]">•</span><span>{item}</span></li>)}</ul>;
+    case 'code': return (
+      <div className="my-4 rounded-lg overflow-hidden border border-gray-200">
+        <div className="flex items-center justify-between px-4 py-1.5 bg-gray-100 border-b border-gray-200">
+          <span className="text-[10px] text-gray-400 font-mono font-semibold uppercase tracking-wide">Code</span>
+          <span className="text-[10px] text-gray-400">{block.code.split('\n').length} lines</span>
+        </div>
+        <pre className="p-4 bg-[#1e1e2e] overflow-x-auto"><code className="text-xs font-mono text-[#cdd6f4] whitespace-pre-wrap leading-relaxed">{block.code}</code></pre>
+      </div>
+    );
+    case 'image': return (
+      <figure className="my-6">
+        <img src={block.src} alt={block.alt} className="max-w-full rounded-lg border border-gray-100 cursor-pointer hover:shadow-md transition-shadow" loading="lazy" onClick={(e) => { const el = e.currentTarget; el.classList.toggle('max-w-full'); el.classList.toggle('max-w-[200%]'); }} />
+        {block.alt && block.alt !== 'Image' && <figcaption className="text-xs text-gray-400 text-center mt-2">{block.alt}</figcaption>}
+      </figure>
+    );
+    case 'table': return (
+      <div className="my-4 overflow-x-auto rounded-lg border border-gray-200">
+        <table className="min-w-full text-sm border-collapse">
+          <thead>
+            <tr className="bg-gray-50 border-b border-gray-200">
+              {block.headers.map((h, i) => <th key={i} className="px-3 py-2.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">{h}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {block.rows.map((row, ri) => (
+              <tr key={ri} className={`border-b border-gray-100 ${ri % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'}`}>
+                {row.map((cell, ci) => <td key={ci} className="px-3 py-2 text-gray-700 leading-relaxed">{cell}</td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+    case 'blockquote': return <blockquote className="border-l-[3px] border-[#DB5F5B]/40 bg-[#F5F6E5]/20 px-4 py-2.5 my-4 text-sm text-gray-600 italic leading-relaxed rounded-r">{block.text}</blockquote>;
+    case 'divider': return <hr className="my-8 border-gray-200" />;
     default: return null;
   }
 }
