@@ -21,6 +21,7 @@ import {
   ParserError,
 } from './models.js';
 import type { ParsedProperty } from '../types.js';
+import { config } from '../config.js';
 import { markdownParser } from './markdown.js';
 
 const execFileAsync = promisify(execFile);
@@ -83,25 +84,91 @@ function countWords(text: string): number {
   return cjk + latin;
 }
 
-/** Strip inline data:image/...;base64,... URLs from Markdown */
-function stripDataUriImages(markdown: string): string {
+/** MIME type → file extension mapping for common image formats */
+const MIME_TO_EXT: Record<string, string> = {
+  'image/png': '.png',
+  'image/jpeg': '.jpg',
+  'image/jpg': '.jpg',
+  'image/gif': '.gif',
+  'image/webp': '.webp',
+  'image/bmp': '.bmp',
+  'image/svg+xml': '.svg',
+  'image/tiff': '.tiff',
+};
+
+/** Regex to match data:image/... URIs */
+const DATA_URI_RE = /data:(image\/[a-z+-]+);base64,([A-Za-z0-9+/=]+)/g;
+
+/**
+ * Extract base64 images from markdown, save them to disk, and replace the
+ * data-URI references with /api/images/<filename> URLs.
+ *
+ * Returns the transformed markdown and a list of saved image file names.
+ */
+function extractAndSaveImages(markdown: string, imagesDir: string): { markdown: string; savedImages: string[] } {
+  const savedImages: string[] = [];
+  const now = Date.now();
+  let counter = 0;
+
+  // Ensure the images directory exists
+  try { fs.mkdirSync(imagesDir, { recursive: true }); } catch { /* ignore */ }
+
   // Pass 1: markdown image syntax ![alt](data:image/...)
   markdown = markdown.replace(
-    /!\[([^\]]*)\]\(data:image\/[^)]+\)/g,
-    (_full: string, alt: string) => `[Embedded image: ${alt?.trim() || 'Image'}]`,
+    /!\[([^\]]*)\]\((data:image\/[a-z+-]+;base64,[A-Za-z0-9+/=]+)\)/g,
+    (_full: string, alt: string, dataUri: string) => {
+      const match = DATA_URI_RE.exec(dataUri);
+      DATA_URI_RE.lastIndex = 0; // reset — we only called exec once per replacement
+      if (!match) return `[Embedded image: ${alt?.trim() || 'Image'}]`;
+
+      const mimeType = match[1];
+      const base64Data = match[2];
+      const ext = MIME_TO_EXT[mimeType] || '.png';
+      const fileName = `img_${now}_${counter++}${ext}`;
+      const filePath = path.join(imagesDir, fileName);
+
+      try {
+        const buffer = Buffer.from(base64Data, 'base64');
+        fs.writeFileSync(filePath, buffer);
+        savedImages.push(fileName);
+        return `![${alt?.trim() || 'Image'}](/api/images/${fileName})`;
+      } catch {
+        return `[Embedded image: ${alt?.trim() || 'Image'}]`;
+      }
+    },
   );
-  // Pass 2: bare base64 URIs (LLM may output them raw, or broken parse artifacts)
+
+  // Pass 2: bare base64 URIs (not wrapped in markdown image syntax)
   markdown = markdown.replace(
-    /data:image\/[a-z+]+;base64,[A-Za-z0-9+/=]{100,}/g,
-    '[Embedded image omitted]',
+    /data:image\/[a-z+-]+;base64,([A-Za-z0-9+/=]{100,})/g,
+    (_full: string, base64Data: string) => {
+      const fileName = `img_${now}_${counter++}.png`;
+      const filePath = path.join(imagesDir, fileName);
+      try {
+        const buffer = Buffer.from(base64Data, 'base64');
+        fs.writeFileSync(filePath, buffer);
+        savedImages.push(fileName);
+        return `/api/images/${fileName}`;
+      } catch {
+        return '[Embedded image]';
+      }
+    },
   );
-  return markdown;
+
+  return { markdown, savedImages };
 }
 
-/** Count how many data-URI images will be stripped */
-function stripDataUriImages_count(markdown: string): number {
+/** Count how many data-URI images are present in the markdown */
+function countDataUriImages(markdown: string): number {
   const matches = markdown.match(/!\[([^\]]*)\]\(data:image\/[^)]+\)/g);
   return matches ? matches.length : 0;
+}
+
+/** Get the images output directory and ensure it exists */
+function getImagesDir(): string {
+  const dir = path.join(config.dataDir, 'images');
+  try { fs.mkdirSync(dir, { recursive: true }); } catch { /* ignore */ }
+  return dir;
 }
 
 /** Formats that Docling CLI can process natively */
@@ -280,7 +347,13 @@ export class DoclingParser implements DocumentParser {
 
       // --- same processing as parseString ---
       let markdown = content.replace(/\x00/g, '');
-      markdown = stripDataUriImages(markdown);
+      const imagesDir = getImagesDir();
+      const imgResult = extractAndSaveImages(markdown, imagesDir);
+      markdown = imgResult.markdown;
+      if (imgResult.savedImages.length > 0) {
+        console.log(`[Docling] Saved ${imgResult.savedImages.length} image(s) from "${fileName}"`);
+        warnings.push(`Extracted ${imgResult.savedImages.length} embedded image(s)`);
+      }
 
       // Extract structured properties
       let properties: ParsedProperty[] | undefined;
@@ -497,14 +570,14 @@ export class DoclingParser implements DocumentParser {
     // Strip null bytes
     markdown = markdown.replace(/\x00/g, '');
 
-    // Strip inline Base64 data-URI images (Docling embeds images as base64).
-    // These can be tens of KB and break page layout when rendered.
-    // Replaced with a safe placeholder.
-    const strippedCount = stripDataUriImages_count(markdown);
-    markdown = stripDataUriImages(markdown);
-    if (strippedCount > 0) {
-      console.log(`[Docling] Stripped ${strippedCount} inline base64 image(s) from "${fileName}"`);
-      warnings.push(`Stripped ${strippedCount} inline base64 image(s)`);
+    // Extract inline Base64 data-URI images (Docling embeds images as base64).
+    // Save them as files and replace with /api/images/<filename> URLs.
+    const imagesDir = getImagesDir();
+    const imgResult = extractAndSaveImages(markdown, imagesDir);
+    markdown = imgResult.markdown;
+    if (imgResult.savedImages.length > 0) {
+      console.log(`[Docling] Saved ${imgResult.savedImages.length} image(s) from "${fileName}"`);
+      warnings.push(`Extracted ${imgResult.savedImages.length} embedded image(s)`);
     }
 
     // Extract structured properties
@@ -565,8 +638,13 @@ export class DoclingParser implements DocumentParser {
     // For text formats, parse directly without invoking Docling CLI
     let markdown = content.replace(/\x00/g, '');
 
-    // Strip inline Base64 data-URI images (defensive — any source can contain them)
-    markdown = stripDataUriImages(markdown);
+    // Extract inline Base64 data-URI images (defensive — any source can contain them)
+    const imagesDir = getImagesDir();
+    const imgResult = extractAndSaveImages(markdown, imagesDir);
+    markdown = imgResult.markdown;
+    if (imgResult.savedImages.length > 0) {
+      warnings.push(`Extracted ${imgResult.savedImages.length} embedded image(s)`);
+    }
 
     // For HTML, invoke Docling for better conversion
     if (format === 'html') {
