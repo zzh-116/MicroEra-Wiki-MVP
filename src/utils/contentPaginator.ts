@@ -71,10 +71,24 @@ function isBreakPoint(block: ContentBlock): boolean {
 
 // ---- Main pagination logic ----
 
+/** Yield to the browser event loop to keep the UI responsive. */
+function yieldToEventLoop(): Promise<void> {
+  return new Promise((resolve) => {
+    if (typeof globalThis.scheduler !== 'undefined' && 'yield' in globalThis.scheduler) {
+      (globalThis.scheduler as any).yield().then(resolve).catch(() => setTimeout(resolve, 0));
+    } else {
+      setTimeout(resolve, 0);
+    }
+  });
+}
+
+const PAGINATE_YIELD_INTERVAL = 200;
+
 /**
  * Split ContentBlock[] into pages.
  * Uses estimated heights with smart break rules.
- * Caches result — call once per document.
+ * Yields to the event loop every PAGINATE_YIELD_INTERVAL blocks so the page-build
+ * pass doesn't run uninterrupted on the main thread for very large documents.
  */
 export async function paginateContent(rawContent: string): Promise<PaginationResult> {
   const blocks = await parseContent(rawContent);
@@ -85,6 +99,10 @@ export async function paginateContent(rawContent: string): Promise<PaginationRes
   let currentHeight = 0;
 
   for (let i = 0; i < blocks.length; i++) {
+    if (i > 0 && i % PAGINATE_YIELD_INTERVAL === 0) {
+      await yieldToEventLoop();
+    }
+
     const block = blocks[i];
     const blockHeight = estimateBlockHeight(block);
 
