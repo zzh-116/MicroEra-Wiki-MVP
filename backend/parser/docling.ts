@@ -110,8 +110,9 @@ function extractAndSaveImages(markdown: string, imagesDir: string): { markdown: 
   const now = Date.now();
   let counter = 0;
 
-  // Ensure the images directory exists
-  try { fs.mkdirSync(imagesDir, { recursive: true }); } catch { /* ignore */ }
+  // Ensure the images directory exists. Don't swallow this error — a missing
+  // imagesDir silently drops every image and ships broken /api/images/... URLs.
+  fs.mkdirSync(imagesDir, { recursive: true });
 
   // Pass 1: markdown image syntax ![alt](data:image/...)
   markdown = markdown.replace(
@@ -167,7 +168,7 @@ function countDataUriImages(markdown: string): number {
 /** Get the images output directory and ensure it exists */
 function getImagesDir(): string {
   const dir = path.join(config.dataDir, 'images');
-  try { fs.mkdirSync(dir, { recursive: true }); } catch { /* ignore */ }
+  fs.mkdirSync(dir, { recursive: true });
   return dir;
 }
 
