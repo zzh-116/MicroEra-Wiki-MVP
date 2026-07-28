@@ -76,8 +76,8 @@ function isBreakPoint(block: ContentBlock): boolean {
  * Uses estimated heights with smart break rules.
  * Caches result — call once per document.
  */
-export function paginateContent(rawContent: string): PaginationResult {
-  const blocks = parseContent(rawContent);
+export async function paginateContent(rawContent: string): Promise<PaginationResult> {
+  const blocks = await parseContent(rawContent);
   if (blocks.length === 0) return { pages: [], totalPages: 0 };
 
   const pages: Page[] = [];

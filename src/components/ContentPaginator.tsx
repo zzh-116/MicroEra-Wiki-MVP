@@ -1,10 +1,11 @@
 // ContentPaginator — paginated content reader with page navigation, progress bar,
 // URL sync, and TOC integration. Renders ContentBlock[] pages, never raw Markdown.
 
-import { useMemo, useCallback, useEffect, useRef } from 'react';
+import { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, ChevronUp } from 'lucide-react';
 import type { ContentBlock } from '../utils/contentParser';
 import { paginateContent, findPageByHeading } from '../utils/contentPaginator';
+import type { Page } from '../utils/contentPaginator';
 
 // Internal BlockRenderer (same as ContentRenderer but standalone here for self-containment)
 function PageBlockRenderer({ block }: { block: ContentBlock }) {
@@ -85,19 +86,34 @@ export default function ContentPaginator({
 }: ContentPaginatorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Parse + paginate (memoized — only runs when content changes)
-  const { pages, totalPages, headings } = useMemo(() => {
-    const result = paginateContent(content);
-    // Extract headings with their page numbers
-    const hds: Array<{ text: string; page: number; level: number }> = [];
-    result.pages.forEach((page) => {
-      page.blocks.forEach((block) => {
-        if (block.type === 'heading') {
-          hds.push({ text: block.text, page: page.index + 1, level: block.level });
-        }
+  // Async pagination state
+  const [pages, setPages] = useState<Page[]>([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [headings, setHeadings] = useState<Array<{ text: string; page: number; level: number }>>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load and paginate content asynchronously
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    paginateContent(content).then((result) => {
+      if (cancelled) return;
+      setPages(result.pages);
+      setTotalPages(result.totalPages);
+
+      // Extract headings with their page numbers
+      const hds: Array<{ text: string; page: number; level: number }> = [];
+      result.pages.forEach((page) => {
+        page.blocks.forEach((block) => {
+          if (block.type === 'heading') {
+            hds.push({ text: block.text, page: page.index + 1, level: block.level });
+          }
+        });
       });
+      setHeadings(hds);
+      setLoading(false);
     });
-    return { pages: result.pages, totalPages: result.totalPages, headings: hds };
+    return () => { cancelled = true; };
   }, [content]);
 
   // Notify parent of headings
@@ -107,14 +123,14 @@ export default function ContentPaginator({
 
   // Navigate to heading
   useEffect(() => {
-    if (scrollToHeading) {
+    if (scrollToHeading && pages.length > 0) {
       const page = findPageByHeading(pages, scrollToHeading);
       if (page !== currentPage) {
         onPageChange?.(page);
       }
       onNavigated?.();
     }
-  }, [scrollToHeading]);
+  }, [scrollToHeading, pages, currentPage, onPageChange, onNavigated]);
 
   const safePage = Math.min(currentPage, totalPages) || 1;
   const page = pages[safePage - 1];
@@ -123,6 +139,20 @@ export default function ContentPaginator({
     const clamped = Math.max(1, Math.min(p, totalPages));
     if (clamped !== currentPage) onPageChange?.(clamped);
   }, [currentPage, totalPages, onPageChange]);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div ref={containerRef} className={`space-y-4 ${className}`}>
+        <div className="flex items-center justify-center py-20">
+          <div className="flex items-center gap-2 text-sm text-gray-400 animate-pulse font-medium">
+            <span className="w-2 h-2 bg-[#DB5F5B] rounded-full animate-bounce" />
+            正在解析文档内容...
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Don't show paginator if content is short
   if (totalPages <= 1 && (!page || page.estimatedHeight < 800)) {
