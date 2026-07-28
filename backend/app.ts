@@ -66,7 +66,8 @@ export async function createApp(options: AppOptions = {}) {
 
   for (const { path: p, router } of extraRoutes) app.use(p, router);
 
-  // Serve extracted document images
+  // Serve extracted document images. Don't swallow mkdir errors — they
+  // indicate DATA_DIR is misconfigured and image requests will silently 404.
   const imagesDir = path.join(config.dataDir, 'images');
   fs.mkdirSync(imagesDir, { recursive: true });
   app.use('/api/images', express.static(imagesDir));

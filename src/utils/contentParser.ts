@@ -35,12 +35,69 @@ function yieldToEventLoop(): Promise<void> {
 }
 
 /**
+ * Fast single-char/char-range check for whether a (trimmed) line opens a
+ * special markdown block. Avoids regex on the hot path — full-line regex
+ * was responsible for the main-thread saturation that survived chunked
+ * yielding: every `.match()` calls into the JS engine's regex interpreter.
+ *
+ * Returns the block "tag" the line belongs to, or 0 for ordinary paragraph.
+ *
+ * Tags:
+ *   'h'  heading           (#, 1–4)
+ *   'c'  code fence        (```)
+ *   't'  table             (|)
+ *   'q'  blockquote        (>)
+ *   'd'  hr                (--- / *** / ___)
+ *   'u'  unordered list    (- / * / +)
+ *   'o'  ordered list      (digit + . or ))
+ *   'i'  image             (![
+ */
+function classifyLine(t: string): 0 | 'h' | 'c' | 't' | 'q' | 'd' | 'u' | 'o' | 'i' {
+  if (t.length === 0) return 0;
+  const c0 = t.charCodeAt(0);
+  // `#` → heading
+  if (c0 === 35) return 'h';
+  // ``` → code
+  if (c0 === 96 && t[1] === '`' && t[2] === '`') return 'c';
+  // `|` → table
+  if (c0 === 124) return 't';
+  // `>` → blockquote
+  if (c0 === 62 && t[1] === ' ') return 'q';
+  // `!` → image
+  if (c0 === 33 && t[1] === '[') return 'i';
+  // `-` `*` `_`
+  if (c0 === 45 /* - */ || c0 === 42 /* * */) {
+    // horizontal rule: 3+ of same
+    if (t.length >= 3 && (t[1] === t[0] && t[2] === t[0])) return 'd';
+    // unordered list: marker + space
+    if (t[1] === ' ') return 'u';
+    return 0;
+  }
+  if (c0 === 95 /* _ */ && t.length >= 3 && t[1] === '_' && t[2] === '_') return 'd';
+  // digit → ordered list
+  if (c0 >= 48 && c0 <= 57) {
+    const len = t.length;
+    let k = 1;
+    while (k < len && t.charCodeAt(k) >= 48 && t.charCodeAt(k) <= 57) k++;
+    if (k > 1 && k < len && (t[k] === '.' || t[k] === ')') && t[k + 1] === ' ') return 'o';
+    return 0;
+  }
+  // unordered list via `+ `
+  if (c0 === 43 /* + */ && t[1] === ' ') return 'u';
+  return 0;
+}
+
+/**
  * Parse raw content string into structured ContentBlock[].
  * Processes in chunks of YIELD_INTERVAL lines, yielding to the event loop
  * between chunks so the UI remains responsive for large documents.
  */
 export async function parseContent(raw: string): Promise<ContentBlock[]> {
   if (!raw || !raw.trim()) return [];
+
+  // Yield first so the LCP painting pipeline isn't starved behind
+  // the synchronous stripNoise() regex passes on very large inputs.
+  await yieldToEventLoop();
 
   // Step 0: Strip base64 data URIs and embedded-image placeholders entirely
   const cleaned = stripNoise(raw);
@@ -58,14 +115,18 @@ export async function parseContent(raw: string): Promise<ContentBlock[]> {
     }
 
     const line = lines[i];
+    const trimmed = line.trim();
+    const tag = classifyLine(trimmed);
 
     // ── Code fences ──
-    if (line.trim().startsWith('```')) {
-      const language = line.trim().slice(3).trim();
+    if (tag === 'c') {
+      const language = trimmed.slice(3).trim();
       const codeLines: string[] = [];
       i++;
-      while (i < lines.length && !lines[i].trim().startsWith('```')) {
-        codeLines.push(lines[i]);
+      while (i < lines.length) {
+        const next = lines[i];
+        if (next.trim().startsWith('```')) break;
+        codeLines.push(next);
         i++;
       }
       i++; // skip closing ```
@@ -76,13 +137,15 @@ export async function parseContent(raw: string): Promise<ContentBlock[]> {
     }
 
     // ── Tables ──
-    if (line.trim().startsWith('|') && lines[i + 1]?.trim().match(/^\|[\s\-:|]+\|$/)) {
-      const headerLine = line;
+    if (tag === 't' && lines[i + 1] && /^[\s\-:|]+$/.test(lines[i + 1].trim())) {
+      const headerLine = trimmed;
       i += 2; // skip header + separator
       const headers = headerLine.split('|').filter(Boolean).map((h) => h.trim());
       const rows: string[][] = [];
-      while (i < lines.length && lines[i].trim().startsWith('|')) {
-        rows.push(lines[i].split('|').filter(Boolean).map((c) => c.trim()));
+      while (i < lines.length) {
+        const next = lines[i];
+        if (!next.trim().startsWith('|')) break;
+        rows.push(next.split('|').filter(Boolean).map((c) => c.trim()));
         i++;
       }
       if (headers.length > 0) {
@@ -92,19 +155,21 @@ export async function parseContent(raw: string): Promise<ContentBlock[]> {
     }
 
     // ── Headings ──
-    const headingMatch = line.match(/^(#{1,4})\s+(.+)/);
-    if (headingMatch) {
-      const level = Math.min(headingMatch[1].length, 4) as 1 | 2 | 3 | 4;
-      blocks.push({ type: 'heading', level, text: headingMatch[2].trim() });
+    if (tag === 'h') {
+      const hashes = trimmed.match(/^#+/);
+      const level = Math.min(hashes ? hashes[0].length : 1, 4) as 1 | 2 | 3 | 4;
+      blocks.push({ type: 'heading', level, text: trimmed.slice(level).trim() });
       i++;
       continue;
     }
 
     // ── Blockquote ──
-    if (line.startsWith('> ')) {
+    if (tag === 'q') {
       const quoteLines: string[] = [];
-      while (i < lines.length && lines[i].startsWith('> ')) {
-        quoteLines.push(lines[i].slice(2));
+      while (i < lines.length) {
+        const next = lines[i];
+        if (!next.startsWith('> ')) break;
+        quoteLines.push(next.slice(2));
         i++;
       }
       blocks.push({ type: 'blockquote', text: quoteLines.join('\n') });
@@ -112,17 +177,21 @@ export async function parseContent(raw: string): Promise<ContentBlock[]> {
     }
 
     // ── Horizontal rule ──
-    if (line.trim().match(/^(-{3,}|\*{3,}|_{3,})$/)) {
+    if (tag === 'd') {
       blocks.push({ type: 'divider' });
       i++;
       continue;
     }
 
     // ── Unordered list ──
-    if (line.match(/^[-*+]\s/)) {
+    if (tag === 'u') {
       const items: string[] = [];
-      while (i < lines.length && lines[i].match(/^[-*+]\s/)) {
-        items.push(lines[i].replace(/^[-*+]\s*/, ''));
+      while (i < lines.length) {
+        const next = lines[i];
+        const nt = next.trim();
+        if (nt.length === 0) break;
+        if (classifyLine(nt) !== 'u') break;
+        items.push(nt.replace(/^[-*+]\s*/, ''));
         i++;
       }
       blocks.push({ type: 'list', items, ordered: false });
@@ -130,10 +199,14 @@ export async function parseContent(raw: string): Promise<ContentBlock[]> {
     }
 
     // ── Ordered list ──
-    if (line.match(/^\d+[.)]\s/)) {
+    if (tag === 'o') {
       const items: string[] = [];
-      while (i < lines.length && lines[i].match(/^\d+[.)]\s/)) {
-        items.push(lines[i].replace(/^\d+[.)]\s*/, ''));
+      while (i < lines.length) {
+        const next = lines[i];
+        const nt = next.trim();
+        if (nt.length === 0) break;
+        if (classifyLine(nt) !== 'o') break;
+        items.push(nt.replace(/^\d+[.)]\s*/, ''));
         i++;
       }
       blocks.push({ type: 'list', items, ordered: true });
@@ -141,23 +214,32 @@ export async function parseContent(raw: string): Promise<ContentBlock[]> {
     }
 
     // ── Image (markdown syntax with real URL) ──
-    const imgMatch = line.match(/^!\[([^\]]*)\]\((\/\/[^)]+\)|https?:\/\/[^)]+)\)/);
-    if (imgMatch) {
-      blocks.push({ type: 'image', alt: imgMatch[1], src: imgMatch[2] });
-      i++;
-      continue;
+    // Accept: http(s)://, protocol-relative //, or root-relative /api/...
+    // (the last form is what docling emits after extractAndSaveImages).
+    if (tag === 'i') {
+      const imgMatch = trimmed.match(/^!\[([^\]]*)\](\(((?:https?:)?\/\/[^)]+|\/[^)]+)\))/);
+      if (imgMatch) {
+        blocks.push({ type: 'image', alt: imgMatch[1], src: imgMatch[3] });
+        i++;
+        continue;
+      }
+      // fall through to paragraph if it didn't actually match an image URL
     }
 
     // ── Blank line ──
-    if (!line.trim()) {
+    if (trimmed.length === 0) {
       i++;
       continue;
     }
 
     // ── Paragraph (accumulate consecutive non-special lines) ──
     const paraLines: string[] = [];
-    while (i < lines.length && lines[i].trim() && !isSpecialLine(lines[i])) {
-      paraLines.push(lines[i]);
+    while (i < lines.length) {
+      const next = lines[i];
+      const nt = next.trim();
+      if (nt.length === 0) break;
+      if (classifyLine(nt) !== 0) break;
+      paraLines.push(next);
       i++;
     }
     if (paraLines.length > 0) {
@@ -197,21 +279,6 @@ function stripNoise(raw: string): string {
   result = result.replace(/\n{3,}/g, '\n\n');
 
   return result.trim();
-}
-
-/** Check if a line starts a special block (heading, code, list, etc.) */
-function isSpecialLine(line: string): boolean {
-  const t = line.trim();
-  return !!(
-    t.startsWith('#') ||
-    t.startsWith('```') ||
-    t.startsWith('|') ||
-    t.startsWith('> ') ||
-    t.match(/^[-*+]\s/) ||
-    t.match(/^\d+[.)]\s/) ||
-    t.match(/^(-{3,}|\*{3,}|_{3,})$/) ||
-    t.startsWith('![')
-  );
 }
 
 /** Check if a paragraph line is just noise that should be skipped */
