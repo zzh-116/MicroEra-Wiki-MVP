@@ -66,6 +66,11 @@ export async function createApp(options: AppOptions = {}) {
 
   for (const { path: p, router } of extraRoutes) app.use(p, router);
 
+  // Serve extracted document images
+  const imagesDir = path.join(config.dataDir, 'images');
+  fs.mkdirSync(imagesDir, { recursive: true });
+  app.use('/api/images', express.static(imagesDir));
+
   // Static files (production)
   if (serveStatic) {
     const distPath = path.resolve(import.meta.dirname, '..', 'dist');
