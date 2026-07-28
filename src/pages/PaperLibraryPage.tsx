@@ -19,7 +19,7 @@ export default function PaperLibraryPage() {
       setPapers(list.filter((e) => {
         if (!e.title) return false;
         const tags = (e.tags as string[]) || [];
-        return e.entryType === "concept" || e.entryType === "patent";
+        return e.entryType === 'tech_doc' || e.entryType === 'patent';
       }));
     });
   }, []);
