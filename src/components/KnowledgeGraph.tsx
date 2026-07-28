@@ -36,8 +36,8 @@ export default function KnowledgeGraph({
     const centerX = width / 2;
 
     // Find the primary/central node (usually the project node if available, or first node)
-    const centralIndex = nodes.findIndex(n => n.type === 'project' || n.type === 'service') !== -1
-      ? nodes.findIndex(n => n.type === 'project' || n.type === 'service')
+    const centralIndex = nodes.findIndex(n => n.type === 'sandbox_project') !== -1
+      ? nodes.findIndex(n => n.type === 'sandbox_project')
       : 0;
 
     const centralNode = nodes[centralIndex];
@@ -70,18 +70,20 @@ export default function KnowledgeGraph({
   const getNodeColor = (type: EntryType, isSelected: boolean) => {
     if (isSelected) return 'fill-[#DB5F5B] stroke-[#2B3150] stroke-2';
     switch (type) {
-      case 'project':
+      case 'sandbox_project':
         return 'fill-[#2B3150] stroke-blue-300';
-      case 'paper':
+      case 'academic_paper':
         return 'fill-[#10B981] stroke-green-100';
-      case 'data_item':
+      case 'data_standard':
         return 'fill-[#8B5CF6] stroke-purple-100';
-      case 'business_value':
+      case 'business_material':
         return 'fill-[#F43F5E] stroke-rose-100';
-      case 'service':
+      case 'tech_doc':
         return 'fill-[#F2D760] stroke-[#2B3150]';
       case 'template':
         return 'fill-[#14B8A6] stroke-teal-100';
+      case 'patent':
+        return 'fill-[#F59E0B] stroke-amber-100';
       default:
         return 'fill-gray-400 stroke-gray-200';
     }

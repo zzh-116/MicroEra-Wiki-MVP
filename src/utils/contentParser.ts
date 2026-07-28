@@ -18,8 +18,28 @@ export type ContentBlock =
   | { type: 'divider' }
   | { type: 'html'; html: string }; // For trusted HTML content
 
-/** Parse raw content string into structured blocks */
-export function parseContent(raw: string): ContentBlock[] {
+/** Number of lines to process before yielding to the event loop */
+const YIELD_INTERVAL = 200;
+
+/** Yield to the browser event loop to keep the UI responsive */
+function yieldToEventLoop(): Promise<void> {
+  return new Promise((resolve) => {
+    // Use scheduler.yield() if available (Node 20.11+/React 19),
+    // otherwise fall back to setTimeout 0 which is universally supported.
+    if (typeof globalThis.scheduler !== 'undefined' && 'yield' in globalThis.scheduler) {
+      (globalThis.scheduler as any).yield().then(resolve).catch(() => setTimeout(resolve, 0));
+    } else {
+      setTimeout(resolve, 0);
+    }
+  });
+}
+
+/**
+ * Parse raw content string into structured ContentBlock[].
+ * Processes in chunks of YIELD_INTERVAL lines, yielding to the event loop
+ * between chunks so the UI remains responsive for large documents.
+ */
+export async function parseContent(raw: string): Promise<ContentBlock[]> {
   if (!raw || !raw.trim()) return [];
 
   // Step 0: Strip base64 data URIs and embedded-image placeholders entirely
@@ -32,6 +52,11 @@ export function parseContent(raw: string): ContentBlock[] {
   let i = 0;
 
   while (i < lines.length) {
+    // ── Yield periodically so the UI doesn't freeze for large documents ──
+    if (i > 0 && i % YIELD_INTERVAL === 0) {
+      await yieldToEventLoop();
+    }
+
     const line = lines[i];
 
     // ── Code fences ──

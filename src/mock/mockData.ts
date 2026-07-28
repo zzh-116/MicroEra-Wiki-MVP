@@ -415,7 +415,7 @@ export const mockEntries: WikiEntry[] = [
     id: 'e-stabilizer-project',
     spaceId: 's-sandbox',
     title: '稳定子算法 Sandbox 计算项目',
-    entryType: 'project',
+    entryType: 'sandbox_project',
     summary: '该项目记录稳定子算法在 Sandbox 中的计算过程、结果文件、引用文献和可服务化调用方式。不仅沉淀了仿真过程和 Monte Carlo 的拟合计算指标，更能通过 RAG、MCP 以及 MiQi 在全平台进行调用。',
     content: `
 # 稳定子算法 Sandbox 计算项目 (Stabilizer Monte Carlo Simulation)
@@ -501,7 +501,7 @@ export const mockEntries: WikiEntry[] = [
     id: 'e-ai-data-analysis',
     spaceId: 's-tech',
     title: 'AI 驱动的实验数据分析能力',
-    entryType: 'concept',
+    entryType: 'tech_doc',
     summary: '展示微观纪元使用企业自研 AI 模型及知识图谱进行高维实验数据分析、归档和辅助判断的领先技术水平与平台优势。',
     content: `
 # AI 驱动的实验数据分析能力 (AI-Driven Experimental Data Analysis)
@@ -533,7 +533,7 @@ export const mockEntries: WikiEntry[] = [
     id: 'e-paper-correction',
     spaceId: 's-papers-quantum',
     title: 'Quantum Error Correction with Stabilizer Codes',
-    entryType: 'paper',
+    entryType: 'academic_paper',
     summary: '量子纠错理论的开山之作，由 Daniel Gottesman 于 1997 年提出。该论文奠定了稳定子代码在量子误差校正中的绝对统治地位。',
     content: `
 # Quantum Error Correction with Stabilizer Codes
@@ -567,7 +567,7 @@ export const mockEntries: WikiEntry[] = [
     id: 'e-data-stabilizer-schema',
     spaceId: 's-data',
     title: '稳定子计算结果数据结构',
-    entryType: 'data_item',
+    entryType: 'data_standard',
     summary: '此条目详细规范了量子纠错模拟结果的数据存储、元数据定义以及 Schema 规范，是后端 Drizzle 库表、RAG 数据检索切片的重要规约。',
     content: `
 # 稳定子计算结果数据结构 (Stabilizer Result Metadata & Database Schema)
@@ -637,7 +637,7 @@ export const mockEntries: WikiEntry[] = [
     id: 'e-business-quantum-value',
     spaceId: 's-business',
     title: '量子计算项目商业价值摘要',
-    entryType: 'business_value',
+    entryType: 'business_material',
     summary: '基于稳定子纠错算法项目的成功实验，进行 ROI、算力开销节省、专利衍生等商业化资产指标的深度总结，可一键生成汇报 PPT 简报。',
     content: `
 # 量子计算项目商业价值摘要 (Business Value of Quantum Error Correction Stabilizer Projects)
@@ -668,7 +668,7 @@ export const mockEntries: WikiEntry[] = [
     id: 'e-stabilizer-service-entry',
     spaceId: 's-tech',
     title: '稳定子算法知识与工具调用服务',
-    entryType: 'service',
+    entryType: 'tech_doc',
     summary: '此条目归档了本算法和知识库能对外或对内提供的 RAG 查询接口、MCP 工具集以及 MiQi 可直接调用的微服务列表，展示真正的知识服务化价值。',
     content: `
 # 稳定子算法知识与工具调用服务 (Stabilizer Algorithm Knowledge Service & APIs)
@@ -708,13 +708,13 @@ export const mockEntries: WikiEntry[] = [
 
 // Mock Knowledge Graph Nodes
 export const mockGraphNodes: KnowledgeGraphNode[] = [
-  { id: 'gn-1', label: '稳定子算法 Sandbox 计算项目', type: 'project', entryId: 'e-stabilizer-project', description: '核心 Sandbox 计算与 Monte Carlo 仿真项目' },
-  { id: 'gn-2', label: 'Daniel Gottesman 经典量子纠错论文', type: 'paper', entryId: 'e-paper-correction', description: 'Gottesman 1997 纠错码群论开山论文' },
-  { id: 'gn-3', label: '稳定子计算结果 Schema 定义', type: 'data_item', entryId: 'e-data-stabilizer-schema', description: 'v0.2 格式 Schema 与关系表规约' },
-  { id: 'gn-4', label: '量子计算项目商业价值摘要', type: 'business_value', entryId: 'e-business-quantum-value', description: 'ROI 320%、节约 45.2万算力、衍生专利看板' },
-  { id: 'gn-5', label: '稳定子算法知识与工具调用服务', type: 'service', entryId: 'e-stabilizer-service-entry', description: 'RAG、MCP工具、MiQi可调用服务三合一卡片' },
+  { id: 'gn-1', label: '稳定子算法 Sandbox 计算项目', type: 'sandbox_project', entryId: 'e-stabilizer-project', description: '核心 Sandbox 计算与 Monte Carlo 仿真项目' },
+  { id: 'gn-2', label: 'Daniel Gottesman 经典量子纠错论文', type: 'academic_paper', entryId: 'e-paper-correction', description: 'Gottesman 1997 纠错码群论开山论文' },
+  { id: 'gn-3', label: '稳定子计算结果 Schema 定义', type: 'data_standard', entryId: 'e-data-stabilizer-schema', description: 'v0.2 格式 Schema 与关系表规约' },
+  { id: 'gn-4', label: '量子计算项目商业价值摘要', type: 'business_material', entryId: 'e-business-quantum-value', description: 'ROI 320%、节约 45.2万算力、衍生专利看板' },
+  { id: 'gn-5', label: '稳定子算法知识与工具调用服务', type: 'tech_doc', entryId: 'e-stabilizer-service-entry', description: 'RAG、MCP工具、MiQi可调用服务三合一卡片' },
   { id: 'gn-6', label: '项目复盘报告标准模板', type: 'template', entryId: 'e-template-retrospective', description: 'QA 发布的官方项目成果总结 Word 模板 v1.3' },
-  { id: 'gn-7', label: 'AI 驱动实验分析能力', type: 'concept', entryId: 'e-ai-data-analysis', description: '微观纪元领先的 AI 语义提取与知识图谱架构' }
+  { id: 'gn-7', label: 'AI 驱动实验分析能力', type: 'tech_doc', entryId: 'e-ai-data-analysis', description: '微观纪元领先的 AI 语义提取与知识图谱架构' }
 ];
 
 // Mock Knowledge Graph Edges
