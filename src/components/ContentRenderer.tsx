@@ -1,6 +1,6 @@
 // ContentRenderer — renders ContentBlock[] with appropriate React components.
 // Never renders raw strings, base64, or placeholder text.
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import type { ContentBlock } from '../utils/contentParser';
 import { parseContent } from '../utils/contentParser';
 
@@ -10,8 +10,16 @@ interface ContentRendererProps {
 }
 
 export default function ContentRenderer({ content, maxHeight }: ContentRendererProps) {
-  const [expanded, setExpanded] = React.useState(false);
-  const blocks = parseContent(content);
+  const [expanded, setExpanded] = useState(false);
+  const [blocks, setBlocks] = useState<ContentBlock[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    parseContent(content).then((parsed) => {
+      if (!cancelled) setBlocks(parsed);
+    });
+    return () => { cancelled = true; };
+  }, [content]);
 
   if (blocks.length === 0) {
     return <p className="text-xs text-gray-400 italic">暂无正文内容</p>;
