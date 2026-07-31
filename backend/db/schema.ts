@@ -194,6 +194,25 @@ export const bookmarks = pgTable(
   ],
 );
 
+// ---- Run Logs ----
+export const runLogs = pgTable(
+  'run_logs',
+  {
+    id: serial('id').primaryKey(),
+    level: text('level', { enum: ['debug', 'info', 'warn', 'error'] }).notNull(),
+    module: text('module').notNull().default('app'),
+    message: text('message').notNull(),
+    stack: text('stack'),
+    context: jsonb('context').default({}),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('run_logs_level_idx').on(table.level),
+    index('run_logs_module_idx').on(table.module),
+    index('run_logs_created_at_idx').on(table.createdAt.desc()),
+  ],
+);
+
 // ---- Relations ----
 export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
   user: one(users, { fields: [bookmarks.userId], references: [users.id] }),

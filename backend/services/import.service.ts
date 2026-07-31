@@ -15,6 +15,9 @@ import type { ParsedProperty, Entry } from '../types.js';
 import { config } from '../config.js';
 import type { Document } from '../connectors/types.js';
 import { findSyncedEntry, recordSync } from './sync-log.service.js';
+import { createLogger } from '../utils/logger.js';
+
+const logger = createLogger('Import');
 
 export type ImportMode = 'upload' | 'api' | 'batch';
 
@@ -163,15 +166,14 @@ export class ImportService {
       stages.push({ stage: 'chunk', status: 'failed', ms: 0, detail: errDetail });
       // Dig into nested error (Drizzle wraps pg errors in `cause`)
       const pgErr = err.cause || err;
-      console.error(`[Import] Entry/Chunk FAILED:
-  Message: ${err.message}
-  Code: ${err.code || pgErr.code || 'N/A'}
-  Detail: ${err.detail || pgErr.detail || 'N/A'}
-  Constraint: ${err.constraint || pgErr.constraint || 'N/A'}
-  Column: ${err.column || pgErr.column || 'N/A'}
-  Table: ${err.table || pgErr.table || 'N/A'}
-  cause.Message: ${pgErr.message || 'N/A'}
-  cause.Code: ${pgErr.code || 'N/A'}`);
+      logger.error(`Entry/Chunk FAILED for "${input.source}"`, err as Error, {
+        code: err.code || pgErr.code || undefined,
+        detail: err.detail || pgErr.detail || undefined,
+        constraint: err.constraint || pgErr.constraint || undefined,
+        column: err.column || pgErr.column || undefined,
+        table: err.table || pgErr.table || undefined,
+        causeMessage: pgErr.message || undefined,
+      });
       return this.buildResult(input, stages, errors, 0, t0);
     }
 
@@ -191,7 +193,7 @@ export class ImportService {
         for (const f of failed) {
           const chunk = chunks[f.index];
           errors.push(`Embedding: chunk #${f.index}${chunk ? ` (${chunk.id})` : ''} — ${f.error}`);
-          console.error(`[Import] Embed | entry=${entry!.id} | chunk=${f.index}${chunk ? ` id=${chunk.id}` : ''} | FAILED: ${f.error}`);
+          logger.error(`Embed failed for entry=${entry!.id} chunk=${f.index}`, undefined, { entryId: entry!.id, chunkIndex: f.index, chunkId: chunk?.id, error: f.error });
         }
 
         if (valid.length > 0) {
@@ -223,7 +225,7 @@ export class ImportService {
       } catch (err: any) {
         errors.push(`Embedding: ${err.message}`);
         stages.push({ stage: 'embed', status: 'failed', ms: Date.now() - tEmbed, detail: err.message });
-        console.error(`[Import] Embed | FAILED: ${err.message}`);
+        logger.error(`Embed stage FAILED for entry=${entry.id}`, err as Error, { entryId: entry.id });
       }
     } else {
       stages.push({ stage: 'embed', status: 'skipped', ms: 0,
@@ -264,7 +266,7 @@ export class ImportService {
 
         if (attempt < RETRY_MAX && this.isRetryable(err)) {
           const delay = RETRY_BASE_MS * Math.pow(2, attempt - 1);
-          console.warn(`[Import] Parse | attempt ${attempt}/${RETRY_MAX} FAILED, retry in ${delay}ms: ${err.message}`);
+          logger.warn(`Parse attempt ${attempt}/${RETRY_MAX} FAILED, retry in ${delay}ms: ${err.message}`, { attempt, maxRetries: RETRY_MAX, delayMs: delay });
           await new Promise((r) => setTimeout(r, delay));
           continue;
         }
@@ -274,7 +276,7 @@ export class ImportService {
           : err.message;
         errors.push(`Parse: ${detail}`);
         stages.push({ stage: 'parse', status: 'failed', ms: parseMs, detail });
-        console.error(`[Import] Parse | FAILED (attempt ${attempt}): ${detail}`);
+        logger.error(`Parse FAILED after ${attempt} attempts: ${detail}`, undefined, { attempt, detail });
         return null;
       }
     }
@@ -367,7 +369,7 @@ export class ImportService {
       try {
         await recordSync(doc.source, doc.id, result.entryId, doc.title);
       } catch (err: any) {
-        console.error(`[Import] Failed to record sync log for ${doc.source}:${doc.id}: ${err.message}`);
+        logger.error(`Failed to record sync log for ${doc.source}:${doc.id}`, err as Error, { source: doc.source, docId: doc.id });
       }
     }
 
