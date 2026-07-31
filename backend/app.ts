@@ -76,15 +76,6 @@ export async function createApp(options: AppOptions = {}) {
     const distPath = path.resolve(import.meta.dirname, '..', 'dist');
     app.use(express.static(distPath));
 
-    // Return JSON 404 for unmatched /api/* requests instead of serving index.html
-    app.use((_req, res, next) => {
-      if (_req.path.startsWith('/api/')) {
-        res.status(404).json({ error: 'NOT_FOUND', message: `Unknown API endpoint: ${_req.method} ${_req.originalUrl}` });
-        return;
-      }
-      next();
-    });
-
     // SPA fallback: serve index.html for all other non-API routes
     app.get('*', (_req, res) => {
       const indexPath = path.join(distPath, 'index.html');
@@ -92,6 +83,19 @@ export async function createApp(options: AppOptions = {}) {
       else res.json({ message: 'MicroEra Wiki API', version: '0.2.0', docs: '/api/docs' });
     });
   }
+
+  // Return JSON 404 for unmatched /api/* requests (always enabled)
+  app.use((_req, res, next) => {
+    if (_req.path.startsWith('/api/')) {
+      res.status(404).json({ error: 'NOT_FOUND', message: `Unknown API endpoint: ${_req.method} ${_req.originalUrl}` });
+      return;
+    }
+    next();
+  });
+
+  // Register global error handler — must be AFTER all routes
+  const { errorHandler } = await import('../server/middleware/errorHandler.js');
+  app.use(errorHandler);
 
   if (bootstrap) await runBootstrap();
   return app;
@@ -107,6 +111,19 @@ export async function runBootstrap() {
 
   // 3. Seed admin user (idempotent)
   await userRepository.seedAdmin();
+
+  // 3a. Start structured logger flush timer
+  const { startLoggerFlush } = await import('./utils/logger.js');
+  startLoggerFlush();
+
+  // 3b. Auto-cleanup old logs (keep last maxEntries or last maxAgeDays)
+  try {
+    const { logRepository } = await import('./repositories/log.repository.js');
+    const deleted = await logRepository.cleanup(config.logging.maxEntries, config.logging.maxAgeDays);
+    if (deleted > 0) console.log(`[Bootstrap] Log cleanup: removed ${deleted} old log entries`);
+  } catch (err: any) {
+    console.warn(`[Bootstrap] Log cleanup failed (non-fatal): ${err.message}`);
+  }
 
   // 4. Warm up embedding model — force Ollama to load bge-m3 into memory
   //    and keep it warm so queries don't pay 1.7s load penalty each time

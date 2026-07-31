@@ -7,6 +7,9 @@ import { vectorRepository } from '../../backend/repositories/vector.repository.j
 import { chunkService } from '../../backend/chunk/service.js';
 import { ollamaEmbedder } from '../../backend/embedding/ollama.js';
 import { config } from '../../backend/config.js';
+import { createLogger } from '../../backend/utils/logger.js';
+
+const logger = createLogger('Admin');
 
 export const adminRouter = Router();
 
@@ -38,7 +41,7 @@ adminRouter.post('/rebuild-embeddings', async (req: Request, res: Response) => {
     const overlap = req.body?.overlap || 128;
     const strategy = req.body?.strategy || 'markdown';
 
-    console.log(`[Admin] Rebuild embeddings started — strategy=${strategy} chunkSize=${chunkSize} overlap=${overlap}`);
+    logger.info(`Rebuild embeddings started — strategy=${strategy} chunkSize=${chunkSize} overlap=${overlap}`);
 
     // Step 1: Clear all existing vectors
     const tClear = Date.now();
@@ -101,7 +104,7 @@ adminRouter.post('/rebuild-embeddings', async (req: Request, res: Response) => {
 
         if (failed.length > 0) {
           for (const f of failed) {
-            console.error(`[Admin] Embed | entry=${entry.id} | chunk=${f.index} | FAILED: ${f.error}`);
+            logger.error(`Embed failed for entry=${entry.id} chunk=${f.index}`, undefined, { entryId: entry.id, chunkIndex: f.index, error: f.error });
           }
         }
 
@@ -144,7 +147,7 @@ adminRouter.post('/rebuild-embeddings', async (req: Request, res: Response) => {
           title: entry.title.slice(0, 80),
           error: err.message,
         });
-        console.error(`[Admin] Rebuild failed for entry #${entry.id} "${entry.title.slice(0, 60)}": ${err.message}`);
+        logger.error(`Rebuild failed for entry #${entry.id} "${entry.title.slice(0, 60)}"`, err as Error, { entryId: entry.id });
       }
     }
 
@@ -172,7 +175,7 @@ adminRouter.post('/rebuild-embeddings', async (req: Request, res: Response) => {
       errors: errors.slice(0, 20), // Cap errors at 20 for response size
     });
   } catch (err: any) {
-    console.error(`[Admin] Rebuild embeddings failed: ${err.message}`);
+    logger.error(`Rebuild embeddings failed: ${err.message}`, err as Error);
     res.status(500).json({
       success: false,
       error: 'REBUILD_FAILED',
@@ -204,6 +207,85 @@ adminRouter.get('/stats', async (_req: Request, res: Response) => {
     });
   } catch (err: any) {
     res.status(500).json({ error: 'STATS_FAILED', message: err.message });
+  }
+});
+
+/**
+ * GET /api/admin/logs
+ *
+ * 查询运行日志，支持级别/模块/关键词筛选和分页。
+ * 返回 levels 和 modules 列表供前端下拉框使用。
+ */
+adminRouter.get('/logs', async (req: Request, res: Response) => {
+  try {
+    const { logRepository } = await import('../../backend/repositories/log.repository.js');
+    const page = Math.max(1, parseInt(req.query.page as string || '1', 10) || 1);
+    const pageSize = Math.min(100, Math.max(1, parseInt(req.query.pageSize as string || '20', 10) || 20));
+
+    const result = await logRepository.query({
+      level: req.query.level as string | undefined,
+      module: req.query.module as string | undefined,
+      search: req.query.search as string | undefined,
+      startDate: req.query.startDate as string | undefined,
+      endDate: req.query.endDate as string | undefined,
+      page,
+      pageSize,
+    });
+
+    res.json(result);
+  } catch (err: any) {
+    res.status(500).json({ error: 'LOGS_QUERY_FAILED', message: err.message });
+  }
+});
+
+/**
+ * DELETE /api/admin/logs
+ *
+ * 清除指定天数之前的旧日志。默认 30 天。
+ */
+adminRouter.delete('/logs', async (req: Request, res: Response) => {
+  try {
+    const { logRepository } = await import('../../backend/repositories/log.repository.js');
+    const days = parseInt(req.query.olderThan as string || '30', 10);
+    if (days < 1) {
+      res.status(400).json({ error: 'INVALID_PARAM', message: 'olderThan must be >= 1' });
+      return;
+    }
+    const deleted = await logRepository.deleteOlderThan(days);
+    res.json({ success: true, deleted, message: `Deleted ${deleted} logs older than ${days} days` });
+  } catch (err: any) {
+    res.status(500).json({ error: 'LOGS_DELETE_FAILED', message: err.message });
+  }
+});
+
+/**
+ * POST /api/admin/logs/test
+ *
+ * Write a test log entry to verify the logging pipeline is working.
+ * This triggers the full chain: logger → flush queue → run_logs table.
+ */
+adminRouter.post('/logs/test', async (_req: Request, res: Response) => {
+  try {
+    const testError = new Error('Test log entry — logging pipeline verification');
+    logger.info('Test log triggered via admin endpoint');
+    logger.error('Test ERROR log — verify pipeline', testError, {
+      source: 'manual-test',
+      timestamp: new Date().toISOString(),
+    });
+    // Force immediate flush so the log is visible right away
+    const { logRepository } = await import('../../backend/repositories/log.repository.js');
+    const entry = {
+      level: 'error',
+      module: 'Admin',
+      message: 'Test ERROR log — verify pipeline',
+      stack: testError.stack || null,
+      context: { source: 'manual-test', timestamp: new Date().toISOString() },
+      timestamp: new Date().toISOString(),
+    };
+    await logRepository.insert(entry);
+    res.json({ success: true, message: 'Test log written — check GET /api/admin/logs' });
+  } catch (err: any) {
+    res.status(500).json({ error: 'TEST_LOG_FAILED', message: err.message });
   }
 });
 
