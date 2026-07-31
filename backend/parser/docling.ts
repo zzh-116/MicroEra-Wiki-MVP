@@ -177,6 +177,11 @@ const DOCLING_FORMATS: Set<InputFormat> = new Set([
   'pdf', 'docx', 'pptx', 'xlsx', 'html', 'md', 'asciidoc', 'csv', 'txt',
 ]);
 
+/** Image formats all map to Docling's single "image" input format */
+const IMAGE_FORMATS: Set<InputFormat> = new Set([
+  'png', 'jpg', 'jpeg', 'gif', 'webp',
+]);
+
 /** Formats that can be read as plain text directly */
 const TEXT_FORMATS: Set<InputFormat> = new Set(['md', 'txt', 'csv', 'html', 'asciidoc']);
 
@@ -225,7 +230,8 @@ function buildDoclingArgs(filePath: string, outputDir: string, format: InputForm
   // --from gives Docling an explicit format hint, improving backend selection
   // --abort-on-error prevents silent partial output on corrupt pages
   if (format !== 'auto' && format !== 'txt' && format !== 'md' && format !== 'csv') {
-    return ['docling', ['convert', filePath, '--from', format, '--to', 'md', '--output', outputDir]];
+    const doclingFormat = IMAGE_FORMATS.has(format) ? 'image' : format;
+    return ['docling', ['convert', filePath, '--from', doclingFormat, '--to', 'md', '--output', outputDir]];
   }
   return ['docling', ['convert', filePath, '--to', 'md', '--output', outputDir]];
 }
@@ -416,6 +422,17 @@ export class DoclingParser implements DocumentParser {
     const tmpDir = path.join('./backend/data/tmp', `docling_${Date.now()}`);
     fs.mkdirSync(tmpDir, { recursive: true });
 
+    // Docling's Python tempfile handling mangles non-ASCII file names on
+    // Windows, so parse a safe ASCII copy instead of the original path.
+    let doclingSource = filePath;
+    let inputBase = path.basename(filePath, path.extname(filePath));
+    if (/[^\x00-\x7F]/.test(fileName)) {
+      const safeName = safeTempName(fileName);
+      doclingSource = path.join(tmpDir, safeName);
+      fs.copyFileSync(filePath, doclingSource);
+      inputBase = path.basename(safeName, path.extname(safeName));
+    }
+
     const parseStart = performance.now();
     let markdown = '';
 
@@ -424,7 +441,7 @@ export class DoclingParser implements DocumentParser {
       await resolveDoclingCommand();
 
       // Build and execute the docling command
-      const [cmd, args] = buildDoclingArgs(filePath, tmpDir, format);
+      const [cmd, args] = buildDoclingArgs(doclingSource, tmpDir, format);
 
       console.log(`[Docling] ${cmd} ${args.join(' ')} (format=${format}, size=${formatFileSize(stat.size)})`);
 
@@ -455,7 +472,6 @@ export class DoclingParser implements DocumentParser {
 
       // Find the generated markdown file
       // Docling output name: <input_basename_without_ext>.md
-      const inputBase = path.basename(filePath, path.extname(filePath));
       const expectedOutput = path.join(tmpDir, `${inputBase}.md`);
 
       if (fs.existsSync(expectedOutput)) {
@@ -520,7 +536,6 @@ export class DoclingParser implements DocumentParser {
 
       // Try to recover: Docling may have produced output despite non-zero exit
       // (e.g. non-fatal warnings on some pages). Check for markdown output.
-      const inputBase = path.basename(filePath, path.extname(filePath));
       const expectedOutput = path.join(tmpDir, `${inputBase}.md`);
       if (fs.existsSync(expectedOutput)) {
         markdown = fs.readFileSync(expectedOutput, 'utf-8');
