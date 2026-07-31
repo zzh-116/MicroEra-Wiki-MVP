@@ -45,4 +45,14 @@ export const config = {
   dataDir: process.env.DATA_DIR || './backend/data',
 
   databaseUrl: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/microera_wiki',
+
+  /** Runtime logging configuration */
+  logging: {
+    /** Minimum log level: debug | info | warn | error */
+    level: (process.env.LOG_LEVEL || 'info') as string,
+    /** Max number of log entries to retain (auto-cleanup threshold) */
+    maxEntries: parseInt(process.env.LOG_MAX_ENTRIES || '10000', 10),
+    /** Max age of log entries in days before auto-cleanup */
+    maxAgeDays: parseInt(process.env.LOG_MAX_AGE_DAYS || '30', 10),
+  },
 };
