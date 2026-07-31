@@ -16,7 +16,13 @@ export interface CreateEntryInput {
 
 export interface UpdateEntryInput extends Partial<CreateEntryInput> {}
 
-const VALID_ENTRY_TYPES = ['asset', 'product', 'tech', 'patent', 'data_item'] as const;
+// Keep the MVP aliases plus the v0.1.1 type system used by the frontend and
+// entry_type migration (0003). Real-data imports rely on the expanded set.
+const VALID_ENTRY_TYPES = [
+  'asset', 'product', 'tech', 'patent', 'data_item',
+  'sandbox_project', 'academic_paper', 'data_standard', 'tech_doc',
+  'template', 'business_material', 'handwritten_note',
+] as const;
 
 export class EntryRepository extends BaseRepository {
   /** Hydrate entry rows with their tags */
