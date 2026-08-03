@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Sparkles, Search, LogIn, LogOut, User, FolderKanban, Network, Layout, Settings, BookOpen } from 'lucide-react';
+import { Sparkles, Search, LogIn, LogOut, User, FolderKanban, Network, Layout, Settings, BookOpen, ScrollText } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function TopNav() {
@@ -127,13 +127,24 @@ export default function TopNav() {
                 <button
                   onClick={() => navigate('/admin/import')}
                   className={`px-2.5 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
-                    isActive('/admin')
+                    isActive('/admin/import')
                       ? 'bg-white/10 text-[#F2D760]'
                       : 'text-gray-200 hover:text-white hover:bg-white/5'
                   }`}
                 >
                   <Settings className="w-3.5 h-3.5" />
                   <span>知识导入</span>
+                </button>
+                <button
+                  onClick={() => navigate('/admin/logs')}
+                  className={`px-2.5 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
+                    isActive('/admin/logs')
+                      ? 'bg-white/10 text-[#F2D760]'
+                      : 'text-gray-200 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  <ScrollText className="w-3.5 h-3.5" />
+                  <span>运行日志</span>
                 </button>
               </>
             )}
@@ -192,6 +203,16 @@ export default function TopNav() {
                     className="w-full text-left px-3.5 py-1.5 hover:bg-gray-50 transition-colors"
                   >
                     知识导入
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setShowProfile(false);
+                      navigate('/admin/logs');
+                    }}
+                    className="w-full text-left px-3.5 py-1.5 hover:bg-gray-50 transition-colors"
+                  >
+                    运行日志
                   </button>
 
                   <button

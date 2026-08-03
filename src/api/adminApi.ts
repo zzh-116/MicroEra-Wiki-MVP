@@ -1,5 +1,35 @@
 import { getToken } from './client';
 
+// ---- Log Types ----
+
+export interface LogEntry {
+  id: number;
+  level: 'debug' | 'info' | 'warn' | 'error';
+  module: string;
+  message: string;
+  stack: string | null;
+  context: Record<string, unknown> | null;
+  createdAt: string;
+}
+
+export interface LogsResponse {
+  logs: LogEntry[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  levels: string[];
+  modules: string[];
+}
+
+export interface DeleteLogsResponse {
+  success: boolean;
+  deleted: number;
+  message: string;
+}
+
+// ---- Import Job Types ----
+
 export interface ImportJobStep {
   id: number;
   name: string;
@@ -224,5 +254,36 @@ export const adminApi = {
   tickJob(jobId: string): ImportJob | null {
     const job = activeJobs.find((j) => j.id === jobId);
     return job ? { ...job } : null;
+  },
+
+  // ---- Logs ----
+
+  /** Fetch paginated, filtered logs */
+  async getLogs(params: {
+    level?: string; module?: string; search?: string;
+    page?: number; pageSize?: number;
+  } = {}): Promise<LogsResponse> {
+    const qs = new URLSearchParams();
+    if (params.level) qs.set('level', params.level);
+    if (params.module) qs.set('module', params.module);
+    if (params.search) qs.set('search', params.search);
+    if (params.page) qs.set('page', String(params.page));
+    if (params.pageSize) qs.set('pageSize', String(params.pageSize));
+
+    const res = await fetch(`${API_BASE}/admin/logs?${qs.toString()}`, {
+      headers: { ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}) },
+    });
+    if (!res.ok) throw new Error(`Failed to fetch logs: ${res.statusText}`);
+    return res.json();
+  },
+
+  /** Delete logs older than N days (default 30) */
+  async deleteLogs(olderThanDays: number = 30): Promise<DeleteLogsResponse> {
+    const res = await fetch(`${API_BASE}/admin/logs?olderThan=${olderThanDays}`, {
+      method: 'DELETE',
+      headers: { ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}) },
+    });
+    if (!res.ok) throw new Error(`Failed to delete logs: ${res.statusText}`);
+    return res.json();
   },
 };
