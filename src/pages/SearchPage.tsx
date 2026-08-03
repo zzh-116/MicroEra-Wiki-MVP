@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { searchApi, SearchResult } from '../api/searchApi';
+import { entriesApi } from '../api/entriesApi';
+import { WikiEntry } from '../types/wiki';
 import { storage } from '../lib/storage';
 import {
   Search, Clock, TrendingUp, X, Filter, ChevronDown, ChevronRight,
@@ -97,6 +99,7 @@ export default function SearchPage() {
   // ── Core state ────────────────────────────────────────────────────────────
   const [query, setQuery] = useState(searchParams.get('q') || '');
   const [results, setResults] = useState<SearchResult[]>([]);
+  const [allEntries, setAllEntries] = useState<WikiEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -183,6 +186,16 @@ export default function SearchPage() {
     }
     executeSearch(q, typeFilter, visibilityFilter, page, pageSize);
   }, [isLoggedIn]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Load the full visible knowledge base once so type-filter counts match the
+  // actual totals instead of only counting the current search result page.
+  useEffect(() => {
+    let cancelled = false;
+    entriesApi.getEntries()
+      .then((list) => { if (!cancelled) setAllEntries(list); })
+      .catch((err) => console.error('Error loading entry counts:', err));
+    return () => { cancelled = true; };
+  }, [isLoggedIn]);
 
   // ── Keyboard shortcut ────────────────────────────────────────────────────
   useEffect(() => {
@@ -284,13 +297,13 @@ export default function SearchPage() {
 
   // ── Type counts for filter badges ────────────────────────────────────────
   const typeCounts = useMemo(() => {
-    const counts: Record<string, number> = { all: results.length };
+    const counts: Record<string, number> = { all: allEntries.length };
     for (const opt of TYPE_OPTIONS) {
       if (opt.value === 'all') continue;
-      counts[opt.value] = results.filter((r) => r.type === opt.value).length;
+      counts[opt.value] = allEntries.filter((e) => e.entryType === opt.value).length;
     }
     return counts;
-  }, [results]);
+  }, [allEntries]);
 
   const hasSearched = total > 0 || loading || query || typeFilter !== 'all' || visibilityFilter !== 'all';
   const showHeroSuggestions = !hasSearched && !loading;
