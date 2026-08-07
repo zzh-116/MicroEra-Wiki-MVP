@@ -3,6 +3,10 @@ import { get, post, put, del } from './client';
 import { mvpEntryToWikiEntry, toNumId, reverseEntryType } from '../utils/adapter';
 
 export const entriesApi = {
+  async getStats(): Promise<{ total: number; byType: Record<string, number> }> {
+    return get('/entries/stats');
+  },
+
   async getEntries(params?: {
     keyword?: string;
     entry_type?: string;

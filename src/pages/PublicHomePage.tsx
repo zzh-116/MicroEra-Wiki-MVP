@@ -42,22 +42,33 @@ function countByType(entries: WikiEntry[], type: string): number {
 export default function PublicHomePage() {
   const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState('');
-  const [publicEntries, setPublicEntries] = useState<WikiEntry[]>([]);
+  const [allEntries, setAllEntries] = useState<WikiEntry[]>([]);
+  const [statsData, setStatsData] = useState<{ total: number; byType: Record<string, number> } | null>(null);
   const [entriesLoading, setEntriesLoading] = useState(true);
   const [searchFocused, setSearchFocused] = useState(false);
+  const publicEntries = useMemo(
+    () => allEntries.filter((e) => e.visibility === 'public'),
+    [allEntries],
+  );
 
   useEffect(() => {
-    const fetchPublic = async () => {
+    const fetchEntries = async () => {
       setEntriesLoading(true);
       try {
-        const data = await entriesApi.getEntries({ visibility: 'public' });
-        setPublicEntries(data);
+        const data = await entriesApi.getEntries();
+        setAllEntries(data);
       } catch {
-        setPublicEntries([]);
+        setAllEntries([]);
+      }
+      try {
+        const stats = await entriesApi.getStats();
+        setStatsData(stats);
+      } catch {
+        setStatsData(null);
       }
       setEntriesLoading(false);
     };
-    fetchPublic();
+    fetchEntries();
   }, []);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -73,18 +84,18 @@ export default function PublicHomePage() {
 
   // ── Derived data ──────────────────────────────────────────────────────────
   const stats = useMemo(() => {
-    const total = publicEntries.length;
-    const papers = countByType(publicEntries, 'academic_paper');
-    const sandbox = countByType(publicEntries, 'sandbox_project');
-    const dataStandards = countByType(publicEntries, 'data_standard');
-    const lastUpdated = publicEntries.length > 0
-      ? publicEntries.reduce((a, b) =>
+    const total = statsData?.total ?? allEntries.length;
+    const papers = statsData?.byType['academic_paper'] ?? countByType(allEntries, 'academic_paper');
+    const sandbox = statsData?.byType['sandbox_project'] ?? countByType(allEntries, 'sandbox_project');
+    const dataStandards = statsData?.byType['data_standard'] ?? countByType(allEntries, 'data_standard');
+    const lastUpdated = allEntries.length > 0
+      ? allEntries.reduce((a, b) =>
           a.latestUpdatedAt > b.latestUpdatedAt ? a : b
         ).latestUpdatedAt
       : null;
 
     return { total, papers, sandbox, dataStandards, lastUpdated };
-  }, [publicEntries]);
+  }, [allEntries, statsData]);
 
   const featuredEntries = useMemo(() => {
     return [...publicEntries]
@@ -218,7 +229,7 @@ export default function PublicHomePage() {
               </div>
             ) : (
               <>
-                <PublicStatBadge icon={Layers} value={stats.total} label="公开条目" />
+                <PublicStatBadge icon={Layers} value={stats.total} label="知识条目" />
                 <PublicStatBadge icon={BookOpen} value={stats.papers} label="学术论文" />
                 <PublicStatBadge icon={Beaker} value={stats.sandbox} label="Sandbox 项目" />
                 <PublicStatBadge icon={Ruler} value={stats.dataStandards} label="数据标准" />

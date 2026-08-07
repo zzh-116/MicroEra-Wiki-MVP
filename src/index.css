@@ -41,3 +41,62 @@
 .markdown-body pre, .markdown-body code {
   font-family: var(--font-mono);
 }
+
+/* Knowledge graph workspace */
+@keyframes kgPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.kg-panel {
+  animation: kgPanelIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.kg-panel-left {
+  animation-delay: 0ms;
+}
+
+.kg-panel-right {
+  animation-delay: 90ms;
+}
+
+.kg-dashboard-grid {
+  background-color: #F4F7FB;
+  background-image:
+    linear-gradient(rgba(100, 116, 139, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(100, 116, 139, 0.07) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.kg-graph-stage {
+  background-color: #FAFBFC;
+  background-image:
+    linear-gradient(rgba(100, 116, 139, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(100, 116, 139, 0.1) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.kg-scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.25) transparent;
+}
+
+.kg-scroll-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.kg-scroll-thin::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 9999px;
+}
+
+.kg-scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
+}

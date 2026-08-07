@@ -110,17 +110,25 @@ export interface Reference {
 export interface KnowledgeGraphNode {
   id: string;
   label: string;
-  type: EntryType;
-  entryId: string;
-  description: string;
+  type: string;
+  entryId?: string;
+  description?: string;
+  metadata?: {
+    title?: string;
+    author?: string;
+    tags?: string[];
+    summary?: string;
+    updatedAt?: string;
+  };
 }
 
 export interface KnowledgeGraphEdge {
-  id: string;
+  id?: string;
   source: string;
   target: string;
-  relation: string; // references, produces, depends_on, belongs_to, etc.
-  description: string;
+  relation?: string; // legacy field kept for compatibility
+  label?: string; // backend now returns this field
+  description?: string;
 }
 
 export interface ServiceCard {

@@ -1,5 +1,5 @@
 import { BaseRepository, DbClient } from './base.js';
-import { entries, entryTags, tags } from '../db/schema.js';
+import { entries, entryTags, tags, wikiFiles } from '../db/schema.js';
 import { eq, like, and, or, inArray, desc, isNull, sql } from 'drizzle-orm';
 import type { Entry } from '../types.js';
 
@@ -37,14 +37,26 @@ export class EntryRepository extends BaseRepository {
       .where(inArray(entryTags.entryId, ids));
 
     const tagMap = new Map<number, string[]>();
+    const fileMap = new Map<number, string>();
     for (const row of tagRows) {
       if (!tagMap.has(row.entryId)) tagMap.set(row.entryId, []);
       tagMap.get(row.entryId)!.push(row.tagName);
+    }
+    if (ids.length > 0) {
+      const fileRows = await this.db
+        .select({ entryId: wikiFiles.entryId, originalFilename: wikiFiles.originalFilename })
+        .from(wikiFiles)
+        .where(inArray(wikiFiles.entryId, ids))
+        .orderBy(wikiFiles.id);
+      for (const row of fileRows) {
+        if (!fileMap.has(row.entryId)) fileMap.set(row.entryId, row.originalFilename);
+      }
     }
 
     return entryRows.map((e) => ({
       id: e.id,
       title: e.title,
+      file_name: fileMap.get(e.id),
       entry_type: e.entryType as Entry['entry_type'],
       summary: e.summary,
       content: e.content,
@@ -165,6 +177,67 @@ export class EntryRepository extends BaseRepository {
   }): Promise<Entry[]> {
     const result = await this.findMany({ ...params, page: 1, pageSize: 999999 });
     return result.entries;
+  }
+
+  /** Graph-only variant: keeps one record per title so repeated imports of the
+   * same document only produce one node (the newest record per title). */
+  async findAllDistinctByTitle(params?: {
+    keyword?: string;
+    entry_type?: string;
+    visibility?: string;
+    category_id?: string;
+    tag?: string;
+    isInternal?: boolean;
+  }): Promise<Entry[]> {
+    const conditions: ReturnType<typeof eq>[] = [isNull(entries.deletedAt)];
+
+    if (!params?.isInternal) {
+      conditions.push(eq(entries.visibility, 'public'));
+    }
+
+    if (params) {
+      if (params.keyword) {
+        const kw = `%${params.keyword.toLowerCase()}%`;
+        conditions.push(
+          or(
+            like(sql`lower(${entries.title})`, kw),
+            like(sql`lower(${entries.summary})`, kw),
+            like(sql`lower(${entries.content})`, kw),
+          )!,
+        );
+      }
+      if (params.entry_type && params.entry_type !== 'all') {
+        conditions.push(eq(entries.entryType, params.entry_type));
+      }
+      if (params.visibility && params.visibility !== 'all') {
+        conditions.push(eq(entries.visibility, params.visibility));
+      }
+      if (params.category_id && params.category_id !== 'all') {
+        conditions.push(eq(entries.categoryId, Number(params.category_id)));
+      }
+      if (params.tag) {
+        const matchingIds = await this.db
+          .select({ entryId: entryTags.entryId })
+          .from(entryTags)
+          .innerJoin(tags, eq(entryTags.tagId, tags.id))
+          .where(eq(tags.name, params.tag));
+        const ids = matchingIds.map((r) => r.entryId);
+        if (ids.length > 0) {
+          conditions.push(inArray(entries.id, ids));
+        } else {
+          return [];
+        }
+      }
+    }
+
+    const where = and(...conditions);
+    const rows = await this.db
+      .selectDistinctOn([entries.title])
+      .from(entries)
+      .where(where)
+      .orderBy(entries.title, desc(entries.updatedAt));
+
+    return this.hydrateTags(rows);
   }
 
   async create(input: CreateEntryInput, tx?: DbClient): Promise<Entry> {
@@ -299,6 +372,26 @@ export class EntryRepository extends BaseRepository {
       .from(entries)
       .where(and(...conditions));
     return Number(result[0]?.count ?? 0);
+  }
+
+  /** Full-library counts grouped by entry type (used for home/stat cards). */
+  async countByType(isInternal = true): Promise<{ total: number; byType: Record<string, number> }> {
+    const conditions: ReturnType<typeof eq>[] = [isNull(entries.deletedAt)];
+    if (!isInternal) conditions.push(eq(entries.visibility, 'public'));
+
+    const rows = await this.db
+      .select({ entryType: entries.entryType, count: sql<number>`count(*)` })
+      .from(entries)
+      .where(and(...conditions))
+      .groupBy(entries.entryType);
+
+    const byType: Record<string, number> = {};
+    let total = 0;
+    for (const row of rows) {
+      byType[row.entryType] = Number(row.count);
+      total += Number(row.count);
+    }
+    return { total, byType };
   }
 }
 

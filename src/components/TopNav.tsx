@@ -91,9 +91,9 @@ export default function TopNav() {
               <span>AI 查询问答</span>
             </button>
             <button
-              onClick={() => navigate('/graph')}
+              onClick={() => navigate('/knowledge-graph')}
               className={`px-2.5 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
-                isActive('/graph')
+                isActive('/knowledge-graph') || isActive('/graph')
                   ? 'bg-white/10 text-[#F2D760]'
                   : 'text-gray-200 hover:text-white hover:bg-white/5'
               }`}

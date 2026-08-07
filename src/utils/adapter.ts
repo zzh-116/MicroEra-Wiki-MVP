@@ -133,7 +133,17 @@ export function mapEntryType(mvpType: string): string {
     business_material: 'business_material',
     handwritten_note: 'handwritten_note',
   };
-  return map[mvpType] || 'general';
+  // Legacy MVP backend values -> current frontend types
+  const legacy: Record<string, string> = {
+    asset: 'business_material',
+    product: 'sandbox_project',
+    tech: 'tech_doc',
+    data_item: 'data_standard',
+    service: 'tech_doc',
+    api: 'tech_doc',
+    person: 'tech_doc',
+  };
+  return map[mvpType] || legacy[mvpType] || 'general';
 }
 
 /** Reverse: v0.1.1 → MVP */
@@ -148,16 +158,19 @@ export function reverseEntryType(feType: string): string {
     business_material: 'business_material',
     handwritten_note: 'handwritten_note',
   };
-  // Fallback: map legacy/invalid types to a valid default
-  const fallback: Record<string, string> = {
-    tech: 'tech_doc',
-    data_item: 'data_standard',
+  // Legacy frontend values -> current backend types
+  const legacy: Record<string, string> = {
     project: 'sandbox_project',
     paper: 'academic_paper',
     concept: 'tech_doc',
     service: 'tech_doc',
+    api: 'tech_doc',
+    person: 'tech_doc',
+    data_item: 'data_standard',
+    source_file: 'business_material',
+    business_value: 'business_material',
   };
-  return map[feType] || fallback[feType] || 'handwritten_note';
+  return map[feType] || legacy[feType] || 'tech_doc';
 }
 
 // ── Entry field adapter (MVP Entry → WikiEntry) ───────────────

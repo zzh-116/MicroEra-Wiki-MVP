@@ -36,6 +36,10 @@ entriesRouter.get('/', optionalAuth, async (req: Request, res: Response) => {
   }
 });
 
+entriesRouter.get('/stats', async (_req: Request, res: Response) => {
+  res.json(await entryRepository.countByType(true));
+});
+
 entriesRouter.get('/:id', optionalAuth, async (req: Request, res: Response) => {
   const entry = await entryRepository.findById(Number(req.params.id));
   if (!entry) { res.status(404).json({ error: 'ENTRY_NOT_FOUND', message: '条目不存在' }); return; }
