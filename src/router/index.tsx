@@ -6,7 +6,7 @@ import HomePage from '../pages/HomePage';
 import LoginPage from '../pages/LoginPage';
 import SearchPage from '../pages/SearchPage';
 import AIQueryPage from '../pages/AIQueryPage';
-import KnowledgeGraphPage from '../pages/KnowledgeGraphPage';
+import SemanticGraphPage from '../pages/KnowledgeGraph';
 import PaperLibraryPage from '../pages/PaperLibraryPage';
 import DataItemPage from '../pages/DataItemPage';
 import TemplateLibraryPage from '../pages/TemplateLibraryPage';
@@ -31,7 +31,8 @@ export default function AppRoutes() {
         <Route path="search" element={<SearchPage />} />
         <Route path="literature" element={<LiteratureSearchPage />} />
         <Route path="ai-query" element={<AIQueryPage />} />
-        <Route path="graph" element={<KnowledgeGraphPage />} />
+        <Route path="graph" element={<SemanticGraphPage />} />
+        <Route path="knowledge-graph" element={<SemanticGraphPage />} />
         <Route path="entry/:id" element={<EntryDetailPage />} />
         <Route path="system-version" element={<SystemVersionPage />} />
 

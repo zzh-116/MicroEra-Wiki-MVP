@@ -36,8 +36,8 @@ export default function KnowledgeGraph({
     const centerX = width / 2;
 
     // Find the primary/central node (usually the project node if available, or first node)
-    const centralIndex = nodes.findIndex(n => n.type === 'sandbox_project') !== -1
-      ? nodes.findIndex(n => n.type === 'sandbox_project')
+    const centralIndex = nodes.findIndex(n => n.type === 'Sandbox项目') !== -1
+      ? nodes.findIndex(n => n.type === 'Sandbox项目')
       : 0;
 
     const centralNode = nodes[centralIndex];
@@ -67,27 +67,18 @@ export default function KnowledgeGraph({
     }
   }, [nodes, height]);
 
-  const getNodeColor = (type: EntryType, isSelected: boolean) => {
-    if (isSelected) return 'fill-[#DB5F5B] stroke-[#2B3150] stroke-2';
-    switch (type) {
-      case 'sandbox_project':
-        return 'fill-[#2B3150] stroke-blue-300';
-      case 'academic_paper':
-        return 'fill-[#10B981] stroke-green-100';
-      case 'data_standard':
-        return 'fill-[#8B5CF6] stroke-purple-100';
-      case 'business_material':
-        return 'fill-[#F43F5E] stroke-rose-100';
-      case 'tech_doc':
-        return 'fill-[#F2D760] stroke-[#2B3150]';
-      case 'template':
-        return 'fill-[#14B8A6] stroke-teal-100';
-      case 'patent':
-        return 'fill-[#F59E0B] stroke-amber-100';
-      default:
-        return 'fill-gray-400 stroke-gray-200';
-    }
+  const SVG_TYPE_COLOR_MAP: Record<string, string> = {
+    'Sandbox项目': '#5B8FF9',
+    '学术论文': '#9270CA',
+    '专利成果': '#F6BD16',
+    '技术文档': '#6DC8EC',
+    '数据标准': '#51A8A8',
+    '模板规范': '#F6903D',
+    '商业资料': '#F4664A',
+    '手写笔记': '#B37BEB',
   };
+
+  const getNodeFill = (type: string) => SVG_TYPE_COLOR_MAP[type] || '#999999';
 
   const getTextColor = (type: EntryType) => {
     return 'text-gray-700';
@@ -102,7 +93,7 @@ export default function KnowledgeGraph({
           <span>关联知识图谱 (Interactive Semantic Network)</span>
         </span>
         <span className="text-[9px] text-gray-400">
-          * 鼠标悬停显示信息，点击节点加载摘要及跳转
+          * 点击节点查看摘要，按钮跳转详情
         </span>
       </div>
 
@@ -138,7 +129,7 @@ export default function KnowledgeGraph({
               if (!start || !end) return null;
 
               return (
-                <g key={edge.id}>
+                <g key={edge.id || `${edge.source}->${edge.target}`}>
                   <path
                     d={`M ${start.x} ${start.y} L ${end.x} ${end.y}`}
                     stroke="#E2E8F0"
@@ -154,7 +145,7 @@ export default function KnowledgeGraph({
                     className="fill-gray-400 text-[8px] text-center pointer-events-none select-none font-sans"
                     textAnchor="middle"
                   >
-                    {edge.relation}
+                    {edge.label || edge.relation || ''}
                   </text>
                 </g>
               );
@@ -167,6 +158,8 @@ export default function KnowledgeGraph({
 
               const isSelected = selectedNode?.id === node.id;
               const isHovered = hoveredNode?.id === node.id;
+              const labelChars = Array.from(node.label || '');
+              const shortLabel = labelChars.slice(0, 8).join('');
 
               return (
                 <g
@@ -178,8 +171,11 @@ export default function KnowledgeGraph({
                   className="cursor-pointer group"
                 >
                   <circle
-                    r={isSelected ? 14 : isHovered ? 12 : 10}
-                    className={`transition-all duration-200 shadow ${getNodeColor(node.type, isSelected)}`}
+                    r={11}
+                    fill={getNodeFill(node.type)}
+                    stroke={isSelected ? '#DB5F5B' : '#FFFFFF'}
+                    strokeWidth={isSelected ? 3 : 2}
+                    className="transition-all duration-200"
                   />
                   {/* Inner text/badge */}
                   <text
@@ -198,7 +194,7 @@ export default function KnowledgeGraph({
                     className="fill-gray-700 text-[9px] font-medium pointer-events-none select-none"
                     textAnchor="middle"
                   >
-                    {node.label.length > 8 ? `${node.label.substring(0, 8)}...` : node.label}
+                    {labelChars.length > 8 ? `${shortLabel}...` : node.label}
                   </text>
                 </g>
               );
@@ -226,11 +222,11 @@ export default function KnowledgeGraph({
                 </div>
 
                 <p className="text-[11px] text-gray-500 leading-normal">
-                  {selectedNode.description}
+                  {selectedNode.metadata?.summary || '暂无描述'}
                 </p>
 
                 <div className="bg-gray-50 p-2 rounded text-[10px] text-gray-500 font-mono">
-                  <span>编号: {selectedNode.entryId}</span>
+                  <span>编号: {selectedNode.id}</span>
                 </div>
               </div>
             ) : (
@@ -243,7 +239,7 @@ export default function KnowledgeGraph({
           {selectedNode && (
             <button
               onClick={() => {
-                const url = `/entry/${selectedNode.entryId}`;
+                const url = `/entry/${selectedNode.id}`;
                 if (openInNewTab) {
                   window.open(url, '_blank');
                 } else {

@@ -16,12 +16,23 @@ import {
 // ── Entry type mapping ──────────────────────────────────────
 
 describe('mapEntryType', () => {
-  it('maps MVP backend types to frontend types', () => {
-    expect(mapEntryType('asset')).toBe('source_file');
-    expect(mapEntryType('product')).toBe('project');
-    expect(mapEntryType('tech')).toBe('concept');
+  it('maps backend types to frontend types', () => {
+    expect(mapEntryType('sandbox_project')).toBe('sandbox_project');
+    expect(mapEntryType('academic_paper')).toBe('academic_paper');
     expect(mapEntryType('patent')).toBe('patent');
-    expect(mapEntryType('data_item')).toBe('data_item');
+    expect(mapEntryType('data_standard')).toBe('data_standard');
+    expect(mapEntryType('tech_doc')).toBe('tech_doc');
+    expect(mapEntryType('template')).toBe('template');
+    expect(mapEntryType('business_material')).toBe('business_material');
+    expect(mapEntryType('handwritten_note')).toBe('handwritten_note');
+  });
+
+  it('maps legacy MVP backend types to current frontend types', () => {
+    expect(mapEntryType('asset')).toBe('business_material');
+    expect(mapEntryType('product')).toBe('sandbox_project');
+    expect(mapEntryType('tech')).toBe('tech_doc');
+    expect(mapEntryType('data_item')).toBe('data_standard');
+    expect(mapEntryType('service')).toBe('tech_doc');
   });
 
   it('returns "general" for unknown types', () => {
@@ -31,23 +42,32 @@ describe('mapEntryType', () => {
 });
 
 describe('reverseEntryType', () => {
-  it('maps frontend types back to MVP backend types', () => {
-    expect(reverseEntryType('project')).toBe('product');
-    expect(reverseEntryType('paper')).toBe('tech');
+  it('maps frontend types back to backend types', () => {
+    expect(reverseEntryType('sandbox_project')).toBe('sandbox_project');
+    expect(reverseEntryType('academic_paper')).toBe('academic_paper');
     expect(reverseEntryType('patent')).toBe('patent');
-    expect(reverseEntryType('data_item')).toBe('data_item');
-    expect(reverseEntryType('concept')).toBe('tech');
-    expect(reverseEntryType('template')).toBe('asset');
-    expect(reverseEntryType('business_value')).toBe('asset');
-    expect(reverseEntryType('source_file')).toBe('asset');
-    expect(reverseEntryType('service')).toBe('tech');
-    expect(reverseEntryType('api')).toBe('tech');
-    expect(reverseEntryType('person')).toBe('tech');
+    expect(reverseEntryType('data_standard')).toBe('data_standard');
+    expect(reverseEntryType('tech_doc')).toBe('tech_doc');
+    expect(reverseEntryType('template')).toBe('template');
+    expect(reverseEntryType('business_material')).toBe('business_material');
+    expect(reverseEntryType('handwritten_note')).toBe('handwritten_note');
   });
 
-  it('returns "tech" for unknown frontend types', () => {
-    expect(reverseEntryType('unknown')).toBe('tech');
-    expect(reverseEntryType('')).toBe('tech');
+  it('maps legacy frontend types to current backend types', () => {
+    expect(reverseEntryType('project')).toBe('sandbox_project');
+    expect(reverseEntryType('paper')).toBe('academic_paper');
+    expect(reverseEntryType('concept')).toBe('tech_doc');
+    expect(reverseEntryType('data_item')).toBe('data_standard');
+    expect(reverseEntryType('business_value')).toBe('business_material');
+    expect(reverseEntryType('source_file')).toBe('business_material');
+    expect(reverseEntryType('service')).toBe('tech_doc');
+    expect(reverseEntryType('api')).toBe('tech_doc');
+    expect(reverseEntryType('person')).toBe('tech_doc');
+  });
+
+  it('returns "tech_doc" for unknown frontend types', () => {
+    expect(reverseEntryType('unknown')).toBe('tech_doc');
+    expect(reverseEntryType('')).toBe('tech_doc');
   });
 });
 
@@ -129,7 +149,7 @@ describe('mvpEntryToWikiEntry', () => {
 
   it('maps entry_type via mapEntryType', () => {
     const result = mvpEntryToWikiEntry(mvpInput);
-    expect(result.entryType).toBe('concept'); // tech → concept
+    expect(result.entryType).toBe('tech_doc'); // tech -> tech_doc
   });
 
   it('converts category_id to spaceId', () => {

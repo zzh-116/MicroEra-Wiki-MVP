@@ -84,8 +84,10 @@ export class ImportService {
     }
 
     const properties = parseResult.properties || [];
+    const fileNameTitle = parseResult.metadata.fileName.replace(/\.[^.]+$/, '');
     const title = input.entryMetadata?.title
-      || parseResult.metadata.fileName.replace(/\.[^.]+$/, '')
+      || parseResult.metadata.title?.trim()
+      || fileNameTitle
       || `Import ${Date.now()}`;
 
     let entryContent = parseResult.markdown;

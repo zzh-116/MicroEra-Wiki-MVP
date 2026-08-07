@@ -8,6 +8,8 @@ export type VisibilityType = 'public' | 'internal';
 export interface Entry {
   id: number;
   title: string;
+  /** Original uploaded file name, used only when title is empty */
+  file_name?: string;
   entry_type: EntryType;
   summary: string;
   content: string;
