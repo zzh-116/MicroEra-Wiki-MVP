@@ -138,15 +138,6 @@ export default function KnowledgeGraph({
                     markerEnd="url(#arrow)"
                     className="hover:stroke-[#DB5F5B] hover:stroke-2 transition-colors cursor-help"
                   />
-                  {/* Subtle label in the middle */}
-                  <text
-                    x={(start.x + end.x) / 2}
-                    y={(start.y + end.y) / 2 - 4}
-                    className="fill-gray-400 text-[8px] text-center pointer-events-none select-none font-sans"
-                    textAnchor="middle"
-                  >
-                    {edge.label || edge.relation || ''}
-                  </text>
                 </g>
               );
             })}

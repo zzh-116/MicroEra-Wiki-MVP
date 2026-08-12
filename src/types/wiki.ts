@@ -128,6 +128,8 @@ export interface KnowledgeGraphEdge {
   target: string;
   relation?: string; // legacy field kept for compatibility
   label?: string; // backend now returns this field
+  similarity?: number;
+  relationSource?: string;
   description?: string;
 }
 

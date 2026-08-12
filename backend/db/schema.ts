@@ -4,7 +4,7 @@
 import {
   pgTable, serial, text, integer, timestamp,
   primaryKey, index, jsonb, uniqueIndex,
-  vector,
+  vector, doublePrecision,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -210,6 +210,36 @@ export const runLogs = pgTable(
     index('run_logs_level_idx').on(table.level),
     index('run_logs_module_idx').on(table.module),
     index('run_logs_created_at_idx').on(table.createdAt.desc()),
+  ],
+);
+
+// ---- Entry Relations (persisted knowledge graph edges) ----
+// Each undirected semantic pair is stored once with source_entry_id <
+// target_entry_id, so A->B and B->A cannot both exist.
+export const entryRelations = pgTable(
+  'entry_relations',
+  {
+    id: serial('id').primaryKey(),
+    sourceEntryId: integer('source_entry_id')
+      .notNull()
+      .references(() => entries.id, { onDelete: 'cascade' }),
+    targetEntryId: integer('target_entry_id')
+      .notNull()
+      .references(() => entries.id, { onDelete: 'cascade' }),
+    relationType: text('relation_type').notNull().default('semantic_related'),
+    similarity: doublePrecision('similarity'),
+    relationSource: text('relation_source').notNull().default('embedding'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('entry_relations_source_target_type_idx').on(
+      table.sourceEntryId,
+      table.targetEntryId,
+      table.relationType,
+    ),
+    index('entry_relations_source_idx').on(table.sourceEntryId),
+    index('entry_relations_target_idx').on(table.targetEntryId),
   ],
 );
 

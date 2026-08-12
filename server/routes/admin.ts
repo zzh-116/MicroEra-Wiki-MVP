@@ -8,6 +8,7 @@ import { chunkService } from '../../backend/chunk/service.js';
 import { ollamaEmbedder } from '../../backend/embedding/ollama.js';
 import { config } from '../../backend/config.js';
 import { createLogger } from '../../backend/utils/logger.js';
+import { rebuildSemanticRelations } from '../../backend/services/graph-rebuild.service.js';
 
 const logger = createLogger('Admin');
 
@@ -15,6 +16,27 @@ export const adminRouter = Router();
 
 // All admin routes require authentication
 adminRouter.use(requireAuth);
+
+/**
+ * POST /api/admin/graph-rebuild
+ *
+ * Dev/ops endpoint: batch-generate semantic_related edges via pgvector
+ * similarity and persist them into entry_relations. Graph APIs then read
+ * from that table instead of recomputing relations on every request.
+ */
+adminRouter.post('/graph-rebuild', async (_req: Request, res: Response) => {
+  try {
+    const result = await rebuildSemanticRelations();
+    res.json(result);
+  } catch (err: any) {
+    console.error('[Admin] Graph rebuild failed:', err.message);
+    res.status(500).json({
+      success: false,
+      error: 'GRAPH_REBUILD_FAILED',
+      message: err.message,
+    });
+  }
+});
 
 /**
  * POST /api/admin/rebuild-embeddings

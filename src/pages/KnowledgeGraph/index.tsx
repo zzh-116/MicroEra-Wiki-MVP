@@ -32,11 +32,15 @@ interface SeedGraphNode {
   metadata: SeedGraphMetadata;
 }
 
+type SeedGraphRelation = 'semantic_related';
+
 interface SeedGraphEdge {
   source: string;
   target: string;
-  label: 'references' | 'produces' | 'belongs_to' | 'derived_from';
+  label: SeedGraphRelation;
+  relation: SeedGraphRelation;
   similarity?: number;
+  relationSource: 'embedding' | 'tag' | 'manual';
 }
 
 interface SeedGraphData {
@@ -48,15 +52,11 @@ function normalizeGraph(data: any): SeedGraphData {
   const rawNodes: any[] = data?.nodes || [];
   const rawEdges: any[] = data?.edges || [];
   const cleanId = (v: any) => String(v ?? '').replace(/^gn-/, '');
-  const seenLabels = new Set<string>();
   const nodes: SeedGraphNode[] = [];
   for (const n of rawNodes) {
     const id = cleanId(n.id ?? n.entryId ?? n.entry_id);
     if (!id) continue;
     const label = (n.label || n.title || n.file_name || '未命名文档').trim();
-    const key = label.toLowerCase();
-    if (seenLabels.has(key)) continue;
-    seenLabels.add(key);
     const baseMeta = n.metadata || {
       title: n.title || n.label || n.file_name || '未命名文档',
       author: n.author || '',
@@ -72,12 +72,20 @@ function normalizeGraph(data: any): SeedGraphData {
     });
   }
   const edges: SeedGraphEdge[] = rawEdges
-    .map((e) => ({
-      source: cleanId(e.source ?? e.from),
-      target: cleanId(e.target ?? e.to),
-      label: (e.label || e.relation || 'references') as SeedGraphEdge['label'],
-      similarity: e.similarity,
-    }))
+    .map((e): SeedGraphEdge => {
+      const rawRelation = String(e.relation || e.label || 'semantic_related');
+      const relation = ['references', 'produces', 'belongs_to', 'derived_from', 'shared_tags'].includes(rawRelation)
+        ? 'semantic_related'
+        : rawRelation;
+      return {
+        source: cleanId(e.source ?? e.from),
+        target: cleanId(e.target ?? e.to),
+        label: 'semantic_related',
+        relation: relation as SeedGraphRelation,
+        similarity: e.similarity,
+        relationSource: (e.relation_source || e.relationSource || 'embedding') as SeedGraphEdge['relationSource'],
+      };
+    })
     .filter((e) => e.source && e.target);
   return { nodes, edges };
 }
@@ -161,25 +169,25 @@ const MOCK_GRAPH: SeedGraphData = {
     { id: '16', label: '木质素高值化论文', type: '学术论文', metadata: { title: '木质素高值化论文', author: '生物组', tags: ['木质素', '高值化'], summary: '木质素基材料的高值化利用研究。', updatedAt: '2026-06-07' } },
   ],
   edges: [
-    { source: '1', target: '2', label: 'references' },
-    { source: '1', target: '10', label: 'references' },
-    { source: '1', target: '4', label: 'belongs_to' },
-    { source: '2', target: '4', label: 'belongs_to' },
-    { source: '2', target: '6', label: 'produces' },
-    { source: '3', target: '6', label: 'references' },
-    { source: '4', target: '5', label: 'references' },
-    { source: '6', target: '13', label: 'produces' },
-    { source: '7', target: '13', label: 'produces' },
-    { source: '1', target: '8', label: 'derived_from' },
-    { source: '8', target: '9', label: 'derived_from' },
-    { source: '10', target: '12', label: 'belongs_to' },
-    { source: '10', target: '11', label: 'produces' },
-    { source: '11', target: '4', label: 'belongs_to' },
-    { source: '13', target: '7', label: 'references' },
-    { source: '15', target: '14', label: 'derived_from' },
-    { source: '15', target: '16', label: 'references' },
-    { source: '16', target: '14', label: 'derived_from' },
-    { source: '10', target: '16', label: 'references' },
+    { source: '1', target: '2', label: 'semantic_related', relation: 'semantic_related', similarity: 0.72, relationSource: 'embedding' },
+    { source: '1', target: '10', label: 'semantic_related', relation: 'semantic_related', similarity: 0.68, relationSource: 'embedding' },
+    { source: '1', target: '4', label: 'semantic_related', relation: 'semantic_related', similarity: 0.61, relationSource: 'embedding' },
+    { source: '2', target: '4', label: 'semantic_related', relation: 'semantic_related', similarity: 0.55, relationSource: 'embedding' },
+    { source: '2', target: '6', label: 'semantic_related', relation: 'semantic_related', similarity: 0.59, relationSource: 'embedding' },
+    { source: '3', target: '6', label: 'semantic_related', relation: 'semantic_related', similarity: 0.64, relationSource: 'embedding' },
+    { source: '4', target: '5', label: 'semantic_related', relation: 'semantic_related', similarity: 0.52, relationSource: 'embedding' },
+    { source: '6', target: '13', label: 'semantic_related', relation: 'semantic_related', similarity: 0.57, relationSource: 'embedding' },
+    { source: '7', target: '13', label: 'semantic_related', relation: 'semantic_related', similarity: 0.63, relationSource: 'embedding' },
+    { source: '1', target: '8', label: 'semantic_related', relation: 'semantic_related', similarity: 0.66, relationSource: 'embedding' },
+    { source: '8', target: '9', label: 'semantic_related', relation: 'semantic_related', similarity: 0.71, relationSource: 'embedding' },
+    { source: '10', target: '12', label: 'semantic_related', relation: 'semantic_related', similarity: 0.49, relationSource: 'embedding' },
+    { source: '10', target: '11', label: 'semantic_related', relation: 'semantic_related', similarity: 0.58, relationSource: 'embedding' },
+    { source: '11', target: '4', label: 'semantic_related', relation: 'semantic_related', similarity: 0.47, relationSource: 'embedding' },
+    { source: '13', target: '7', label: 'semantic_related', relation: 'semantic_related', similarity: 0.62, relationSource: 'embedding' },
+    { source: '15', target: '14', label: 'semantic_related', relation: 'semantic_related', similarity: 0.54, relationSource: 'embedding' },
+    { source: '15', target: '16', label: 'semantic_related', relation: 'semantic_related', similarity: 0.67, relationSource: 'embedding' },
+    { source: '16', target: '14', label: 'semantic_related', relation: 'semantic_related', similarity: 0.56, relationSource: 'embedding' },
+    { source: '10', target: '16', label: 'semantic_related', relation: 'semantic_related', similarity: 0.6, relationSource: 'embedding' },
   ],
 };
 
@@ -190,10 +198,7 @@ interface LegendTypeItem {
 }
 
 const RELATION_META: Record<string, { text: string; color: string }> = {
-  references: { text: '引用 / 关联', color: '#22D3EE' },
-  produces: { text: '产出', color: '#FBBF24' },
-  belongs_to: { text: '归属', color: '#A78BFA' },
-  derived_from: { text: '衍生', color: '#34D399' },
+  semantic_related: { text: '语义关联', color: '#22D3EE' },
 };
 
 interface RelationStat {
@@ -263,7 +268,7 @@ function computeStats(nodes: any[], edges: any[]): GraphStats {
   for (const e of edges) {
     degreeMap.set(e.source, (degreeMap.get(e.source) || 0) + 1);
     degreeMap.set(e.target, (degreeMap.get(e.target) || 0) + 1);
-    const label = (e.label || 'references') as SeedGraphEdge['label'];
+    const label = (e.relation || e.label || 'semantic_related') as SeedGraphRelation;
     relationCounts.set(label, (relationCounts.get(label) || 0) + 1);
   }
   const nodeCount = nodes.length;
@@ -307,6 +312,22 @@ function buildTooltipHtml(node: SeedGraphNode): string {
       <div class="mb-1">${tags}</div>
       <div class="max-w-[220px] text-[10px] leading-snug text-slate-500">${escapeHtml(meta.summary || '')}</div>
       ${meta.updatedAt ? `<div class="mt-1.5 text-[9px] text-slate-400">更新：${escapeHtml(meta.updatedAt)}</div>` : ''}
+    </div>
+  `;
+}
+
+function buildEdgeTooltipHtml(model: SeedGraphEdge): string {
+  const similarity = typeof model.similarity === 'number' ? model.similarity.toFixed(2) : null;
+  const sourceText = model.relationSource === 'tag' ? '标签关联' : '向量相似度';
+  const simText = similarity !== null
+    ? similarity
+    : (model.relationSource === 'tag' ? '无（标签关联）' : '—');
+  return `
+    <div class="min-w-[160px] text-left">
+      <div class="mb-1 text-[12px] font-bold leading-snug text-slate-900">语义关联</div>
+      <div class="mb-0.5 font-mono text-[9px] uppercase tracking-wider text-cyan-600">semantic_related</div>
+      <div class="text-[10px] text-slate-500">相似度：${escapeHtml(simText)}</div>
+      <div class="text-[10px] text-slate-400">来源：${escapeHtml(sourceText)}</div>
     </div>
   `;
 }
@@ -451,8 +472,7 @@ export default function KnowledgeGraphPage() {
       },
       defaultEdge: {
         type: 'line',
-        style: { endArrow: true, lineWidth: 1.2, stroke: '#CBD5E1' },
-        labelCfg: { autoRotate: true, style: { fontSize: 7.5, fill: '#64748B' } },
+        style: { endArrow: false, lineWidth: 1.2, stroke: '#CBD5E1' },
       },
       nodeStateStyles: {
         selected: {
@@ -493,7 +513,13 @@ export default function KnowledgeGraphPage() {
           size: 44,
           style: nodeStyleForType(n.type),
         })),
-        edges: data.edges.map((e) => ({ ...e, label: e.label })),
+        edges: data.edges.map((e) => ({
+          ...e,
+          label: '',
+          relation: e.relation,
+          similarity: e.similarity,
+          relationSource: e.relationSource,
+        })),
       };
       fullGraphDataRef.current = graphData;
       applyTypeFilter('');
@@ -515,6 +541,23 @@ export default function KnowledgeGraphPage() {
     });
 
     graph.on('node:mouseleave', () => {
+      if (tooltipRef.current) tooltipRef.current.style.display = 'none';
+    });
+
+    graph.on('edge:mouseenter', (evt: any) => {
+      const model = evt.item.getModel() as SeedGraphEdge;
+      const tooltip = tooltipRef.current;
+      const rect = container.getBoundingClientRect();
+      const point = graph.getClientByPoint(evt.x, evt.y);
+      if (tooltip && rect) {
+        tooltip.innerHTML = buildEdgeTooltipHtml(model);
+        tooltip.style.left = `${Math.min(point.x - rect.left + 14, rect.width - 250)}px`;
+        tooltip.style.top = `${Math.min(point.y - rect.top + 14, rect.height - 130)}px`;
+        tooltip.style.display = 'block';
+      }
+    });
+
+    graph.on('edge:mouseleave', () => {
       if (tooltipRef.current) tooltipRef.current.style.display = 'none';
     });
 
