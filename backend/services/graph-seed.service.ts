@@ -1,8 +1,7 @@
-// Seed knowledge graph — G6-compatible graph data built from a few core
-// documents plus their pgvector-similar neighbors.
-import { entryRepository } from '../repositories/entry.repository.js';
-import { searchService } from './search.service.js';
+// Knowledge graph assembly - builds G6-compatible graph data from persisted
+// entry_relations rows. No semantic search runs per request anymore.
 import type { Entry } from '../types.js';
+import type { EntryRelationRow } from '../repositories/relation.repository.js';
 
 export type SeedNodeType = string;
 
@@ -19,11 +18,15 @@ export interface SeedGraphNode {
   };
 }
 
+export type SeedGraphRelation = 'semantic_related';
+
 export interface SeedGraphEdge {
   source: string;
   target: string;
-  label: 'references' | 'produces' | 'belongs_to' | 'derived_from';
+  label: SeedGraphRelation;
+  relation: SeedGraphRelation;
   similarity?: number;
+  relationSource: 'embedding' | 'tag' | 'manual';
 }
 
 export interface SeedGraphData {
@@ -79,120 +82,100 @@ function nodeFor(entry: Entry): SeedGraphNode {
   };
 }
 
-function relationFor(targetType: string): SeedGraphEdge['label'] {
-  switch (targetType) {
-    case '学术论文':
-    case '专利成果':
-      return 'references';
-    case '数据标准':
-      return 'belongs_to';
-    case '商业资料':
-      return 'derived_from';
-    default: return 'produces';
-  }
+function edgeFromRelation(rel: EntryRelationRow): SeedGraphEdge {
+  const relation = (rel.relationType === 'semantic_related'
+    ? 'semantic_related'
+    : rel.relationType) as SeedGraphRelation;
+  const relationSource = (['embedding', 'tag', 'manual'].includes(rel.relationSource)
+    ? rel.relationSource
+    : 'embedding') as SeedGraphEdge['relationSource'];
+  const edge: SeedGraphEdge = {
+    source: String(rel.sourceEntryId),
+    target: String(rel.targetEntryId),
+    label: 'semantic_related',
+    relation,
+    relationSource,
+  };
+  if (typeof rel.similarity === 'number') edge.similarity = rel.similarity;
+  return edge;
 }
 
-export async function buildSeedGraph(ids: number[], isInternal: boolean): Promise<SeedGraphData> {
-  const all = await entryRepository.findAllDistinctByTitle({ isInternal });
-  const seeds = all.filter((e) => ids.includes(e.id));
+/** Seed graph: seed entries plus every persisted relation touching a seed. */
+export function buildSeedGraphFromRelations(
+  ids: number[],
+  entries: Entry[],
+  relations: EntryRelationRow[],
+): SeedGraphData {
+  const idSet = new Set(ids);
+  const seeds = entries.filter((e) => idSet.has(e.id));
   if (seeds.length === 0) return { nodes: [], edges: [] };
 
-  const nodeMap = new Map<string, SeedGraphNode>();
-  const edgeMap = new Map<string, SeedGraphEdge>();
-  const seenTitles = new Set<string>();
-  const addNode = (entry: Entry) => {
-    const node = nodeFor(entry);
-    // Dedupe by raw title: keep only the first (highest-similarity) record per title.
-    const key = (entry.title || '').trim().toLowerCase() || node.label.toLowerCase();
-    if (seenTitles.has(key)) return;
-    seenTitles.add(key);
-    nodeMap.set(String(entry.id), node);
-  };
-  const addEdge = (sourceId: number, targetId: number, label: SeedGraphEdge['label'], similarity?: number) => {
-    const key = `${sourceId}->${targetId}`;
-    if (!edgeMap.has(key)) {
-      const edge: SeedGraphEdge = { source: String(sourceId), target: String(targetId), label };
-      if (similarity !== undefined) edge.similarity = similarity;
-      edgeMap.set(key, edge);
-    }
-  };
-
-  for (const seed of seeds) addNode(seed);
-
-  await Promise.all(seeds.map(async (seed) => {
-    let relatedResults: Array<{ entry: Entry; score?: number }> = [];
-    try {
-      const results = await searchService.semanticSearch(seed.title, isInternal, 3);
-      relatedResults = results
-        .filter((r) => r.entry && r.entry.id !== seed.id)
-        .slice(0, 3)
-        .map((r) => ({ entry: r.entry as Entry, score: r.score }));
-    } catch {
-      relatedResults = [];
-    }
-    if (relatedResults.length === 0) {
-      relatedResults = all
-        .filter((e) => e.id !== seed.id && e.tags.some((t) => seed.tags.includes(t)))
-        .slice(0, 3)
-        .map((e) => ({ entry: e }));
-    }
-    for (const { entry, score } of relatedResults) {
-      addNode(entry);
-      addEdge(seed.id, entry.id, relationFor(toChineseType(entry.entry_type)), score);
-    }
-  }));
-
-  for (let i = 0; i < seeds.length; i++) {
-    for (let j = i + 1; j < seeds.length; j++) {
-      if (seeds[i].tags.some((t) => seeds[j].tags.includes(t))) {
-        addEdge(seeds[i].id, seeds[j].id, 'references');
-      }
-    }
+  const related = relations.filter(
+    (r) => idSet.has(r.sourceEntryId) || idSet.has(r.targetEntryId),
+  );
+  const nodeIds = new Set<number>(ids);
+  for (const r of related) {
+    nodeIds.add(r.sourceEntryId);
+    nodeIds.add(r.targetEntryId);
   }
+
+  const nodeMap = new Map<string, SeedGraphNode>();
+  for (const entry of entries) {
+    if (nodeIds.has(entry.id)) nodeMap.set(String(entry.id), nodeFor(entry));
+  }
+  const edges = related
+    .map(edgeFromRelation)
+    .filter((e) => nodeMap.has(e.source) && nodeMap.has(e.target));
 
   return {
     nodes: [...nodeMap.values()].slice(0, 40),
-    edges: [...edgeMap.values()].slice(0, 120),
+    edges: edges.slice(0, 120),
   };
 }
 
-/** Build a full graph from every entry, deduped by title and linked by shared tags. */
-export function buildGlobalGraph(entries: Entry[]): SeedGraphData {
-  const byTitle = new Map<string, Entry>();
-  for (const entry of entries) {
-    const key = (entry.title || '').trim().toLowerCase() || String(entry.id);
-    const existing = byTitle.get(key);
-    if (!existing || (entry.updated_at || '') > (existing.updated_at || '')) {
-      byTitle.set(key, entry);
-    }
-  }
-
-  const unique = [...byTitle.values()];
-  const nodeMap = new Map<string, SeedGraphNode>();
-  for (const entry of unique) {
-    nodeMap.set(String(entry.id), nodeFor(entry));
-  }
-
-  const edgeMap = new Map<string, SeedGraphEdge>();
-  const addEdge = (sourceId: number, targetId: number, label: SeedGraphEdge['label']) => {
-    const key = `${sourceId}->${targetId}`;
-    if (!edgeMap.has(key)) {
-      edgeMap.set(key, { source: String(sourceId), target: String(targetId), label });
-    }
+/** Global graph: every visible entry, edges only between visible entries. */
+export function buildGlobalGraphFromRelations(
+  entries: Entry[],
+  relations: EntryRelationRow[],
+): SeedGraphData {
+  const entryIds = new Set(entries.map((e) => e.id));
+  return {
+    nodes: entries.map(nodeFor).slice(0, 1000),
+    edges: relations
+      .filter((r) => entryIds.has(r.sourceEntryId) && entryIds.has(r.targetEntryId))
+      .map(edgeFromRelation)
+      .slice(0, 3000),
   };
+}
 
-  for (let i = 0; i < unique.length; i++) {
-    for (let j = i + 1; j < unique.length; j++) {
-      const a = unique[i];
-      const b = unique[j];
-      if (a.tags.some((t) => b.tags.includes(t))) {
-        addEdge(a.id, b.id, relationFor(toChineseType(b.entry_type)));
-      }
-    }
+/** Focused graph: one center entry plus its persisted neighbors. */
+export function buildFocusedGraphFromRelations(
+  center: Entry,
+  entries: Entry[],
+  relations: EntryRelationRow[],
+): SeedGraphData {
+  const centerId = center.id;
+  const related = relations.filter(
+    (r) => r.sourceEntryId === centerId || r.targetEntryId === centerId,
+  );
+  const nodeIds = new Set<number>([centerId]);
+  for (const r of related) {
+    nodeIds.add(r.sourceEntryId);
+    nodeIds.add(r.targetEntryId);
   }
+
+  const entryMap = new Map(entries.map((e) => [e.id, e]));
+  const nodes: SeedGraphNode[] = [];
+  for (const id of nodeIds) {
+    const entry = entryMap.get(id);
+    if (entry) nodes.push(nodeFor(entry));
+  }
+  const edges = related
+    .map(edgeFromRelation)
+    .filter((e) => nodeIds.has(Number(e.source)) && nodeIds.has(Number(e.target)));
 
   return {
-    nodes: [...nodeMap.values()].slice(0, 1000),
-    edges: [...edgeMap.values()].slice(0, 3000),
+    nodes: nodes.slice(0, 60),
+    edges: edges.slice(0, 200),
   };
 }

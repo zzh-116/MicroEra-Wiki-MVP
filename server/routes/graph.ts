@@ -1,7 +1,13 @@
 import { Router, Request, Response } from 'express';
 import { entryRepository } from '../../backend/repositories/entry.repository.js';
-import { buildGlobalGraph, buildSeedGraph, resolveLabel, toChineseType } from '../../backend/services/graph-seed.service.js';
+import { relationRepository } from '../../backend/repositories/relation.repository.js';
+import {
+  buildSeedGraphFromRelations,
+  buildGlobalGraphFromRelations,
+  buildFocusedGraphFromRelations,
+} from '../../backend/services/graph-seed.service.js';
 import { optionalAuth } from '../middleware/auth.js';
+
 export const graphRouter = Router();
 
 graphRouter.get('/seed', optionalAuth, async (req: Request, res: Response) => {
@@ -14,33 +20,25 @@ graphRouter.get('/seed', optionalAuth, async (req: Request, res: Response) => {
     return;
   }
   const isInternal = (req as any).isInternal === true;
-  const graph = await buildSeedGraph(ids, isInternal);
-  res.json(graph);
+  const all = await entryRepository.findAll({ isInternal });
+  const relations = await relationRepository.findByEntryIds(all.map((e) => e.id));
+  res.json(buildSeedGraphFromRelations(ids, all, relations));
 });
 
 graphRouter.get('/global', optionalAuth, async (_req: Request, res: Response) => {
   const isInternal = (_req as any).isInternal === true;
-  const all = await entryRepository.findAllDistinctByTitle({ isInternal });
-  res.json(buildGlobalGraph(all));
+  const all = await entryRepository.findAll({ isInternal });
+  const relations = await relationRepository.findByEntryIds(all.map((e) => e.id));
+  res.json(buildGlobalGraphFromRelations(all, relations));
 });
 
 graphRouter.get('/focused', optionalAuth, async (req: Request, res: Response) => {
   const eid = parseInt(req.query.entryId as string, 10);
   if (isNaN(eid)) { res.json({ nodes: [], edges: [] }); return; }
   const isInternal = (req as any).isInternal === true;
-  const all = await entryRepository.findAllDistinctByTitle({ isInternal });
+  const all = await entryRepository.findAll({ isInternal });
   const center = all.find((e) => e.id === eid);
   if (!center) { res.json({ nodes: [], edges: [] }); return; }
-  const cn = String(center.id);
-  const nodes = [{ id: cn, label: resolveLabel(center), type: toChineseType(center.entry_type), metadata: { title: resolveLabel(center), author: '', tags: center.tags || [], summary: center.summary, updatedAt: center.updated_at } }];
-  const edges: Array<{ id: string; source: string; target: string; relation: string; description: string }> = [];
-  for (const e of all) {
-    if (e.id === center.id) continue;
-    const shared = center.tags.filter((t) => e.tags.includes(t));
-    if (shared.length > 0) {
-      nodes.push({ id: String(e.id), label: resolveLabel(e), type: toChineseType(e.entry_type), metadata: { title: resolveLabel(e), author: '', tags: e.tags || [], summary: e.summary, updatedAt: e.updated_at } });
-      edges.push({ id: `ge-${center.id}-${e.id}`, source: cn, target: String(e.id), relation: 'shared_tags', label: 'shared_tags', description: `共享标签: ${shared.slice(0, 3).join(', ')}` });
-    }
-  }
-  res.json({ nodes, edges });
+  const relations = await relationRepository.findByEntryIds(all.map((e) => e.id));
+  res.json(buildFocusedGraphFromRelations(center, all, relations));
 });
