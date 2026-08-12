@@ -100,3 +100,29 @@
 .kg-scroll-thin::-webkit-scrollbar-track {
   background: transparent;
 }
+
+.kg-graph-toolbar {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  z-index: 5;
+}
+
+.kg-legend-panel {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 5;
+}
+
+.kg-minimap {
+  position: absolute !important;
+  right: 12px;
+  bottom: 12px;
+  z-index: 5;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+}

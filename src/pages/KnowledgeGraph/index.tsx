@@ -8,11 +8,16 @@ import {
   ExternalLink,
   GitBranch,
   Layers,
+  Maximize2,
   Network,
   Radar,
+  RefreshCw,
   Search,
+  SlidersHorizontal,
   Target,
   X,
+  ZoomIn,
+  ZoomOut,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { getAuthHeaders } from '../../api/client';
@@ -47,6 +52,41 @@ interface SeedGraphData {
   nodes: SeedGraphNode[];
   edges: SeedGraphEdge[];
 }
+
+const MAX_GRAPH_NODES = 50;
+const DEFAULT_FOCUS_LIMIT = 30;
+const MIN_NODE_SIZE = 10;
+const MAX_NODE_SIZE = 22;
+const FIXED_NODE_SIZE = 15;
+
+const FORCE_LAYOUT: Record<string, any> = {
+  type: 'force',
+  preventOverlap: true,
+  nodeSpacing: 60,
+  linkDistance: 180,
+  nodeStrength: -80,
+  edgeStrength: 0.2,
+  gravity: 0.03,
+  collideStrength: 1,
+  alpha: 0.6,
+  alphaDecay: 0.03,
+  alphaMin: 0.005,
+};
+
+const CIRCULAR_LAYOUT: Record<string, any> = {
+  type: 'circular',
+  ordering: 'degree',
+  angleRatio: 1,
+};
+
+const DAGRE_LAYOUT: Record<string, any> = {
+  type: 'dagre',
+  rankdir: 'LR',
+  align: 'UL',
+  nodesep: 80,
+  ranksep: 120,
+  controlPoints: true,
+};
 
 function normalizeGraph(data: any): SeedGraphData {
   const rawNodes: any[] = data?.nodes || [];
@@ -119,10 +159,10 @@ function nodeStyleForType(type: string): Record<string, unknown> {
   return {
     fill: `l(90) 0:${base} 1:${dark}`,
     stroke: '#FFFFFF',
-    lineWidth: 2,
+    lineWidth: 1,
     cursor: 'pointer',
-    shadowColor: `${base}66`,
-    shadowBlur: 18,
+    shadowColor: `${base}40`,
+    shadowBlur: 4,
   };
 }
 
@@ -141,8 +181,33 @@ function escapeHtml(value: string): string {
     .replace(/'/g, '&#39;');
 }
 
-// Initial seed documents. Override via VITE_GRAPH_SEED_IDS when needed.
-const SEED_IDS = [1, 2, 3, 4, 5];
+/** Short two-line label. The full title is available in the hover tooltip. */
+function formatNodeLabel(label: string, _selected: boolean): string {
+  const text = (label || '').trim();
+  if (!text) return '';
+  const chars = Array.from(text);
+  if (chars.length <= 10) return text;
+  const first = chars.slice(0, 10).join('') + '...';
+  const rest = chars.slice(10);
+  const second = rest.length > 10 ? rest.slice(0, 10).join('') + '…' : rest.join('');
+  return `${first}\n${second}`;
+}
+
+function nodeSizeForDegree(degree: number, maxDegree: number, mode: 'degree' | 'fixed'): number {
+  if (mode === 'fixed') return FIXED_NODE_SIZE;
+  const ratio = maxDegree > 0 ? degree / maxDegree : 0;
+  return Math.min(MAX_NODE_SIZE, Math.max(MIN_NODE_SIZE, 10 + Math.min(ratio * 12, 12)));
+}
+
+function edgeWidthForScore(score?: number): number {
+  const s = typeof score === 'number' ? score : 0.5;
+  return Math.min(1.2, Math.max(0.8, 0.8 + s * 0.4));
+}
+
+function edgeOpacityForScore(score?: number): number {
+  const s = typeof score === 'number' ? score : 0.5;
+  return Math.min(0.3, Math.max(0.15, 0.15 + s * 0.15));
+}
 
 interface KeywordFilterItem {
   keyword: string;
@@ -317,17 +382,15 @@ function buildTooltipHtml(node: SeedGraphNode): string {
 }
 
 function buildEdgeTooltipHtml(model: SeedGraphEdge): string {
-  const similarity = typeof model.similarity === 'number' ? model.similarity.toFixed(2) : null;
-  const sourceText = model.relationSource === 'tag' ? '标签关联' : '向量相似度';
-  const simText = similarity !== null
-    ? similarity
-    : (model.relationSource === 'tag' ? '无（标签关联）' : '—');
+  const score = typeof model.similarity === 'number' ? model.similarity.toFixed(2) : '—';
+  const source = model.relationSource === 'embedding' ? 'embedding' : (model.relationSource || 'embedding');
   return `
-    <div class="min-w-[160px] text-left">
+    <div class="min-w-[170px] text-left">
       <div class="mb-1 text-[12px] font-bold leading-snug text-slate-900">语义关联</div>
-      <div class="mb-0.5 font-mono text-[9px] uppercase tracking-wider text-cyan-600">semantic_related</div>
-      <div class="text-[10px] text-slate-500">相似度：${escapeHtml(simText)}</div>
-      <div class="text-[10px] text-slate-400">来源：${escapeHtml(sourceText)}</div>
+      <div class="space-y-0.5 text-[10px] leading-relaxed">
+        <div class="text-slate-500">相似度：<span class="font-mono font-semibold text-slate-800">${escapeHtml(score)}</span></div>
+        <div class="text-slate-400">来源：${escapeHtml(source)}</div>
+      </div>
     </div>
   `;
 }
@@ -339,6 +402,14 @@ export default function KnowledgeGraphPage() {
   const graphRef = useRef<any>(null);
   const dataRef = useRef<SeedGraphData>(MOCK_GRAPH);
   const fullGraphDataRef = useRef<{ nodes: any[]; edges: any[] }>({ nodes: [], edges: [] });
+  const selectedNodeIdRef = useRef<string | null>(null);
+  const pendingFitRef = useRef(false);
+  const hasFittedRef = useRef(false);
+  const graphSizeRef = useRef({ width: 800, height: 600 });
+  const showLabelsRef = useRef(true);
+  const sizeModeRef = useRef<'degree' | 'fixed'>('degree');
+  const minSimilarityRef = useRef(0.5);
+  const layoutModeRef = useRef<'force' | 'circular' | 'dagre'>('force');
 
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<GraphStats>(EMPTY_STATS);
@@ -349,14 +420,98 @@ export default function KnowledgeGraphPage() {
   const [activeType, setActiveType] = useState('');
   const [keywordFilters, setKeywordFilters] = useState<KeywordFilterItem[]>([]);
   const [activeKeyword, setActiveKeyword] = useState('');
+  const [knowledgeQuery, setKnowledgeQuery] = useState('');
+  const [searching, setSearching] = useState(false);
+  const [searchMessage, setSearchMessage] = useState('');
+  const [expanding, setExpanding] = useState(false);
+  const [layoutMode, setLayoutMode] = useState<'force' | 'circular' | 'dagre'>('force');
+  const [sizeMode, setSizeMode] = useState<'degree' | 'fixed'>('degree');
+  const [showLabels, setShowLabels] = useState(true);
+  const [showEdgeWeight, setShowEdgeWeight] = useState(false);
+  const [minSimilarity, setMinSimilarity] = useState(0.5);
 
   const setSelection = (item: any, model: SeedGraphNode | null) => {
     const graph = graphRef.current;
     if (!graph) return;
     const items = graph.getNodes();
     for (const it of items) {
-      graph.setItemState(it, 'selected', !!model && it === item);
+      const m = it.getModel() as SeedGraphNode;
+      const selected = !!model && it === item;
+      graph.setItemState(it, 'selected', selected);
+      if (showLabelsRef.current) {
+        graph.updateItem(it, { label: formatNodeLabel(m.label, selected) });
+      }
     }
+    selectedNodeIdRef.current = model?.id || null;
+  };
+
+  const applyNeighborHighlight = (item: any, model: SeedGraphNode) => {
+    const graph = graphRef.current;
+    if (!graph) return;
+    const edges = fullGraphDataRef.current.edges;
+    const connected = new Set<string>([model.id]);
+    for (const e of edges) {
+      if (e.source === model.id) connected.add(e.target);
+      if (e.target === model.id) connected.add(e.source);
+    }
+    for (const it of graph.getNodes()) {
+      const m = it.getModel() as SeedGraphNode & { baseSize?: number };
+      const isTarget = m.id === model.id;
+      const isNeighbor = connected.has(m.id);
+      graph.setItemState(it, 'dim', !isTarget && !isNeighbor);
+      graph.setItemState(it, 'highlight', isNeighbor && !isTarget);
+      const base = m.baseSize || FIXED_NODE_SIZE;
+      const next = Math.round(base * (isTarget ? 1.1 : isNeighbor ? 1.05 : 1));
+      graph.updateItem(it, { size: Math.min(MAX_NODE_SIZE + 4, next) });
+    }
+    for (const it of graph.getEdges()) {
+      const e = it.getModel() as SeedGraphEdge;
+      const related = connected.has(e.source) && connected.has(e.target);
+      graph.setItemState(it, 'dim', !related);
+    }
+  };
+
+  const resetNeighborHighlight = () => {
+    const graph = graphRef.current;
+    if (!graph) return;
+    for (const it of graph.getNodes()) {
+      const m = it.getModel() as SeedGraphNode & { baseSize?: number };
+      graph.setItemState(it, 'dim', false);
+      graph.setItemState(it, 'highlight', false);
+      if (m.baseSize) graph.updateItem(it, { size: m.baseSize });
+    }
+    for (const it of graph.getEdges()) {
+      graph.setItemState(it, 'dim', false);
+    }
+  };
+
+  const fitGraphToView = () => {
+    const graph = graphRef.current;
+    if (!graph) return;
+    if (hasFittedRef.current) {
+      pendingFitRef.current = false;
+      return;
+    }
+    if (graph.getNodes().length === 0) {
+      pendingFitRef.current = false;
+      return;
+    }
+    try {
+      graph.fitView(60);
+      const id = selectedNodeIdRef.current;
+      const center = id ? graph.findById?.(id) : graph.getNodes()[0];
+      if (center) graph.focusItem(center, false);
+    } catch {
+      // ignore fit failures on tiny or empty graphs
+    }
+    hasFittedRef.current = true;
+    pendingFitRef.current = false;
+  };
+
+  /** Arm auto-fit for the next layout completion (data reload only). */
+  const scheduleFit = () => {
+    pendingFitRef.current = true;
+    hasFittedRef.current = false;
   };
 
   const applySearch = (query: string) => {
@@ -411,7 +566,12 @@ export default function KnowledgeGraphPage() {
     const full = fullGraphDataRef.current;
     const nodes = type ? full.nodes.filter((n) => n.type === type) : full.nodes;
     const nodeIds = new Set(nodes.map((n) => n.id));
-    const edges = full.edges.filter((e) => nodeIds.has(e.source) && nodeIds.has(e.target));
+    const threshold = minSimilarityRef.current;
+    const edges = full.edges.filter((e) =>
+      nodeIds.has(e.source)
+      && nodeIds.has(e.target)
+      && (typeof e.similarity !== 'number' || e.similarity >= threshold),
+    );
     graph.changeData({ nodes, edges } as any);
     graph.render();
     setStats(computeStats(nodes, edges));
@@ -425,6 +585,265 @@ export default function KnowledgeGraphPage() {
     }
   };
 
+  const highlightSelected = () => {
+    const graph = graphRef.current;
+    const id = selectedNodeIdRef.current;
+    if (!graph || !id) return;
+    try {
+      const item = graph.findById?.(id);
+      if (item) {
+        graph.setItemState(item, 'selected', true);
+        const model = item.getModel() as SeedGraphNode;
+        if (showLabelsRef.current) {
+          graph.updateItem(item, { label: formatNodeLabel(model.label, true) });
+        }
+      }
+    } catch {
+      // ignore missing items after data replacement
+    }
+  };
+
+  const renderData = () => {
+    const graph = graphRef.current;
+    if (!graph) return;
+    const data = dataRef.current;
+    const degreeMap = new Map<string, number>();
+    for (const e of data.edges) {
+      degreeMap.set(e.source, (degreeMap.get(e.source) || 0) + 1);
+      degreeMap.set(e.target, (degreeMap.get(e.target) || 0) + 1);
+    }
+    const maxDegree = Math.max(1, ...[...degreeMap.values()]);
+    const nodes = data.nodes.map((n) => {
+      const degree = degreeMap.get(n.id) || 0;
+      const size = nodeSizeForDegree(degree, maxDegree, sizeModeRef.current);
+      return {
+        ...n,
+        degree,
+        size,
+        baseSize: size,
+        style: nodeStyleForType(n.type),
+        label: showLabelsRef.current ? formatNodeLabel(n.label, selectedNodeIdRef.current === n.id) : '',
+      };
+    });
+    const edges = data.edges.map((e) => ({
+      ...e,
+      label: '',
+      relation: e.relation,
+      similarity: e.similarity,
+      relationSource: e.relationSource,
+      style: {
+        opacity: edgeOpacityForScore(e.similarity),
+        lineWidth: edgeWidthForScore(e.similarity),
+      },
+    }));
+    fullGraphDataRef.current = { nodes, edges };
+    applyTypeFilter('');
+    highlightSelected();
+  };
+
+  const fetchFocusedGraph = async (entryId: string, options: { depth?: number; limit?: number } = {}) => {
+    const params = new URLSearchParams({ entryId });
+    if (options.depth !== undefined) params.set('depth', String(options.depth));
+    if (options.limit !== undefined) params.set('limit', String(options.limit));
+    const res = await fetch(`/api/graph/focused?${params.toString()}`, {
+      headers: getAuthHeaders(),
+      signal: AbortSignal.timeout(60000),
+    });
+    if (!res.ok) throw new Error('FOCUSED_GRAPH_FAILED');
+    return normalizeGraph(await res.json());
+  };
+
+  const applyFocusedGraph = async (entryId: string, options: { depth?: number; limit?: number }) => {
+    const normalized = await fetchFocusedGraph(entryId, options);
+    if (normalized.nodes.length === 0) return false;
+    selectedNodeIdRef.current = null;
+    dataRef.current = normalized;
+    scheduleFit();
+    renderData();
+    const center = normalized.nodes.find((n) => n.id === String(entryId)) || normalized.nodes[0];
+    if (center) {
+      setSelectedNode(center);
+      setSelectedDegree(
+        fullGraphDataRef.current.edges.filter((e) => e.source === center.id || e.target === center.id).length,
+      );
+      selectedNodeIdRef.current = center.id;
+      const graph = graphRef.current;
+      try {
+        const item = graph?.findById?.(center.id);
+        if (item) {
+          graph.setItemState(item, 'selected', true);
+          if (showLabelsRef.current) {
+            graph.updateItem(item, { label: formatNodeLabel(center.label, true) });
+          }
+        }
+      } catch {
+        // ignore selection errors on tiny graphs
+      }
+    }
+    return true;
+  };
+
+  const expandNode = async (nodeId: string) => {
+    if (expanding) return;
+    setExpanding(true);
+    setSearchMessage('');
+    try {
+      const incoming = await fetchFocusedGraph(nodeId, { depth: 1, limit: DEFAULT_FOCUS_LIMIT });
+      const existing = dataRef.current;
+      const nodeMap = new Map<string, SeedGraphNode>(existing.nodes.map((n) => [n.id, n]));
+      for (const n of incoming.nodes) {
+        if (!nodeMap.has(n.id)) nodeMap.set(n.id, n);
+      }
+      const nodes = [...nodeMap.values()];
+      if (nodes.length > MAX_GRAPH_NODES) nodes.length = MAX_GRAPH_NODES;
+      const nodeIds = new Set(nodes.map((n) => n.id));
+      const edgeMap = new Map<string, SeedGraphEdge>();
+      for (const e of [...existing.edges, ...incoming.edges]) {
+        if (nodeIds.has(e.source) && nodeIds.has(e.target)) {
+          edgeMap.set(`${e.source}->${e.target}`, e);
+        }
+      }
+      dataRef.current = { nodes, edges: [...edgeMap.values()] };
+      scheduleFit();
+      renderData();
+      setSelectedDegree(
+        fullGraphDataRef.current.edges.filter((e) => e.source === nodeId || e.target === nodeId).length,
+      );
+      setSearchMessage(
+        nodes.length >= MAX_GRAPH_NODES
+          ? `已达 ${MAX_GRAPH_NODES} 节点上限，继续展开查看更多关联知识`
+          : `已展开节点 #${nodeId} 的关联知识`,
+      );
+    } catch {
+      setSearchMessage('展开关联失败，请稍后重试');
+    } finally {
+      setExpanding(false);
+    }
+  };
+
+  const handleKnowledgeSearch = async () => {
+    const q = knowledgeQuery.trim();
+    if (!q || searching) return;
+    setSearching(true);
+    setSearchMessage('');
+    try {
+      const res = await fetch(`/api/graph/search?q=${encodeURIComponent(q)}`, {
+        headers: getAuthHeaders(),
+        signal: AbortSignal.timeout(60000),
+      });
+      if (!res.ok) throw new Error('SEARCH_FAILED');
+      const hit = await res.json();
+      if (!hit?.entryId) {
+        setSearchMessage(`未找到与「${q}」匹配的知识条目`);
+        return;
+      }
+      setSelectedNode(null);
+      applySearch('');
+      const ok = await applyFocusedGraph(String(hit.entryId), { depth: 1, limit: DEFAULT_FOCUS_LIMIT });
+      setSearchMessage(ok ? `已定位：${hit.title}` : `「${hit.title}」暂无关联数据`);
+    } catch {
+      setSearchMessage('知识搜索失败，请稍后重试');
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const changeLayout = (mode: 'force' | 'circular' | 'dagre') => {
+    setLayoutMode(mode);
+    layoutModeRef.current = mode;
+    const graph = graphRef.current;
+    if (!graph) return;
+    const { width, height } = graphSizeRef.current;
+    if (mode === 'force') {
+      graph.updateLayout({ ...FORCE_LAYOUT, center: [width / 2, height / 2] });
+    } else if (mode === 'circular') {
+      const count = fullGraphDataRef.current.nodes.length || 1;
+      graph.updateLayout({
+        ...CIRCULAR_LAYOUT,
+        center: [width / 2, height / 2],
+        radius: Math.max(180, count * 22),
+      });
+    } else {
+      graph.updateLayout({ ...DAGRE_LAYOUT, center: [width / 2, height / 2] });
+    }
+  };
+
+  const changeSizeMode = (mode: 'degree' | 'fixed') => {
+    setSizeMode(mode);
+    sizeModeRef.current = mode;
+    const graph = graphRef.current;
+    if (!graph) return;
+    const nodes = fullGraphDataRef.current.nodes;
+    const maxDegree = Math.max(1, ...nodes.map((n: any) => n.degree || 0));
+    for (const it of graph.getNodes()) {
+      const m = it.getModel() as SeedGraphNode & { degree?: number };
+      const size = nodeSizeForDegree(m.degree || 0, maxDegree, mode);
+      graph.updateItem(it, { size, baseSize: size });
+    }
+  };
+
+  const toggleLabels = () => {
+    const next = !showLabels;
+    setShowLabels(next);
+    showLabelsRef.current = next;
+    const graph = graphRef.current;
+    if (!graph) return;
+    for (const it of graph.getNodes()) {
+      const m = it.getModel() as SeedGraphNode;
+      const selected = selectedNodeIdRef.current === m.id;
+      graph.updateItem(it, {
+        label: next ? formatNodeLabel(m.label, selected) : '',
+      });
+    }
+  };
+
+  const toggleEdgeWeight = () => {
+    const next = !showEdgeWeight;
+    setShowEdgeWeight(next);
+    const graph = graphRef.current;
+    if (!graph) return;
+    for (const it of graph.getEdges()) {
+      const m = it.getModel() as SeedGraphEdge;
+      graph.updateItem(it, {
+        label: next && typeof m.similarity === 'number' ? m.similarity.toFixed(2) : '',
+      });
+    }
+  };
+
+  const changeThreshold = (value: number) => {
+    setMinSimilarity(value);
+    minSimilarityRef.current = value;
+    applyTypeFilter(activeType);
+  };
+
+  const zoomIn = () => {
+    const graph = graphRef.current;
+    if (!graph) return;
+    const { width, height } = graphSizeRef.current;
+    graph.zoom(1.2, { x: width / 2, y: height / 2 });
+  };
+
+  const zoomOut = () => {
+    const graph = graphRef.current;
+    if (!graph) return;
+    const { width, height } = graphSizeRef.current;
+    graph.zoom(0.8, { x: width / 2, y: height / 2 });
+  };
+
+  const centerView = () => {
+    const graph = graphRef.current;
+    if (!graph) return;
+    try {
+      graph.fitView(60, false, false);
+    } catch {
+      graph.refreshPositions();
+    }
+  };
+
+  const resetLayout = () => {
+    changeLayout(layoutModeRef.current);
+  };
+
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -432,103 +851,131 @@ export default function KnowledgeGraphPage() {
 
     const graphWidth = container.clientWidth || 800;
     const graphHeight = container.clientHeight || 600;
+    graphSizeRef.current = { width: graphWidth, height: graphHeight };
+
+    const minimap = new G6.Minimap({
+      size: [120, 80],
+      className: 'kg-minimap',
+      type: 'delegate',
+    });
+
     const graph = new G6.Graph({
       container,
       width: graphWidth,
       height: graphHeight,
       fitView: true,
-      fitViewPadding: 40,
+      fitViewPadding: 60,
       animate: true,
       modes: { default: ['drag-canvas', 'zoom-canvas', 'drag-node'] },
+      plugins: [minimap],
       layout: {
-        type: 'force',
+        ...FORCE_LAYOUT,
         center: [graphWidth / 2, graphHeight / 2],
-        preventOverlap: true,
-        nodeSize: (d: any) => (d.size || 44) / 2 + 12,
-        nodeSpacing: 8,
-        linkDistance: (edge: any) => Math.min(240, 170 / Math.max(0.08, edge.similarity || 0.5)),
-        edgeStrength: 0.8,
-        nodeStrength: -420,
-        alpha: 0.6,
-        alphaDecay: 0.018,
-        alphaMin: 0.001,
-        collideStrength: 1,
       },
       defaultNode: {
         type: 'circle',
-        size: 44,
+        size: 14,
         style: {
           stroke: '#FFFFFF',
-          lineWidth: 2,
+          lineWidth: 1,
           cursor: 'pointer',
-          shadowColor: 'rgba(34, 211, 238, 0.25)',
-          shadowBlur: 12,
+          shadowColor: 'rgba(34, 211, 238, 0.12)',
+          shadowBlur: 4,
         },
         labelCfg: {
           position: 'bottom',
-          offset: 8,
-          style: { fontSize: 11, fill: '#1F2430', fontWeight: 600, wordWrap: true, maxWidth: 70, textAlign: 'center', lineHeight: 15 },
+          offset: 5,
+          style: {
+            fontSize: 11,
+            fill: '#334155',
+            fontWeight: 500,
+            textAlign: 'center',
+            lineHeight: 14,
+            maxWidth: 120,
+            wordWrap: true,
+            stroke: 'rgba(255,255,255,0.9)',
+            lineWidth: 2,
+          },
         },
       },
       defaultEdge: {
         type: 'line',
-        style: { endArrow: false, lineWidth: 1.2, stroke: '#CBD5E1' },
+        style: {
+          endArrow: false,
+          stroke: '#94A3B8',
+          lineWidth: 1,
+          opacity: 0.2,
+        },
+        labelCfg: {
+          autoRotate: true,
+          style: {
+            fontSize: 8,
+            fill: '#64748B',
+            stroke: '#FFFFFF',
+            lineWidth: 2,
+          },
+        },
       },
       nodeStateStyles: {
         selected: {
           style: {
-            lineWidth: 3,
+            lineWidth: 2,
             stroke: '#0EA5E9',
             shadowColor: '#0EA5E9',
-            shadowBlur: 16,
+            shadowBlur: 8,
           },
         },
-        highlight: { style: { lineWidth: 4, stroke: '#F59E0B' } },
-        dim: { style: { opacity: 0.25 } },
+        highlight: { style: { lineWidth: 2, stroke: '#F59E0B' } },
+        dim: { style: { opacity: 0.15 } },
+      },
+      edgeStateStyles: {
+        hover: {
+          style: {
+            opacity: 1,
+            stroke: '#22D3EE',
+            lineWidth: 1.6,
+          },
+        },
+        dim: { style: { opacity: 0.05 } },
       },
     });
     graphRef.current = graph;
 
+    graph.on('afterlayout', () => {
+      if (pendingFitRef.current) {
+        setTimeout(() => {
+          if (pendingFitRef.current) fitGraphToView();
+        }, 100);
+      }
+    });
+    graph.on('layoutcomplete', () => {
+      if (pendingFitRef.current) {
+        setTimeout(() => {
+          if (pendingFitRef.current) fitGraphToView();
+        }, 100);
+      }
+    });
+
     const load = async () => {
       try {
-        const res = await fetch(`/api/graph/seed?ids=${SEED_IDS.join(',')}`, {
-          headers: getAuthHeaders(),
-          signal: AbortSignal.timeout(60000),
-        });
-        if (res.ok) {
-          const data = await res.json();
-          const normalized = normalizeGraph(data);
-          if (normalized.nodes.length > 0) dataRef.current = normalized;
-        }
+        await applyFocusedGraph('1', { depth: 1, limit: DEFAULT_FOCUS_LIMIT });
       } catch {
-        // Fall through to seed data when the backend is unavailable.
+        // Fall back to bundled mock data when the backend is unavailable.
       }
       if (cancelled) return;
-
-      const data = dataRef.current;
-
-      const graphData = {
-        nodes: data.nodes.map((n) => ({
-          ...n,
-          size: 44,
-          style: nodeStyleForType(n.type),
-        })),
-        edges: data.edges.map((e) => ({
-          ...e,
-          label: '',
-          relation: e.relation,
-          similarity: e.similarity,
-          relationSource: e.relationSource,
-        })),
-      };
-      fullGraphDataRef.current = graphData;
-      applyTypeFilter('');
+      renderData();
       setLoading(false);
+      scheduleFit();
     };
 
     graph.on('node:mouseenter', (evt: any) => {
       const item = evt.item;
-      const model = item.getModel() as SeedGraphNode;
+      const model = item.getModel() as SeedGraphNode & { baseSize?: number };
+      if (!selectedNodeIdRef.current && model.baseSize) {
+        graph.updateItem(item, {
+          size: Math.min(MAX_NODE_SIZE + 4, Math.round(model.baseSize * 1.15)),
+        });
+      }
       const tooltip = tooltipRef.current;
       const rect = container.getBoundingClientRect();
       const point = graph.getClientByPoint(evt.x, evt.y);
@@ -540,12 +987,16 @@ export default function KnowledgeGraphPage() {
       }
     });
 
-    graph.on('node:mouseleave', () => {
+    graph.on('node:mouseleave', (evt: any) => {
+      const model = evt.item.getModel() as SeedGraphNode & { baseSize?: number };
+      if (model.baseSize) graph.updateItem(evt.item, { size: model.baseSize });
       if (tooltipRef.current) tooltipRef.current.style.display = 'none';
     });
 
     graph.on('edge:mouseenter', (evt: any) => {
-      const model = evt.item.getModel() as SeedGraphEdge;
+      const item = evt.item;
+      graph.setItemState(item, 'hover', true);
+      const model = item.getModel() as SeedGraphEdge;
       const tooltip = tooltipRef.current;
       const rect = container.getBoundingClientRect();
       const point = graph.getClientByPoint(evt.x, evt.y);
@@ -557,13 +1008,15 @@ export default function KnowledgeGraphPage() {
       }
     });
 
-    graph.on('edge:mouseleave', () => {
+    graph.on('edge:mouseleave', (evt: any) => {
+      graph.setItemState(evt.item, 'hover', false);
       if (tooltipRef.current) tooltipRef.current.style.display = 'none';
     });
 
     graph.on('node:click', (evt: any) => {
       const model = evt.item.getModel() as SeedGraphNode;
       setSelection(evt.item, model);
+      applyNeighborHighlight(evt.item, model);
       setSelectedNode(model);
       setSelectedDegree(
         fullGraphDataRef.current.edges.filter((e) => e.source === model.id || e.target === model.id).length,
@@ -571,6 +1024,7 @@ export default function KnowledgeGraphPage() {
     });
 
     graph.on('canvas:click', () => {
+      resetNeighborHighlight();
       setSelection(null, null);
       setSelectedNode(null);
       setSelectedDegree(0);
@@ -580,6 +1034,10 @@ export default function KnowledgeGraphPage() {
     const handleResize = () => {
       if (graphRef.current && container) {
         graphRef.current.changeSize(container.clientWidth || 800, container.clientHeight || 600);
+        graphSizeRef.current = {
+          width: container.clientWidth || 800,
+          height: container.clientHeight || 600,
+        };
       }
     };
     window.addEventListener('resize', handleResize);
@@ -597,12 +1055,21 @@ export default function KnowledgeGraphPage() {
   const visibleTypes = legendTypes.filter((item) => item.count > 0).sort((a, b) => b.count - a.count);
   const typeTotal = visibleTypes.reduce((sum, item) => sum + item.count, 0);
   const typeMax = Math.max(1, ...visibleTypes.map((item) => item.count));
+  const atNodeCap = stats.nodeCount >= MAX_GRAPH_NODES;
+  const legendItems = visibleTypes.slice(0, 6);
 
   const kpis: { key: string; label: string; value: string; hint: string; icon: LucideIcon; color: string }[] = [
-    { key: 'nodes', label: '文档节点', value: String(stats.nodeCount), hint: '精选范围', icon: Database, color: '#22D3EE' },
+    { key: 'nodes', label: '文档节点', value: String(stats.nodeCount), hint: '局部范围', icon: Database, color: '#22D3EE' },
     { key: 'edges', label: '关系连线', value: String(stats.edgeCount), hint: `平均度数 ${stats.avgDegree}`, icon: GitBranch, color: '#A78BFA' },
     { key: 'types', label: '知识分类', value: String(stats.typeCount), hint: `密度 ${(stats.density * 100).toFixed(1)}%`, icon: Layers, color: '#FBBF24' },
     { key: 'hub', label: '核心节点', value: stats.hubLabel, hint: `${stats.hubDegree} 条关联`, icon: Target, color: '#34D399' },
+  ];
+
+  const toolbarItems: { key: string; label: string; icon: LucideIcon; onClick: () => void }[] = [
+    { key: 'zoom-in', label: '放大', icon: ZoomIn, onClick: zoomIn },
+    { key: 'zoom-out', label: '缩小', icon: ZoomOut, onClick: zoomOut },
+    { key: 'center', label: '居中', icon: Maximize2, onClick: centerView },
+    { key: 'reset', label: '重置布局', icon: RefreshCw, onClick: resetLayout },
   ];
 
   return (
@@ -621,15 +1088,41 @@ export default function KnowledgeGraphPage() {
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <h1 className="truncate font-display text-sm font-bold tracking-wide text-slate-900">知识图谱分析台</h1>
-              <span className="hidden rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-widest text-slate-500 sm:inline-block">
-                seed 5
+              <span className="hidden rounded-md border border-cyan-200 bg-cyan-50 px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-widest text-cyan-600 sm:inline-block">
+                探索模式
               </span>
             </div>
             <p className="mt-0.5 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.16em] text-slate-400">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-cyan-500 shadow-[0_0_6px_rgba(34,211,238,0.5)]" aria-hidden="true" />
-              knowledge graph analytics
+              semantic knowledge explorer
             </p>
           </div>
+        </div>
+
+        <div className="order-3 w-full min-w-0 sm:order-none sm:w-80 lg:w-[340px]">
+          <div className="relative flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" aria-hidden="true" />
+              <input
+                value={knowledgeQuery}
+                onChange={(e) => setKnowledgeQuery(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleKnowledgeSearch(); }}
+                placeholder="输入知识关键词，如 RAG"
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 py-1.5 pl-8 pr-3 text-xs text-slate-700 placeholder:text-slate-400 focus:border-cyan-400/60 focus:outline-none focus:ring-2 focus:ring-cyan-400/20"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={handleKnowledgeSearch}
+              disabled={searching || !knowledgeQuery.trim()}
+              className="inline-flex flex-shrink-0 items-center gap-1 rounded-lg bg-slate-800 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-slate-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              {searching ? '搜索中...' : '搜索'}
+            </button>
+          </div>
+          {searchMessage && (
+            <p className="mt-1 truncate text-[10px] font-medium text-slate-500">{searchMessage}</p>
+          )}
         </div>
 
         <div className="flex flex-shrink-0 flex-wrap items-center gap-2">
@@ -754,7 +1247,9 @@ export default function KnowledgeGraphPage() {
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(34,211,238,0.35)]" aria-hidden="true" />
               <h2 className="text-xs font-extrabold tracking-wide text-slate-800">关系网络视图</h2>
-              <span className="hidden font-mono text-[9px] uppercase tracking-[0.14em] text-slate-400 sm:inline">force layout</span>
+              <span className="hidden font-mono text-[9px] uppercase tracking-[0.14em] text-slate-400 sm:inline">
+                {layoutMode === 'force' ? 'force layout' : layoutMode === 'circular' ? 'circular layout' : 'dagre layout'}
+              </span>
             </div>
             <div className="relative w-full sm:w-64">
               <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" aria-hidden="true" />
@@ -762,7 +1257,7 @@ export default function KnowledgeGraphPage() {
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); applySearch(e.target.value); }}
                 onKeyDown={(e) => { if (e.key === 'Enter') applySearch(search); }}
-                placeholder="搜索节点关键词"
+                placeholder="筛选当前节点"
                 className="w-full rounded-lg border border-slate-200 bg-slate-50 py-1.5 pl-8 pr-7 text-xs text-slate-700 placeholder:text-slate-400 focus:border-cyan-400/60 focus:outline-none focus:ring-2 focus:ring-cyan-400/20"
               />
               {search && (
@@ -770,7 +1265,7 @@ export default function KnowledgeGraphPage() {
                   type="button"
                   onClick={clearSearch}
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                  aria-label="清空搜索"
+                  aria-label="清空筛选"
                 >
                   <X className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
@@ -811,6 +1306,49 @@ export default function KnowledgeGraphPage() {
               className="pointer-events-none absolute z-20 hidden rounded-lg border border-slate-200 bg-white/95 px-3 py-2.5 text-slate-700 shadow-xl shadow-slate-900/10 backdrop-blur"
               style={{ maxWidth: 260 }}
             />
+
+            {/* Left toolbar */}
+            <div className="kg-graph-toolbar flex flex-col gap-1.5">
+              {toolbarItems.map((item) => (
+                <button
+                  key={item.key}
+                  type="button"
+                  onClick={item.onClick}
+                  title={item.label}
+                  aria-label={item.label}
+                  className="grid h-8 w-8 place-items-center rounded-lg border border-slate-200 bg-white/95 text-slate-500 shadow-sm transition hover:bg-slate-800 hover:text-white active:scale-95"
+                >
+                  <item.icon className="h-4 w-4" aria-hidden="true" />
+                </button>
+              ))}
+            </div>
+
+            {/* Legend */}
+            <div className="kg-legend-panel pointer-events-none max-w-[220px] rounded-lg border border-slate-200 bg-white/90 px-2.5 py-2 shadow-sm backdrop-blur">
+              <div className="mb-1.5 flex items-center gap-1.5 text-[9px] font-extrabold uppercase tracking-widest text-slate-500">
+                <CircleDot className="h-3 w-3 text-cyan-500" aria-hidden="true" />
+                图例
+              </div>
+              <div className="space-y-1">
+                {legendItems.map((item) => (
+                  <div key={item.type} className="flex items-center gap-1.5 text-[9px] text-slate-600">
+                    <span className="h-2 w-2 flex-shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
+                    <span className="truncate">{item.type}</span>
+                    <span className="ml-auto font-mono text-slate-400">{item.count}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-1.5 border-t border-slate-100 pt-1.5 text-[8px] text-slate-400">
+                节点大小 = 关联数 · 线粗 = 关联评分
+              </div>
+            </div>
+
+            {atNodeCap && (
+              <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-full border border-amber-200 bg-amber-50/95 px-3 py-1 text-[10px] font-semibold text-amber-700 shadow-sm">
+                已达 {MAX_GRAPH_NODES} 节点上限，继续展开查看更多关联知识
+              </div>
+            )}
+
             {loading && (
               <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/70 backdrop-blur-[2px]">
                 <div className="flex items-center gap-2.5 rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm shadow-slate-900/10">
@@ -824,6 +1362,101 @@ export default function KnowledgeGraphPage() {
 
         {/* Right action rail */}
         <aside className="kg-panel kg-panel-right kg-scroll-thin flex flex-col gap-3 lg:col-span-3 lg:max-h-[calc(100vh-230px)] lg:overflow-y-auto lg:pr-0.5">
+          <section className="rounded-lg border border-slate-200 bg-white p-3 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5">
+                <SlidersHorizontal className="h-3.5 w-3.5 text-slate-500" aria-hidden="true" />
+                <h2 className="text-[11px] font-extrabold tracking-wide text-slate-800">图谱设置</h2>
+              </div>
+              <span className="font-mono text-[8px] uppercase tracking-widest text-slate-400">graph view</span>
+            </div>
+
+            <div className="mt-3 space-y-3">
+              <div>
+                <p className="mb-1.5 text-[10px] font-bold text-slate-600">布局模式</p>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {([
+                    ['force', '力导向'],
+                    ['circular', '环形'],
+                    ['dagre', '层级'],
+                  ] as const).map(([mode, label]) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      onClick={() => changeLayout(mode)}
+                      className={`rounded-md px-2 py-1.5 text-[10px] font-bold ring-1 transition ${layoutMode === mode ? 'bg-slate-800 text-white ring-slate-800' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-100'}`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="mb-1.5 text-[10px] font-bold text-slate-600">节点大小</p>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {([
+                    ['degree', '按关联度'],
+                    ['fixed', '固定大小'],
+                  ] as const).map(([mode, label]) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      onClick={() => changeSizeMode(mode)}
+                      className={`rounded-md px-2 py-1.5 text-[10px] font-bold ring-1 transition ${sizeMode === mode ? 'bg-cyan-600 text-white ring-cyan-600' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-100'}`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <button
+                  type="button"
+                  onClick={toggleLabels}
+                  className="flex w-full items-center justify-between rounded-md border border-slate-200 bg-slate-50/60 px-2.5 py-2 text-left"
+                >
+                  <span className="text-[10px] font-bold text-slate-600">节点标签</span>
+                  <span className={`relative h-4 w-8 rounded-full transition ${showLabels ? 'bg-cyan-500' : 'bg-slate-300'}`}>
+                    <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white shadow transition ${showLabels ? 'left-4.5' : 'left-0.5'}`} />
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={toggleEdgeWeight}
+                  className="flex w-full items-center justify-between rounded-md border border-slate-200 bg-slate-50/60 px-2.5 py-2 text-left"
+                >
+                  <span className="text-[10px] font-bold text-slate-600">边权重显示</span>
+                  <span className={`relative h-4 w-8 rounded-full transition ${showEdgeWeight ? 'bg-cyan-500' : 'bg-slate-300'}`}>
+                    <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white shadow transition ${showEdgeWeight ? 'left-4.5' : 'left-0.5'}`} />
+                  </span>
+                </button>
+              </div>
+
+              <div>
+                <div className="mb-1.5 flex items-center justify-between">
+                  <p className="text-[10px] font-bold text-slate-600">最小关联阈值</p>
+                  <span className="font-mono text-[10px] font-bold text-cyan-600">{minSimilarity.toFixed(2)}</span>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.05}
+                  value={minSimilarity}
+                  onChange={(e) => changeThreshold(Number(e.target.value))}
+                  className="w-full accent-cyan-600"
+                />
+                <div className="mt-0.5 flex justify-between font-mono text-[8px] text-slate-400">
+                  <span>0</span>
+                  <span>低于阈值隐藏边</span>
+                  <span>1</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
           <section className="rounded-lg border border-slate-200 bg-white p-3 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
             <div className="flex items-center justify-between gap-2">
               <div>
@@ -910,14 +1543,25 @@ export default function KnowledgeGraphPage() {
                     </dd>
                   </div>
                 </dl>
-                <button
-                  type="button"
-                  onClick={() => navigate(`/entry/${selectedNode.id}`)}
-                  className="mt-auto inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-cyan-300 bg-cyan-50 px-3 py-2 text-xs font-bold text-cyan-700 transition hover:bg-cyan-100 active:scale-[0.99]"
-                >
-                  <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-                  查看知识条目
-                </button>
+                <div className="mt-auto flex flex-col gap-2 pt-3">
+                  <button
+                    type="button"
+                    onClick={() => expandNode(selectedNode.id)}
+                    disabled={expanding}
+                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-slate-800 px-3 py-2 text-xs font-bold text-white transition hover:bg-slate-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    <GitBranch className="h-3.5 w-3.5" aria-hidden="true" />
+                    {expanding ? '展开中...' : '展开关联知识'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/entry/${selectedNode.id}`)}
+                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-cyan-300 bg-cyan-50 px-3 py-2 text-xs font-bold text-cyan-700 transition hover:bg-cyan-100 active:scale-[0.99]"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                    查看知识条目
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
