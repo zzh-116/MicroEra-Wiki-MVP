@@ -260,6 +260,10 @@ export async function parseContent(raw: string): Promise<ContentBlock[]> {
 function stripNoise(raw: string): string {
   let result = raw;
 
+  // Strip leading YAML frontmatter (--- ... ---) so its keys/values never
+  // become content or keyword links.
+  result = result.replace(/^---\s*\n[\s\S]*?\n---\s*\n?/, '');
+
   // Remove embedded-image placeholder lines (from stripDataUriImages)
   result = result.replace(/\[Embedded image:[^\]]*\]/gi, '');
 

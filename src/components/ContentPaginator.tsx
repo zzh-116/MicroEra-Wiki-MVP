@@ -1,24 +1,53 @@
 // ContentPaginator — paginated content reader with page navigation, progress bar,
 // URL sync, and TOC integration. Renders ContentBlock[] pages, never raw Markdown.
 
-import { useMemo, useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, useMemo, useCallback, useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, ChevronUp } from 'lucide-react';
 import type { ContentBlock } from '../utils/contentParser';
 import { paginateContent, findPageByHeading } from '../utils/contentPaginator';
 import type { Page } from '../utils/contentPaginator';
+import { findKeywordLinks, type KeywordIndex } from '../utils/keywordLinker';
 
 // Internal BlockRenderer (same as ContentRenderer but standalone here for self-containment)
-function PageBlockRenderer({ block }: { block: ContentBlock }) {
+function renderInline(text: string, keywordIndex?: KeywordIndex, currentEntryId?: string) {
+  if (!keywordIndex || keywordIndex.maxLen === 0) return text;
+  const parts = findKeywordLinks(text, keywordIndex, currentEntryId);
+  return parts.map((part, i) =>
+    part.type === 'link' ? (
+      <Link
+        key={i}
+        to={`/entry/${part.entryId}`}
+        title={part.title}
+        className="text-[#1D70B8] hover:text-[#DB5F5B] hover:underline font-medium"
+      >
+        {part.title}
+      </Link>
+    ) : (
+      <Fragment key={i}>{part.text}</Fragment>
+    ),
+  );
+}
+
+function PageBlockRenderer({
+  block,
+  keywordIndex,
+  currentEntryId,
+}: {
+  block: ContentBlock;
+  keywordIndex?: KeywordIndex;
+  currentEntryId?: string;
+}) {
   switch (block.type) {
     case 'heading': {
       if (block.level <= 1) return <h2 id={`h-${block.text.slice(0, 20)}`} className="text-xl font-bold text-gray-900 font-display mt-10 mb-3 leading-snug">{block.text}</h2>;
       if (block.level === 2) return <h3 id={`h-${block.text.slice(0, 20)}`} className="text-base font-semibold text-gray-800 mt-8 mb-2 leading-snug">{block.text}</h3>;
       return <h4 id={`h-${block.text.slice(0, 20)}`} className="text-sm font-semibold text-gray-700 mt-6 mb-1.5 leading-snug">{block.text}</h4>;
     }
-    case 'paragraph': return <p className="my-3 text-sm text-gray-700 leading-relaxed">{block.text}</p>;
+    case 'paragraph': return <p className="my-3 text-sm text-gray-700 leading-relaxed">{renderInline(block.text, keywordIndex, currentEntryId)}</p>;
     case 'list':
-      if (block.ordered) return <ol className="space-y-1 ml-5 my-3 list-decimal text-sm text-gray-700 leading-relaxed">{block.items.map((item, i) => <li key={i} className="pl-1">{item}</li>)}</ol>;
-      return <ul className="space-y-1 ml-4 my-3 text-sm text-gray-700 leading-relaxed">{block.items.map((item, i) => <li key={i} className="flex items-start gap-2"><span className="text-[#DB5F5B] font-bold shrink-0 mt-[3px]">•</span><span>{item}</span></li>)}</ul>;
+      if (block.ordered) return <ol className="space-y-1 ml-5 my-3 list-decimal text-sm text-gray-700 leading-relaxed">{block.items.map((item, i) => <li key={i} className="pl-1">{renderInline(item, keywordIndex, currentEntryId)}</li>)}</ol>;
+      return <ul className="space-y-1 ml-4 my-3 text-sm text-gray-700 leading-relaxed">{block.items.map((item, i) => <li key={i} className="flex items-start gap-2"><span className="text-[#DB5F5B] font-bold shrink-0 mt-[3px]">•</span><span>{renderInline(item, keywordIndex, currentEntryId)}</span></li>)}</ul>;
     case 'code': return (
       <div className="my-4 rounded-lg overflow-hidden border border-gray-200">
         <div className="flex items-center justify-between px-4 py-1.5 bg-gray-100 border-b border-gray-200">
@@ -45,14 +74,14 @@ function PageBlockRenderer({ block }: { block: ContentBlock }) {
           <tbody>
             {block.rows.map((row, ri) => (
               <tr key={ri} className={`border-b border-gray-100 ${ri % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'}`}>
-                {row.map((cell, ci) => <td key={ci} className="px-3 py-2 text-gray-700 leading-relaxed">{cell}</td>)}
+                {row.map((cell, ci) => <td key={ci} className="px-3 py-2 text-gray-700 leading-relaxed">{renderInline(cell, keywordIndex, currentEntryId)}</td>)}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
     );
-    case 'blockquote': return <blockquote className="border-l-[3px] border-[#DB5F5B]/40 bg-[#F5F6E5]/20 px-4 py-2.5 my-4 text-sm text-gray-600 italic leading-relaxed rounded-r">{block.text}</blockquote>;
+    case 'blockquote': return <blockquote className="border-l-[3px] border-[#DB5F5B]/40 bg-[#F5F6E5]/20 px-4 py-2.5 my-4 text-sm text-gray-600 italic leading-relaxed rounded-r">{renderInline(block.text, keywordIndex, currentEntryId)}</blockquote>;
     case 'divider': return <hr className="my-8 border-gray-200" />;
     default: return null;
   }
@@ -62,6 +91,10 @@ function PageBlockRenderer({ block }: { block: ContentBlock }) {
 
 interface ContentPaginatorProps {
   content: string;
+  /** Entry title -> entry id index used to turn keywords into Wiki links */
+  keywordIndex?: KeywordIndex;
+  /** Current entry id: matching the current entry's own title is skipped */
+  currentEntryId?: string;
   /** Current page number (1-based, URL-controlled) */
   currentPage?: number;
   /** Called when page changes (to update URL) */
@@ -77,6 +110,8 @@ interface ContentPaginatorProps {
 
 export default function ContentPaginator({
   content,
+  keywordIndex,
+  currentEntryId,
   currentPage = 1,
   onPageChange,
   onHeadings,
@@ -158,7 +193,7 @@ export default function ContentPaginator({
   if (totalPages <= 1 && (!page || page.estimatedHeight < 800)) {
     return (
       <div ref={containerRef} className={`prose prose-sm max-w-none text-xs text-gray-700 leading-relaxed font-sans ${className}`}>
-        {page ? page.blocks.map((block, i) => <div key={i}><PageBlockRenderer block={block as ContentBlock} /></div>) : (
+        {page ? page.blocks.map((block, i) => <div key={i}><PageBlockRenderer block={block as ContentBlock} keywordIndex={keywordIndex} currentEntryId={currentEntryId} /></div>) : (
           <p className="text-xs text-gray-400 italic">暂无正文内容</p>
         )}
       </div>
@@ -188,7 +223,7 @@ export default function ContentPaginator({
       {/* Page content */}
       <div className="min-h-[400px]">
         {page ? page.blocks.map((block, i) => (
-          <div key={i}><PageBlockRenderer block={block as ContentBlock} /></div>
+          <div key={i}><PageBlockRenderer block={block as ContentBlock} keywordIndex={keywordIndex} currentEntryId={currentEntryId} /></div>
         )) : (
           <p className="text-xs text-gray-400 italic">暂无正文内容</p>
         )}
