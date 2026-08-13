@@ -9,6 +9,7 @@ import { graphApi } from '../api/graphApi';
 import type { SourceFile, MarkdownFile, KnowledgeGraphNode, KnowledgeGraphEdge } from '../types/wiki';
 import type { DetailViewModel } from '../types/viewModels';
 import { toDetailViewModel } from '../utils/knowledgeFormatter';
+import { buildKeywordIndex } from '../utils/keywordLinker';
 import { useConversation } from '../hooks/useConversation';
 
 import Breadcrumbs from '../components/Breadcrumbs';
@@ -59,6 +60,7 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
   const [errorState, setErrorState] = useState<string | null>(null);
   const [bookmarked, setBookmarked] = useState(false);
   const [relatedEntries, setRelatedEntries] = useState<any[]>([]);
+  const [allEntries, setAllEntries] = useState<any[]>([]);
   const [showDebug, setShowDebug] = useState(false);
 
   // ── Pagination & TOC ──────────────────────────────────────────────────────
@@ -110,6 +112,7 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
         setGraph(subGraph);
 
         const allEntries = await entriesApi.getEntries();
+        setAllEntries(allEntries);
         const related = allEntries.filter((e: any) =>
           loadedEntry.relatedEntryIds?.includes(e.id),
         );
@@ -160,6 +163,8 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
     const idx = headings.findIndex((h) => h.page === contentPage);
     return idx >= 0 ? idx : -1;
   }, [headings, contentPage]);
+
+  const keywordIndex = useMemo(() => buildKeywordIndex(allEntries), [allEntries]);
 
   // ── Loading / Error states ────────────────────────────────────────────────
   if (errorState === 'FORBIDDEN') return <Unauthorized />;
@@ -371,6 +376,8 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
           <section id="content" aria-label="正文内容">
             <ContentPaginator
               content={viewModel.content}
+              keywordIndex={keywordIndex}
+              currentEntryId={entryId}
               currentPage={contentPage}
               onPageChange={handlePageChange}
               onHeadings={setHeadings}
