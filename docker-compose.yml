@@ -34,9 +34,13 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - app-data:/app/backend/data
+      - app-uploads:/app/backend/data/uploads
+      - app-tmp:/app/backend/data/tmp
+      - app-images:/app/backend/data/images
     restart: unless-stopped
 
 volumes:
   pgdata:
-  app-data:
+  app-uploads:
+  app-tmp:
+  app-images:

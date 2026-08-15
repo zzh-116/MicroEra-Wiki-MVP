@@ -40,6 +40,10 @@ export interface WikiFile {
   file_type: string;
   file_size: number;
   storage_path: string;
+  object_key?: string | null;
+  object_bucket?: string | null;
+  sha256?: string | null;
+  content_type?: string | null;
   usage_type: string;
   created_at: string;
 }
