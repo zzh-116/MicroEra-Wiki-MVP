@@ -422,3 +422,43 @@ sudo systemctl list-timers | grep auto-deploy
 | 暂停自动部署 | `sudo systemctl stop auto-deploy.timer` |
 | 恢复自动部署 | `sudo systemctl start auto-deploy.timer` |
 | 查看最近部署 | `journalctl -u auto-deploy.service --since "1 hour ago"` |
+
+## 11.8 PDF 数据接入约定（Git LFS）
+
+PDF 文件由 Git LFS 管理，保存在 GitLab 仓库的 `backend/data/reports`、`backend/data/zaozhi`、`backend/data/laiguanxue` 中。
+
+- UCL 部署前必须执行 `git lfs pull`。
+- `scripts/auto-deploy.sh` 会在 `git pull` 后显式执行：
+  - `git lfs install --local`
+  - `git lfs pull`
+  - 只读校验 `scripts/ucl-verify-lfs.sh`
+- `DATA_DIR` 仍保持为 `/data/archive-hot/wiki-data`，不要改为仓库内的 `backend/data`。
+- 三个 PDF 目录通过 symlink 接入：
+  - `/data/archive-hot/wiki-data/reports -> /data/code-project/microera-wiki/backend/data/reports`
+  - `/data/archive-hot/wiki-data/zaozhi -> /data/code-project/microera-wiki/backend/data/zaozhi`
+  - `/data/archive-hot/wiki-data/laiguanxue -> /data/code-project/microera-wiki/backend/data/laiguanxue`
+- 绝对禁止通过删除、覆盖或移动已有目录来创建 symlink。
+  - 目标不存在时，auto-deploy 创建 symlink。
+  - 目标已是正确 symlink 时，直接复用。
+  - 目标是普通目录或错误 symlink 时，部署立即失败，不自动处理。
+- `scripts/ucl-verify-lfs.sh` 是只读校验脚本，只检查、不创建、不删除、不修改任何文件。
+- 不再使用 MinIO/对象存储方案：不启动 MinIO，不把 PDF 上传到 MinIO，不执行 MinIO migration。
+
+## 11.9 Wiki 文献图片 Git LFS + symlink 约定
+
+文献图片由 Git LFS 管理，保存在仓库的 `backend/data/images`。
+- UCL 部署前必须执行 `git lfs pull`，否则 `backend/data/images` 里只会是 LFS pointer。
+- `DATA_DIR` 仍保持 `/data/archive-hot/wiki-data`，不要改为仓库内的 `backend/data`。
+- `/data/archive-hot/wiki-data/images` 通过 symlink 指向仓库图片目录：
+  - `/data/archive-hot/wiki-data/images -> /data/code-project/microera-wiki/backend/data/images`
+- `scripts/auto-deploy.sh` 在 `git pull` 后会：
+  - 检查 `git-lfs` 是否安装，未安装直接退出；
+  - 执行 `git lfs pull`；
+  - 检查 `backend/data/images` 是否存在、文件数量是否达到预期、文件不是 LFS pointer；
+  - 创建或复用正确的 images symlink；
+  - 校验失败时在重启服务前退出，保持旧版本继续运行。
+- symlink 规则与 PDF 目录一致：
+  - 目标不存在时创建 symlink；
+  - 目标已是正确 symlink 时直接复用；
+  - 目标是普通目录、文件或错误 symlink 时部署立即失败，不自动删除或覆盖。
+- 不需要数据库修改，不需要重新解析文献，不需要复制 866 MB PDF。
