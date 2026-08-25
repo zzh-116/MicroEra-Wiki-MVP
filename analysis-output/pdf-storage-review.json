@@ -1,0 +1,207 @@
+{
+  "generatedAt": "2026-08-14T09:31:52.236Z",
+  "readOnly": true,
+  "scope": {
+    "dataDir": "C:\\Users\\CAIHUI\\MicroEra-Wiki-MVP-new\\backend\\data",
+    "dirs": [
+      "reports",
+      "zaozhi",
+      "laiguanxue"
+    ]
+  },
+  "stats": {
+    "pdfTotal": 185,
+    "uniqueSha256": 176,
+    "matchedPdfCount": 183,
+    "unmatchedPdfCount": 2,
+    "pdfMultiEntryCount": 74,
+    "entriesWithMultiplePdfs": 89,
+    "expectedWikiFilesRows": 285,
+    "expectedUniqueObjects": 174,
+    "uniqueObjectKeysAllPdfs": 176,
+    "duplicateObjectKeyCount": 9,
+    "entryFilenameDuplicateCount": 11,
+    "previousManifestKeyOverlap": 174,
+    "sourceFilesUnchanged": true,
+    "byDir": {
+      "reports": 1,
+      "zaozhi": 180,
+      "laiguanxue": 4
+    }
+  },
+  "objectKeyDuplicates": [
+    {
+      "objectKey": "documents/4779eb86cbcbc58fe3f46dd6a21b8f8b43604e446225a4e1fca1382a74f685d0.pdf",
+      "relPaths": [
+        "zaozhi/2025_food pakageing.pdf",
+        "zaozhi/新方向调研/2025_food pakageing.pdf"
+      ]
+    },
+    {
+      "objectKey": "documents/7d37b78c876f6610c99fbff1b2b93c382e3df85a192abca4a8c182488eeb7cea.pdf",
+      "relPaths": [
+        "zaozhi/2025_geotechnical.pdf",
+        "zaozhi/新方向调研/2025_geotechnical.pdf"
+      ]
+    },
+    {
+      "objectKey": "documents/8c1be8232f6918fa10344b5a9cc1afdc957f152a2f3c596a40e81baa5979e082.pdf",
+      "relPaths": [
+        "zaozhi/2026_Decarbonization pathways.pdf",
+        "zaozhi/新方向调研/2026_Decarbonization pathways.pdf"
+      ]
+    },
+    {
+      "objectKey": "documents/a7167e79ee90e8c3e86ead9d89418a2f200b80f47a0e969c8d4adc7be2e7e0c0.pdf",
+      "relPaths": [
+        "zaozhi/CN201610046821.8_一种选择性制备1-羟基-2,5-己二酮及2,5-呋喃二甲醇的方法.pdf",
+        "zaozhi/甘蔗渣/利夫生物/专利/第一部分/CN201610046821.8_一种选择性制备1-羟基-2,5-己二酮及2,5-呋喃二甲醇的方法.pdf"
+      ]
+    },
+    {
+      "objectKey": "documents/8283f07ee8eaab917a59dcebb3d02ac45c2cf607e4b192476b57ae866cb79e6f.pdf",
+      "relPaths": [
+        "zaozhi/CN201710451177.7_一种间羟基苯乙酮的制备方法.pdf",
+        "zaozhi/甘蔗渣/利夫生物/专利/第三部分/CN201710451177.7_一种间羟基苯乙酮的制备方法.pdf"
+      ]
+    },
+    {
+      "objectKey": "documents/5e3a1d10f15e80dd7d577e3020345fd74359b8e96548118292396db2df1f4c8a.pdf",
+      "relPaths": [
+        "zaozhi/CN201710768995.X_一种1,10‑癸二酸的制备方法.pdf",
+        "zaozhi/甘蔗渣/利夫生物/专利/第一部分/CN201710768995.X_一种1,10‑癸二酸的制备方法.pdf"
+      ]
+    },
+    {
+      "objectKey": "documents/4a4675b64288a502562701d5cfe33e25d28b2ab13d3bf833c865c37dd5db1811.pdf",
+      "relPaths": [
+        "zaozhi/CN201810321005.2_一种正辛醇酯及其正辛醇的制备方法.pdf",
+        "zaozhi/甘蔗渣/利夫生物/专利/第一部分/CN201810321005.2_一种正辛醇酯及其正辛醇的制备方法.pdf"
+      ]
+    },
+    {
+      "objectKey": "documents/8e24d43e22902e88943dcb0b5ed678dae0a1280f8dea2730dc827132d54298bc.pdf",
+      "relPaths": [
+        "zaozhi/PCTCN2025079285_一种呋喃二甲酸的制备方法及装置.pdf",
+        "zaozhi/甘蔗渣/利夫生物/专利/第一部分/PCTCN2025079285_一种呋喃二甲酸的制备方法及装置.pdf"
+      ]
+    },
+    {
+      "objectKey": "documents/2d22e03ec6ca1dd89831d7f55a22d171d686e82b861523f20642f5d5e1663ec2.pdf",
+      "relPaths": [
+        "zaozhi/US202418895254_METHOD FOR PREPARING 5-HYDROXYMETHYLFURFURAL.pdf",
+        "zaozhi/甘蔗渣/利夫生物/专利/第一部分/US202418895254_METHOD FOR PREPARING 5-HYDROXYMETHYLFURFURAL.pdf"
+      ]
+    }
+  ],
+  "entryFilenameDuplicates": [
+    {
+      "entryId": 319,
+      "fileName": "2025_food pakageing.pdf",
+      "relPaths": [
+        "zaozhi/2025_food pakageing.pdf",
+        "zaozhi/新方向调研/2025_food pakageing.pdf"
+      ]
+    },
+    {
+      "entryId": 370,
+      "fileName": "2025_food pakageing.pdf",
+      "relPaths": [
+        "zaozhi/2025_food pakageing.pdf",
+        "zaozhi/新方向调研/2025_food pakageing.pdf"
+      ]
+    },
+    {
+      "entryId": 320,
+      "fileName": "2025_geotechnical.pdf",
+      "relPaths": [
+        "zaozhi/2025_geotechnical.pdf",
+        "zaozhi/新方向调研/2025_geotechnical.pdf"
+      ]
+    },
+    {
+      "entryId": 371,
+      "fileName": "2025_geotechnical.pdf",
+      "relPaths": [
+        "zaozhi/2025_geotechnical.pdf",
+        "zaozhi/新方向调研/2025_geotechnical.pdf"
+      ]
+    },
+    {
+      "entryId": 321,
+      "fileName": "2026_Decarbonization pathways.pdf",
+      "relPaths": [
+        "zaozhi/2026_Decarbonization pathways.pdf",
+        "zaozhi/新方向调研/2026_Decarbonization pathways.pdf"
+      ]
+    },
+    {
+      "entryId": 351,
+      "fileName": "CN201610046821.8_一种选择性制备1-羟基-2,5-己二酮及2,5-呋喃二甲醇的方法.pdf",
+      "relPaths": [
+        "zaozhi/CN201610046821.8_一种选择性制备1-羟基-2,5-己二酮及2,5-呋喃二甲醇的方法.pdf",
+        "zaozhi/甘蔗渣/利夫生物/专利/第一部分/CN201610046821.8_一种选择性制备1-羟基-2,5-己二酮及2,5-呋喃二甲醇的方法.pdf"
+      ]
+    },
+    {
+      "entryId": 367,
+      "fileName": "CN201710451177.7_一种间羟基苯乙酮的制备方法.pdf",
+      "relPaths": [
+        "zaozhi/CN201710451177.7_一种间羟基苯乙酮的制备方法.pdf",
+        "zaozhi/甘蔗渣/利夫生物/专利/第三部分/CN201710451177.7_一种间羟基苯乙酮的制备方法.pdf"
+      ]
+    },
+    {
+      "entryId": 353,
+      "fileName": "CN201710768995.X_一种1,10‑癸二酸的制备方法.pdf",
+      "relPaths": [
+        "zaozhi/CN201710768995.X_一种1,10‑癸二酸的制备方法.pdf",
+        "zaozhi/甘蔗渣/利夫生物/专利/第一部分/CN201710768995.X_一种1,10‑癸二酸的制备方法.pdf"
+      ]
+    },
+    {
+      "entryId": 354,
+      "fileName": "CN201810321005.2_一种正辛醇酯及其正辛醇的制备方法.pdf",
+      "relPaths": [
+        "zaozhi/CN201810321005.2_一种正辛醇酯及其正辛醇的制备方法.pdf",
+        "zaozhi/甘蔗渣/利夫生物/专利/第一部分/CN201810321005.2_一种正辛醇酯及其正辛醇的制备方法.pdf"
+      ]
+    },
+    {
+      "entryId": 355,
+      "fileName": "PCTCN2025079285_一种呋喃二甲酸的制备方法及装置.pdf",
+      "relPaths": [
+        "zaozhi/PCTCN2025079285_一种呋喃二甲酸的制备方法及装置.pdf",
+        "zaozhi/甘蔗渣/利夫生物/专利/第一部分/PCTCN2025079285_一种呋喃二甲酸的制备方法及装置.pdf"
+      ]
+    },
+    {
+      "entryId": 323,
+      "fileName": "US202418895254_METHOD FOR PREPARING 5-HYDROXYMETHYLFURFURAL.pdf",
+      "relPaths": [
+        "zaozhi/US202418895254_METHOD FOR PREPARING 5-HYDROXYMETHYLFURFURAL.pdf",
+        "zaozhi/甘蔗渣/利夫生物/专利/第一部分/US202418895254_METHOD FOR PREPARING 5-HYDROXYMETHYLFURFURAL.pdf"
+      ]
+    }
+  ],
+  "review": [
+    {
+      "relPath": "zaozhi/新方向调研/翻译/2026-Development of lateral flow assay for quantitative analysis-dual.pdf",
+      "fileName": "2026-Development of lateral flow assay for quantitative analysis-dual.pdf",
+      "sha256": "b2c2231f0d0ceace6127ddc988d628527d89b7805cfa3d9b5a185f08a140028c",
+      "size": 9584335,
+      "reason": "no_high_confidence_entry"
+    },
+    {
+      "relPath": "zaozhi/新方向调研/翻译/sensors-25-01021-dual.pdf",
+      "fileName": "sensors-25-01021-dual.pdf",
+      "sha256": "16a15476c24473766295d73dd9c511d147ec1c736e8c64fc517b84b156af1778",
+      "size": 8372313,
+      "reason": "no_high_confidence_entry"
+    }
+  ],
+  "warnings": [
+    "MinIO was not contacted; actual bucket object state was not verified.",
+    "previousManifestKeyOverlap is based on analysis-output/pdf-migration-manifest.csv, not live MinIO state."
+  ]
+}

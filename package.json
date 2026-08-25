@@ -14,11 +14,14 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "tsc --noEmit",
+    "typecheck:backend": "tsc --noEmit -p tsconfig.backend.json",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx backend/db/migrate.ts",
     "db:seed": "tsx backend/db/seed.ts",
     "db:studio": "drizzle-kit studio",
-    "graph:rebuild": "tsx scripts/rebuild-graph.mts"
+    "graph:rebuild": "tsx scripts/rebuild-graph.mts",
+    "storage:upload": "tsx scripts/upload-local-file-to-minio.mts",
+    "storage:migrate": "tsx scripts/migrate-files-to-minio.mts"
   },
   "dependencies": {
     "@antv/g6": "^4.8.25",
@@ -29,6 +32,7 @@
     "drizzle-orm": "^0.45.2",
     "express": "^4.21.2",
     "lucide-react": "^0.546.0",
+    "minio": "^8.0.7",
     "motion": "^12.23.24",
     "multer": "^2.2.0",
     "mysql2": "^3.23.1",

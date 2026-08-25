@@ -1,0 +1,368 @@
+Year，Article Title
+2025，An active representation learning method for reaction yield prediction with small-scale data
+2025，Calcium carbonate promoted 2,5-furandicarboxylic acid production from 5-hydroxymethylfurfural over Co-OMS-2 catalyst
+2025，Generation of Hydrides or Hydrogen Radicals for Hydrodehalogenation and Deuterodehalogenation of gem-Dihaloalkenes
+2024，Quantitative Insight into the Electric Field Effect on CO2 Electrocatalysis via Machine Learning Spectroscopy
+2025，Accurate location of Ni and W active sites in hierarchical zeolite catalyst for the conversion of cellulose to alcohols
+2024，Reactive Oxygen Species-Mediated Photooxidation in a Full-Space Electric Field Catalyst: Selectivity and Activity Control of Intramolecular Alcohol Hydroxyl and Aldehyde Groups
+2025，Cobalt-Catalyzed Hydroarylation of 2,3-Dihydrofuran to Access α-Arylated Tetrahydrofurans
+2024，R es B os2 and the CDF W mass measurement
+2024，Data-Based Prediction of Redox Potentials via Introducing Chemical Features into the Transformer Architecture
+2025，Copper-Catalyzed Oxidation of 5-Hydroxymethylfurfural to 2,5-Diformylfuran Assisted by TEMPOL in Liquid Sunlight Methanol
+2024，Nickel-Catalyzed α-selective Hydroalkylation of Vinylarenes
+2024，Cobalt-catalyzed stereoselective synthesis of chiral gem-difluorocyclopropanes with vicinal stereocenters
+2024，Improving ResBos for the precision needs of the LHC
+2025，Enhancing Built-In Electric Field via Defect-Mediated Interfacial Chemical Bond Construction in Chalcogenide Heterojunction for Alcohol Photooxidation Coupled with H2 Production
+2024，Studies of the Energy Dependence of Diboson Polarization Fractions and the Radiation-Amplitude-Zero Effect in WZ Production with the ATLAS Detector
+2024，Bimetal-carbon engineering for polypropylene conversion into hydrocarbons and ketones in a Fenton-like system
+2024，Cobalt-catalysed enantioselective hydroalkylation of 1,1-disubstituted styrenes
+2024，Enantioselective alkene hydroalkylation overcoming heteroatom constraints via cobalt catalysis
+2024，Entropy effects in temperature-regulated nickel-catalyzed regiodivergent alkene hydroalkylation
+2024，Cobalt-catalyze d re ductive alkynylation to construct C(sp)-C(sp3 ) and C(sp)-C(sp2 ) bonds
+2024，Generation of Hydrides or Hydrogen Radicals for Hydrodehalogenation and Deuterodehalogenation of gem-Dihaloalkenes
+2024，Chemoselective direct deuterodecarboxylation of free aliphatic carboxylic acids enabled by deuteron-coupled electron transfer
+2024，Probing parton distribution functions at large x via Drell-Yan forward-backward asymmetry
+2024，Catalytic conversion of mixed polyolefins under mild atmospheric pressure
+2024，Recent Advances in Cobalt-Catalyzed Regio- or Stereoselective Hydrofunctionalization of Alkenes and Alkynes
+2024，Photoinduced Dehalocyclization to Access Oxindoles Using Formate as a Reductant
+2024，Ligand-Controlled Cobalt-Catalyzed Regio-, Enantio-, and Diastereoselective Oxyheterocyclic Alkene Hydroalkylation
+2024，Photoinduced Triphenylphosphine and Iodide Salt Promoted Reductive Decarboxylative Coupling
+2024，Porous Composite-Mediated Bimetallic Cluster POMs/Zr-MOF for Catalytic Transfer Hydrogenation of Biomass-Derived Aldehydes and Ketones
+2024，Phosphine Ligand Effects in Nickel-Catalyzed Alkene Migratory Hydroalkylation
+2023，Boryl radical catalysis enables asymmetric radical cycloisomerization reactions
+2024，MFI zeolite with confined adjustable synergistic Cu sites for the hydrogenation of levulinic acid
+2024，Modular Synthesis of Fluoro-Substituted Furan Compounds via Controllable Fluorination of Biomass-Based 5-HMF and Its Derivatives
+2023，Tunable Synthesis of Monofluoroalkenes and Gem-Difluoroalkenes via Solvent-Controlled Rhodium-Catalyzed Arylation of 1-Bromo-2,2-difluoroethylene
+2023，Ferric Single-Site Catalyst Confined in a Zeolite Framework for Propane Dehydrogenation
+2024，Selective photocatalytic oxidation of furfural to C4 compounds with metal-TS-1 zeolite
+2023，Surface-Controlled CdS/Ti3C2 MXene Schottky Junction for Highly Selective and Active Photocatalytic Dehydrogenation-Reductive Amination
+2023，Recent DFT Calculations on the Mechanism of Transition-Metal-Catalyzed C-O Activation of Alcohols
+2023，Carbon footprint analysis of supply chain of bio-based methyl levulinate production in China
+2023，Cobalt-Catalyzed Facial-Selective Hydroalkylation of Cyclopropenes
+2023，Acetolysis of waste polyethylene terephthalate for upcycling and life-cycle assessment study
+2023，Nickel-Catalyzed Remote Asymmetric Hydroalkylation of Alkenyl Ethers to Access Ethers of Chiral Dialkyl Carbinols
+2023，Ligand-Controlled Stereoselective Synthesis of 2-Deoxy-β-C-glycosides by Cobalt Catalysis
+2023，Photocatalytic Alkyl Radical Addition Tandem Oxidation of Alkenyl Borates
+2023，Measurement of the proton structure parameters in the forward-backward charge asymmetry
+2022，Dual nickel/photoredox catalyzed carboxylation of C(sp2)-halides with formate
+2022，Linear Regression Model for Predicting Allyl Alcohol C-O Bond Activity under Palladium Catalysis
+2022，Synthesis of conjugated bisallenes by cooperative Cu/Pd-catalysed borylallenylation of 2-trifluoromethyl-1,3-enynes
+2022，Aerobic Oxidation of 5-Hydroxymethylfurfural to Dimethyl Furan-2,5-dicarboxylate over CoMn@NC Catalysts Using Atmospheric Oxygen
+2022，Mechanistic Study on Palladium-Catalyzed Cycloaddition of Vinylethylene Carbonates with α,β-Unsaturated Imines
+2022，Na-MnOx catalyzed aerobic oxidative cleavage of biomass-derived 1,2-diols to synthesis medium-chain furanic chemicals
+2022，Boost asymmetry of the diboson productions in pp collisions
+2022，Manganese-catalysed dehydrogenative oxidation of glycerol to lactic acid
+2022，Nucleophilicity Prediction Using Graph Neural Networks
+2022，Boryl Radicals Enabled a Three-Step Sequence to Assemble All-Carbon Centers from Activated Groups
+2022，Catalytic Cleavage of the C-O Bond in Lignin and Lignin-Derived Aryl Ethers over Ni/AlPyOx Catalysts
+2022，Synthesis of gem-Difluorinated 1,3-Dienes via Synergistic Cu/Pd-Catalyzed Borodifluorovinylation of Alkynes
+2022，Factorization of the forward-backward asymmetry and measurements of the weak mixing angle and proton structure at hadron colliders
+2022，Ligand-Controlled Cobalt-Catalyzed Regiodivergent Alkyne Hydroalkylation
+2022，Preparation of new bio-based antibacterial acrylic bone cement via modification with a biofunctional monomer of nitrofurfuryl methacrylate
+2022，Preparation of Furoic Acid by Oxidation of Furfural
+2022，Nickel-Catalyzed Switchable Site-Selective Alkene Hydroalkylation by Temperature Regulation
+2022，Reduction of the electroweak correlation in the PDF updating by using the forward-backward asymmetry of Drell-Yan process
+2022，Dehydroxylative Alkylation of α-Hydroxy Carboxylic Acids Derivatives via a Spin-Center Shift
+2022，NiH-catalysed proximal-selective hydroalkylation of unactivated alkenes and the ligand effects on regioselectivity
+2022，Copper-Catalyzed Regiodivergent and Enantioselective Hydrosilylation of Allenes
+2022，Photoredox-Catalyzed Allylic Defluorinative Alkoxycarbonylation of Trifluoromethyl Alkenes through Intermolecular Alkoxycarbonyl Radical Addition
+2022，Proton-Promoted Nickel-Catalyzed Asymmetric Hydrogenation of Aliphatic Ketoacids
+2022，Efficient Decarboxylative/Defluorinative Alkylation for the Synthesis of gem-Difluoroalkenes through an SN2'-Type Route
+2022，Synthesis of gem-Difluoroalkenes through Nickel-Promoted Electrochemical Reductive Cross-Coupling
+2022，NiH-Catalyzed Reductive Hydrocarbonation of Enol Esters and Ethers
+2022，Mechanistic insights into the rhodium-catalyzed aryl C-H carboxylation
+2021，Cobalt-catalysed enantioselective C(sp3)-C(sp3) coupling
+2021，Heterogeneous Cobalt-Catalyzed C-C Bond Cleavage in Alcohols to Carbonyl Compounds
+2021，Mechanistic study on the photo carboxylation of benzylic C-H bonds by xanthone and Ni(0) catalysts
+2021，Heterogeneous photocatalyzed acceptorless dehydrogenation of 5-hydroxymethylfurfural upon visible-light illumination
+2021，Reshaping the active pocket of esterase Est816 for resolution of economically important racemates
+2021，A nitrogen-doped carbon modified nickel catalyst for the hydrogenation of levulinic acid under mild conditions
+2021，Enhanced Production of (S)-2-arylpropionic Acids by Protein Engineering and Whole-Cell Catalysis
+2021，Photocatalyst- and additive-free site-specific C(sp3)-H hydrazination of glycine derivatives and peptides
+2021，Three-component reaction of gem-difluorinated cyclopropanes with alkenes and B2pin2 for the synthesis of monofluoroalkenes
+2021，Reduction of PDF uncertainty in the measurement of the weak mixing angle at the ATLAS experiment
+2021，Cu/Pd-Catalyzed cis-Borylfluoroallylation of Alkynes for the Synthesis of Boryl-Substituted Monofluoroalkenes
+2021，Mechanistic Insights into the Nickel-Catalyzed Regioselective Carboxylation of Allylic Alcohols
+2021，Controllable regio- and stereo-selective coupling reactions of homoallenylboronates
+2021，Mechanistic Studies on N-Heterocyclic Carbene-Catalyzed Umpolung of β,γ-Unsaturated α-Diketones
+2021，Synthesis of 1,10-decanediol diacetate and 1-decanol acetate from furfural
+2021，Catalytic asymmetric reductive hydroalkylation of enamides and enecarbamates to chiral aliphatic amines
+2021，Metal-free photocatalytic aerobic oxidation of biomass-based furfural derivatives to prepare γ-butyrolactone
+2021，Pivotal Electron Delivery Effect of the Cobalt Catalyst in Photocarboxylation of Alkynes: A DFT Calculation
+2020，Mechanistic study on the regioselective Ni-catalyzed dicarboxylation of 1,3-dienes with CO2
+2021，Transition-Metal-Free Valorization of Biomass-derived Levulinic Acid Derivatives: Synthesis of Curcumene and Xanthorrhizol
+2020，Conversion of 5-hydroxymethylfurfural to chemicals: A review of catalytic routes and product applications
+2020，Cascade conversion of furancarboxylic acid to butanediol diacetate over Pd/C and La(OTf)3 catalytic system
+2020，Visible-light-induced Selective Oxidation of Alcohols
+2020，Kinetic Studies on the Impact of Pd Addition to Ru/TiO2 Catalyst: Levulinic Acid to γ-Valerolactone under Ambient Hydrogen Pressure
+2020，Recent advances in nickel-catalyzed reductive hydroalkylation and hydroarylation of electronically unbiased alkenes
+2020，A General and Efficient Access to Carboxylic Acids and Derivatives through the Oxidation of Alkynyl Boronates
+2020，Metal-free Photocatalytic Aerobic Oxidative Cleavage of C-C Bonds in 1,2-Diols
+2020，An azacyclo-localizing fluorescent probe for the specific labeling of lysosome and autolysosome
+2020，Nickel-catalyzed three-component olefin reductive dicarbofunctionalization to access alkylborates
+2020，Study on Reaction of γ-Valerolactone and Amine Catalyzed by Zirconium-Based Lewis Acids
+2020，Equilibrium and thermodynamic studies of chromic overcrowded fluorenylidene-acridanes with modified fluorene moieties
+2020，Cobalt-Catalyzed Decarboxylative Methylation and Ethylation of Aliphatic N-(Acyloxy)phthalimides with Organoaluminum Reagents
+2020，A Multi-responsive Fluorescent Probe Reveals Mitochondrial Nucleoprotein Dynamics with Reactive Oxygen Species Regulation through Super-resolution Imaging
+2020，Biosynthesis of α-Substituted β-Ketoesters via the Tandem Knoevenagel Condensation-Reduction Reaction Using a Single Enzyme
+2020，A practical and concise homogeneous nickel catalyst for efficient solvent-free synthesis of γ-valerolactone
+2020，Three-Component Borylallenylation of Alkynes: Access to Densely Boryl-Substituted Ene-allenes
+2020，Nickel-catalyzed carboxylation of aryl iodides with lithium formate through catalytic CO recycling
+2020，Stereospecific Electrophilic Fluorocyclization of α,β-Unsaturated Amides with Selectfluor
+2020，Selectively Chemocatalytic Conversion of Fructose to 1,2-Propylene Glycol over Ru-WOx/Hydroxyapatite Catalyst†
+2020，One-pot cascade conversion of xylose to furfuryl alcohol over a bifunctional Cu/SBA-15-SO3H catalyst
+2020，Photocatalytic decarboxylative alkenylation of α-amino and α-hydroxy acid-derived redox active esters by NaI/PPh3 catalysis
+2020，Access to Divergent Fluorinated Enynes and Arenes via Palladium-Catalyzed Ring-Opening Alkynylation of gem-Difluorinated Cyclopropanes
+2020，The dual-catalyzed boryldifluoroallylation of alkynes: an efficient method for the synthesis of skipped gem-difluorodienes
+2020，Palladium-Catalyzed Dual Ligand-Enabled Alkylation of Silyl Enol Ether and Enamide under Irradiation: Scope, Mechanism, and Theoretical Elucidation of Hybrid Alkyl Pd(I)-Radical Species
+2020，Nickel-Catalyzed Enantioconvergent Reductive Hydroalkylation of Olefins with α-Heteroatom Phosphorus or Sulfur Alkyl Electrophiles
+2019，Visible light-induced palladium-catalyzed ring opening β-H elimination and addition of cyclobutanone oxime esters
+2019，Efficient Semi-Synthesis of Atypical Ubiquitin Chains and Ubiquitin-Based Probes Forged by Thioether Isopeptide Bonds
+2019，Oxalic Acid Monothioester for Palladium-Catalyzed Decarboxylative Thiocarbonylation and Hydrothiocarbonylation
+2019，Iron-Catalyzed Selective Hydrogenation of Stearic Acid to Stearyl Alcohol
+2019，Semisynthesis of Ubiquitin and SUMO-Rhodamine 110-Glycine through Aminolysis of Boc-Protected Thioester Counterparts
+2019，Sustainable Production of Acetonitrile from Microalgae via Catalytic Fast Pyrolysis with Ammonia over Ga/HZSM-5 Catalysts
+2019，Catalytic fast pyrolysis of corn cob in ammonia with Ga/HZSM-5 catalyst for selective production of acetonitrile
+2019，Highly selective conversion of natural oil to alcohols or alkanes over a Pd stabilized CuZnAl catalyst under mild conditions
+2019，Selective Conversion of Furoic Acid Derivatives to Multi-Substituted Furanacrylate by a Ruthenium Catalyst
+2019，Highly selective conversion of glyceric acid to 3-iodopropionic acid by hydriodic acid mediated hydrogenation
+2019，Selective hydrodeoxygenation of biomass-derived furfural-acetone to prepare 1-octyl acetate
+2019，Mechanistic Study on Decarbonylative Phosphorylation of Aryl Amides by Nickel Catalysis
+2019，Ligand-Dependent-Controlled Copper-Catalyzed Regio- and Stereoselective Silaboration of Alkynes
+2019，Palladium-Catalyzed Stereoselective Defluorination Arylation/Alkenylation/Alkylation of gem-Difluorinated Cyclopropanes
+2019，Continuous Hydrogenation of Ethyl Levulinate to 1,4-Pentanediol over 2.8Cu-3.5Fe/SBA-15 Catalyst at Low Loading: The Effect of Fe Doping
+2019，Synthesis of Conjugated Boron-Enynes via cis-Alkynylboration of Terminal Alkynes
+2019，A weakly basic Co/CeOx catalytic system for one-pot conversion of cellulose to diols: Kungfu on eggs
+2019，TDDFT investigation on the solvent effect of methanol on the electronic structure and luminescence of metal organic framework CdL2
+2019，An activity-based probe developed by a sequential dehydroalanine formation strategy targets HECT E3 ubiquitin ligases
+2019，Production of acetonitrile via catalytic fast pyrolysis of biomass derived polylactic acid under ammonia atmosphere
+2019，One-pot chemocatalytic transformation of cellulose to ethanol over Ru-WOx/HZSM-5
+2019，Regioselective radical α-borylation of α,β-unsaturated carbonyl compounds for direct synthesis of α-borylcarbonyl molecules
+2019，Photocatalytic decarboxylative alkylations mediated by triphenylphosphine and sodium iodide
+2019，Direct conversion of cellulose and raw biomass to acetonitrile by catalytic fast pyrolysis in ammonia
+2019，Nickel-catalyzed allylic defluorinative alkylation of trifluoromethyl alkenes with reductive decarboxylation of redox-active esters
+2019，Free Radical Pathway Cleavage of C-O Bonds for the Synthesis of Alkylboron Compounds
+2018，Nickel-Catalyzed Suzuki-Type Cross Coupling of Fluorinated Alkenyl Boronates with Alkyl Halides
+2018，Irradiation-induced palladium-catalyzed decarboxylative desaturation enabled by a dual ligand system
+2018，Copper-Catalyzed Reagent-Controlled Regioselective Cyanoborylation of Vinylarenes
+2018，Preparation of valeric acid and valerate esters from biomass-derived levulinic acid using metal triflates plus Pd/C
+2018，Effective conversion of cellobiose and glucose to sorbitol using non-noble bimetallic NiCo/HZSM-5 catalyst
+2018，Mechanistic insights into the ruthenium-catalyzed site-selective oxidation of alcohols
+2018，Direct Selective Hydrogenation of Fatty Acids and Jatropha Oil to Fatty Alcohols over Cobalt-Based Catalysts in Water
+2018，Irradiation-Induced Palladium-Catalyzed Direct C-H Alkylation of Heteroarenes with Tertiary and Secondary Alkyl Bromides
+2018，W(OTf)6-Catalyzed Synthesis of γ-Lactones by Ring Contraction of Macrolides or Ring Closing of Terminal Hydroxyfatty Acids in Ionic Liquid
+2018，Transition Metal Catalyzed Deoxydehydration of Alcohols
+2018，Aerobic oxidative esterification of 5-hydroxymethylfurfural to dimethyl furan-2,5-dicarboxylate by using homogeneous and heterogeneous PdCoBi/C catalysts under atmospheric oxygen
+2018，Decarboxylative formylation of aryl halides with glyoxylic acid by merging organophotoredox with palladium catalysis
+2018，Selective reductive cleavage of C-O bond in lignin model compounds over nitrogen-doped carbon-supported iron catalysts
+2018，Exploration of Biaryl Carboxylic Acids as Proton Shuttles for the Selective Functionalization of Indole C-H Bonds
+2018，Theoretical Investigation on Ni-Catalyzed C(sp3)-F Activation and Ring Contraction of Tetrahydropyrans: Exploration of an SN2 Pathway
+2018，Enhanced Reactivity by Torsional Strain of Cyclic Diaryliodonium in Cu-Catalyzed Enantioselective Ring-Opening Reaction
+2018，A cobalt catalyst for reductive etherification of 5-hydroxymethyl-furfural to 2,5-bis (methoxymethyl)furan under mild conditions
+2018，Mechanism and Origins of Chemo- and Regioselectivities of Pd-Catalyzed Intermolecular σ-Bond Exchange between Benzocyclobutenones and Silacyclobutanes: A Computational Study
+2018，Selective Hydrogenolysis of Furfural Derivative 2-Methyltetrahydrofuran into Pentanediol Acetate and Pentanol Acetate over Pd/C and Sc(OTf)3 Cocatalytic System
+2018，Hydride Source in Ethers Hydrosilylation Reaction Catalyzed by Brookhart's Ir(III) Pincer Complex
+2018，Rhodium(III)-Catalyzed Directed C-H Coupling with Methyl Trifluoroacrylate: Diverse Synthesis of Fluoroalkenes and Heterocycles
+2018，Irradiation-Induced Palladium-Catalyzed Decarboxylative Heck Reaction of Aliphatic N-(Acyloxy)phthalimides at Room Temperature
+2018，Cobalt Nanocluster Supported on ZrREnOx for the Selective Hydrogenation of Biomass Derived Aromatic Aldehydes and Ketones in Water
+2018，Synthesis of medium-chain carboxylic acids or α,ω-dicarboxylic acids from cellulose-derived platform chemicals
+2018，Palladium/Norbornene-Catalyzed ortho Aliphatic Acylation with Mixed Anhydride: Selectivity and Reactivity
+2018，Mechanistic Insights into Solvent and Ligand Dependency in Cu(I)-Catalyzed Allylic Alkylation-with gem-Diborylalkanes
+2018，Isocanthine Synthesis via Rh(III)-Catalyzed Intramolecular C-H Functionalization
+2018，Visible Light Accelerated Vinyl C-H Arylation in Pd-Catalysis: Application in the Synthesis of ortho Tetra-substituted Vinylarene Atropisomers
+2017，Catalytic pyrolysis of dimethyl carbonate to aromatic hydrocarbons
+2017，Preparation of D-Sorbitol by Catalytic Hydrogenation of D-Glucose with Semi Sandwich Iridium Catalyst
+2017，Mechanistic Study on Nickel-Catalyzed Silylation of Aryl Methyl Ethers
+2017，Graphitic Carbon Nitride (g-C3N4)-derived Fe-N-C Catalysts for Selective Hydrodeoxygenation of 5-Hydroxymethylfurfural to 2,5-Dimethylfuran
+2017，Conversion of levulinic acid and alkyl levulinates into biofuels and high-value chemicals
+2017，Copper-Catalyzed Alkynylboration of Alkenes with Diboron Reagents and Bromoalkynes
+2017，A Comprehensive Study on Metal Triflate-Promoted Hydrogenolysis of Lactones to Carboxylic Acids: From Synthetic and Mechanistic Perspectives
+2017，Facile preparation of bio-based polyesters from furandicarboxylic acid and long chain diols via asymmetric monomer strategy
+2017，Molybdenum modified nickel phyllosilicates as a high performance bifunctional catalyst for deoxygenation of methyl palmitate to alkanes under mild conditions
+2017，Nickel-Catalyzed Defluorinative Reductive Cross-Coupling of gem-Difluoroalkenes with Unactivated Secondary and Tertiary Alkyl Halides
+2017，Nickel-catalyzed synthesis of 1,1-diborylalkanes from terminal alkenes
+2017，Isonicotinate Ester Catalyzed Decarboxylative Borylation of (Hetero)Aryl and Alkenyl Carboxylic Acids through N-Hydroxyphthalimide Esters
+2017，Lignin C-C Bond's Cleavage by Vanadium Catalyzed with High Selectivity in Acid Environment
+2017，Theoretical Investigation on Nickel-Catalyzed Hydrocarboxylation of Alkynes Employing Formic Acid
+2017，Effect of Cp*Iridium(III) Complex and acid co-catalyst on conversion of furfural compounds to cyclopentanones or straight chain ketones
+2017，Mechanism of Nickel-Catalyzed Suzuki-Miyaura Coupling of Amides
+2017，Efficient Pd-Catalyzed Regio- and Stereoselective Carboxylation of Allylic Alcohols with Formic Acid
+2017，Recent advances in catalytic production of sugar alcohols and their applications
+2017，Iron-mediated remote C-H bond benzylation of 8-aminoquinoline amides
+2017，Selective Hydrodeoxygenation of 5-Hydroxymethylfurfural to 2,5-Dimethylfuran over Heterogeneous Iron Catalysts
+2017，Integrated Production of Aromatic Amines and N-Doped Carbon from Lignin via ex Situ Catalytic Fast Pyrolysis in the Presence of Ammonia over Zeolites
+2017，Copper-catalyzed propargylation of diborylmethane
+2017，Theoretical Investigation on the ClBcat-Promoted Synthesis of Heterocyclic Boronic Esters
+2017，Selective production of pyrroles via catalytic fast pyrolysis of cellulose under ammonia atmosphere at low temperature
+2017，Mechanistic Study on the Ruthenium-Catalyzed Terminal Alkyne Hydrochlorination
+2017，Photoredox-Catalysed Decarboxylative Alkylation of N-Heteroarenes with N-(Acyloxy)phthalimides
+2017，Efficient Hydrogenation of Various Renewable Oils over Ru-HAP Catalyst in Water
+2017，Superior ligand for Pd(II)-catalyzed enantioselective arylation of C(sp3)-H bonds: chiral acetyl protected aminoethyl quinoline
+2017，A Ligand-Dissociation-Involved Mechanism in Amide Formation of Monofluoroacylboronates with Hydroxylamines
+2017，Copper-catalyzed/mediated borylation reactions of epoxides with diboron reagents: access to β-hydroxyl boronic esters
+2017，Effective Hydrodeoxygenation of Stearic Acid and Cyperus Esculentus Oil into Liquid Alkanes over Nitrogen-Modified Carbon Nanotube-Supported Ruthenium Catalysts
+2017，Aerobic dehydrogenation of cyclic ketones into corresponding phenols catalyzed by heterogeneous Pd nanocatalysts
+2017，Photoredox/Bronsted Acid Co-Catalysis Enabling Decarboxylative Coupling of Amino Acid and Peptide Redox-Active Esters with N-Heteroarenes
+2017，Advances in Upgrading Lignin Pyrolysis Vapors by Ex Situ Catalytic Fast Pyrolysis
+2016，pH-Regulated Aqueous Catalytic Hydrogenation of Biomass Carbohydrate Derivatives by Using Semisandwich Iridium Complexes
+2016，Selective Formylation and Methylation of Amines using Carbon Dioxide and Hydrosilane Catalyzed by Alkali-Metal Carbonates
+2016，Mechanism of Vanadium-Catalyzed Deoxydehydration of Vicinal Diols: Spin-Crossover-Involved Processes
+2016，Ligand-Controlled Regiodivergent Copper-Catalyzed Alkylboration of Unactivated Terminal Alkynes
+2016，Mechanism of Ligand-Controlled Regioselectivity-Switchable Copper-Catalyzed Alkylboration of Alkenes
+2016，Enhancement of indoles production and catalyst stability in thermo-catalytic conversion and ammonization of furfural with NH3 and N2 environments
+2016，Theoretical Study of Ir-Catalyzed Chemoselective C1-O Reduction of Glucose with Silane
+2016，Mechanism of Boron-Catalyzed N-Alkylation of Amines with Carboxylic Acids
+2016，Directing Group in Decarboxylative Cross-Coupling: CopperCatalyzed Site-Selective C-N Bond Formation from Nonactivated Aliphatic Carboxylic Acids
+2016，Formation of C(sp3)-C(sp3) Bonds through Nickel-Catalyzed Decarboxylative Olefin Hydroalkylation Reactions
+2016，Mechanism of Vanadium-Catalyzed Selective C-O and C-C Cleavage of Lignin Model Compound
+2016，Catalytic Transfer Hydrogenation of Furfural to Furfuryl Alcohol over Nitrogen-Doped Carbon-Supported Iron Catalysts
+2016，A self-catalytic role of methanol in PNP-Ru pincer complex catalysed dehydrogenation
+2016，Selective Conversion of 5-Hydroxymethylfuraldehyde Using Cp*Ir Catalysts in Aqueous Formate Buffer Solution
+2016，Mechanism Study of Mn(I) Complex-catalyzed Imines and Alkynes Dehydrogenation Coupling Reaction
+2016，Practical carbon-carbon bond formation from olefins through nickel-catalyzed reductive olefin hydrocarbonation
+2016，Computational Study of Formic Acid Dehydrogenation Catalyzed by AlIII-Bis(imino)pyridine
+2016，Copper-Catalyzed SN2′-Selective Allylic Substitution Reaction of gem-Diborylalkanes
+2016，Production of 4-Hydroxymethylfurfural from Derivatives of Biomass-Derived Glycerol for Chemicals and Polymers
+2016，Producing Pyridines via Thermocatalytic Conversion and Ammonization of Waste Polylactic Acid over Zeolites
+2016，Production of Biodegradable Board using Rape Straw and Analysis of Mechanical Properties
+2016，Mechanism of the Visible Light-Mediated Gold-Catalyzed Oxyarylation Reaction of Alkenes
+2016，Effective conversion of biomass-derived ethyl levulinate into γ-valerolactone over commercial zeolite supported Pt catalysts
+2016，Perovskite type oxide-supported Ni catalysts for the production of 2,5-dimethylfuran from biomass-derived 5-hydroxymethylfurfural
+2016，Pd-catalyzed cross-coupling of 1,1-diborylalkanes with aryl triflates
+2016，Copper-catalyzed cross-coupling reactions of epoxides with gem-diborylmethane: access to γ-hydroxyl boronic esters
+2016，Microwave-assisted alcoholysis of furfural alcohol into alkyl levulinates catalyzed by metal salts
+2016，Unprecedented copper-mediated oxidative demethylation of propionamides via bidentate-chelation assistance
+2016，1,1-Disubstituted olefin synthesis via Ni-catalyzed Markovnikov hydroalkylation of alkynes with alkyl halides
+2016，Selective hydrodeoxygenation of lignin-derived phenols to alkyl cyclohexanols over a Ru-solid base bifunctional catalyst
+2016，Producing pyridines via thermo-catalytic conversion and ammonization of glycerol over nano-sized HZSM-5
+2016，In situ synthesis of molybdenum oxide@N-doped carbon from biomass for selective vapor phase hydrodeoxygenation of lignin-derived phenols under H2 atmosphere
+2016，Supported copper catalysts for highly efficient hydrogenation of biomass-derived levulinic acid and γ-valerolactone
+2016，N-Alkylation of amines with phenols over highly active heterogeneous palladium hydride catalysts
+2016，Palladium-catalyzed directing group-assisted C8-triflation of naphthalenes
+2016，Chemoselective oxidant-free dehydrogenation of alcohols in lignin using Cp*Ir catalysts
+2015，Alkanes from Bioderived Furans by using Metal Triflates and Palladium-Catalyzed Hydrodeoxygenation of Cyclic Ethers
+2015，Selective hydrogenolysis of glycerol to 1,2-propanediol catalyzed by supported bimetallic PdCu-KF/γ-Al2O3
+2015，Renewable N-Heterocycles Production by Thermocatalytic Conversion and Ammonization of Biomass over ZSM-5
+2015，Mechanism of Nickel(II)-Catalyzed Oxidative C(sp2)-H/C(sp3)-H Coupling of Benzamides and Toluene Derivatives
+2015，Ligand-Controlled Regiodivergent Copper-Catalyzed Alkylboration of Alkenes
+2015，Decarboxylative 1,4-Addition of α-Oxocarboxylic Acids with Michael Acceptors Enabled by Photoredox Catalysis
+2015，Iron-catalyzed selective oxidation of 5-hydroxylmethylfurfural in air: A facile synthesis of 2,5-diformylfuran at room temperature
+2015，Thermal-reductive transformations of carbon dioxide catalyzed by small molecules using earth-abundant elements
+2015，Room-Temperature Decarboxylative Couplings of α-Oxocarboxylates with Aryl Halides by Merging Photoredox with Palladium Catalysis
+2015，Copper-Catalyzed Cross-Coupling Reaction of Allyl Boron Ester with 1°/2°/3°-Halogenated Alkanes
+2015，Mechanistic Study on Ligand-Controlled Rh(I)-Catalyzed Coupling Reaction of Alkene-Benzocyclobutenone
+2015，Selective Hydrogenation of Phenol to Cyclohexanone over Pd-HAP Catalyst in Aqueous Media
+2015，Mechanism of Pd-catalyzed selective C-H activation of aliphatic amines via four-membered-ring cyclometallation pathway
+2015，Boron-Catalyzed N-Alkylation of Amines using Carboxylic Acids
+2015，Pd-Catalyzed Regioselective Activation of gem-Difluorinated Cyclopropanes: A Highly Efficient Approach to 2-Fluorinated Allylic Scaffolds
+2015，Products and production routes for the catalytic conversion of seed oil into fuel and chemicals: a comprehensive review
+2015，The colloidal synthesis of unsupported nickel-tin bimetallic nanoparticles with tunable composition that have high activity for the reduction of nitroarenes
+2015，Transfer Hydrogenation of Ethyl Levulinate to γ-Valerolactone Catalyzed by Iron Complexes
+2015，Redox potentials of trifluoromethyl-containing compounds
+2015，Copper Nanocrystal Plane Effect on Stereoselectivity of Catalytic Deoxygenation of Aromatic Epoxides
+2015，Mechanism of Aldehyde-Selective Wacker-Type Oxidation of Unbiased Alkenes with a Nitrite Co-Catalyst
+2015，Recent Progress in the Studies of Biomass Plafform Molecule γ-Velerolactone
+2015，Hydrodeoxygenation of lignin-derived phenols into alkanes over carbon nanotube supported Ru catalysts in biphasic systems
+2015，Catalytic conversion of Jatropha oil to alkanes under mild conditions with a Ru/La(OH)3 catalyst
+2015，Selective hydrogenolysis of phenols and phenyl ethers to arenes through direct C-O cleavage over ruthenium-tungsten bifunctional catalysts
+2015，Selective conversion of furfural to cyclopentanone or cyclopentanol using different preparation methods of Cu-Co catalysts
+2015，Catalytic dehydration of D-xylose to furfural over a tantalum-based catalyst in batch and continuous process
+2015，Conversion of biomass-derived fatty acids and derivatives into hydrocarbons using a metal-free hydrodeoxygenation process
+2015，Cu-Catalyzed cross-coupling reactions of epoxides with organoboron compounds
+2015，Rhodium(III)-catalyzed cyanation of vinylic C-H bonds: N-cyano-N-phenyl-p-toluenesulfonamide as a cyanation reagent
+2015，Direct production of indoles via thermo-catalytic conversion of bio-derived furans with ammonia over zeolites
+2015，Towards the sustainable production of pyridines via thermo-catalytic conversion of glycerol with ammonia over zeolite catalysts
+2015，Fast and catalyst-free hydrazone ligation via ortho-halo-substituted benzaldehydes for protein C-terminal labeling at neutral pH
+2014，Copper-Catalyzed/Promoted Cross-coupling of gem-Diborylalkanes with Nonactivated Primary Alkyl Halides: An Alternative Route to Alkylboronic Esters
+2014，Production of Acetic Acid from Lignocellulosic Biomass in the Presence of Mineral Acid and Oxygen under Hydrothermal Condition
+2014，Aerobic Oxidation of Hydroxymethylfurfural and Furfural by Using Heterogeneous CoxOy-N@C Catalysts
+2014，Conversion of Levulinate Ester and Formic Acid into γ-Valerolactone Using a Homogeneous Iron Catalyst
+2014，Density Functional Theory Calculations on Ni-Ligand Bond Dissociation Enthalpies
+2014，Theoretical Study on Homogeneous Hydrogen Activation Catalyzed by Cationic Ag(I) Complex
+2014，Copper-Catalyzed Reductive Cross-Coupling of Nonactivated Alkyl Tosylates and Mesylates with Alkyl and Aryl Bromides
+2014，Expedient Synthesis of Chiral α-Amino Acids through Nickel-Catalyzed Reductive Cross-Coupling
+2014，Transesterification of jojoba oil, sunflower oil, neem oil, rocket seed oil and linseed oil by tin catalysts
+2014，Electrocatalytic Hydrogenation of Lignin-Derived Phenol into Alkanes by Using Platinum Supported on Graphite
+2014，Selective Conversion of Furfural to Cyclopentanone with CuZnAl Catalysts
+2014，Supported Pd Catalysts for the C-O Cleavage of the Lignin Derived Model Dimers through Intramolecular Hydrogenolysis Reaction
+2014，A novel catalyst-free process for producing hydrogen and carboxylate from biomass-derived alcohols
+2014，Theoretical Study on the Mechanism of the Imine-induced Tetrapeptides Cyclization
+2014，Electrocatalytic hydrogenation of furfural to furfuryl alcohol using platinum supported on activated carbon fibers
+2014，Preparation and Characterization of Activated Carbon from Kraft Lignin via KOH Activation
+2014，Mechanistic Study of Chemoselectivity in Ni-Catalyzed Coupling Reactions between Azoles and Aryl Carboxylates
+2014，Nickel-Tungsten Carbide Catalysts for the Production of 2,5-Dimethylfuran from Biomass- Derived Molecules
+2014，Synthesis of indoles through Rh(III)-catalyzed C-H cross-coupling with allyl carbonates
+2014，Rh(I)-catalyzed borylation of primary alkyl chlorides
+2014，Accurate Prediction of Ir-H Bond Dissociation Enthalpies by Density Functional Theory Methods
+2014，Catalytic Conversion of Cellulose into Levulinic Acid by a Sulfonated Chloromethyl Polystyrene Solid Acid Catalyst
+2014，Rh(III)-Catalyzed C-H Activation with Allenes To Synthesize Conjugated Olefins
+2014，Recent advance in transition-metal-mediated trifluoromethylation for the construction of C(sp3)-CF3 bonds
+2014，Synthesis of biobased succinimide from glutamic acid via silver-catalyzed decarboxylation
+2014，The breakdown of reticent biomass to soluble components and their conversion to levulinic acid as a fuel precursor
+2014，Cu-Catalyzed Suzuki-Miyaura reactions of primary and secondary benzyl halides with arylboronates
+2014，Copper-catalyzed endo-type trifluoromethylarylation of alkynes
+2014，Sn-MCM-41 as Efficient Catalyst for the Conversion of Glucose into 5-Hydroxymethylfurfural in Ionic Liquids
+2014，Accurate predictions of C-SO2R bond dissociation enthalpies using density functional theory methods
+2014，Promising density functional theory methods for predicting the structures of uranyl complexes
+2014，NHC-catalyzed homoenolate reaction of enals and nitroalkenes: computational study of mechanism, chemoselectivity and stereoselectivity
+2013，Theoretical Study on Thermodynamic Properties of Pyrolysis of Cellulose Dimer Model Compound
+2013，In situ preparation of K2CO3 supported Kraft lignin activated carbon as solid base catalyst for biodiesel production
+2013，Production of aromatic hydrocarbons through catalytic pyrolysis of 5-Hydroxymethylfurfural from biomass
+2013，DFT Study on Mechanism of Ruthenium-catalyzed meta Sulfonation
+2013，Depolymerization of lignin by catalytic oxidation with aqueous polyoxometalates
+2013，Mechanistic Study on Ligand-Controlled Cobalt-Catalyzed Regioselectivity-Switchable Hydroarylation of Styrenes
+2013，Mechanistic Study of the Rhodium-Catalyzed [3+2+2] Carbocyclization of Alkenylidenecyclopropanes with Alkynes
+2013，Mechanistic Study of Palladium-Catalyzed Chemoselective C(sp3)-H Activation of Carbamoyl Chloride
+2013，Heterogeneous Palladium Catalysts for Decarbonylation of Biomass-Derived Molecules under Mild Conditions
+2013，Rhodium-Catalyzed Directed C-H Cyanation of Arenes with N-Cyano-N-phenyl-p-toluenesulfonamide
+2013，Conversion of Carbohydrate Biomass to -Valerolactone by using Water-Soluble and Reusable Iridium Complexes in Acidic Aqueous Media
+2013，Copper-Promoted Sandmeyer Trifluoromethylation Reaction
+2013，Copper-Catalyzed Decarboxylative Coupling of Alkynyl Carboxylates with 1,1-Dibromo-1-alkenes
+2013，Mechanistic study of copper-catalyzed intramolecular ortho-C-H activation/carbon-nitrogen and carbon-oxygen cyclizations
+2013，Theoretical study on β-H elimination in Heck reactions of heterocyclic substrates
+2013，Surface Facet of Palladium Nanocrystals: A Key Parameter to the Activation of Molecular Oxygen for Organic Catalysis and Cancer Treatment
+2013，Mechanistic Study of Borylation of Nitriles Catalyzed by Rh-B and Ir-B Complexes via C-CN Bond Activation
+2013，Linked strategy for the production of fuels via formose reaction
+2013，Accurate Prediction of AuP Bond Strengths by Density Functional Theory Methods
+2013，Palladium-Catalyzed C-H Activation/Cross-Coupling of Pyridine N-Oxides with Nonactivated Secondary Alkyl Bromides
+2013，Hydrolysis of cellulose to glucose by solid acid catalysts
+2013，Linear correlation between the C-H activation barrier and the C-Cu/C-H bond dissociation energy gap in Cu-promoted C-H activation of heteroarenes
+2013，Catalytic Conversion of Furfural into a 2,5-Furandicarboxylic Acid-Based Polyester with Total Carbon Utilization
+2013，Catalytic conversion of biomass-derived levulinic acid to valerate esters as oxygenated fuels using supported ruthenium catalysts
+2013，Mechanism of arylboronic acid-catalyzed amidation reaction between carboxylic acids and amines
+2013，RANEY® Ni catalyzed transfer hydrogenation of levulinate esters to γ-valerolactone at room temperature
+2013，Computational study on mechanism of Rh(III)-catalyzed oxidative Heck coupling of phenol carbamates with alkenes
+2012，Mechanistic Origin of Cross-Coupling Selectivity in Ni-Catalysed Tishchenko Reactions
+2012，Mechanism of the Pd-catalyzed Decarboxylative Allylation of α-Imino Esters: Decarboxylation via Free Carboxylate Ion
+2012，Mechanism of palladium-catalyzed decarboxylative cross-coupling between cyanoacetate salts and aryl halides
+2012，Ab Initio Calculation of M-H Bond Dissociation Energies of Cr-Group Metal Hydrides
+2012，β-Aryl Nitrile Construction via Palladium-Catalyzed Decarboxylative Benzylation of α-Cyano Aliphatic Carboxylate Salts
+2012，Alkylboronic Esters from Palladium- and Nickel-Catalyzed Borylation of Primary and Secondary Alkyl Bromides
+2012，Production of aromatic hydrocarbons through catalytic pyrolysis of γ-valerolactone from biomass
+2012，Copper-catalyzed trifluoromethylation of terminal alkynes using Umemoto's reagent
+2012，Preparation of Solid Acid Catalyst from Industrial Waste Kraft Lignin for Methyl Oleate Production by Esterification
+2012，Theoretical Study on the Mechanism of Ni-Catalyzed Alkyl-Alkyl Suzuki Cross-Coupling
+2012，A Bio-Catalytic Approach to Aliphatic Ketones
+2012，Electrochemical Synthesis of Adiponitrile from the Renewable Raw Material Glutamic Acid
+2012，Production of high quality fuels from lignocellulose-derived chemicals: a convenient C-C bond formation of furfural, 5-methylfurfural and aromatic aldehyde
+2012，Catalytic Air Oxidation of Biomass-Derived Carbohydrates to Formic Acid
+2012，Hydride Dissociation Energies of Six-Membered Heterocyclic Organic Hydrides Predicted by ONIOM-G4Method
+2012，Palladium-catalyzed monoselective C-H borylation of acetanilides under acidic conditions
+2012，Copper-Promoted Trifluoromethylation of Primary and Secondary Alkylboronic Acids
+2012，Alkylboronic Esters from Copper-Catalyzed Borylation of Primary and Secondary Alkyl Halides and Pseudohalides
+2012，A one-pot approach for conversion of fructose to 2,5-diformylfuran by combination of Fe3O4-SBA-SO3H and K-OMS-2
+2011，Mechanistic Origin of Ligand-Controlled Regioselectivity in Pd-Catalyzed C-H Activation/Arylation of Thiophenes
+2011，Copper-Catalyzed Trifluoromethylation of Terminal Alkenes through Allylic C-H Bond Activation
+2011，Hydrolysis of biomass by magnetic solid acid
+2011，Palladium-Catalyzed Decarboxylative Coupling of Potassium Nitrophenyl Acetates with Aryl Halides
+2011，An in situ reduction approach for bio-oil hydroprocessing
+2011，Selective Decomposition of Formic Acid over Immobilized Catalysts
+2011，Rhodium-Catalyzed Selective C-H Activation/Olefination of Phenol Carbamates
+2011，Dehydration of Glucose and Fructose into 5-Hydroxymethylfurfural Catalyzed by Lewis Acid in Ionic Liquids
+2011，Theoretical Analysis of the Detailed Mechanism of Native Chemical Ligation Reactions
+2011，Mechanistic Studies on Reductive Elimination in High-oxidation-state Palladium Mediated C-H Bond Halogenation Reactions
+2011，Cu-Catalyzed Carbon-Heteroatom Coupling Reactions under Mild Conditions Promoted by Resin-Bound Organic Ionic Bases
+2011，Palladium catalyzed synthesis of aryl thiols: sodium thiosulfate as a cheap and nontoxic mercapto surrogate
+2011，Ruthenium-Catalyzed Conversion of Levulinic Acid to Pyrrolidines by Reductive Amination
+2011，Synthesis of α-Aryl Nitriles through Palladium-Catalyzed Decarboxylative Coupling of Cyanoacetate Salts with Aryl Halides and Triflates
+2010，Predicting Rate Constants for Nucleophilic Reactions of Amines with Diarylcarbenium Ions Using an ONIOM Method
