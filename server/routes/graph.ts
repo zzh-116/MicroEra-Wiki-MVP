@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { entryRepository } from '../../backend/repositories/entry.repository.js';
 import { relationRepository } from '../../backend/repositories/relation.repository.js';
+import type { EntryRelationRow } from '../../backend/repositories/relation.repository.js';
 import {
   buildSeedGraphFromRelations,
   buildGlobalGraphFromRelations,
@@ -27,7 +28,7 @@ graphRouter.get('/seed', optionalAuth, async (req: Request, res: Response) => {
   }
   const isInternal = (req as any).isInternal === true;
   const all = await entryRepository.findAll({ isInternal });
-  const relations = await relationRepository.findByEntryIds(all.map((e) => e.id));
+  const relations = await relationRepository.findByEntryIds(all.map((e) => e.id), 120);
   res.json(buildSeedGraphFromRelations(ids, all, relations));
 });
 
@@ -60,7 +61,8 @@ graphRouter.get('/search', optionalAuth, async (req: Request, res: Response) => 
 graphRouter.get('/global', optionalAuth, async (_req: Request, res: Response) => {
   const isInternal = (_req as any).isInternal === true;
   const all = await entryRepository.findAll({ isInternal });
-  const relations = await relationRepository.findByEntryIds(all.map((e) => e.id));
+  // Bound the fetch: the global builder already slices to 3000 edges / 1000 nodes.
+  const relations = await relationRepository.findByEntryIds(all.map((e) => e.id), 3000);
   res.json(buildGlobalGraphFromRelations(all, relations));
 });
 
@@ -68,11 +70,47 @@ graphRouter.get('/focused', optionalAuth, async (req: Request, res: Response) =>
   const eid = parseInt(req.query.entryId as string, 10);
   if (isNaN(eid)) { res.json({ nodes: [], edges: [] }); return; }
   const isInternal = (req as any).isInternal === true;
-  const all = await entryRepository.findAll({ isInternal });
-  const center = all.find((e) => e.id === eid);
+  const depth = Math.min(Math.max(1, parseInt(req.query.depth as string || '1', 10) || 1), 4);
+  const limit = Math.min(Math.max(1, parseInt(req.query.limit as string || '30', 10) || 30), 50);
+
+  const center = await entryRepository.findById(eid);
   if (!center) { res.json({ nodes: [], edges: [] }); return; }
-  const depth = parseInt(req.query.depth as string || '1', 10) || 1;
-  const limit = parseInt(req.query.limit as string || '30', 10) || 30;
-  const relations = await relationRepository.findByEntryIds(all.map((e) => e.id));
-  res.json(buildFocusedGraphFromRelations(center, all, relations, { depth, limit }));
+  // External visitors must not see internal entries inside the graph.
+  if (!isInternal && center.visibility !== 'public') { res.json({ nodes: [], edges: [] }); return; }
+
+  // SQL-bounded BFS over persisted relations — no full-table scan per request.
+  const visitedIds = new Set<number>([eid]);
+  let frontier: number[] = [eid];
+  const relations: EntryRelationRow[] = [];
+  const seenRelations = new Set<number>();
+
+  for (let d = 0; d < depth && frontier.length > 0 && visitedIds.size < limit; d++) {
+    const touched = await relationRepository.findTouching(frontier, Math.max(limit * 4, 200));
+    const next: number[] = [];
+    for (const rel of touched) {
+      if (!seenRelations.has(rel.id)) { seenRelations.add(rel.id); relations.push(rel); }
+      for (const id of [rel.sourceEntryId, rel.targetEntryId]) {
+        if (!visitedIds.has(id) && visitedIds.size < limit) { visitedIds.add(id); next.push(id); }
+      }
+    }
+    frontier = next;
+  }
+
+  // Cross-links inside the visited subgraph so the local view stays connected.
+  const within = await relationRepository.findWithin([...visitedIds], Math.max(limit * 6, 300));
+  for (const rel of within) {
+    if (!seenRelations.has(rel.id)) { seenRelations.add(rel.id); relations.push(rel); }
+  }
+
+  let entries = await entryRepository.findByIds([...visitedIds]);
+  if (!isInternal) {
+    entries = entries.filter((e) => e.visibility === 'public');
+    const visibleIds = new Set(entries.map((e) => e.id));
+    const visibleRelations = relations.filter(
+      (r) => visibleIds.has(r.sourceEntryId) && visibleIds.has(r.targetEntryId),
+    );
+    res.json(buildFocusedGraphFromRelations(center, entries, visibleRelations, { depth, limit }));
+    return;
+  }
+  res.json(buildFocusedGraphFromRelations(center, entries, relations, { depth, limit }));
 });
