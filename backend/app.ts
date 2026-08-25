@@ -126,6 +126,19 @@ export async function runBootstrap() {
     console.warn(`[Bootstrap] Log cleanup failed (non-fatal): ${err.message}`);
   }
 
+  // 3c. Optional object storage (MinIO) — never crash the Wiki when it is missing.
+  try {
+    const { objectStorageService, safeObjectStorageProbe } = await import('./services/object-storage.service.js');
+    const health = await safeObjectStorageProbe(objectStorageService);
+    if (health.ok) {
+      console.log(`[Bootstrap] Object storage ready — bucket: ${objectStorageService.bucket}`);
+    } else {
+      console.warn(`[Bootstrap] Object storage unavailable (non-fatal): ${health.reason}`);
+    }
+  } catch (err: any) {
+    console.warn(`[Bootstrap] Object storage check failed (non-fatal): ${err.message}`);
+  }
+
   // 4. Warm up embedding model — force Ollama to load bge-m3 into memory
   //    and keep it warm so queries don't pay 1.7s load penalty each time
   ollamaEmbedder.warmup().then(() => {

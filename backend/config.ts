@@ -44,6 +44,17 @@ export const config = {
 
   dataDir: process.env.DATA_DIR || './backend/data',
 
+  /** MinIO / S3-compatible object storage (optional; Wiki still boots without it). */
+  objectStorage: {
+    enabled: Boolean(process.env.MINIO_ACCESS_KEY && process.env.MINIO_SECRET_KEY),
+    endpoint: process.env.MINIO_ENDPOINT || 'localhost',
+    port: parseInt(process.env.MINIO_PORT || '9000', 10),
+    accessKey: process.env.MINIO_ACCESS_KEY || '',
+    secretKey: process.env.MINIO_SECRET_KEY || '',
+    bucket: process.env.MINIO_BUCKET || 'wiki-docs',
+    useSSL: process.env.MINIO_USE_SSL === 'true',
+  },
+
   databaseUrl: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/microera_wiki',
 
   /** Runtime logging configuration */
