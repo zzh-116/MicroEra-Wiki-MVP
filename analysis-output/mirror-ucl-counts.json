@@ -1,0 +1,196 @@
+{
+  "generatedAt": "2026-08-14T06:30:20.884Z",
+  "sha256": "4eef5f6ae104c26780b21eb27ada65c3be04f93c5b78a38efea6e33f4c9052e6",
+  "sqlBytes": 39173982,
+  "finalTarget": {
+    "tags": 29,
+    "entries": 345,
+    "entry_tags": 115,
+    "document_chunks": 3015,
+    "vectors": 2638,
+    "entry_relations": 2324,
+    "wiki_files": 0,
+    "data_items": 0
+  },
+  "recoveredTags": [
+    {
+      "tag_id": 4,
+      "ucl_name": "宣发素材",
+      "used_by_entries": [
+        5,
+        6
+      ],
+      "name_conflict_with_local": false,
+      "fk_references": "entry_tags.tag_id -> tags.id (ON DELETE CASCADE); no other FK references"
+    },
+    {
+      "tag_id": 5,
+      "ucl_name": "产品图片",
+      "used_by_entries": [
+        5
+      ],
+      "name_conflict_with_local": false,
+      "fk_references": "entry_tags.tag_id -> tags.id (ON DELETE CASCADE); no other FK references"
+    },
+    {
+      "tag_id": 6,
+      "ucl_name": "流程图",
+      "used_by_entries": [
+        4
+      ],
+      "name_conflict_with_local": false,
+      "fk_references": "entry_tags.tag_id -> tags.id (ON DELETE CASCADE); no other FK references"
+    },
+    {
+      "tag_id": 7,
+      "ucl_name": "厂房照片",
+      "used_by_entries": [
+        6
+      ],
+      "name_conflict_with_local": false,
+      "fk_references": "entry_tags.tag_id -> tags.id (ON DELETE CASCADE); no other FK references"
+    },
+    {
+      "tag_id": 8,
+      "ucl_name": "数据格式",
+      "used_by_entries": [
+        7
+      ],
+      "name_conflict_with_local": false,
+      "fk_references": "entry_tags.tag_id -> tags.id (ON DELETE CASCADE); no other FK references"
+    },
+    {
+      "tag_id": 10,
+      "ucl_name": "技术优势",
+      "used_by_entries": [
+        2
+      ],
+      "name_conflict_with_local": false,
+      "fk_references": "entry_tags.tag_id -> tags.id (ON DELETE CASCADE); no other FK references"
+    },
+    {
+      "tag_id": 11,
+      "ucl_name": "客户展示",
+      "used_by_entries": [
+        1,
+        3
+      ],
+      "name_conflict_with_local": false,
+      "fk_references": "entry_tags.tag_id -> tags.id (ON DELETE CASCADE); no other FK references"
+    },
+    {
+      "tag_id": 12,
+      "ucl_name": "研发协作",
+      "used_by_entries": [
+        7,
+        8
+      ],
+      "name_conflict_with_local": false,
+      "fk_references": "entry_tags.tag_id -> tags.id (ON DELETE CASCADE); no other FK references"
+    },
+    {
+      "tag_id": 13,
+      "ucl_name": "产品介绍",
+      "used_by_entries": [
+        1
+      ],
+      "name_conflict_with_local": false,
+      "fk_references": "entry_tags.tag_id -> tags.id (ON DELETE CASCADE); no other FK references"
+    },
+    {
+      "tag_id": 14,
+      "ucl_name": "材料计算",
+      "used_by_entries": [
+        1
+      ],
+      "name_conflict_with_local": false,
+      "fk_references": "entry_tags.tag_id -> tags.id (ON DELETE CASCADE); no other FK references"
+    },
+    {
+      "tag_id": 16,
+      "ucl_name": "实验数据",
+      "used_by_entries": [
+        2,
+        8
+      ],
+      "name_conflict_with_local": false,
+      "fk_references": "entry_tags.tag_id -> tags.id (ON DELETE CASCADE); no other FK references"
+    },
+    {
+      "tag_id": 17,
+      "ucl_name": "专利成果",
+      "used_by_entries": [
+        3
+      ],
+      "name_conflict_with_local": false,
+      "fk_references": "entry_tags.tag_id -> tags.id (ON DELETE CASCADE); no other FK references"
+    },
+    {
+      "tag_id": 18,
+      "ucl_name": "技术成果",
+      "used_by_entries": [
+        3
+      ],
+      "name_conflict_with_local": false,
+      "fk_references": "entry_tags.tag_id -> tags.id (ON DELETE CASCADE); no other FK references"
+    }
+  ],
+  "local": {
+    "tags": 16,
+    "entries": 345,
+    "entry_tags": 115,
+    "document_chunks": 3015,
+    "vectors": 2638,
+    "entry_relations": 2324,
+    "wiki_files": 0,
+    "data_items": 0
+  },
+  "uclBefore": {
+    "drizzle.__drizzle_migrations": 2,
+    "public._migrations": 6,
+    "public.bookmarks": 0,
+    "public.categories": 6,
+    "public.chat_messages": 0,
+    "public.connector_sync_log": 245,
+    "public.conversations": 0,
+    "public.data_items": 0,
+    "public.document_chunks": 647,
+    "public.entries": 306,
+    "public.entry_relations": 21,
+    "public.entry_tags": 865,
+    "public.run_logs": 2,
+    "public.tags": 48,
+    "public.users": 1,
+    "public.vectors": 476,
+    "public.wiki_files": 0
+  },
+  "uclOnlyTagsDeleted": [
+    19,
+    20,
+    22,
+    24,
+    27,
+    32,
+    33,
+    122,
+    123,
+    124,
+    134,
+    189,
+    798,
+    799,
+    800,
+    803,
+    809,
+    810,
+    811,
+    812,
+    821,
+    846
+  ],
+  "newTagsInserted": [
+    "test",
+    "手写笔记",
+    "来关学"
+  ]
+}

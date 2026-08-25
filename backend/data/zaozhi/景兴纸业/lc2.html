@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>酶法造纸绿色解决方案</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", "Microsoft YaHei";
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background-color: #F8F9FA;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            color: #005A31;
+            font-weight: 600;
+        }
+        p.instructions {
+            text-align: center;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        svg {
+            width: 100%;
+            height: auto;
+        }
+
+        /* SVG Styles */
+        .icon {
+            stroke: #005A31;
+            stroke-width: 6;
+            fill: none;
+        }
+        .icon-label {
+            font-size: 20px;
+            font-weight: 500;
+            fill: #212529;
+            text-anchor: middle;
+        }
+        .process-line {
+            stroke: #005A31;
+            stroke-width: 3;
+            fill: none;
+        }
+        .process-type-label {
+            font-size: 18px;
+            font-style: italic;
+            fill: #555;
+            text-anchor: middle;
+        }
+        .enzyme-symbol {
+            fill: #A4D4AE; /* 浅绿色填充 */
+            stroke: #005A31; /* 深绿色描边 */
+            stroke-width: 3;
+        }
+        .enzyme-benefit-symbol {
+            fill: none;
+            stroke: #A4D4AE;
+            stroke-width: 6;
+        }
+        .enzyme-arrow {
+            stroke: #2E8B57; /* 海绿色，突出但不刺眼 */
+            stroke-width: 2.5;
+            fill: none;
+        }
+        .legend-text {
+            font-size: 18px;
+            fill: #333;
+            dominant-baseline: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <svg viewBox="0 0 1400 900" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- 主流程箭头 -->
+                <marker id="arrowhead-main" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#005A31" />
+                </marker>
+                <!-- 酶应用指示箭头 -->
+                <marker id="arrowhead-enzyme" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                    <path d="M0,0 L8,3 L0,6 Z" fill="#2E8B57" />
+                </marker>
+                <!-- 酶应用点图标 -->
+                <g id="enzyme-applied-icon">
+                    <circle cx="0" cy="0" r="25" class="enzyme-symbol"/>
+                    <circle cx="-10" cy="-10" r="4" fill="#005A31"/><circle cx="0" cy="-12" r="4" fill="#005A31"/><circle cx="10" cy="-10" r="4" fill="#005A31"/>
+                    <circle cx="-12" cy="0" r="4" fill="#005A31"/><circle cx="0" cy="0" r="4" fill="#005A31"/><circle cx="12" cy="0" r="4" fill="#005A31"/>
+                    <circle cx="-10" cy="10" r="4" fill="#005A31"/><circle cx="0" cy="12" r="4" fill="#005A31"/><circle cx="10" cy="10" r="4" fill="#005A31"/>
+                </g>
+                <!-- 酶受益点图标 -->
+                <g id="enzyme-benefit-icon">
+                     <circle cx="0" cy="0" r="30" class="enzyme-benefit-symbol"/>
+                </g>
+            </defs>
+
+            <!-- ### 上路: 回收纤维路线 ### -->
+            <g transform="translate(150, 150)">
+                <path class="icon" d="M-50 -40 h100 v80 h-100 z M-50 -40 l20 -20 h60 l20 20 M-30 -60 v20 M70 -40 l-20 -20"/>
+                <path class="icon" d="M-15 10 l30 -20 M0 -10 l0 40 M-15 30 l30 -20"/>
+                <text class="icon-label" y="70">回收纤维</text>
+            </g>
+            <path class="process-line" d="M250, 150 h150" marker-end="url(#arrowhead-main)"></path>
+            
+            <g transform="translate(450, 150)">
+                <path class="icon" d="M-60 20 h120 M-60 -40 v60 h120 v-60 M-20 -40 v-15 h40 v15 M0 -55 v15"/>
+                <text class="icon-label" y="70">水力碎浆机</text>
+            </g>
+            <!-- 流向储浆池 -->
+            <path class="process-line" d="M520, 150 H 600 V 370" marker-end="url(#arrowhead-main)"></path>
+
+            <!-- ### 中路: 机械制浆路线 ### -->
+            <g transform="translate(150, 450)">
+                <circle class="icon" cx="0" cy="0" r="35"/><circle class="icon" cx="20" cy="-20" r="20"/>
+                <path class="icon" d="M-12 10 l-5 -9 l9 5 l-9 -5 l5 9 M20 -20 l-12 12 M20 -20 l12 -12 M20 -20 l12 12 M20 -20 l-12 -12" stroke-width="4"/>
+                <text class="icon-label" y="70">磨木机</text>
+            </g>
+            <text class="process-type-label" x="150" y="360">机械制浆</text>
+            <!-- 流向储浆池 -->
+            <path class="process-line" d="M250, 450 h300" marker-end="url(#arrowhead-main)"></path>
+
+            <!-- ### 下路: 化学制浆路线 ### -->
+            <g transform="translate(150, 700)">
+                <path class="icon" d="M-30 40 v-60 a30 30 0 0 1 60 0 v60 M-30 40 h-10 M0 40 h-10 M30 40 h-10"/>
+                <path class="icon" d="M15 40 v-60 a30 30 0 0 1 60 0 v60 M15 40 h-10 M45 40 h-10 M75 40 h-10"/>
+                <text class="icon-label" y="70">森林</text>
+            </g>
+            <path class="process-line" d="M250, 700 h50" marker-end="url(#arrowhead-main)"></path>
+
+            <g transform="translate(350, 700)">
+                <path class="icon" d="M-40 20 q40 -60 80 0 z"/><circle cx="-20" cy="0" r="4" fill="#005A31"/><circle cx="0" cy="5" r="4" fill="#005A31"/><circle cx="20" cy="0" r="4" fill="#005A31" />
+                <text class="icon-label" y="70">木片</text>
+            </g>
+            <path class="process-line" d="M420, 700 h80" marker-end="url(#arrowhead-main)"></path>
+            <text class="process-type-label" x="460" y="660">化学制浆</text>
+            
+            <g transform="translate(550, 700)">
+                <path class="icon" d="M-30 -40 h60 v60 l-30 30 l-30 -30 z M-30 -10 l30 20 l30 -20"/>
+                <text class="icon-label" y="80">蒸煮锅</text>
+            </g>
+            <path class="process-line" d="M620, 700 h80" marker-end="url(#arrowhead-main)"></path>
+            
+            <g transform="translate(750, 700)">
+                <circle class="icon" cx="0" cy="0" r="60"/><path class="icon" d="M0 -40 l-35 70 h70 z" />
+                <text class="icon-label" y="90">漂白</text>
+            </g>
+            <!-- 流向储浆池 (修正后的流程) -->
+            <path class="process-line" d="M750, 610 V 530 H 600" marker-end="url(#arrowhead-main)"></path>
+
+            <!-- ### 中心流程 ### -->
+            <g transform="translate(600, 450)">
+                 <path class="icon" d="M-40 -80 h80 v160 h-80 z M-40 -40 l40 20 l40 -20 M-40 40 h80"/>
+                 <circle class="icon" cx="0" cy="-60" r="10" />
+                 <text class="icon-label" y="110">储浆池</text>
+            </g>
+            <path class="process-line" d="M680, 450 h70" marker-end="url(#arrowhead-main)"></path>
+
+            <g transform="translate(800, 450)">
+                <circle class="icon" cx="0" cy="0" r="60"/><path class="icon" d="M-30 0 h20 v-20 h20 v40 h-20 v-20"/>
+                <text class="icon-label" y="90">磨浆</text>
+            </g>
+            <path class="process-line" d="M890, 450 h160" marker-end="url(#arrowhead-main)"></path>
+
+            <g transform="translate(1100, 450)">
+                <circle class="icon" cx="0" cy="0" r="60"/><circle class="icon" cx="-20" cy="-20" r="15"/><circle class="icon" cx="20" cy="-20" r="15"/>
+                <path class="icon" d="M-35 5 c30 -30 40 -30 70 0" />
+                <text class="icon-label" y="90">造纸机</text>
+            </g>
+
+            <!-- ### 酶的应用点和指示箭头 (修正后) ### -->
+            <!-- 1. 回收纤维路线: 酶应用于水力碎浆机 -->
+            <g transform="translate(450, 250)">
+                <use href="#enzyme-applied-icon"/>
+                <path class="enzyme-arrow" d="M0, -25 v-65" marker-end="url(#arrowhead-enzyme)"></path>
+            </g>
+
+            <!-- 2. 机械制浆路线: 酶应用于磨木后（储浆池中） -->
+            <g transform="translate(400, 520)">
+                <use href="#enzyme-applied-icon"/>
+                <path class="enzyme-arrow" d="M0, -25 v-35" marker-end="url(#arrowhead-enzyme)"></path>
+            </g>
+
+            <!-- 3. 化学制浆路线: 酶应用于蒸煮后（漂白前） -->
+            <g transform="translate(675, 750)">
+                <use href="#enzyme-applied-icon"/>
+                <path class="enzyme-arrow" d="M0, -25 v-15" marker-end="url(#arrowhead-enzyme)"></path>
+            </g>
+
+            <!-- ### 酶的受益点 ### -->
+            <use href="#enzyme-benefit-icon" transform="translate(800, 450)"/> <!-- 磨浆环节受益 -->
+            <use href="#enzyme-benefit-icon" transform="translate(750, 700)"/> <!-- 漂白环节受益 -->
+
+            <!-- ### 图例说明 ### -->
+            <g transform="translate(950, 750)">
+                <use href="#enzyme-applied-icon" transform="translate(0, 0)"/>
+                <text class="legend-text" x="40" y="0">酶的应用点</text>
+                <text class="legend-text" x="40" y="25" style="font-size:16px; fill:#555">指在工艺中添加酶制剂的环节</text>
+            </g>
+            <g transform="translate(950, 830)">
+                <use href="#enzyme-benefit-icon" transform="translate(0, 0)"/>
+                <text class="legend-text" x="40" y="0">酶的受益点</text>
+                <text class="legend-text" x="40" y="25" style="font-size:16px; fill:#555">指能够体现酶带来效益的环节</text>
+            </g>
+
+        </svg>
+
+    </div>
+</body>
+</html>

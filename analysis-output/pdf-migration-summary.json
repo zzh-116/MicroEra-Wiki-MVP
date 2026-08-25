@@ -1,0 +1,1752 @@
+{
+  "generatedAt": "2026-08-14T08:53:13.622Z",
+  "pdfCount": 189,
+  "totalBytes": 990771780,
+  "uniqueSha": 178,
+  "matchedFiles": 183,
+  "unmatchedFiles": 6,
+  "autoFiles": 183,
+  "reviewFiles": 6,
+  "tempFiles": 4,
+  "multiEntryFiles": 121,
+  "entriesWithMatchedPdf": 189,
+  "entriesWithMultiplePdfs": 139,
+  "byDir": {
+    "laiguanxue": {
+      "count": 4,
+      "bytes": 6200237
+    },
+    "reports": {
+      "count": 1,
+      "bytes": 62701028
+    },
+    "tmp": {
+      "count": 3,
+      "bytes": 19914886
+    },
+    "uploads": {
+      "count": 1,
+      "bytes": 62701028
+    },
+    "zaozhi": {
+      "count": 180,
+      "bytes": 839254601
+    }
+  },
+  "unmatchedRels": [
+    "tmp/docling_buf_1783652655801/2605.12061v1_1783652655801.pdf",
+    "tmp/docling_buf_1783913085966/2605.12061v1_1783913085967.pdf",
+    "tmp/test.pdf",
+    "uploads/MOF-VOCs市场深度评估报告.pdf",
+    "zaozhi/新方向调研/翻译/2026-Development of lateral flow assay for quantitative analysis-dual.pdf",
+    "zaozhi/新方向调研/翻译/sensors-25-01021-dual.pdf"
+  ],
+  "tempRels": [
+    "tmp/docling_buf_1783652655801/2605.12061v1_1783652655801.pdf",
+    "tmp/docling_buf_1783913085966/2605.12061v1_1783913085967.pdf",
+    "tmp/test.pdf",
+    "uploads/MOF-VOCs市场深度评估报告.pdf"
+  ],
+  "multiEntry": [
+    {
+      "rel": "laiguanxue/MOF-303小试放大预算和风险评估报告-2.0.pdf",
+      "entryIds": [
+        97,
+        98,
+        99,
+        303,
+        304
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/1-s2.0-S0009250925013971-main.pdf",
+      "entryIds": [
+        101,
+        144
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/1-s2.0-S0141813025001230-main.pdf",
+      "entryIds": [
+        102,
+        145
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/1-s2.0-S0141813025086374-main.pdf",
+      "entryIds": [
+        103,
+        146
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/1-s2.0-S0926669025015614-main.pdf",
+      "entryIds": [
+        104,
+        147
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/1-s2.0-S0957582024001381-main.pdf",
+      "entryIds": [
+        105,
+        148
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/1-s2.0-S0959652625013630-main.pdf",
+      "entryIds": [
+        106,
+        149
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/1-s2.0-S0961953425002089-main.pdf",
+      "entryIds": [
+        107,
+        150
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/1-s2.0-S0961953425005720-main.pdf",
+      "entryIds": [
+        108,
+        151
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/1-s2.0-S0961953425006968-main.pdf",
+      "entryIds": [
+        109,
+        152
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/1-s2.0-S0961953425008979-main.pdf",
+      "entryIds": [
+        110,
+        153
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/1-s2.0-S1369703X25000646-main.pdf",
+      "entryIds": [
+        111,
+        154
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/1-s2.0-S1385894725049903-main.pdf",
+      "entryIds": [
+        112,
+        155
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/1-s2.0-S2351978919303488-main.pdf",
+      "entryIds": [
+        113,
+        156
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/1-s2.0-S2589014X25002361-main.pdf",
+      "entryIds": [
+        114,
+        157
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/1-s2.0-S2589014X25003044-main.pdf",
+      "entryIds": [
+        115,
+        158
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/1-s2.0-S2590123025012368-main.pdf",
+      "entryIds": [
+        116,
+        159
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/1-s2.0-S266615432300056X-main.pdf",
+      "entryIds": [
+        117,
+        160
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/2025-Transparent wood.pdf",
+      "entryIds": [
+        120,
+        163,
+        328
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/2025-enzyme-food.pdf",
+      "entryIds": [
+        121,
+        164,
+        368
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/2025-ligini.pdf",
+      "entryIds": [
+        122,
+        165,
+        325
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/2025-lignin-oiland water separate.pdf",
+      "entryIds": [
+        123,
+        166,
+        326
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/2025-lignin2.pdf",
+      "entryIds": [
+        124,
+        167,
+        327
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/2025.07.21.665674v1.full.pdf",
+      "entryIds": [
+        125,
+        168
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/2025_ Orange peel composition-mono.pdf",
+      "entryIds": [
+        126,
+        127,
+        169,
+        170,
+        332
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/2025_ Orange peel composition.pdf",
+      "entryIds": [
+        127,
+        170,
+        332
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/2025_Chimeric enzymes.pdf",
+      "entryIds": [
+        128,
+        171,
+        241,
+        333
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/2025_Decarbonization pathways.pdf",
+      "entryIds": [
+        129,
+        172,
+        369
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/2025_food pakageing.pdf",
+      "entryIds": [
+        319,
+        370
+      ],
+      "maxConfidence": 0.95
+    },
+    {
+      "rel": "zaozhi/2025_geotechnical.pdf",
+      "entryIds": [
+        320,
+        371
+      ],
+      "maxConfidence": 0.95
+    },
+    {
+      "rel": "zaozhi/2025_lignocellulosic biomass.pdf",
+      "entryIds": [
+        130,
+        173,
+        372
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/2025_microalgae biodiesel.pdf",
+      "entryIds": [
+        131,
+        174
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/2025_waste.pdf",
+      "entryIds": [
+        132,
+        175
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/BC.pdf",
+      "entryIds": [
+        133,
+        176
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/CN201410834523.6_一种2,5-呋喃二甲酸的制备方法.pdf",
+      "entryIds": [
+        134,
+        177,
+        136,
+        179,
+        190,
+        355,
+        135,
+        142,
+        178,
+        185,
+        187,
+        188,
+        191,
+        193,
+        205,
+        206,
+        207,
+        209,
+        210,
+        213,
+        215,
+        351,
+        353
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201410834527.4_一种催化体系可循环使用的2,5-呋喃二甲醛的制备方法.pdf",
+      "entryIds": [
+        135,
+        178,
+        134,
+        136,
+        177,
+        179,
+        190,
+        205,
+        207,
+        212,
+        213,
+        351,
+        355
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201410834559.4_一种2,5-呋喃二甲醛的制备方法.pdf",
+      "entryIds": [
+        136,
+        179,
+        134,
+        177,
+        190,
+        135,
+        142,
+        178,
+        185,
+        187,
+        191,
+        205,
+        206,
+        207,
+        209,
+        210,
+        212,
+        213,
+        215,
+        351,
+        353,
+        355
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201510616697.X_一种由生物质衍生物5-HMF或糠醛制备长链烷烃的方法.pdf",
+      "entryIds": [
+        137,
+        180,
+        142,
+        185,
+        205,
+        209,
+        210
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201610040983.0_合成奈妥吡坦中间体杂质2-(3,5-双三氟甲基苯基)丙酸的方法.pdf",
+      "entryIds": [
+        138,
+        181,
+        141,
+        184,
+        139,
+        182
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201610046821.8_一种选择性制备1-羟基-2,5-己二酮及2,5-呋喃二甲醇的方法.pdf",
+      "entryIds": [
+        351,
+        134,
+        135,
+        136,
+        142,
+        177,
+        178,
+        179,
+        185,
+        190,
+        205,
+        209,
+        210,
+        213,
+        355
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201610101663.1_一种奈妥吡坦中间体的合成方法.pdf",
+      "entryIds": [
+        139,
+        182,
+        138,
+        140,
+        141,
+        181,
+        183,
+        184,
+        202,
+        203
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201610101681.X_一种药物中间体的合成方法.pdf",
+      "entryIds": [
+        140,
+        183,
+        139,
+        182,
+        202,
+        203
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201610101682.4_一种奈妥吡坦中间体2-(3,5-双三氟甲基苯基)-2-甲基丙酸的合成方法.pdf",
+      "entryIds": [
+        141,
+        184,
+        138,
+        181,
+        139,
+        182
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201610326841.0_一种由糖制备5-羟甲基糠醛的方法.pdf",
+      "entryIds": [
+        142,
+        185,
+        206,
+        209,
+        210,
+        216,
+        134,
+        136,
+        137,
+        177,
+        179,
+        180,
+        189,
+        190,
+        197,
+        205,
+        211,
+        351,
+        367
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201611079757.X_一种利用乙酰丙酸制备吡咯烷酮的方法.pdf",
+      "entryIds": [
+        143,
+        186,
+        189,
+        201,
+        353,
+        367
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201611116066.2_一种γ‑己内酯的制备方法.pdf",
+      "entryIds": [
+        187,
+        134,
+        136,
+        177,
+        179,
+        188,
+        189,
+        190,
+        191,
+        192,
+        193,
+        197,
+        209,
+        210,
+        353,
+        354,
+        367
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201611131088.6_一种由γ‑戊内酯制备戊酸及戊酸酯的方法.pdf",
+      "entryIds": [
+        188,
+        189,
+        134,
+        177,
+        187,
+        191,
+        193,
+        194,
+        353,
+        354,
+        355
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201611131667.0_一种由乙酰丙酸制备戊酸及戊酸酯的方法.pdf",
+      "entryIds": [
+        189,
+        188,
+        142,
+        143,
+        185,
+        186,
+        187,
+        193,
+        354,
+        355
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201710079914.5_一种2,5‑呋喃二甲醛的制备方法.pdf",
+      "entryIds": [
+        190,
+        134,
+        136,
+        177,
+        179,
+        205,
+        135,
+        142,
+        178,
+        185,
+        187,
+        191,
+        193,
+        197,
+        206,
+        207,
+        209,
+        210,
+        211,
+        212,
+        213,
+        215,
+        216,
+        351,
+        353,
+        354,
+        355
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201710389333.1_一种噻唑‑4‑甲酸的制备方法.pdf",
+      "entryIds": [
+        191,
+        134,
+        136,
+        177,
+        179,
+        187,
+        188,
+        190,
+        193,
+        209,
+        210,
+        353,
+        355
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201710396195.X_一种美罗培南侧链中间体硫醇内酯的制备方法.pdf",
+      "entryIds": [
+        192,
+        187
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201710451177.7_一种间羟基苯乙酮的制备方法.pdf",
+      "entryIds": [
+        367,
+        142,
+        143,
+        185,
+        186,
+        187,
+        193,
+        197,
+        206,
+        209,
+        210
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201710768965.9_一种正癸酸的制备方法.pdf",
+      "entryIds": [
+        193,
+        134,
+        177,
+        187,
+        188,
+        189,
+        190,
+        191,
+        197,
+        209,
+        210,
+        353,
+        354,
+        355,
+        367
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201710768995.X_一种1,10‑癸二酸的制备方法.pdf",
+      "entryIds": [
+        353,
+        134,
+        136,
+        143,
+        177,
+        179,
+        186,
+        187,
+        188,
+        190,
+        191,
+        193,
+        194,
+        209,
+        355
+      ],
+      "maxConfidence": 0.95
+    },
+    {
+      "rel": "zaozhi/CN201810320426.3_一种1,13-十三烷二醇酯及其1,13-十三烷二醇的制备方法.pdf",
+      "entryIds": [
+        194,
+        188,
+        353,
+        354
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201810321005.2_一种正辛醇酯及其正辛醇的制备方法.pdf",
+      "entryIds": [
+        354,
+        187,
+        188,
+        189,
+        190,
+        193,
+        194,
+        197
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201810916648.1_一种二氟磷酸锂的生产装置及生产方法.pdf",
+      "entryIds": [
+        195,
+        196,
+        355
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201821301208.7_一种二氟磷酸锂的生产装置.pdf",
+      "entryIds": [
+        196,
+        195
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN201910695504.2_一种对羟基苯海因的制备方法.pdf",
+      "entryIds": [
+        197,
+        142,
+        185,
+        187,
+        190,
+        193,
+        205,
+        206,
+        209,
+        210,
+        354,
+        367
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN202110399634.9_一种生物基隔膜涂敷液及其制备方法和在锂电池中的应用.pdf",
+      "entryIds": [
+        198,
+        199,
+        204
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN202110400674.0_一种基于生物质呋喃基聚合物的锂电池隔膜及其制备方法.pdf",
+      "entryIds": [
+        199,
+        198,
+        204
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN202110400675.5_一种S-(+)-3-羟基四氢呋喃的纯化和异构体检测方法.pdf",
+      "entryIds": [
+        200,
+        212,
+        216
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN202110448463.4_一种高手性纯度(S)-1-(2-氯乙酰基)吡咯烷-2-甲腈的制备方法.pdf",
+      "entryIds": [
+        201,
+        143,
+        186,
+        206
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN202111026582.7_一种酪氨酸激酶抑制剂关键中间体的合成方法.pdf",
+      "entryIds": [
+        202,
+        203,
+        139,
+        140,
+        182,
+        183
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN202111368937.0_一种吡咯吡啶激酶抑制剂关键中间体的合成方法.pdf",
+      "entryIds": [
+        203,
+        202,
+        139,
+        140,
+        182,
+        183
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN202111478797.2_一种纯呋喃基聚合物膜材料及其在锂电池中的应用.pdf",
+      "entryIds": [
+        204,
+        198,
+        199
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN202210424424.5_一种由5-羟甲基糠醛制备2,5-呋喃二甲酸的生产方法.pdf",
+      "entryIds": [
+        205,
+        190,
+        134,
+        135,
+        136,
+        137,
+        142,
+        177,
+        178,
+        179,
+        180,
+        185,
+        197,
+        206,
+        207,
+        209,
+        210,
+        211,
+        212,
+        213,
+        215,
+        216,
+        351,
+        355
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN202210493713.0_一种高纯度5-羟甲基糠醛的制备方法.pdf",
+      "entryIds": [
+        206,
+        142,
+        185,
+        209,
+        210,
+        216,
+        134,
+        136,
+        177,
+        179,
+        190,
+        197,
+        201,
+        205,
+        211,
+        367
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN202210877671.0_一种无金属催化果糖一锅法制备呋喃二甲酸的方法.pdf",
+      "entryIds": [
+        207,
+        134,
+        135,
+        136,
+        177,
+        178,
+        179,
+        190,
+        205,
+        215,
+        355
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN202211414220.X_一种5-羟甲基糠醛的制备方法.pdf",
+      "entryIds": [
+        209,
+        142,
+        185,
+        206,
+        210,
+        134,
+        136,
+        137,
+        177,
+        179,
+        180,
+        187,
+        190,
+        191,
+        193,
+        197,
+        205,
+        211,
+        216,
+        351,
+        353,
+        367
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN202311420375.9_一种5-羟甲基糠醛的制备方法.pdf",
+      "entryIds": [
+        210,
+        142,
+        185,
+        206,
+        209,
+        211,
+        134,
+        136,
+        137,
+        177,
+        179,
+        180,
+        187,
+        190,
+        191,
+        193,
+        197,
+        205,
+        216,
+        351,
+        367
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN202311732340.9_一种5-羟甲基糠醛的合成方法.pdf",
+      "entryIds": [
+        211,
+        210,
+        142,
+        185,
+        190,
+        205,
+        206,
+        209,
+        212,
+        215,
+        216
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN202410337429.3_催化5-羟甲基糠醛合成2,5-二羟甲基四氢呋喃的方法.pdf",
+      "entryIds": [
+        212,
+        135,
+        136,
+        178,
+        179,
+        190,
+        200,
+        205,
+        211,
+        215,
+        216
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN202410455919.3_一种2,5-呋喃二甲酸颗粒及其制备方法和应用.pdf",
+      "entryIds": [
+        213,
+        134,
+        135,
+        136,
+        177,
+        178,
+        179,
+        190,
+        205,
+        215,
+        351,
+        355
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN202510726786.3_一种呋喃二甲酸的合成方法.pdf",
+      "entryIds": [
+        215,
+        134,
+        136,
+        177,
+        179,
+        190,
+        205,
+        207,
+        211,
+        212,
+        213,
+        355
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/CN202511322703.0_一种5-羟甲基糠醛的纯化方法.pdf",
+      "entryIds": [
+        216,
+        142,
+        185,
+        206,
+        190,
+        200,
+        205,
+        209,
+        210,
+        211,
+        212
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/EP24203247.2_METHOD FOR PREPARING 5-HYDROXYMETHYLFURFURAL.pdf",
+      "entryIds": [
+        217,
+        323
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/PCTCN2025079285_一种呋喃二甲酸的制备方法及装置.pdf",
+      "entryIds": [
+        355,
+        134,
+        177,
+        135,
+        136,
+        178,
+        179,
+        188,
+        189,
+        190,
+        191,
+        193,
+        195,
+        205,
+        207,
+        213,
+        215,
+        351,
+        353
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/US202418895254_METHOD FOR PREPARING 5-HYDROXYMETHYLFURFURAL.pdf",
+      "entryIds": [
+        323,
+        217
+      ],
+      "maxConfidence": 0.95
+    },
+    {
+      "rel": "zaozhi/bio-based paper&pulp by MQE 2025.10.30.pdf",
+      "entryIds": [
+        225,
+        226,
+        224,
+        227,
+        228,
+        276
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/lactic-acid-production-from-sugarcane-bagasse-hydrolysates-by-lactiplantibacillus-strains.pdf",
+      "entryIds": [
+        239,
+        232
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/main2.pdf",
+      "entryIds": [
+        128,
+        171,
+        241,
+        333
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/s12649-025-02962-5.pdf",
+      "entryIds": [
+        317,
+        248
+      ],
+      "maxConfidence": 0.95
+    },
+    {
+      "rel": "zaozhi/s12649-025-03057-x.pdf",
+      "entryIds": [
+        248,
+        317
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/新方向调研/2025-Transparent wood-dual.pdf",
+      "entryIds": [
+        328,
+        120,
+        163
+      ],
+      "maxConfidence": 0.95
+    },
+    {
+      "rel": "zaozhi/新方向调研/2025-enzyme-food-dual.pdf",
+      "entryIds": [
+        368,
+        121,
+        164
+      ],
+      "maxConfidence": 0.95
+    },
+    {
+      "rel": "zaozhi/新方向调研/2025-ligini-dual.pdf",
+      "entryIds": [
+        325,
+        122,
+        165
+      ],
+      "maxConfidence": 0.95
+    },
+    {
+      "rel": "zaozhi/新方向调研/2025-lignin-oiland water separate-dual.pdf",
+      "entryIds": [
+        326,
+        123,
+        166
+      ],
+      "maxConfidence": 0.95
+    },
+    {
+      "rel": "zaozhi/新方向调研/2025-lignin2-dual.pdf",
+      "entryIds": [
+        327,
+        124,
+        167
+      ],
+      "maxConfidence": 0.95
+    },
+    {
+      "rel": "zaozhi/新方向调研/2025_food pakageing.pdf",
+      "entryIds": [
+        319,
+        370
+      ],
+      "maxConfidence": 0.95
+    },
+    {
+      "rel": "zaozhi/新方向调研/2025_geotechnical.pdf",
+      "entryIds": [
+        320,
+        371
+      ],
+      "maxConfidence": 0.95
+    },
+    {
+      "rel": "zaozhi/新方向调研/翻译/2025_ Orange peel composition-dual.pdf",
+      "entryIds": [
+        332,
+        127,
+        170
+      ],
+      "maxConfidence": 0.95
+    },
+    {
+      "rel": "zaozhi/新方向调研/翻译/2025_Chimeric enzymes-dual.pdf",
+      "entryIds": [
+        333,
+        128,
+        171,
+        241
+      ],
+      "maxConfidence": 0.95
+    },
+    {
+      "rel": "zaozhi/新方向调研/翻译/2025_Decarbonization pathways-dual.pdf",
+      "entryIds": [
+        369,
+        129,
+        172
+      ],
+      "maxConfidence": 0.95
+    },
+    {
+      "rel": "zaozhi/新方向调研/翻译/2025_food pakageing-dual.pdf",
+      "entryIds": [
+        370,
+        319
+      ],
+      "maxConfidence": 0.95
+    },
+    {
+      "rel": "zaozhi/新方向调研/翻译/2025_geotechnical-dual.pdf",
+      "entryIds": [
+        371,
+        320
+      ],
+      "maxConfidence": 0.95
+    },
+    {
+      "rel": "zaozhi/新方向调研/翻译/2025_lignocellulosic biomass-dual.pdf",
+      "entryIds": [
+        372,
+        130,
+        173
+      ],
+      "maxConfidence": 0.95
+    },
+    {
+      "rel": "zaozhi/新方向调研/翻译/2025_microalgae biodiesel-dual.pdf",
+      "entryIds": [
+        131,
+        174
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/新方向调研/翻译/2025_waste-dual.pdf",
+      "entryIds": [
+        132,
+        175
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/椰树-造纸.pdf",
+      "entryIds": [
+        272,
+        273
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/1-s2.0-S0961953425002089-main-dual.pdf",
+      "entryIds": [
+        107,
+        150
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/1-s2.0-S0961953425005720-main-dual.pdf",
+      "entryIds": [
+        108,
+        151
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/1-s2.0-S266615432300056X-main-dual.pdf",
+      "entryIds": [
+        117,
+        160
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/bagasse3/1-s2.0-S0009250925013971-main-dual.pdf",
+      "entryIds": [
+        101,
+        144
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/bagasse3/1-s2.0-S0961953425006968-main-dual.pdf",
+      "entryIds": [
+        109,
+        152
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/bagasse3/1-s2.0-S0961953425008979-main-dual.pdf",
+      "entryIds": [
+        110,
+        153
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/bagasse3/1-s2.0-S2589014X25003044-main-dual.pdf",
+      "entryIds": [
+        115,
+        158
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/bagasse3/1-s2.0-S2590123025012368-main-dual.pdf",
+      "entryIds": [
+        116,
+        159
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/bagasse3/lactic-acid-production-from-sugarcane-bagasse-hydrolysates-by-lactiplantibacillus-strains-dual.pdf",
+      "entryIds": [
+        239,
+        232
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/bagasse3/s12649-025-03057-x-dual.pdf",
+      "entryIds": [
+        248,
+        317
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/paper2/1-s2.0-S0141813025086374-main-dual.pdf",
+      "entryIds": [
+        103,
+        146
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/paper2/1-s2.0-S0926669025015614-main-dual.pdf",
+      "entryIds": [
+        104,
+        147
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/paper2/1-s2.0-S1369703X25000646-main-dual.pdf",
+      "entryIds": [
+        111,
+        154
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/paper2/1-s2.0-S1385894725049903-main-dual.pdf",
+      "entryIds": [
+        112,
+        155
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/paper2/1-s2.0-S2589014X25002361-main-dual.pdf",
+      "entryIds": [
+        114,
+        157
+      ],
+      "maxConfidence": 0.85
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/利夫生物/专利/第一部分/CN201610046821.8_一种选择性制备1-羟基-2,5-己二酮及2,5-呋喃二甲醇的方法.pdf",
+      "entryIds": [
+        351,
+        134,
+        135,
+        136,
+        142,
+        177,
+        178,
+        179,
+        185,
+        190,
+        205,
+        209,
+        210,
+        213,
+        355
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/利夫生物/专利/第一部分/CN201710768995.X_一种1,10‑癸二酸的制备方法.pdf",
+      "entryIds": [
+        353,
+        134,
+        136,
+        143,
+        177,
+        179,
+        186,
+        187,
+        188,
+        190,
+        191,
+        193,
+        194,
+        209,
+        355
+      ],
+      "maxConfidence": 0.95
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/利夫生物/专利/第一部分/CN201810321005.2_一种正辛醇酯及其正辛醇的制备方法.pdf",
+      "entryIds": [
+        354,
+        187,
+        188,
+        189,
+        190,
+        193,
+        194,
+        197
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/利夫生物/专利/第一部分/PCTCN2025079285_一种呋喃二甲酸的制备方法及装置.pdf",
+      "entryIds": [
+        355,
+        134,
+        177,
+        135,
+        136,
+        178,
+        179,
+        188,
+        189,
+        190,
+        191,
+        193,
+        195,
+        205,
+        207,
+        213,
+        215,
+        351,
+        353
+      ],
+      "maxConfidence": 0.98
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/利夫生物/专利/第一部分/US202418895254_METHOD FOR PREPARING 5-HYDROXYMETHYLFURFURAL.pdf",
+      "entryIds": [
+        323,
+        217
+      ],
+      "maxConfidence": 0.95
+    },
+    {
+      "rel": "zaozhi/甘蔗渣/利夫生物/专利/第三部分/CN201710451177.7_一种间羟基苯乙酮的制备方法.pdf",
+      "entryIds": [
+        367,
+        142,
+        143,
+        185,
+        186,
+        187,
+        193,
+        197,
+        206,
+        209,
+        210
+      ],
+      "maxConfidence": 0.98
+    }
+  ],
+  "entriesMultiTop": [
+    {
+      "entryId": 190,
+      "count": 27
+    },
+    {
+      "entryId": 134,
+      "count": 22
+    },
+    {
+      "entryId": 177,
+      "count": 22
+    },
+    {
+      "entryId": 136,
+      "count": 21
+    },
+    {
+      "entryId": 179,
+      "count": 21
+    },
+    {
+      "entryId": 205,
+      "count": 21
+    },
+    {
+      "entryId": 209,
+      "count": 21
+    },
+    {
+      "entryId": 355,
+      "count": 19
+    },
+    {
+      "entryId": 210,
+      "count": 19
+    },
+    {
+      "entryId": 187,
+      "count": 18
+    },
+    {
+      "entryId": 193,
+      "count": 18
+    },
+    {
+      "entryId": 142,
+      "count": 17
+    },
+    {
+      "entryId": 185,
+      "count": 17
+    },
+    {
+      "entryId": 206,
+      "count": 14
+    },
+    {
+      "entryId": 353,
+      "count": 14
+    },
+    {
+      "entryId": 188,
+      "count": 13
+    },
+    {
+      "entryId": 191,
+      "count": 13
+    },
+    {
+      "entryId": 351,
+      "count": 13
+    },
+    {
+      "entryId": 197,
+      "count": 13
+    },
+    {
+      "entryId": 135,
+      "count": 12
+    },
+    {
+      "entryId": 178,
+      "count": 12
+    },
+    {
+      "entryId": 213,
+      "count": 11
+    },
+    {
+      "entryId": 215,
+      "count": 11
+    },
+    {
+      "entryId": 216,
+      "count": 10
+    },
+    {
+      "entryId": 189,
+      "count": 10
+    },
+    {
+      "entryId": 211,
+      "count": 10
+    },
+    {
+      "entryId": 367,
+      "count": 10
+    },
+    {
+      "entryId": 207,
+      "count": 9
+    },
+    {
+      "entryId": 212,
+      "count": 9
+    },
+    {
+      "entryId": 354,
+      "count": 9
+    }
+  ],
+  "duplicateGroups": [
+    {
+      "sha256": "a56b8b6366f28f178dadba0e91562271a41a4383bf0893e26a41eef0aa91eed5",
+      "count": 2,
+      "rels": [
+        "reports/MOF-VOCs市场深度评估报告.pdf",
+        "uploads/MOF-VOCs市场深度评估报告.pdf"
+      ]
+    },
+    {
+      "sha256": "0ec23e5a2e799ab672c79a9a21404ce5cdf615f9524ea62844edb2353e17fecc",
+      "count": 2,
+      "rels": [
+        "tmp/docling_buf_1783652655801/2605.12061v1_1783652655801.pdf",
+        "tmp/docling_buf_1783913085966/2605.12061v1_1783913085967.pdf"
+      ]
+    },
+    {
+      "sha256": "4779eb86cbcbc58fe3f46dd6a21b8f8b43604e446225a4e1fca1382a74f685d0",
+      "count": 2,
+      "rels": [
+        "zaozhi/2025_food pakageing.pdf",
+        "zaozhi/新方向调研/2025_food pakageing.pdf"
+      ]
+    },
+    {
+      "sha256": "7d37b78c876f6610c99fbff1b2b93c382e3df85a192abca4a8c182488eeb7cea",
+      "count": 2,
+      "rels": [
+        "zaozhi/2025_geotechnical.pdf",
+        "zaozhi/新方向调研/2025_geotechnical.pdf"
+      ]
+    },
+    {
+      "sha256": "8c1be8232f6918fa10344b5a9cc1afdc957f152a2f3c596a40e81baa5979e082",
+      "count": 2,
+      "rels": [
+        "zaozhi/2026_Decarbonization pathways.pdf",
+        "zaozhi/新方向调研/2026_Decarbonization pathways.pdf"
+      ]
+    },
+    {
+      "sha256": "a7167e79ee90e8c3e86ead9d89418a2f200b80f47a0e969c8d4adc7be2e7e0c0",
+      "count": 2,
+      "rels": [
+        "zaozhi/CN201610046821.8_一种选择性制备1-羟基-2,5-己二酮及2,5-呋喃二甲醇的方法.pdf",
+        "zaozhi/甘蔗渣/利夫生物/专利/第一部分/CN201610046821.8_一种选择性制备1-羟基-2,5-己二酮及2,5-呋喃二甲醇的方法.pdf"
+      ]
+    },
+    {
+      "sha256": "8283f07ee8eaab917a59dcebb3d02ac45c2cf607e4b192476b57ae866cb79e6f",
+      "count": 2,
+      "rels": [
+        "zaozhi/CN201710451177.7_一种间羟基苯乙酮的制备方法.pdf",
+        "zaozhi/甘蔗渣/利夫生物/专利/第三部分/CN201710451177.7_一种间羟基苯乙酮的制备方法.pdf"
+      ]
+    },
+    {
+      "sha256": "5e3a1d10f15e80dd7d577e3020345fd74359b8e96548118292396db2df1f4c8a",
+      "count": 2,
+      "rels": [
+        "zaozhi/CN201710768995.X_一种1,10‑癸二酸的制备方法.pdf",
+        "zaozhi/甘蔗渣/利夫生物/专利/第一部分/CN201710768995.X_一种1,10‑癸二酸的制备方法.pdf"
+      ]
+    },
+    {
+      "sha256": "4a4675b64288a502562701d5cfe33e25d28b2ab13d3bf833c865c37dd5db1811",
+      "count": 2,
+      "rels": [
+        "zaozhi/CN201810321005.2_一种正辛醇酯及其正辛醇的制备方法.pdf",
+        "zaozhi/甘蔗渣/利夫生物/专利/第一部分/CN201810321005.2_一种正辛醇酯及其正辛醇的制备方法.pdf"
+      ]
+    },
+    {
+      "sha256": "8e24d43e22902e88943dcb0b5ed678dae0a1280f8dea2730dc827132d54298bc",
+      "count": 2,
+      "rels": [
+        "zaozhi/PCTCN2025079285_一种呋喃二甲酸的制备方法及装置.pdf",
+        "zaozhi/甘蔗渣/利夫生物/专利/第一部分/PCTCN2025079285_一种呋喃二甲酸的制备方法及装置.pdf"
+      ]
+    },
+    {
+      "sha256": "2d22e03ec6ca1dd89831d7f55a22d171d686e82b861523f20642f5d5e1663ec2",
+      "count": 2,
+      "rels": [
+        "zaozhi/US202418895254_METHOD FOR PREPARING 5-HYDROXYMETHYLFURFURAL.pdf",
+        "zaozhi/甘蔗渣/利夫生物/专利/第一部分/US202418895254_METHOD FOR PREPARING 5-HYDROXYMETHYLFURFURAL.pdf"
+      ]
+    }
+  ],
+  "representative": {
+    "abs": "C:\\Users\\CAIHUI\\MicroEra-Wiki-MVP-new\\backend\\data\\zaozhi\\新方向调研\\2025-lignin2-dual.pdf",
+    "rel": "zaozhi/新方向调研/2025-lignin2-dual.pdf",
+    "fileName": "2025-lignin2-dual.pdf",
+    "ext": ".pdf",
+    "size": 3195503,
+    "mtime": "2025-11-19T05:51:08.000Z",
+    "sha256": "94daeb39d4dd3dd7932cfd6989c92e9a4da995d56f1338c724f942d35afb227e",
+    "mime": "application/pdf",
+    "objectKey": "documents/94daeb39d4dd3dd7932cfd6989c92e9a4da995d56f1338c724f942d35afb227e.pdf",
+    "matches": [
+      {
+        "entryId": 327,
+        "confidence": 0.95,
+        "method": "source_summary"
+      },
+      {
+        "entryId": 124,
+        "confidence": 0.85,
+        "method": "metadata_in_db"
+      },
+      {
+        "entryId": 167,
+        "confidence": 0.85,
+        "method": "metadata_in_db"
+      }
+    ],
+    "entryIds": [
+      327,
+      124,
+      167
+    ],
+    "maxConfidence": 0.95,
+    "isTemp": false
+  }
+}
