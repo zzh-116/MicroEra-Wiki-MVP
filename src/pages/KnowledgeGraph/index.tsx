@@ -37,7 +37,13 @@ interface SeedGraphNode {
   metadata: SeedGraphMetadata;
 }
 
-type SeedGraphRelation = 'semantic_related';
+type SeedGraphRelation =
+  | 'semantic_related'
+  | 'references'
+  | 'produces'
+  | 'belongs_to'
+  | 'derived_from'
+  | 'shared_tags';
 
 interface SeedGraphEdge {
   source: string;
@@ -55,6 +61,7 @@ interface SeedGraphData {
 
 const MAX_GRAPH_NODES = 50;
 const DEFAULT_FOCUS_LIMIT = 30;
+const GLOBAL_DISPLAY_CAP = 150;
 const MIN_NODE_SIZE = 10;
 const MAX_NODE_SIZE = 22;
 const FIXED_NODE_SIZE = 15;
@@ -114,14 +121,16 @@ function normalizeGraph(data: any): SeedGraphData {
   const edges: SeedGraphEdge[] = rawEdges
     .map((e): SeedGraphEdge => {
       const rawRelation = String(e.relation || e.label || 'semantic_related');
-      const relation = ['references', 'produces', 'belongs_to', 'derived_from', 'shared_tags'].includes(rawRelation)
-        ? 'semantic_related'
-        : rawRelation;
+      // Keep real relation types (references / produces / …) instead of
+      // flattening everything to semantic_related.
+      const relation: SeedGraphRelation = RELATION_META[rawRelation]
+        ? (rawRelation as SeedGraphRelation)
+        : 'semantic_related';
       return {
         source: cleanId(e.source ?? e.from),
         target: cleanId(e.target ?? e.to),
-        label: 'semantic_related',
-        relation: relation as SeedGraphRelation,
+        label: relation,
+        relation,
         similarity: e.similarity,
         relationSource: (e.relation_source || e.relationSource || 'embedding') as SeedGraphEdge['relationSource'],
       };
@@ -263,7 +272,25 @@ interface LegendTypeItem {
 }
 
 const RELATION_META: Record<string, { text: string; color: string }> = {
-  semantic_related: { text: '语义关联', color: '#22D3EE' },
+  semantic_related: { text: '语义关联', color: '#1D70B8' },
+  references: { text: '引用文献', color: '#DB5F5B' },
+  produces: { text: '产出标准', color: '#3F7E5F' },
+  belongs_to: { text: '归档模板', color: '#8B5CF6' },
+  derived_from: { text: '衍生价值', color: '#C9971F' },
+  shared_tags: { text: '共享标签', color: '#14B8A6' },
+};
+
+/** Edge line style encodes the relation source: solid = embedding, dashed = tag, dotted = manual. */
+const LINE_DASH_BY_SOURCE: Record<string, number[]> = {
+  embedding: [],
+  tag: [5, 4],
+  manual: [1, 3],
+};
+
+const SOURCE_META: Record<string, { text: string; color: string }> = {
+  embedding: { text: '语义向量', color: '#1D70B8' },
+  tag: { text: '共享标签', color: '#DB5F5B' },
+  manual: { text: '人工标注', color: '#C9971F' },
 };
 
 interface RelationStat {
@@ -283,6 +310,7 @@ interface GraphStats {
   hubLabel: string;
   hubDegree: number;
   relations: RelationStat[];
+  relationSources: RelationStat[];
 }
 
 const EMPTY_STATS: GraphStats = {
@@ -294,6 +322,7 @@ const EMPTY_STATS: GraphStats = {
   hubLabel: '—',
   hubDegree: 0,
   relations: [],
+  relationSources: [],
 };
 
 function buildLegendTypes(nodes: any[]): LegendTypeItem[] {
@@ -344,12 +373,30 @@ function computeStats(nodes: any[], edges: any[]): GraphStats {
   const hub = [...degreeMap.entries()].sort((a, b) => b[1] - a[1])[0];
   const hubNode = hub ? nodes.find((n: any) => n.id === hub[0]) : null;
   const typeSet = new Set(nodes.map((n: any) => n.type || '未分类'));
-  const relations: RelationStat[] = (Object.keys(RELATION_META) as SeedGraphEdge['label'][]).map((label) => ({
-    label,
-    ...RELATION_META[label],
-    count: relationCounts.get(label) || 0,
-    percent: edgeCount ? Math.round(((relationCounts.get(label) || 0) / edgeCount) * 100) : 0,
-  }));
+  const relationLabels = [...new Set([...Object.keys(RELATION_META), ...relationCounts.keys()])];
+  const relations: RelationStat[] = relationLabels.map((label) => {
+    const meta = RELATION_META[label] || { text: label, color: '#64748B' };
+    return {
+      label,
+      ...meta,
+      count: relationCounts.get(label) || 0,
+      percent: edgeCount ? Math.round(((relationCounts.get(label) || 0) / edgeCount) * 100) : 0,
+    };
+  });
+  const sourceCounts = new Map<string, number>();
+  for (const e of edges) {
+    const src = e.relationSource || 'embedding';
+    sourceCounts.set(src, (sourceCounts.get(src) || 0) + 1);
+  }
+  const relationSources: RelationStat[] = [...sourceCounts.keys()].map((label) => {
+    const meta = SOURCE_META[label] || { text: label, color: '#64748B' };
+    return {
+      label,
+      ...meta,
+      count: sourceCounts.get(label) || 0,
+      percent: edgeCount ? Math.round(((sourceCounts.get(label) || 0) / edgeCount) * 100) : 0,
+    };
+  });
   return {
     nodeCount,
     edgeCount,
@@ -359,6 +406,7 @@ function computeStats(nodes: any[], edges: any[]): GraphStats {
     hubLabel: hubNode?.label || '—',
     hubDegree: hub?.[1] || 0,
     relations,
+    relationSources,
   };
 }
 
@@ -370,7 +418,7 @@ function buildTooltipHtml(node: SeedGraphNode): string {
     <div class="min-w-[180px] text-left">
       <div class="mb-1.5 flex items-center gap-1.5">
         <span class="inline-block h-2 w-2 rounded-full" style="background:${color};box-shadow:0 0 0 3px ${color}40"></span>
-        <span class="font-mono text-[9px] font-semibold uppercase tracking-wider text-cyan-600">${escapeHtml(node.type)}</span>
+        <span class="font-mono text-[9px] font-semibold uppercase tracking-wider text-[#DB5F5B]">${escapeHtml(node.type)}</span>
       </div>
       <div class="mb-1 text-[12px] font-bold leading-snug text-slate-900">${escapeHtml(meta.title || node.label)}</div>
       ${meta.author ? `<div class="mb-1 text-[10px] text-slate-500">作者：${escapeHtml(meta.author)}</div>` : ''}
@@ -384,11 +432,16 @@ function buildTooltipHtml(node: SeedGraphNode): string {
 function buildEdgeTooltipHtml(model: SeedGraphEdge): string {
   const score = typeof model.similarity === 'number' ? model.similarity.toFixed(2) : '—';
   const source = model.relationSource === 'embedding' ? 'embedding' : (model.relationSource || 'embedding');
+  const relMeta = RELATION_META[model.relation] || { text: String(model.relation), color: '#64748B' };
   return `
     <div class="min-w-[170px] text-left">
-      <div class="mb-1 text-[12px] font-bold leading-snug text-slate-900">语义关联</div>
+      <div class="mb-1.5 flex items-center gap-1.5">
+        <span class="inline-block h-2 w-2 rounded-full" style="background:${relMeta.color}"></span>
+        <span class="text-[12px] font-bold leading-snug text-slate-900">${escapeHtml(relMeta.text)}</span>
+        <span class="font-mono text-[8px] uppercase tracking-wider text-slate-400">${escapeHtml(String(model.relation))}</span>
+      </div>
       <div class="space-y-0.5 text-[10px] leading-relaxed">
-        <div class="text-slate-500">相似度：<span class="font-mono font-semibold text-slate-800">${escapeHtml(score)}</span></div>
+        <div class="text-slate-500">相似度：<span class="font-mono font-semibold text-[#2B3150]">${escapeHtml(score)}</span></div>
         <div class="text-slate-400">来源：${escapeHtml(source)}</div>
       </div>
     </div>
@@ -429,6 +482,10 @@ export default function KnowledgeGraphPage() {
   const [showLabels, setShowLabels] = useState(true);
   const [showEdgeWeight, setShowEdgeWeight] = useState(false);
   const [minSimilarity, setMinSimilarity] = useState(0.5);
+  /** 'live' = data from the backend, 'mock' = bundled demo fallback. */
+  const [dataSource, setDataSource] = useState<'live' | 'mock'>('live');
+  /** 'focused' = local neighbourhood of a seed entry, 'global' = full topology. */
+  const [viewMode, setViewMode] = useState<'focused' | 'global'>('focused');
 
   const setSelection = (item: any, model: SeedGraphNode | null) => {
     const graph = graphRef.current;
@@ -634,6 +691,8 @@ export default function KnowledgeGraphPage() {
       style: {
         opacity: edgeOpacityForScore(e.similarity),
         lineWidth: edgeWidthForScore(e.similarity),
+        stroke: RELATION_META[e.relation]?.color || '#94A3B8',
+        lineDash: LINE_DASH_BY_SOURCE[e.relationSource] || [],
       },
     }));
     fullGraphDataRef.current = { nodes, edges };
@@ -704,6 +763,7 @@ export default function KnowledgeGraphPage() {
         }
       }
       dataRef.current = { nodes, edges: [...edgeMap.values()] };
+      setViewMode('focused');
       scheduleFit();
       renderData();
       setSelectedDegree(
@@ -740,12 +800,79 @@ export default function KnowledgeGraphPage() {
       setSelectedNode(null);
       applySearch('');
       const ok = await applyFocusedGraph(String(hit.entryId), { depth: 1, limit: DEFAULT_FOCUS_LIMIT });
+      setViewMode('focused');
       setSearchMessage(ok ? `已定位：${hit.title}` : `「${hit.title}」暂无关联数据`);
     } catch {
       setSearchMessage('知识搜索失败，请稍后重试');
     } finally {
       setSearching(false);
     }
+  };
+
+  /** Load the default focused neighbourhood of the seed entry. */
+  const loadFocusedSeed = async () => {
+    try {
+      const ok = await applyFocusedGraph('1', { depth: 1, limit: DEFAULT_FOCUS_LIMIT });
+      setDataSource('live');
+      if (!ok) {
+        // Backend reachable but no graph for the seed entry — show a real
+        // empty state instead of silently keeping the demo mock.
+        dataRef.current = { nodes: [], edges: [] };
+        renderData();
+      }
+    } catch {
+      // Backend unavailable: fall back to bundled demo data, clearly flagged.
+      setDataSource('mock');
+    }
+  };
+
+  /** Load the whole knowledge topology from /api/graph/global. */
+  const loadGlobal = async () => {
+    try {
+      const res = await fetch('/api/graph/global', {
+        headers: getAuthHeaders(),
+        signal: AbortSignal.timeout(60000),
+      });
+      if (!res.ok) throw new Error('GLOBAL_FAILED');
+      const data = normalizeGraph(await res.json());
+      // Defensive cap: keep the highest-degree nodes so the global view stays usable.
+      let { nodes, edges } = data;
+      if (nodes.length > GLOBAL_DISPLAY_CAP) {
+        const degree = new Map<string, number>();
+        for (const e of edges) {
+          degree.set(e.source, (degree.get(e.source) || 0) + 1);
+          degree.set(e.target, (degree.get(e.target) || 0) + 1);
+        }
+        const kept = new Set(
+          [...nodes]
+            .sort((a, b) => (degree.get(b.id) || 0) - (degree.get(a.id) || 0))
+            .slice(0, GLOBAL_DISPLAY_CAP)
+            .map((n) => n.id),
+        );
+        nodes = nodes.filter((n) => kept.has(n.id));
+        edges = edges.filter((e) => kept.has(e.source) && kept.has(e.target));
+      }
+      selectedNodeIdRef.current = null;
+      dataRef.current = { nodes, edges };
+      setViewMode('global');
+      setDataSource('live');
+      scheduleFit();
+      renderData();
+      setSearchMessage(
+        nodes.length >= GLOBAL_DISPLAY_CAP
+          ? `全局视图：已展示前 ${GLOBAL_DISPLAY_CAP} 个核心节点`
+          : `已加载全局拓扑（${nodes.length} 节点 / ${edges.length} 连线）`,
+      );
+    } catch {
+      setDataSource('mock');
+      setSearchMessage('全局图谱加载失败，请稍后重试');
+    }
+  };
+
+  /** Switch back to the focused neighbourhood view. */
+  const switchToFocused = async () => {
+    setViewMode('focused');
+    await loadFocusedSeed();
   };
 
   const changeLayout = (mode: 'force' | 'circular' | 'dagre') => {
@@ -879,7 +1006,7 @@ export default function KnowledgeGraphPage() {
           stroke: '#FFFFFF',
           lineWidth: 1,
           cursor: 'pointer',
-          shadowColor: 'rgba(34, 211, 238, 0.12)',
+          shadowColor: 'rgba(219, 95, 91, 0.12)',
           shadowBlur: 4,
         },
         labelCfg: {
@@ -920,8 +1047,8 @@ export default function KnowledgeGraphPage() {
         selected: {
           style: {
             lineWidth: 2,
-            stroke: '#0EA5E9',
-            shadowColor: '#0EA5E9',
+            stroke: '#DB5F5B',
+            shadowColor: '#DB5F5B',
             shadowBlur: 8,
           },
         },
@@ -932,7 +1059,7 @@ export default function KnowledgeGraphPage() {
         hover: {
           style: {
             opacity: 1,
-            stroke: '#22D3EE',
+            stroke: '#DB5F5B',
             lineWidth: 1.6,
           },
         },
@@ -957,11 +1084,7 @@ export default function KnowledgeGraphPage() {
     });
 
     const load = async () => {
-      try {
-        await applyFocusedGraph('1', { depth: 1, limit: DEFAULT_FOCUS_LIMIT });
-      } catch {
-        // Fall back to bundled mock data when the backend is unavailable.
-      }
+      await loadFocusedSeed();
       if (cancelled) return;
       renderData();
       setLoading(false);
@@ -1059,10 +1182,10 @@ export default function KnowledgeGraphPage() {
   const legendItems = visibleTypes.slice(0, 6);
 
   const kpis: { key: string; label: string; value: string; hint: string; icon: LucideIcon; color: string }[] = [
-    { key: 'nodes', label: '文档节点', value: String(stats.nodeCount), hint: '局部范围', icon: Database, color: '#22D3EE' },
-    { key: 'edges', label: '关系连线', value: String(stats.edgeCount), hint: `平均度数 ${stats.avgDegree}`, icon: GitBranch, color: '#A78BFA' },
-    { key: 'types', label: '知识分类', value: String(stats.typeCount), hint: `密度 ${(stats.density * 100).toFixed(1)}%`, icon: Layers, color: '#FBBF24' },
-    { key: 'hub', label: '核心节点', value: stats.hubLabel, hint: `${stats.hubDegree} 条关联`, icon: Target, color: '#34D399' },
+    { key: 'nodes', label: '文档节点', value: String(stats.nodeCount), hint: viewMode === 'global' ? '全局范围' : '局部范围', icon: Database, color: '#2B3150' },
+    { key: 'edges', label: '关系连线', value: String(stats.edgeCount), hint: `平均度数 ${stats.avgDegree}`, icon: GitBranch, color: '#DB5F5B' },
+    { key: 'types', label: '知识分类', value: String(stats.typeCount), hint: `密度 ${(stats.density * 100).toFixed(1)}%`, icon: Layers, color: '#F2D760' },
+    { key: 'hub', label: '核心节点', value: stats.hubLabel, hint: `${stats.hubDegree} 条关联`, icon: Target, color: '#3F7E5F' },
   ];
 
   const toolbarItems: { key: string; label: string; icon: LucideIcon; onClick: () => void }[] = [
@@ -1077,23 +1200,23 @@ export default function KnowledgeGraphPage() {
       className="kg-dashboard-grid kg-panel relative overflow-hidden rounded-xl border border-slate-200 text-slate-700 shadow-[0_18px_50px_-24px_rgba(15,23,42,0.18)]"
       id="knowledge-graph-dashboard"
     >
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-cyan-400/70 via-violet-400/50 to-amber-300/40" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-[#DB5F5B]/70 via-[#2B3150]/50 to-[#F2D760]/40" aria-hidden="true" />
 
       {/* Dashboard header */}
       <header className="relative z-10 flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white/60 px-4 py-3.5 sm:px-5">
         <div className="flex min-w-0 items-center gap-3">
-          <span className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-lg border border-cyan-200 bg-cyan-50 text-cyan-600 shadow-[0_0_12px_rgba(34,211,238,0.18)]">
+          <span className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-lg border border-[#DB5F5B]/30 bg-[#DB5F5B]/10 text-[#DB5F5B] shadow-[0_0_12px_rgba(219,95,91,0.18)]">
             <Network className="h-5 w-5" aria-hidden="true" />
           </span>
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <h1 className="truncate font-display text-sm font-bold tracking-wide text-slate-900">知识图谱分析台</h1>
-              <span className="hidden rounded-md border border-cyan-200 bg-cyan-50 px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-widest text-cyan-600 sm:inline-block">
+              <span className="hidden rounded-md border border-[#DB5F5B]/30 bg-[#DB5F5B]/10 px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-widest text-[#DB5F5B] sm:inline-block">
                 探索模式
               </span>
             </div>
             <p className="mt-0.5 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.16em] text-slate-400">
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-cyan-500 shadow-[0_0_6px_rgba(34,211,238,0.5)]" aria-hidden="true" />
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#DB5F5B] shadow-[0_0_6px_rgba(219,95,91,0.5)]" aria-hidden="true" />
               semantic knowledge explorer
             </p>
           </div>
@@ -1103,19 +1226,22 @@ export default function KnowledgeGraphPage() {
           <div className="relative flex items-center gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" aria-hidden="true" />
+              <span className="pointer-events-none absolute left-8 top-1/2 -translate-y-1/2 rounded-md bg-[#DB5F5B]/12 px-1.5 py-0.5 font-mono text-[9px] font-bold text-[#DB5F5B]">
+                搜全库
+              </span>
               <input
                 value={knowledgeQuery}
                 onChange={(e) => setKnowledgeQuery(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleKnowledgeSearch(); }}
-                placeholder="输入知识关键词，如 RAG"
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 py-1.5 pl-8 pr-3 text-xs text-slate-700 placeholder:text-slate-400 focus:border-cyan-400/60 focus:outline-none focus:ring-2 focus:ring-cyan-400/20"
+                placeholder="输入关键词，定位知识节点…"
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 py-1.5 pl-[86px] pr-3 text-xs text-slate-700 placeholder:text-slate-400 focus:border-[#1D70B8]/60 focus:outline-none focus:ring-2 focus:ring-[#1D70B8]/20"
               />
             </div>
             <button
               type="button"
               onClick={handleKnowledgeSearch}
               disabled={searching || !knowledgeQuery.trim()}
-              className="inline-flex flex-shrink-0 items-center gap-1 rounded-lg bg-slate-800 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-slate-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex flex-shrink-0 items-center gap-1 rounded-lg bg-[#2B3150] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#2B3150]/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
             >
               {searching ? '搜索中...' : '搜索'}
             </button>
@@ -1126,10 +1252,33 @@ export default function KnowledgeGraphPage() {
         </div>
 
         <div className="flex flex-shrink-0 flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
-            <span className="font-mono text-[9px] font-bold uppercase tracking-widest text-emerald-600">在线</span>
-          </span>
+          <div className="flex items-center gap-0.5 rounded-lg border border-slate-200 bg-slate-50 p-0.5">
+            <button
+              type="button"
+              onClick={switchToFocused}
+              className={`rounded-md px-2.5 py-1 text-[10px] font-bold transition ${viewMode === 'focused' ? 'bg-[#2B3150] text-white' : 'text-slate-600 hover:bg-white'}`}
+            >
+              聚焦
+            </button>
+            <button
+              type="button"
+              onClick={loadGlobal}
+              className={`rounded-md px-2.5 py-1 text-[10px] font-bold transition ${viewMode === 'global' ? 'bg-[#2B3150] text-white' : 'text-slate-600 hover:bg-white'}`}
+            >
+              全局
+            </button>
+          </div>
+          {dataSource === 'mock' ? (
+            <span className="inline-flex items-center gap-1.5 rounded-lg border border-amber-300 bg-amber-50 px-2.5 py-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" aria-hidden="true" />
+              <span className="font-mono text-[9px] font-bold uppercase tracking-widest text-amber-700">演示数据 · DEMO</span>
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
+              <span className="font-mono text-[9px] font-bold uppercase tracking-widest text-emerald-600">在线 · LIVE</span>
+            </span>
+          )}
           <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-600">
             <span className="h-1.5 w-1.5 rounded-full bg-violet-500" aria-hidden="true" />
             {stats.nodeCount} 节点 / {stats.edgeCount} 连线
@@ -1138,7 +1287,7 @@ export default function KnowledgeGraphPage() {
             type="button"
             onClick={handleViewEntry}
             disabled={!selectedNode}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-cyan-500 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-cyan-400 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[#DB5F5B] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#DB5F5B]/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
           >
             <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
             查看条目
@@ -1151,7 +1300,7 @@ export default function KnowledgeGraphPage() {
         <aside className="kg-panel kg-panel-left kg-scroll-thin flex flex-col gap-3 lg:col-span-3 lg:max-h-[calc(100vh-230px)] lg:overflow-y-auto lg:pr-0.5">
           <section className="rounded-lg border border-slate-200 bg-white p-3 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
             <div className="flex items-center justify-between gap-2">
-              <h2 className="text-[11px] font-extrabold tracking-wide text-slate-800">核心指标</h2>
+              <h2 className="text-[11px] font-extrabold tracking-wide text-[#2B3150]">核心指标</h2>
               <span className="font-mono text-[9px] uppercase tracking-widest text-slate-400">overview</span>
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2">
@@ -1173,8 +1322,8 @@ export default function KnowledgeGraphPage() {
           <section className="rounded-lg border border-slate-200 bg-white p-3 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-1.5">
-                <Boxes className="h-3.5 w-3.5 text-cyan-600" aria-hidden="true" />
-                <h2 className="text-[11px] font-extrabold tracking-wide text-slate-800">节点类型分布</h2>
+                <Boxes className="h-3.5 w-3.5 text-[#DB5F5B]" aria-hidden="true" />
+                <h2 className="text-[11px] font-extrabold tracking-wide text-[#2B3150]">节点类型分布</h2>
               </div>
               <span className="font-mono text-[9px] font-semibold text-slate-400">{stats.typeCount} 类</span>
             </div>
@@ -1212,7 +1361,7 @@ export default function KnowledgeGraphPage() {
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-1.5">
                 <CircleDot className="h-3.5 w-3.5 text-violet-600" aria-hidden="true" />
-                <h2 className="text-[11px] font-extrabold tracking-wide text-slate-800">关系构成</h2>
+                <h2 className="text-[11px] font-extrabold tracking-wide text-[#2B3150]">关系构成</h2>
               </div>
               <span className="rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-mono text-[8px] font-semibold uppercase tracking-wider text-slate-400">
                 密度 {stats.density.toFixed(3)}
@@ -1238,6 +1387,25 @@ export default function KnowledgeGraphPage() {
                 <li className="py-4 text-center text-[10px] text-slate-400">暂无关系数据</li>
               )}
             </ul>
+
+            <div className="mt-3 border-t border-slate-200 pt-2.5">
+              <p className="mb-2 font-mono text-[8px] uppercase tracking-wider text-slate-400">来源构成 · by source</p>
+              <ul className="space-y-1.5">
+                {stats.relationSources.map((src) => (
+                  <li key={src.label} className="flex items-center justify-between gap-2 text-[10px]">
+                    <span className="flex min-w-0 items-center gap-1.5">
+                      <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full" style={{ backgroundColor: src.color }} />
+                      <span className="truncate text-slate-600">{src.text}</span>
+                      <span className="font-mono text-[8px] uppercase tracking-wide text-slate-400">{src.label}</span>
+                    </span>
+                    <span className="font-mono text-[9px] font-semibold text-slate-500">{src.count} / {src.percent}%</span>
+                  </li>
+                ))}
+                {stats.relationSources.length === 0 && (
+                  <li className="py-2 text-center text-[10px] text-slate-400">暂无来源数据</li>
+                )}
+              </ul>
+            </div>
           </section>
         </aside>
 
@@ -1245,20 +1413,22 @@ export default function KnowledgeGraphPage() {
         <section className="kg-panel flex min-h-[560px] flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-[0_18px_50px_-24px_rgba(15,23,42,0.18)] lg:col-span-6 lg:h-[calc(100vh-230px)]">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-slate-50/80 px-3 py-2.5">
             <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(34,211,238,0.35)]" aria-hidden="true" />
-              <h2 className="text-xs font-extrabold tracking-wide text-slate-800">关系网络视图</h2>
+              <span className="h-2 w-2 rounded-full bg-[#DB5F5B] shadow-[0_0_8px_rgba(219,95,91,0.35)]" aria-hidden="true" />
+              <h2 className="text-xs font-extrabold tracking-wide text-[#2B3150]">关系网络视图</h2>
               <span className="hidden font-mono text-[9px] uppercase tracking-[0.14em] text-slate-400 sm:inline">
                 {layoutMode === 'force' ? 'force layout' : layoutMode === 'circular' ? 'circular layout' : 'dagre layout'}
               </span>
             </div>
             <div className="relative w-full sm:w-64">
-              <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" aria-hidden="true" />
+              <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 rounded-md bg-[#1D70B8]/12 px-1.5 py-0.5 font-mono text-[9px] font-bold text-[#1D70B8]">
+                筛当前
+              </span>
               <input
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); applySearch(e.target.value); }}
                 onKeyDown={(e) => { if (e.key === 'Enter') applySearch(search); }}
-                placeholder="筛选当前节点"
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 py-1.5 pl-8 pr-7 text-xs text-slate-700 placeholder:text-slate-400 focus:border-cyan-400/60 focus:outline-none focus:ring-2 focus:ring-cyan-400/20"
+                placeholder="高亮当前视图匹配节点"
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 py-1.5 pl-[64px] pr-7 text-xs text-slate-700 placeholder:text-slate-400 focus:border-[#1D70B8]/60 focus:outline-none focus:ring-2 focus:ring-[#1D70B8]/20"
               />
               {search && (
                 <button
@@ -1278,7 +1448,7 @@ export default function KnowledgeGraphPage() {
               <button
                 type="button"
                 onClick={() => applyTypeFilter('')}
-                className={`inline-flex flex-shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1 text-[10px] font-bold ring-1 transition ${activeType === '' ? 'bg-slate-800 text-white ring-slate-800' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-100'}`}
+                className={`inline-flex flex-shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1 text-[10px] font-bold ring-1 transition ${activeType === '' ? 'bg-[#2B3150] text-white ring-[#2B3150]' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-100'}`}
               >
                 全部
                 <span className="font-mono text-[9px] opacity-80">{stats.nodeCount}</span>
@@ -1288,7 +1458,7 @@ export default function KnowledgeGraphPage() {
                   key={item.type}
                   type="button"
                   onClick={() => applyTypeFilter(activeType === item.type ? '' : item.type)}
-                  className={`inline-flex flex-shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1 text-[10px] font-bold ring-1 transition ${activeType === item.type ? 'bg-slate-800 text-white ring-slate-800' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-100'}`}
+                  className={`inline-flex flex-shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1 text-[10px] font-bold ring-1 transition ${activeType === item.type ? 'bg-[#2B3150] text-white ring-[#2B3150]' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-100'}`}
                 >
                   <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: item.color }} />
                   {item.type}
@@ -1316,7 +1486,7 @@ export default function KnowledgeGraphPage() {
                   onClick={item.onClick}
                   title={item.label}
                   aria-label={item.label}
-                  className="grid h-8 w-8 place-items-center rounded-lg border border-slate-200 bg-white/95 text-slate-500 shadow-sm transition hover:bg-slate-800 hover:text-white active:scale-95"
+                  className="grid h-8 w-8 place-items-center rounded-lg border border-slate-200 bg-white/95 text-slate-500 shadow-sm transition hover:bg-[#2B3150] hover:text-white active:scale-95"
                 >
                   <item.icon className="h-4 w-4" aria-hidden="true" />
                 </button>
@@ -1326,7 +1496,7 @@ export default function KnowledgeGraphPage() {
             {/* Legend */}
             <div className="kg-legend-panel pointer-events-none max-w-[220px] rounded-lg border border-slate-200 bg-white/90 px-2.5 py-2 shadow-sm backdrop-blur">
               <div className="mb-1.5 flex items-center gap-1.5 text-[9px] font-extrabold uppercase tracking-widest text-slate-500">
-                <CircleDot className="h-3 w-3 text-cyan-500" aria-hidden="true" />
+                <CircleDot className="h-3 w-3 text-[#DB5F5B]" aria-hidden="true" />
                 图例
               </div>
               <div className="space-y-1">
@@ -1339,11 +1509,11 @@ export default function KnowledgeGraphPage() {
                 ))}
               </div>
               <div className="mt-1.5 border-t border-slate-100 pt-1.5 text-[8px] text-slate-400">
-                节点大小 = 关联数 · 线粗 = 关联评分
+                节点大小=关联数 · 线粗=相似度 · 实线/虚线/点线=向量/标签/人工
               </div>
             </div>
 
-            {atNodeCap && (
+            {viewMode === 'focused' && atNodeCap && (
               <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-full border border-amber-200 bg-amber-50/95 px-3 py-1 text-[10px] font-semibold text-amber-700 shadow-sm">
                 已达 {MAX_GRAPH_NODES} 节点上限，继续展开查看更多关联知识
               </div>
@@ -1352,8 +1522,28 @@ export default function KnowledgeGraphPage() {
             {loading && (
               <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/70 backdrop-blur-[2px]">
                 <div className="flex items-center gap-2.5 rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm shadow-slate-900/10">
-                  <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-cyan-500 border-t-transparent" aria-hidden="true" />
+                  <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-[#DB5F5B] border-t-transparent" aria-hidden="true" />
                   <span className="text-xs font-semibold text-slate-500">正在加载图谱数据...</span>
+                </div>
+              </div>
+            )}
+
+            {!loading && dataSource === 'live' && stats.nodeCount === 0 && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/85 backdrop-blur-[1px]">
+                <div className="max-w-xs px-6 text-center">
+                  <span className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full border border-slate-200 bg-slate-50 text-slate-400">
+                    <Network className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <p className="text-sm font-bold text-slate-700">图谱暂无关联数据</p>
+                  <p className="mt-1 text-[11px] leading-relaxed text-slate-400">上传文档并重建语义关系后，这里会展示知识关联拓扑。</p>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/admin/import')}
+                    className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-[#2B3150] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#2B3150]/90 active:scale-[0.98]"
+                  >
+                    <Database className="h-3.5 w-3.5" aria-hidden="true" />
+                    去知识导入
+                  </button>
                 </div>
               </div>
             )}
@@ -1366,7 +1556,7 @@ export default function KnowledgeGraphPage() {
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-1.5">
                 <SlidersHorizontal className="h-3.5 w-3.5 text-slate-500" aria-hidden="true" />
-                <h2 className="text-[11px] font-extrabold tracking-wide text-slate-800">图谱设置</h2>
+                <h2 className="text-[11px] font-extrabold tracking-wide text-[#2B3150]">图谱设置</h2>
               </div>
               <span className="font-mono text-[8px] uppercase tracking-widest text-slate-400">graph view</span>
             </div>
@@ -1384,7 +1574,7 @@ export default function KnowledgeGraphPage() {
                       key={mode}
                       type="button"
                       onClick={() => changeLayout(mode)}
-                      className={`rounded-md px-2 py-1.5 text-[10px] font-bold ring-1 transition ${layoutMode === mode ? 'bg-slate-800 text-white ring-slate-800' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-100'}`}
+                      className={`rounded-md px-2 py-1.5 text-[10px] font-bold ring-1 transition ${layoutMode === mode ? 'bg-[#2B3150] text-white ring-[#2B3150]' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-100'}`}
                     >
                       {label}
                     </button>
@@ -1403,7 +1593,7 @@ export default function KnowledgeGraphPage() {
                       key={mode}
                       type="button"
                       onClick={() => changeSizeMode(mode)}
-                      className={`rounded-md px-2 py-1.5 text-[10px] font-bold ring-1 transition ${sizeMode === mode ? 'bg-cyan-600 text-white ring-cyan-600' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-100'}`}
+                      className={`rounded-md px-2 py-1.5 text-[10px] font-bold ring-1 transition ${sizeMode === mode ? 'bg-[#1D70B8] text-white ring-[#1D70B8]' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-100'}`}
                     >
                       {label}
                     </button>
@@ -1418,7 +1608,7 @@ export default function KnowledgeGraphPage() {
                   className="flex w-full items-center justify-between rounded-md border border-slate-200 bg-slate-50/60 px-2.5 py-2 text-left"
                 >
                   <span className="text-[10px] font-bold text-slate-600">节点标签</span>
-                  <span className={`relative h-4 w-8 rounded-full transition ${showLabels ? 'bg-cyan-500' : 'bg-slate-300'}`}>
+                  <span className={`relative h-4 w-8 rounded-full transition ${showLabels ? 'bg-[#DB5F5B]' : 'bg-slate-300'}`}>
                     <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white shadow transition ${showLabels ? 'left-4.5' : 'left-0.5'}`} />
                   </span>
                 </button>
@@ -1428,7 +1618,7 @@ export default function KnowledgeGraphPage() {
                   className="flex w-full items-center justify-between rounded-md border border-slate-200 bg-slate-50/60 px-2.5 py-2 text-left"
                 >
                   <span className="text-[10px] font-bold text-slate-600">边权重显示</span>
-                  <span className={`relative h-4 w-8 rounded-full transition ${showEdgeWeight ? 'bg-cyan-500' : 'bg-slate-300'}`}>
+                  <span className={`relative h-4 w-8 rounded-full transition ${showEdgeWeight ? 'bg-[#DB5F5B]' : 'bg-slate-300'}`}>
                     <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white shadow transition ${showEdgeWeight ? 'left-4.5' : 'left-0.5'}`} />
                   </span>
                 </button>
@@ -1437,7 +1627,7 @@ export default function KnowledgeGraphPage() {
               <div>
                 <div className="mb-1.5 flex items-center justify-between">
                   <p className="text-[10px] font-bold text-slate-600">最小关联阈值</p>
-                  <span className="font-mono text-[10px] font-bold text-cyan-600">{minSimilarity.toFixed(2)}</span>
+                  <span className="font-mono text-[10px] font-bold text-[#DB5F5B]">{minSimilarity.toFixed(2)}</span>
                 </div>
                 <input
                   type="range"
@@ -1446,7 +1636,7 @@ export default function KnowledgeGraphPage() {
                   step={0.05}
                   value={minSimilarity}
                   onChange={(e) => changeThreshold(Number(e.target.value))}
-                  className="w-full accent-cyan-600"
+                  className="w-full accent-[#1D70B8]"
                 />
                 <div className="mt-0.5 flex justify-between font-mono text-[8px] text-slate-400">
                   <span>0</span>
@@ -1460,7 +1650,7 @@ export default function KnowledgeGraphPage() {
           <section className="rounded-lg border border-slate-200 bg-white p-3 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
             <div className="flex items-center justify-between gap-2">
               <div>
-                <h2 className="text-[11px] font-extrabold tracking-wide text-slate-800">关键词筛选</h2>
+                <h2 className="text-[11px] font-extrabold tracking-wide text-[#2B3150]">关键词筛选</h2>
                 <p className="mt-0.5 font-mono text-[8px] uppercase tracking-[0.16em] text-slate-400">tag filter</p>
               </div>
               <span className="rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-mono text-[9px] font-semibold text-slate-400">
@@ -1471,7 +1661,7 @@ export default function KnowledgeGraphPage() {
               <button
                 type="button"
                 onClick={clearKeywordFilter}
-                className={`rounded-md px-2.5 py-1 text-[10px] font-bold transition ${activeKeyword === '' ? 'bg-slate-800 text-white' : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-100'}`}
+                className={`rounded-md px-2.5 py-1 text-[10px] font-bold transition ${activeKeyword === '' ? 'bg-[#2B3150] text-white' : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-100'}`}
               >
                 全部
               </button>
@@ -1480,7 +1670,7 @@ export default function KnowledgeGraphPage() {
                   key={item.keyword}
                   type="button"
                   onClick={() => applyKeywordFilter(item.keyword)}
-                  className={`rounded-md px-2.5 py-1 text-[10px] font-bold transition ${activeKeyword === item.keyword ? 'bg-cyan-500 text-white' : 'border border-slate-200 bg-white text-slate-600 hover:border-cyan-300 hover:bg-cyan-50 hover:text-cyan-700'}`}
+                  className={`rounded-md px-2.5 py-1 text-[10px] font-bold transition ${activeKeyword === item.keyword ? 'bg-[#DB5F5B] text-white' : 'border border-slate-200 bg-white text-slate-600 hover:border-[#DB5F5B]/40 hover:bg-[#DB5F5B]/10 hover:text-[#DB5F5B]'}`}
                 >
                   {item.keyword}
                   <span className="ml-1 font-mono text-[9px] opacity-70">{item.count}</span>
@@ -1495,7 +1685,7 @@ export default function KnowledgeGraphPage() {
           <section className="flex min-h-[280px] flex-1 flex-col rounded-lg border border-slate-200 bg-white p-3 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
             <div className="flex items-center justify-between gap-2 border-b border-slate-200 pb-2">
               <div>
-                <h2 className="text-[11px] font-extrabold tracking-wide text-slate-800">节点分析</h2>
+                <h2 className="text-[11px] font-extrabold tracking-wide text-[#2B3150]">节点分析</h2>
                 <p className="mt-0.5 font-mono text-[8px] uppercase tracking-[0.16em] text-slate-400">node inspector</p>
               </div>
               {selectedNode && (
@@ -1548,7 +1738,7 @@ export default function KnowledgeGraphPage() {
                     type="button"
                     onClick={() => expandNode(selectedNode.id)}
                     disabled={expanding}
-                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-slate-800 px-3 py-2 text-xs font-bold text-white transition hover:bg-slate-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
+                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#2B3150] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#2B3150]/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     <GitBranch className="h-3.5 w-3.5" aria-hidden="true" />
                     {expanding ? '展开中...' : '展开关联知识'}
@@ -1556,7 +1746,7 @@ export default function KnowledgeGraphPage() {
                   <button
                     type="button"
                     onClick={() => navigate(`/entry/${selectedNode.id}`)}
-                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-cyan-300 bg-cyan-50 px-3 py-2 text-xs font-bold text-cyan-700 transition hover:bg-cyan-100 active:scale-[0.99]"
+                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-[#DB5F5B]/40 bg-[#DB5F5B]/10 px-3 py-2 text-xs font-bold text-[#DB5F5B] transition hover:bg-[#DB5F5B]/15 active:scale-[0.99]"
                   >
                     <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
                     查看知识条目

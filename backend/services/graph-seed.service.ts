@@ -18,7 +18,13 @@ export interface SeedGraphNode {
   };
 }
 
-export type SeedGraphRelation = 'semantic_related';
+export type SeedGraphRelation =
+  | 'semantic_related'
+  | 'references'
+  | 'produces'
+  | 'belongs_to'
+  | 'derived_from'
+  | 'shared_tags';
 
 export interface SeedGraphEdge {
   source: string;
@@ -92,7 +98,7 @@ function edgeFromRelation(rel: EntryRelationRow): SeedGraphEdge {
   const edge: SeedGraphEdge = {
     source: String(rel.sourceEntryId),
     target: String(rel.targetEntryId),
-    label: 'semantic_related',
+    label: relation,
     relation,
     relationSource,
   };
