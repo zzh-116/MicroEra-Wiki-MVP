@@ -15,9 +15,6 @@ backend/data/documents/
 backend/data/metadata/
 backend/data/imports/
 
-# Temp files
-C:\Users\CAIHUI\AppData\Local\Temp
-
 # Python bytecode
 __pycache__/
 *.pyc
