@@ -89,7 +89,7 @@ export default function KnowledgeGraph({
       {/* Title / Toolbar */}
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs font-bold text-gray-700 flex items-center">
-          <Network className="w-4 h-4 mr-1 text-[#DB5F5B] animate-pulse" />
+          <Network className="w-4 h-4 mr-1 text-brand animate-pulse" />
           <span>关联知识图谱 (Interactive Semantic Network)</span>
         </span>
         <span className="text-[9px] text-gray-400">
@@ -136,7 +136,7 @@ export default function KnowledgeGraph({
                     strokeWidth="2"
                     fill="none"
                     markerEnd="url(#arrow)"
-                    className="hover:stroke-[#DB5F5B] hover:stroke-2 transition-colors cursor-help"
+                    className="hover:stroke-brand hover:stroke-2 transition-colors cursor-help"
                   />
                 </g>
               );
@@ -197,7 +197,7 @@ export default function KnowledgeGraph({
         <div className="lg:col-span-4 bg-white border border-gray-150 rounded-lg p-3 flex flex-col justify-between">
           <div>
             <div className="flex items-center space-x-1 border-b border-gray-100 pb-1.5 mb-2">
-              <Info className="w-3.5 h-3.5 text-[#DB5F5B]" />
+              <Info className="w-3.5 h-3.5 text-brand" />
               <span className="font-bold text-gray-700 text-xs">节点元数据分析</span>
             </div>
 
@@ -237,9 +237,9 @@ export default function KnowledgeGraph({
                   navigate(url);
                 }
               }}
-              className="w-full mt-3 py-1.5 bg-[#2B3150] hover:bg-[#2B3150]/90 text-white font-semibold rounded text-[11px] transition-all flex items-center justify-center space-x-1"
+              className="w-full mt-3 py-1.5 bg-ink hover:bg-ink/90 text-white font-semibold rounded text-[11px] transition-all flex items-center justify-center space-x-1"
             >
-              <ExternalLink className="w-3 h-3 text-[#F2D760]" />
+              <ExternalLink className="w-3 h-3 text-accent" />
               <span>查看该知识条目</span>
             </button>
           )}

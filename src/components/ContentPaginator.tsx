@@ -19,7 +19,7 @@ function renderInline(text: string, keywordIndex?: KeywordIndex, currentEntryId?
         key={i}
         to={`/entry/${part.entryId}`}
         title={part.title}
-        className="text-[#1D70B8] hover:text-[#DB5F5B] hover:underline font-medium"
+        className="text-link hover:text-brand hover:underline font-medium"
       >
         {part.title}
       </Link>
@@ -47,7 +47,7 @@ function PageBlockRenderer({
     case 'paragraph': return <p className="my-3 text-sm text-gray-700 leading-relaxed">{renderInline(block.text, keywordIndex, currentEntryId)}</p>;
     case 'list':
       if (block.ordered) return <ol className="space-y-1 ml-5 my-3 list-decimal text-sm text-gray-700 leading-relaxed">{block.items.map((item, i) => <li key={i} className="pl-1">{renderInline(item, keywordIndex, currentEntryId)}</li>)}</ol>;
-      return <ul className="space-y-1 ml-4 my-3 text-sm text-gray-700 leading-relaxed">{block.items.map((item, i) => <li key={i} className="flex items-start gap-2"><span className="text-[#DB5F5B] font-bold shrink-0 mt-[3px]">•</span><span>{renderInline(item, keywordIndex, currentEntryId)}</span></li>)}</ul>;
+      return <ul className="space-y-1 ml-4 my-3 text-sm text-gray-700 leading-relaxed">{block.items.map((item, i) => <li key={i} className="flex items-start gap-2"><span className="text-brand font-bold shrink-0 mt-[3px]">•</span><span>{renderInline(item, keywordIndex, currentEntryId)}</span></li>)}</ul>;
     case 'code': return (
       <div className="my-4 rounded-lg overflow-hidden border border-gray-200">
         <div className="flex items-center justify-between px-4 py-1.5 bg-gray-100 border-b border-gray-200">
@@ -81,7 +81,7 @@ function PageBlockRenderer({
         </table>
       </div>
     );
-    case 'blockquote': return <blockquote className="border-l-[3px] border-[#DB5F5B]/40 bg-[#F5F6E5]/20 px-4 py-2.5 my-4 text-sm text-gray-600 italic leading-relaxed rounded-r">{renderInline(block.text, keywordIndex, currentEntryId)}</blockquote>;
+    case 'blockquote': return <blockquote className="border-l-[3px] border-brand/40 bg-cream/20 px-4 py-2.5 my-4 text-sm text-gray-600 italic leading-relaxed rounded-r">{renderInline(block.text, keywordIndex, currentEntryId)}</blockquote>;
     case 'divider': return <hr className="my-8 border-gray-200" />;
     default: return null;
   }
@@ -181,7 +181,7 @@ export default function ContentPaginator({
       <div ref={containerRef} className={`space-y-4 ${className}`}>
         <div className="flex items-center justify-center py-20">
           <div className="flex items-center gap-2 text-sm text-gray-400 animate-pulse font-medium">
-            <span className="w-2 h-2 bg-[#DB5F5B] rounded-full animate-bounce" />
+            <span className="w-2 h-2 bg-brand rounded-full animate-bounce" />
             正在解析文档内容...
           </div>
         </div>
@@ -210,7 +210,7 @@ export default function ContentPaginator({
         <div className="flex items-center gap-1">
           <div className="w-24 h-1.5 bg-gray-200 rounded-full overflow-hidden">
             <div
-              className="h-full bg-[#DB5F5B] rounded-full transition-all duration-300"
+              className="h-full bg-brand rounded-full transition-all duration-300"
               style={{ width: `${(safePage / totalPages) * 100}%` }}
             />
           </div>
@@ -234,7 +234,7 @@ export default function ContentPaginator({
         <button
           onClick={() => goTo(safePage - 1)}
           disabled={safePage <= 1}
-          className="px-2 py-1 text-xs font-bold text-gray-600 hover:text-[#DB5F5B] disabled:opacity-30 disabled:cursor-default transition-colors flex items-center gap-0.5"
+          className="px-2 py-1 text-xs font-bold text-gray-600 hover:text-brand disabled:opacity-30 disabled:cursor-default transition-colors flex items-center gap-0.5"
         >
           <ChevronLeft className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">上一页</span>
@@ -251,7 +251,7 @@ export default function ContentPaginator({
                 onClick={() => goTo(p as number)}
                 className={`w-7 h-7 rounded text-xs font-bold transition-all ${
                   p === safePage
-                    ? 'bg-[#2B3150] text-white'
+                    ? 'bg-ink text-white'
                     : 'text-gray-500 hover:bg-gray-100'
                 }`}
               >
@@ -264,7 +264,7 @@ export default function ContentPaginator({
         <button
           onClick={() => goTo(safePage + 1)}
           disabled={safePage >= totalPages}
-          className="px-2 py-1 text-xs font-bold text-gray-600 hover:text-[#DB5F5B] disabled:opacity-30 disabled:cursor-default transition-colors flex items-center gap-0.5"
+          className="px-2 py-1 text-xs font-bold text-gray-600 hover:text-brand disabled:opacity-30 disabled:cursor-default transition-colors flex items-center gap-0.5"
         >
           <span className="hidden sm:inline">下一页</span>
           <ChevronRight className="w-3.5 h-3.5" />

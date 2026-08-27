@@ -57,8 +57,8 @@ export default function SourceFileList({ files, onDownloadMock, onPreviewMarkdow
           </div>
 
           <div className="bg-gray-50 p-1.5 rounded text-[10px] font-mono text-gray-500 break-all border border-gray-100 mb-2">
-            <div className="flex items-center text-[#2B3150] font-bold text-[9px] uppercase tracking-wider mb-0.5">
-              <ShieldCheck className="w-3 h-3 mr-0.5 text-[#DB5F5B]" />
+            <div className="flex items-center text-ink font-bold text-[9px] uppercase tracking-wider mb-0.5">
+              <ShieldCheck className="w-3 h-3 mr-0.5 text-brand" />
               <span>SHA-256 完整性哈希：</span>
             </div>
             {file.sha256}
@@ -73,14 +73,14 @@ export default function SourceFileList({ files, onDownloadMock, onPreviewMarkdow
               {onPreviewMarkdown && (
                 <button
                   onClick={() => onPreviewMarkdown(file.id)}
-                  className="px-2 py-1 bg-[#F5F6E5] text-[#2B3150] hover:bg-[#F2D760]/30 rounded transition-all font-medium border border-[#DB5F5B]/10 hover:border-[#DB5F5B]/30"
+                  className="px-2 py-1 bg-cream text-ink hover:bg-accent/30 rounded transition-all font-medium border border-brand/10 hover:border-brand/30"
                 >
                   查看 MarkItDown 结果
                 </button>
               )}
               <button
                 onClick={() => handleDownload(file)}
-                className="px-2 py-1 text-white bg-[#2B3150] hover:bg-[#2B3150]/90 rounded transition-all font-medium flex items-center space-x-1"
+                className="px-2 py-1 text-white bg-ink hover:bg-ink/90 rounded transition-all font-medium flex items-center space-x-1"
               >
                 <FileDown className="w-3.5 h-3.5" />
                 <span>下载</span>

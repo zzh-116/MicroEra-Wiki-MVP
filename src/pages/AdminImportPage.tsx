@@ -321,9 +321,9 @@ export default function AdminImportPage() {
     <div className="space-y-6" id="admin-import-panel">
       {/* ═══ Page Header ═══════════════════════════════════════════════════════ */}
       <header className="border-b border-gray-200 pb-5">
-        <h1 className="text-2xl font-bold text-[#2B3150] font-display flex items-center gap-2.5">
-          <span className="flex items-center justify-center w-9 h-9 rounded bg-[#DB5F5B]/10">
-            <FileUp className="w-5 h-5 text-[#DB5F5B]" aria-hidden="true" />
+        <h1 className="text-2xl font-bold text-ink font-display flex items-center gap-2.5">
+          <span className="flex items-center justify-center w-9 h-9 rounded bg-brand/10">
+            <FileUp className="w-5 h-5 text-brand" aria-hidden="true" />
           </span>
           知识导入
         </h1>
@@ -343,7 +343,7 @@ export default function AdminImportPage() {
             className={`
               relative border-2 rounded-lg transition-all duration-200
               ${dragOver
-                ? 'border-[#DB5F5B] border-solid bg-[#DB5F5B]/5 shadow-[0_0_0_4px_rgba(219,95,91,0.1)]'
+                ? 'border-brand border-solid bg-brand/5 shadow-[0_0_0_4px_rgba(219,95,91,0.1)]'
                 : 'border-dashed border-gray-300 bg-white hover:border-gray-400 hover:bg-gray-50/50'
               }
               ${hasFile ? 'p-5' : 'py-14 px-6'}
@@ -375,11 +375,11 @@ export default function AdminImportPage() {
                 <div
                   className={`
                     flex items-center justify-center w-16 h-16 rounded-full mb-4 transition-all duration-200
-                    ${dragOver ? 'bg-[#DB5F5B]/10 scale-110' : 'bg-gray-100'}
+                    ${dragOver ? 'bg-brand/10 scale-110' : 'bg-gray-100'}
                   `}
                 >
                   <FileUp
-                    className={`w-8 h-8 transition-colors duration-200 ${dragOver ? 'text-[#DB5F5B]' : 'text-gray-400'}`}
+                    className={`w-8 h-8 transition-colors duration-200 ${dragOver ? 'text-brand' : 'text-gray-400'}`}
                     aria-hidden="true"
                   />
                 </div>
@@ -399,8 +399,8 @@ export default function AdminImportPage() {
             {hasFile && (
               <div className="flex items-center gap-4">
                 {/* File type icon */}
-                <div className="flex-shrink-0 flex items-center justify-center w-11 h-11 rounded-lg bg-[#2B3150]/5">
-                  <FileText className="w-5 h-5 text-[#2B3150]" aria-hidden="true" />
+                <div className="flex-shrink-0 flex items-center justify-center w-11 h-11 rounded-lg bg-ink/5">
+                  <FileText className="w-5 h-5 text-ink" aria-hidden="true" />
                 </div>
 
                 {/* File info */}
@@ -419,7 +419,7 @@ export default function AdminImportPage() {
                 {/* Remove button */}
                 <button
                   onClick={(e) => { e.stopPropagation(); handleRemoveFile(); }}
-                  className="flex-shrink-0 inline-flex items-center gap-1 text-xs font-medium text-gray-400 hover:text-[#DB5F5B] transition-colors px-2 py-1 rounded hover:bg-[#DB5F5B]/5"
+                  className="flex-shrink-0 inline-flex items-center gap-1 text-xs font-medium text-gray-400 hover:text-brand transition-colors px-2 py-1 rounded hover:bg-brand/5"
                   aria-label="移除文件"
                 >
                   <X className="w-3.5 h-3.5" aria-hidden="true" />
@@ -444,7 +444,7 @@ export default function AdminImportPage() {
                       inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium
                       border transition-all duration-150
                       ${mockFileName === name
-                        ? 'border-[#DB5F5B] bg-[#DB5F5B]/5 text-[#DB5F5B]'
+                        ? 'border-brand bg-brand/5 text-brand'
                         : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50'
                       }
                     `}
@@ -465,7 +465,7 @@ export default function AdminImportPage() {
               aria-label="导入配置"
               className="bg-white border border-gray-200 rounded-lg p-5 space-y-5 animate-fade-in"
             >
-              <h3 className="text-sm font-semibold text-[#2B3150] font-display">
+              <h3 className="text-sm font-semibold text-ink font-display">
                 配置导入选项
               </h3>
 
@@ -479,7 +479,7 @@ export default function AdminImportPage() {
                     className={`
                       flex items-center gap-2 px-4 py-2.5 rounded-md border-2 cursor-pointer transition-all duration-150
                       ${visibility === 'internal'
-                        ? 'border-[#2B3150] bg-[#2B3150]/5'
+                        ? 'border-ink bg-ink/5'
                         : 'border-gray-200 bg-white hover:border-gray-300'
                       }
                     `}
@@ -492,8 +492,8 @@ export default function AdminImportPage() {
                       onChange={() => setVisibility('internal')}
                       className="sr-only"
                     />
-                    <Lock className={`w-4 h-4 ${visibility === 'internal' ? 'text-[#DB5F5B]' : 'text-gray-400'}`} aria-hidden="true" />
-                    <span className={`text-sm font-medium ${visibility === 'internal' ? 'text-[#2B3150]' : 'text-gray-600'}`}>
+                    <Lock className={`w-4 h-4 ${visibility === 'internal' ? 'text-brand' : 'text-gray-400'}`} aria-hidden="true" />
+                    <span className={`text-sm font-medium ${visibility === 'internal' ? 'text-ink' : 'text-gray-600'}`}>
                       内网机密
                     </span>
                     <span className="text-xs text-gray-400">仅研发可见</span>
@@ -503,7 +503,7 @@ export default function AdminImportPage() {
                     className={`
                       flex items-center gap-2 px-4 py-2.5 rounded-md border-2 cursor-pointer transition-all duration-150
                       ${visibility === 'public'
-                        ? 'border-[#2B3150] bg-[#2B3150]/5'
+                        ? 'border-ink bg-ink/5'
                         : 'border-gray-200 bg-white hover:border-gray-300'
                       }
                     `}
@@ -517,7 +517,7 @@ export default function AdminImportPage() {
                       className="sr-only"
                     />
                     <Globe className={`w-4 h-4 ${visibility === 'public' ? 'text-green-600' : 'text-gray-400'}`} aria-hidden="true" />
-                    <span className={`text-sm font-medium ${visibility === 'public' ? 'text-[#2B3150]' : 'text-gray-600'}`}>
+                    <span className={`text-sm font-medium ${visibility === 'public' ? 'text-ink' : 'text-gray-600'}`}>
                       公开可用
                     </span>
                     <span className="text-xs text-gray-400">外部可见</span>
@@ -538,7 +538,7 @@ export default function AdminImportPage() {
                   value={targetSpaceId}
                   onChange={(e) => setTargetSpaceId(e.target.value)}
                   className="w-full border-2 border-gray-200 rounded-md px-3 py-2.5 text-sm font-medium bg-white
-                             focus:outline-none focus:border-[#2B3150] focus:ring-2 focus:ring-[#DB5F5B]/20
+                             focus:outline-none focus:border-ink focus:ring-2 focus:ring-brand/20
                              transition-all duration-150 appearance-none
                              bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%236B7280%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]
                              bg-[length:16px] bg-[right_12px_center] bg-no-repeat pr-10"
@@ -564,13 +564,13 @@ export default function AdminImportPage() {
                 </button>
                 <button
                   onClick={handleStartImport}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#2B3150] hover:bg-[#2B3150]/90
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-ink hover:bg-ink/90
                              text-white text-sm font-semibold rounded-md
                              border-2 border-transparent
-                             focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/40
+                             focus:outline-none focus:ring-2 focus:ring-brand/40
                              transition-all duration-150"
                 >
-                  <Play className="w-4 h-4 text-[#F2D760]" aria-hidden="true" />
+                  <Play className="w-4 h-4 text-accent" aria-hidden="true" />
                   启动导入
                 </button>
               </div>
@@ -583,7 +583,7 @@ export default function AdminImportPage() {
               aria-label="导入处理进度"
               className="bg-white border border-gray-200 rounded-lg p-5 space-y-5 animate-fade-in"
             >
-              <h3 className="text-sm font-semibold text-[#2B3150] font-display">
+              <h3 className="text-sm font-semibold text-ink font-display">
                 {isUploading ? '正在上传文件...' : isWaitingForApi ? '正在启动处理管道...' : '正在处理中...'}
               </h3>
 
@@ -592,13 +592,13 @@ export default function AdminImportPage() {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-xs">
                     <span className="font-medium text-gray-600">上传进度</span>
-                    <span className="font-bold text-[#2B3150] font-mono">
+                    <span className="font-bold text-ink font-mono">
                       {uploadProgress}%
                     </span>
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden" role="progressbar" aria-valuenow={uploadProgress!} aria-valuemin={0} aria-valuemax={100}>
                     <div
-                      className="h-full bg-[#2B3150] rounded-full transition-all duration-150 ease-out"
+                      className="h-full bg-ink rounded-full transition-all duration-150 ease-out"
                       style={{ width: `${uploadProgress}%` }}
                     />
                   </div>
@@ -623,13 +623,13 @@ export default function AdminImportPage() {
                   <div className="space-y-2">
                     <div className="flex justify-between items-center text-xs">
                       <span className="font-medium text-gray-600">管道进度</span>
-                      <span className="font-bold text-[#2B3150] font-mono">
+                      <span className="font-bold text-ink font-mono">
                         {pipelineProgress}%
                       </span>
                     </div>
                     <div className="h-2 bg-gray-100 rounded-full overflow-hidden" role="progressbar" aria-valuenow={pipelineProgress} aria-valuemin={0} aria-valuemax={100}>
                       <div
-                        className="h-full bg-gradient-to-r from-[#2B3150] to-[#DB5F5B] rounded-full transition-all duration-500 ease-out"
+                        className="h-full bg-gradient-to-r from-ink to-brand rounded-full transition-all duration-500 ease-out"
                         style={{ width: `${pipelineProgress}%` }}
                       />
                     </div>
@@ -749,10 +749,10 @@ export default function AdminImportPage() {
                     {jobState?.entryId && (
                       <button
                         onClick={() => navigate(`/entry/${jobState.entryId}`)}
-                        className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#2B3150] hover:bg-[#2B3150]/90
+                        className="inline-flex items-center gap-1.5 px-4 py-2 bg-ink hover:bg-ink/90
                                    text-white text-sm font-medium rounded-md
                                    border-2 border-transparent
-                                   focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/40
+                                   focus:outline-none focus:ring-2 focus:ring-brand/40
                                    transition-all duration-150"
                       >
                         查看条目
@@ -762,9 +762,9 @@ export default function AdminImportPage() {
                     <button
                       onClick={() => navigate('/search')}
                       className="inline-flex items-center gap-1.5 px-4 py-2 bg-white hover:bg-gray-50
-                                 text-[#2B3150] text-sm font-medium rounded-md
-                                 border-2 border-gray-200 hover:border-[#2B3150]
-                                 focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/40
+                                 text-ink text-sm font-medium rounded-md
+                                 border-2 border-gray-200 hover:border-ink
+                                 focus:outline-none focus:ring-2 focus:ring-brand/40
                                  transition-all duration-150"
                     >
                       搜索知识库
@@ -775,7 +775,7 @@ export default function AdminImportPage() {
                       className="inline-flex items-center gap-1.5 px-4 py-2 bg-white hover:bg-gray-50
                                  text-gray-700 text-sm font-medium rounded-md
                                  border-2 border-gray-200 hover:border-gray-400
-                                 focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/40
+                                 focus:outline-none focus:ring-2 focus:ring-brand/40
                                  transition-all duration-150"
                     >
                       继续上传
@@ -818,10 +818,10 @@ export default function AdminImportPage() {
                         setCurrentStep(2);
                         setUploadProgress(null);
                       }}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#2B3150] hover:bg-[#2B3150]/90
+                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-ink hover:bg-ink/90
                                  text-white text-sm font-medium rounded-md
                                  border-2 border-transparent
-                                 focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/40
+                                 focus:outline-none focus:ring-2 focus:ring-brand/40
                                  transition-all duration-150"
                     >
                       <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
@@ -832,7 +832,7 @@ export default function AdminImportPage() {
                       className="inline-flex items-center gap-1.5 px-4 py-2 bg-white hover:bg-gray-50
                                  text-gray-700 text-sm font-medium rounded-md
                                  border-2 border-gray-200 hover:border-gray-400
-                                 focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/40
+                                 focus:outline-none focus:ring-2 focus:ring-brand/40
                                  transition-all duration-150"
                     >
                       重新选择文件
@@ -851,7 +851,7 @@ export default function AdminImportPage() {
             aria-label="最近上传记录"
             className="bg-white border border-gray-200 rounded-lg p-4"
           >
-            <h3 className="text-sm font-semibold text-[#2B3150] font-display pb-3 border-b border-gray-100 flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-ink font-display pb-3 border-b border-gray-100 flex items-center gap-2">
               <Clock className="w-4 h-4 text-gray-400" aria-hidden="true" />
               最近导入
             </h3>
@@ -898,7 +898,7 @@ export default function AdminImportPage() {
                         {job.status === 'success' && job.entryId && (
                           <button
                             onClick={() => navigate(`/entry/${job.entryId}`)}
-                            className="inline-flex items-center gap-1 text-[11px] text-[#1D70B8] hover:underline mt-1"
+                            className="inline-flex items-center gap-1 text-[11px] text-link hover:underline mt-1"
                           >
                             查看条目
                             <ArrowUpRight className="w-3 h-3" aria-hidden="true" />
@@ -937,7 +937,7 @@ export default function AdminImportPage() {
             aria-label="支持的文件格式"
             className="bg-white border border-gray-200 rounded-lg p-4"
           >
-            <h3 className="text-sm font-semibold text-[#2B3150] font-display pb-3 border-b border-gray-100">
+            <h3 className="text-sm font-semibold text-ink font-display pb-3 border-b border-gray-100">
               支持的文件格式
             </h3>
 

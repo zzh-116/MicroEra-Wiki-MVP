@@ -52,7 +52,7 @@ export default function Pagination({
             <select
               value={pageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
-              className="border border-gray-200 rounded px-1 py-0.5 text-[10px] bg-white focus:outline-none focus:ring-1 focus:ring-[#DB5F5B]"
+              className="border border-gray-200 rounded px-1 py-0.5 text-[10px] bg-white focus:outline-none focus:ring-1 focus:ring-brand"
             >
               {pageSizeOptions.map((n) => (
                 <option key={n} value={n}>{n}</option>
@@ -96,7 +96,7 @@ export default function Pagination({
                 onClick={() => goToPage(p)}
                 className={`min-w-[28px] h-7 text-[10px] font-bold rounded transition-all ${
                   p === safePage
-                    ? 'bg-[#2B3150] text-[#F2D760]'
+                    ? 'bg-ink text-accent'
                     : 'border border-gray-200 hover:bg-gray-100 text-gray-600'
                 }`}
               >

@@ -35,8 +35,8 @@ export default function PaperLibraryPage() {
   return (
     <div className="space-y-5" id="paper-library-page-panel">
       <div className="space-y-1 select-none">
-        <h2 className="text-base font-extrabold text-[#2B3150] flex items-center space-x-1.5 uppercase tracking-wide">
-          <BookOpen className="w-5 h-5 text-[#DB5F5B]" />
+        <h2 className="text-base font-extrabold text-ink flex items-center space-x-1.5 uppercase tracking-wide">
+          <BookOpen className="w-5 h-5 text-brand" />
           <span>学术论文文献库</span>
         </h2>
         <p className="text-[10px] text-gray-400">收录 WoS 论文、专利及学术文献，共 {papers.length} 篇</p>
@@ -45,7 +45,7 @@ export default function PaperLibraryPage() {
       <div className="bg-white border border-gray-200 rounded-xl p-3 shadow-sm flex flex-col md:flex-row md:items-center gap-3 text-xs">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input type="text" className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#DB5F5B] text-xs" placeholder="搜索论文标题或摘要..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+          <input type="text" className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-xs" placeholder="搜索论文标题或摘要..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
         </div>
       </div>
 
@@ -66,7 +66,7 @@ export default function PaperLibraryPage() {
               </div>
               <button
                 onClick={() => navigate("/entry/" + entry.id)}
-                className="shrink-0 text-[#DB5F5B] hover:text-[#c04f4b] p-1"
+                className="shrink-0 text-brand hover:text-brand-strong p-1"
                 title="查看详情"
               >
                 <ArrowRight className="w-4 h-4" />

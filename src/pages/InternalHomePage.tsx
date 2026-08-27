@@ -212,21 +212,21 @@ export default function InternalHomePage() {
         aria-label="Hero"
       >
         {/* Subtle top accent bar */}
-        <div className="h-1 bg-gradient-to-r from-[#DB5F5B] via-[#DB5F5B]/60 to-transparent" />
+        <div className="h-1 bg-gradient-to-r from-brand via-brand/60 to-transparent" />
 
         <div className="max-w-5xl mx-auto px-4 py-12 sm:py-16 lg:py-20">
           {/* Eyebrow */}
           <div className="flex items-center gap-2 mb-4">
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#DB5F5B] uppercase tracking-wider">
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand uppercase tracking-wider">
               <Sparkles className="w-4 h-4" aria-hidden="true" />
               企业研发知识工作台
             </span>
           </div>
 
           {/* Greeting */}
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#2B3150] font-display tracking-tight leading-tight">
+          <h1 className="text-3xl sm:text-4xl font-bold text-ink font-display tracking-tight leading-tight">
             您好，研发员。
-            <span className="block text-[#2B3150]/80 mt-1">今天想查阅什么？</span>
+            <span className="block text-ink/80 mt-1">今天想查阅什么？</span>
           </h1>
           <p className="mt-3 text-sm text-gray-500 max-w-2xl leading-relaxed">
             秒级检索企业知识、追溯 Sandbox 物理实验过程、查阅学术论文、或向 AI 智能体提问 — 所有知识资产，一站触达。
@@ -238,7 +238,7 @@ export default function InternalHomePage() {
               className={`
                 relative flex items-center bg-white border-2 rounded-lg transition-all duration-200
                 ${searchFocused
-                  ? 'border-[#DB5F5B] shadow-[0_0_0_4px_rgba(219,95,91,0.12)]'
+                  ? 'border-brand shadow-[0_0_0_4px_rgba(219,95,91,0.12)]'
                   : 'border-gray-300 hover:border-gray-400'
                 }
               `}
@@ -246,7 +246,7 @@ export default function InternalHomePage() {
               {/* Search icon */}
               <span className="absolute left-4 flex items-center pointer-events-none">
                 <Search
-                  className={`w-5 h-5 transition-colors duration-200 ${searchFocused ? 'text-[#DB5F5B]' : 'text-gray-400'}`}
+                  className={`w-5 h-5 transition-colors duration-200 ${searchFocused ? 'text-brand' : 'text-gray-400'}`}
                   aria-hidden="true"
                 />
               </span>
@@ -274,12 +274,12 @@ export default function InternalHomePage() {
 
               <button
                 type="submit"
-                className="m-1.5 px-5 py-2 bg-[#2B3150] hover:bg-[#2B3150]/90 text-white text-sm font-semibold
+                className="m-1.5 px-5 py-2 bg-ink hover:bg-ink/90 text-white text-sm font-semibold
                            rounded-md border-2 border-transparent
-                           focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/40
+                           focus:outline-none focus:ring-2 focus:ring-brand/40
                            transition-all duration-150 shrink-0 flex items-center gap-1.5"
               >
-                <Sparkles className="w-4 h-4 text-[#F2D760]" aria-hidden="true" />
+                <Sparkles className="w-4 h-4 text-accent" aria-hidden="true" />
                 <span>提问</span>
               </button>
             </div>
@@ -298,7 +298,7 @@ export default function InternalHomePage() {
                              bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full
                              transition-all duration-150 hover:border-gray-300"
                 >
-                  <q.icon className="w-3 h-3 text-[#DB5F5B]" aria-hidden="true" />
+                  <q.icon className="w-3 h-3 text-brand" aria-hidden="true" />
                   <span className="max-w-[200px] truncate">{q.text}</span>
                 </button>
               ))}
@@ -362,17 +362,17 @@ export default function InternalHomePage() {
           QUICK WORKSPACE
           ═══════════════════════════════════════════════════════════════════════ */}
       <section
-        className="py-12 sm:py-16 bg-[#F5F6E5]/10"
+        className="py-12 sm:py-16 bg-cream/10"
         aria-label="快速工作区"
       >
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center gap-2 mb-2">
-            <Zap className="w-4 h-4 text-[#DB5F5B]" aria-hidden="true" />
-            <h2 className="text-sm font-semibold text-[#DB5F5B] uppercase tracking-wider">
+            <Zap className="w-4 h-4 text-brand" aria-hidden="true" />
+            <h2 className="text-sm font-semibold text-brand uppercase tracking-wider">
               快速工作区
             </h2>
           </div>
-          <p className="text-lg font-bold text-[#2B3150] font-display mb-8">
+          <p className="text-lg font-bold text-ink font-display mb-8">
             常用工作台入口
           </p>
 
@@ -384,18 +384,18 @@ export default function InternalHomePage() {
                   key={card.key}
                   onClick={() => navigate(card.route)}
                   className="group bg-white border border-gray-200 rounded-lg p-5 text-left
-                             hover:border-[#2B3150]/20 hover:shadow-md hover:-translate-y-0.5
-                             focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/30
+                             hover:border-ink/20 hover:shadow-md hover:-translate-y-0.5
+                             focus:outline-none focus:ring-2 focus:ring-brand/30
                              transition-all duration-200"
                 >
                   {/* Icon */}
-                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-[#2B3150]/5 mb-3
-                                  group-hover:bg-[#DB5F5B]/10 transition-colors duration-200">
-                    <card.icon className="w-5 h-5 text-[#2B3150] group-hover:text-[#DB5F5B] transition-colors duration-200" aria-hidden="true" />
+                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-ink/5 mb-3
+                                  group-hover:bg-brand/10 transition-colors duration-200">
+                    <card.icon className="w-5 h-5 text-ink group-hover:text-brand transition-colors duration-200" aria-hidden="true" />
                   </div>
 
                   {/* Title + Description */}
-                  <h3 className="text-sm font-bold text-gray-900 mb-1 group-hover:text-[#2B3150] transition-colors">
+                  <h3 className="text-sm font-bold text-gray-900 mb-1 group-hover:text-ink transition-colors">
                     {card.title}
                   </h3>
                   <p className="text-xs text-gray-500 leading-relaxed line-clamp-2 mb-4">
@@ -411,8 +411,8 @@ export default function InternalHomePage() {
                     ) : (
                       <span className="text-[11px] text-gray-300">—</span>
                     )}
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#1D70B8]
-                                     group-hover:text-[#DB5F5B] transition-colors duration-200">
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-link
+                                     group-hover:text-brand transition-colors duration-200">
                       {card.action}
                       <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform duration-200" aria-hidden="true" />
                     </span>
@@ -435,19 +435,19 @@ export default function InternalHomePage() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Clock className="w-4 h-4 text-[#DB5F5B]" aria-hidden="true" />
-                <h2 className="text-sm font-semibold text-[#DB5F5B] uppercase tracking-wider">
+                <Clock className="w-4 h-4 text-brand" aria-hidden="true" />
+                <h2 className="text-sm font-semibold text-brand uppercase tracking-wider">
                   最近更新
                 </h2>
               </div>
-              <p className="text-lg font-bold text-[#2B3150] font-display">
+              <p className="text-lg font-bold text-ink font-display">
                 最新知识动态
               </p>
             </div>
             <button
               onClick={() => navigate('/search')}
               className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-gray-500
-                         hover:text-[#2B3150] transition-colors"
+                         hover:text-ink transition-colors"
             >
               查看全部
               <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
@@ -488,7 +488,7 @@ export default function InternalHomePage() {
                   {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-sm font-semibold text-gray-900 truncate group-hover:text-[#1D70B8] transition-colors">
+                      <h3 className="text-sm font-semibold text-gray-900 truncate group-hover:text-link transition-colors">
                         {entry.title}
                       </h3>
                       <span className="shrink-0">
@@ -513,9 +513,9 @@ export default function InternalHomePage() {
                   <button
                     onClick={() => navigate(`/entry/${entry.id}`)}
                     className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold
-                               text-gray-400 hover:text-[#DB5F5B] hover:bg-[#DB5F5B]/5 rounded-md
+                               text-gray-400 hover:text-brand hover:bg-brand/5 rounded-md
                                transition-all duration-150 opacity-0 group-hover:opacity-100
-                               focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/30 focus:opacity-100"
+                               focus:outline-none focus:ring-2 focus:ring-brand/30 focus:opacity-100"
                     aria-label={`打开 ${entry.title}`}
                   >
                     打开
@@ -530,7 +530,7 @@ export default function InternalHomePage() {
           <button
             onClick={() => navigate('/search')}
             className="sm:hidden mt-4 w-full text-center text-xs font-semibold text-gray-500
-                       hover:text-[#2B3150] transition-colors py-2"
+                       hover:text-ink transition-colors py-2"
           >
             查看全部 →
           </button>
@@ -541,17 +541,17 @@ export default function InternalHomePage() {
           BOOKMARKS
           ═══════════════════════════════════════════════════════════════════════ */}
       <section
-        className="py-12 sm:py-16 bg-[#F5F6E5]/10"
+        className="py-12 sm:py-16 bg-cream/10"
         aria-label="我的收藏"
       >
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center gap-2 mb-2">
-            <Star className="w-4 h-4 text-[#F2D760] fill-[#F2D760]" aria-hidden="true" />
-            <h2 className="text-sm font-semibold text-[#DB5F5B] uppercase tracking-wider">
+            <Star className="w-4 h-4 text-accent fill-accent" aria-hidden="true" />
+            <h2 className="text-sm font-semibold text-brand uppercase tracking-wider">
               我的收藏
             </h2>
           </div>
-          <p className="text-lg font-bold text-[#2B3150] font-display mb-8">
+          <p className="text-lg font-bold text-ink font-display mb-8">
             星标书签
           </p>
 
@@ -567,8 +567,8 @@ export default function InternalHomePage() {
           ) : favorites.length === 0 ? (
             /* Empty state */
             <div className="text-center py-12 max-w-sm mx-auto">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-[#F2D760]/10 mx-auto mb-4">
-                <Bookmark className="w-8 h-8 text-[#F2D760]" aria-hidden="true" />
+              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 mx-auto mb-4">
+                <Bookmark className="w-8 h-8 text-accent" aria-hidden="true" />
               </div>
               <h3 className="text-sm font-semibold text-gray-700 mb-1">
                 收藏重要知识以便快速访问
@@ -578,10 +578,10 @@ export default function InternalHomePage() {
               </p>
               <button
                 onClick={() => navigate('/search')}
-                className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#2B3150] hover:bg-[#2B3150]/90
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-ink hover:bg-ink/90
                            text-white text-sm font-semibold rounded-md
                            border-2 border-transparent
-                           focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/40
+                           focus:outline-none focus:ring-2 focus:ring-brand/40
                            transition-all duration-150"
               >
                 浏览知识库
@@ -596,13 +596,13 @@ export default function InternalHomePage() {
                   key={entry.id}
                   onClick={() => navigate(`/entry/${entry.id}`)}
                   className="group flex items-start gap-3 p-4 bg-white border border-gray-200 rounded-lg
-                             hover:border-[#2B3150]/20 hover:shadow-sm
-                             focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/30
+                             hover:border-ink/20 hover:shadow-sm
+                             focus:outline-none focus:ring-2 focus:ring-brand/30
                              transition-all duration-150 text-left"
                 >
-                  <Bookmark className="w-4 h-4 text-[#F2D760] fill-[#F2D760] shrink-0 mt-0.5" aria-hidden="true" />
+                  <Bookmark className="w-4 h-4 text-accent fill-accent shrink-0 mt-0.5" aria-hidden="true" />
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-semibold text-gray-900 truncate group-hover:text-[#1D70B8] transition-colors">
+                    <h4 className="text-sm font-semibold text-gray-900 truncate group-hover:text-link transition-colors">
                       {entry.title}
                     </h4>
                     {entry.summary && (
@@ -617,7 +617,7 @@ export default function InternalHomePage() {
                       <span className="text-[11px] text-gray-400">{formatTimeAgo(entry.latestUpdatedAt)}</span>
                     </div>
                   </div>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-[#DB5F5B] shrink-0 mt-1 transition-colors" aria-hidden="true" />
+                  <ArrowUpRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-brand shrink-0 mt-1 transition-colors" aria-hidden="true" />
                 </button>
               ))}
             </div>
@@ -634,12 +634,12 @@ export default function InternalHomePage() {
       >
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center gap-2 mb-2">
-            <TrendingUp className="w-4 h-4 text-[#DB5F5B]" aria-hidden="true" />
-            <h2 className="text-sm font-semibold text-[#DB5F5B] uppercase tracking-wider">
+            <TrendingUp className="w-4 h-4 text-brand" aria-hidden="true" />
+            <h2 className="text-sm font-semibold text-brand uppercase tracking-wider">
               平台动态
             </h2>
           </div>
-          <p className="text-lg font-bold text-[#2B3150] font-display mb-8">
+          <p className="text-lg font-bold text-ink font-display mb-8">
             Knowledge Insights
           </p>
 
@@ -699,7 +699,7 @@ export default function InternalHomePage() {
                       onClick={() => handleSuggestedSearch(term)}
                       className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium
                                  text-gray-600 bg-white border border-gray-200 rounded-full
-                                 hover:border-[#DB5F5B]/30 hover:text-[#DB5F5B]
+                                 hover:border-brand/30 hover:text-brand
                                  transition-all duration-150"
                     >
                       <Search className="w-3 h-3" aria-hidden="true" />
@@ -725,7 +725,7 @@ export default function InternalHomePage() {
             如需发布新的 MCP 接口，请进入
             <button
               onClick={() => navigate('/admin/import')}
-              className="text-[#1D70B8] hover:underline mx-1 font-semibold"
+              className="text-link hover:underline mx-1 font-semibold"
             >
               知识导入
             </button>
@@ -756,9 +756,9 @@ function StatBadge({
   isTime?: boolean;
 }) {
   const colorMap = {
-    navy: { bg: 'bg-[#2B3150]/5', text: 'text-[#2B3150]', icon: 'text-[#2B3150]/60' },
-    coral: { bg: 'bg-[#DB5F5B]/5', text: 'text-[#DB5F5B]', icon: 'text-[#DB5F5B]/60' },
-    gold: { bg: 'bg-[#F2D760]/10', text: 'text-[#2B3150]', icon: 'text-[#F2D760]' },
+    navy: { bg: 'bg-ink/5', text: 'text-ink', icon: 'text-ink/60' },
+    coral: { bg: 'bg-brand/5', text: 'text-brand', icon: 'text-brand/60' },
+    gold: { bg: 'bg-accent/10', text: 'text-ink', icon: 'text-accent' },
   };
   const c = colorMap[color];
 
@@ -822,9 +822,9 @@ function InsightTile({
   color: 'navy' | 'coral' | 'gold';
 }) {
   const colorMap = {
-    navy: { bg: 'bg-[#2B3150]/5', text: 'text-[#2B3150]', bar: 'bg-[#2B3150]' },
-    coral: { bg: 'bg-[#DB5F5B]/5', text: 'text-[#DB5F5B]', bar: 'bg-[#DB5F5B]' },
-    gold: { bg: 'bg-[#F2D760]/10', text: 'text-[#2B3150]', bar: 'bg-[#F2D760]' },
+    navy: { bg: 'bg-ink/5', text: 'text-ink', bar: 'bg-ink' },
+    coral: { bg: 'bg-brand/5', text: 'text-brand', bar: 'bg-brand' },
+    gold: { bg: 'bg-accent/10', text: 'text-ink', bar: 'bg-accent' },
   };
   const c = colorMap[color];
 

@@ -28,7 +28,7 @@ export default function SearchBox({ onSearch, initialQuery = '' }: SearchBoxProp
         <div className="relative">
           <input
             type="text"
-            className="w-full pl-10 pr-24 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/30 focus:border-[#DB5F5B] text-xs font-sans transition-all shadow-inner"
+            className="w-full pl-10 pr-24 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand text-xs font-sans transition-all shadow-inner"
             placeholder={
               searchMode === 'nlp'
                 ? "输入自然语言提问（如：稳定子计算结果是什么？或 投资回报率是多少？）..."
@@ -40,7 +40,7 @@ export default function SearchBox({ onSearch, initialQuery = '' }: SearchBoxProp
           />
           <div className="absolute left-3.5 top-3 text-gray-400">
             {searchMode === 'nlp' ? (
-              <Sparkles className="w-4 h-4 text-[#DB5F5B] animate-pulse" />
+              <Sparkles className="w-4 h-4 text-brand animate-pulse" />
             ) : (
               <Search className="w-4 h-4" />
             )}
@@ -48,9 +48,9 @@ export default function SearchBox({ onSearch, initialQuery = '' }: SearchBoxProp
           
           <button
             type="submit"
-            className="absolute right-2 top-1.5 px-4 py-1.5 bg-[#2B3150] hover:bg-[#2B3150]/90 text-white font-semibold rounded-md text-xs transition-all flex items-center space-x-1"
+            className="absolute right-2 top-1.5 px-4 py-1.5 bg-ink hover:bg-ink/90 text-white font-semibold rounded-md text-xs transition-all flex items-center space-x-1"
           >
-            {searchMode === 'nlp' && <Sparkles className="w-3 h-3 text-[#F2D760]" />}
+            {searchMode === 'nlp' && <Sparkles className="w-3 h-3 text-accent" />}
             <span>检索</span>
           </button>
         </div>
@@ -66,11 +66,11 @@ export default function SearchBox({ onSearch, initialQuery = '' }: SearchBoxProp
                 onClick={() => setSearchMode('nlp')}
                 className={`px-2.5 py-1 rounded text-[10px] font-bold flex items-center space-x-1 transition-all ${
                   searchMode === 'nlp'
-                    ? 'bg-[#2B3150] text-white shadow-sm'
+                    ? 'bg-ink text-white shadow-sm'
                     : 'text-gray-500 hover:text-gray-800'
                 }`}
               >
-                <Sparkles className="w-3 h-3 text-[#F2D760]" />
+                <Sparkles className="w-3 h-3 text-accent" />
                 <span>AI 自然语言问答</span>
               </button>
               <button
@@ -78,7 +78,7 @@ export default function SearchBox({ onSearch, initialQuery = '' }: SearchBoxProp
                 onClick={() => setSearchMode('keyword')}
                 className={`px-2.5 py-1 rounded text-[10px] font-bold transition-all ${
                   searchMode === 'keyword'
-                    ? 'bg-[#2B3150] text-white shadow-sm'
+                    ? 'bg-ink text-white shadow-sm'
                     : 'text-gray-500 hover:text-gray-800'
                 }`}
               >
@@ -89,7 +89,7 @@ export default function SearchBox({ onSearch, initialQuery = '' }: SearchBoxProp
                 onClick={() => setSearchMode('title')}
                 className={`px-2.5 py-1 rounded text-[10px] font-bold transition-all ${
                   searchMode === 'title'
-                    ? 'bg-[#2B3150] text-white shadow-sm'
+                    ? 'bg-ink text-white shadow-sm'
                     : 'text-gray-500 hover:text-gray-800'
                 }`}
               >
@@ -102,7 +102,7 @@ export default function SearchBox({ onSearch, initialQuery = '' }: SearchBoxProp
           <div className="flex items-center space-x-1.5">
             <Filter className="w-3.5 h-3.5 text-gray-400" />
             <select
-              className="border border-gray-200 rounded px-2 py-1 text-[11px] bg-white focus:outline-none focus:ring-1 focus:ring-[#DB5F5B] text-gray-600"
+              className="border border-gray-200 rounded px-2 py-1 text-[11px] bg-white focus:outline-none focus:ring-1 focus:ring-brand text-gray-600"
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
               id="search-type-filter"
@@ -126,7 +126,7 @@ export default function SearchBox({ onSearch, initialQuery = '' }: SearchBoxProp
             <button
               key={term}
               onClick={() => handleQuickTagClick(term)}
-              className="bg-gray-50 hover:bg-[#F5F6E5] text-gray-600 border border-gray-150 rounded px-1.5 py-0.5 hover:text-[#DB5F5B] hover:border-[#DB5F5B]/30 transition-all"
+              className="bg-gray-50 hover:bg-cream text-gray-600 border border-gray-150 rounded px-1.5 py-0.5 hover:text-brand hover:border-brand/30 transition-all"
             >
               {term}
             </button>

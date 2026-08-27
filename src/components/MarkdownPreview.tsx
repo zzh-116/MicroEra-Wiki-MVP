@@ -30,7 +30,7 @@ export default function MarkdownPreview({ markdownFile, onClose }: MarkdownPrevi
       {/* Panel Header */}
       <div className="bg-gray-50 px-4 py-3 border-b border-gray-200 flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <FileText className="w-4 h-4 text-[#DB5F5B]" />
+          <FileText className="w-4 h-4 text-brand" />
           <span className="font-semibold text-xs text-gray-700">
             MarkItDown 转换输出: {markdownFile.mdFilename}
           </span>
@@ -42,7 +42,7 @@ export default function MarkdownPreview({ markdownFile, onClose }: MarkdownPrevi
           </span>
           <button
             onClick={handleCopy}
-            className="p-1 text-gray-500 hover:text-[#DB5F5B] hover:bg-gray-100 rounded transition-all text-xs flex items-center space-x-1 px-2 border border-gray-200"
+            className="p-1 text-gray-500 hover:text-brand hover:bg-gray-100 rounded transition-all text-xs flex items-center space-x-1 px-2 border border-gray-200"
           >
             {copied ? (
               <>
@@ -69,19 +69,19 @@ export default function MarkdownPreview({ markdownFile, onClose }: MarkdownPrevi
 
       {/* Styled Rendered Markdown container */}
       <div className="p-5 max-h-[500px] overflow-y-auto bg-white font-sans text-xs leading-relaxed text-gray-700 select-text">
-        <div className="prose prose-sm max-w-none prose-headings:text-[#2B3150] prose-headings:font-bold prose-h1:text-lg prose-h2:text-sm prose-h3:text-xs">
+        <div className="prose prose-sm max-w-none prose-headings:text-ink prose-headings:font-bold prose-h1:text-lg prose-h2:text-sm prose-h3:text-xs">
           {/* We will render markdown text by splitting it into sections and displaying nice visual blocks */}
           {stripDataUriImages(markdownFile.markdownContent).split('\n').map((line, idx) => {
             if (line.startsWith('# ')) {
               return (
-                <h1 key={idx} className="text-base font-bold text-[#2B3150] border-b border-gray-100 pb-1 mt-4 mb-2">
+                <h1 key={idx} className="text-base font-bold text-ink border-b border-gray-100 pb-1 mt-4 mb-2">
                   {line.replace('# ', '')}
                 </h1>
               );
             }
             if (line.startsWith('## ')) {
               return (
-                <h2 key={idx} className="text-xs font-bold text-[#DB5F5B] mt-3 mb-1.5 uppercase tracking-wider">
+                <h2 key={idx} className="text-xs font-bold text-brand mt-3 mb-1.5 uppercase tracking-wider">
                   {line.replace('## ', '')}
                 </h2>
               );
@@ -96,14 +96,14 @@ export default function MarkdownPreview({ markdownFile, onClose }: MarkdownPrevi
             if (line.startsWith('- ')) {
               return (
                 <div key={idx} className="flex items-start space-x-1.5 ml-2.5 my-1">
-                  <span className="text-[#DB5F5B] font-bold">•</span>
+                  <span className="text-brand font-bold">•</span>
                   <span>{line.replace('- ', '')}</span>
                 </div>
               );
             }
             if (line.trim().startsWith('{') || line.trim().startsWith('"') || line.trim().startsWith('}')) {
               return (
-                <pre key={idx} className="bg-gray-900 text-green-400 p-2.5 rounded-md font-mono text-[10px] my-2 overflow-x-auto block border-l-4 border-[#F2D760]">
+                <pre key={idx} className="bg-gray-900 text-green-400 p-2.5 rounded-md font-mono text-[10px] my-2 overflow-x-auto block border-l-4 border-accent">
                   <code>{line}</code>
                 </pre>
               );

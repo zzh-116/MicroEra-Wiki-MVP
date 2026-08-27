@@ -76,7 +76,7 @@ export default function ChatInput({
               onClick={() => onQuickPrompt?.(prompt)}
               disabled={disabled}
               className="px-2.5 py-1 text-[11px] font-medium text-gray-500 bg-white border border-gray-200
-                         rounded-full hover:border-[#DB5F5B]/30 hover:text-[#DB5F5B] hover:bg-[#DB5F5B]/5
+                         rounded-full hover:border-brand/30 hover:text-brand hover:bg-brand/5
                          transition-all duration-150 disabled:opacity-50"
             >
               {prompt}
@@ -86,7 +86,7 @@ export default function ChatInput({
             <button
               type="button"
               onClick={onClear}
-              className="px-2.5 py-1 text-[11px] font-medium text-gray-400 hover:text-[#DB5F5B]
+              className="px-2.5 py-1 text-[11px] font-medium text-gray-400 hover:text-brand
                          transition-colors ml-auto"
             >
               清空对话
@@ -108,7 +108,7 @@ export default function ChatInput({
               disabled={disabled}
               rows={1}
               className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm
-                         focus:outline-none focus:border-[#DB5F5B] focus:ring-2 focus:ring-[#DB5F5B]/15
+                         focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/15
                          disabled:bg-gray-50 disabled:text-gray-400
                          resize-none transition-all placeholder:text-gray-400"
               style={{ maxHeight: '200px' }}
@@ -131,7 +131,7 @@ export default function ChatInput({
             placeholder={placeholder}
             disabled={disabled}
             className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-xs
-                       focus:outline-none focus:ring-1 focus:ring-[#DB5F5B] focus:border-[#DB5F5B]
+                       focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand
                        disabled:bg-gray-50 disabled:text-gray-400 transition-all"
           />
         )}
@@ -141,8 +141,8 @@ export default function ChatInput({
           disabled={isSendDisabled}
           className={`shrink-0 flex items-center justify-center rounded-xl transition-all ${
             multiline
-              ? 'w-10 h-10 bg-[#2B3150] text-white hover:bg-[#2B3150]/90 disabled:bg-gray-200 disabled:text-gray-400'
-              : 'w-9 h-9 bg-[#2B3150] text-white hover:bg-[#2B3150]/90 disabled:bg-gray-200 disabled:text-gray-400'
+              ? 'w-10 h-10 bg-ink text-white hover:bg-ink/90 disabled:bg-gray-200 disabled:text-gray-400'
+              : 'w-9 h-9 bg-ink text-white hover:bg-ink/90 disabled:bg-gray-200 disabled:text-gray-400'
           } disabled:cursor-not-allowed`}
           title="发送"
         >

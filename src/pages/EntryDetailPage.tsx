@@ -25,7 +25,7 @@ export default function EntryDetailPage() {
       {/* Back Button */}
       <button
         onClick={handleBack}
-        className="inline-flex items-center space-x-1.5 text-sm font-bold text-gray-600 hover:text-[#DB5F5B] transition-colors select-none group"
+        className="inline-flex items-center space-x-1.5 text-sm font-bold text-gray-600 hover:text-brand transition-colors select-none group"
         title="返回上一页"
       >
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
@@ -34,12 +34,12 @@ export default function EntryDetailPage() {
 
       {/* Breadcrumbs */}
       <nav className="flex items-center space-x-1 text-xs text-gray-500 select-none">
-        <Link to="/" className="flex items-center hover:text-[#DB5F5B] transition-colors">
+        <Link to="/" className="flex items-center hover:text-brand transition-colors">
           <Home className="w-3 h-3 mr-1" />
           <span>首页</span>
         </Link>
         <ChevronRight className="w-3 h-3 text-gray-400" />
-        <Link to="/papers" className="hover:text-[#DB5F5B] transition-colors truncate max-w-[150px]">
+        <Link to="/papers" className="hover:text-brand transition-colors truncate max-w-[150px]">
           知识库
         </Link>
         <ChevronRight className="w-3 h-3 text-gray-400" />

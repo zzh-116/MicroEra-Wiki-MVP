@@ -51,7 +51,7 @@ export default function WikiSidebar() {
         {/* Directory Row */}
         <div
           onClick={() => hasChildren ? toggleSpace(space.id) : null}
-          className={`flex items-center justify-between py-1.5 px-2 rounded hover:bg-[#F5F6E5] cursor-pointer transition-colors ${
+          className={`flex items-center justify-between py-1.5 px-2 rounded hover:bg-cream cursor-pointer transition-colors ${
             depth === 0 ? 'font-bold text-gray-800' : 'text-gray-600'
           }`}
           style={{ paddingLeft: `${Math.max(8, depth * 14)}px` }}
@@ -68,9 +68,9 @@ export default function WikiSidebar() {
             )}
 
             {isExpanded ? (
-              <FolderOpen className="w-3.5 h-3.5 text-[#DB5F5B] flex-shrink-0" />
+              <FolderOpen className="w-3.5 h-3.5 text-brand flex-shrink-0" />
             ) : (
-              <Folder className="w-3.5 h-3.5 text-[#2B3150] flex-shrink-0" />
+              <Folder className="w-3.5 h-3.5 text-ink flex-shrink-0" />
             )}
 
             <span className="truncate" title={space.name}>{space.name}</span>
@@ -97,14 +97,14 @@ export default function WikiSidebar() {
                   onClick={() => navigate(`/entry/${entry.id}`)}
                   className={`flex items-center justify-between py-1 pr-2 rounded-md cursor-pointer transition-all ${
                     isActive
-                      ? 'bg-[#2B3150] text-[#F2D760] font-bold shadow-sm'
-                      : 'text-gray-500 hover:text-[#DB5F5B] hover:bg-gray-100'
+                      ? 'bg-ink text-accent font-bold shadow-sm'
+                      : 'text-gray-500 hover:text-brand hover:bg-gray-100'
                   }`}
                   style={{ paddingLeft: `${(depth + 1) * 14 + 14}px` }}
                   id={`sidebar-entry-${entry.id}`}
                 >
                   <div className="flex items-center space-x-1.5 min-w-0">
-                    <FileText className={`w-3.5 h-3.5 flex-shrink-0 ${isActive ? 'text-[#F2D760]' : 'text-gray-400'}`} />
+                    <FileText className={`w-3.5 h-3.5 flex-shrink-0 ${isActive ? 'text-accent' : 'text-gray-400'}`} />
                     <span className="truncate" title={entry.title}>
                       {entry.title}
                     </span>
@@ -125,8 +125,8 @@ export default function WikiSidebar() {
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-3 shadow-sm select-none" id="wiki-sidebar-panel">
       <div className="flex items-center space-x-1.5 pb-2 mb-2 border-b border-gray-100">
-        <Database className="w-4 h-4 text-[#DB5F5B]" />
-        <span className="font-extrabold text-xs text-[#2B3150] uppercase tracking-wide">
+        <Database className="w-4 h-4 text-brand" />
+        <span className="font-extrabold text-xs text-ink uppercase tracking-wide">
           子 Wiki 导航树 (Spaces)
         </span>
       </div>
@@ -137,13 +137,13 @@ export default function WikiSidebar() {
 
       {/* Quick guide bottom card */}
       <div className="mt-4 p-2 bg-gray-50 rounded border border-gray-150 text-[10px] text-gray-500">
-        <div className="font-bold flex items-center mb-0.5 text-[#2B3150]">
+        <div className="font-bold flex items-center mb-0.5 text-ink">
           <Globe className="w-3 h-3 mr-0.5 text-green-600" />
           <span>访问角色指示</span>
         </div>
         <div>当前状态: {isLoggedIn ? '🔑 已登录 (内部人员)' : '🌐 未登录 (访客)'}</div>
         {!isLoggedIn && (
-          <div className="text-[#DB5F5B] mt-1">
+          <div className="text-brand mt-1">
             * 内部条目已被隐藏，登录后解锁全部 Sandbox 数据链路。
           </div>
         )}

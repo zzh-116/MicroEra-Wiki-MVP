@@ -64,8 +64,8 @@ export function VersionInfoPanel({
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4 shadow-sm" id="system-version-info-panel">
       <div className="border-b border-gray-100 pb-3">
-        <h3 className="text-sm font-extrabold text-[#2B3150] uppercase tracking-wide flex items-center">
-          <History className="w-4 h-4 mr-1.5 text-[#DB5F5B]" />
+        <h3 className="text-sm font-extrabold text-ink uppercase tracking-wide flex items-center">
+          <History className="w-4 h-4 mr-1.5 text-brand" />
           <span>Wiki 平台版本与系统合规档案</span>
         </h3>
         <p className="text-[10px] text-gray-400 mt-0.5 font-sans">
@@ -121,7 +121,7 @@ export function VersionInfoPanel({
 
       {/* Version Descriptions */}
       <div className="space-y-3 text-xs">
-        <div className="bg-[#F5F6E5]/40 p-4 rounded-lg border border-[#F2D760]/30 space-y-1.5">
+        <div className="bg-cream/40 p-4 rounded-lg border border-accent/30 space-y-1.5">
           <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block">
             🚀 现行产品版本说明 (Product Release Note):
           </span>
@@ -130,7 +130,7 @@ export function VersionInfoPanel({
           </p>
         </div>
 
-        <div className="bg-[#F5F6E5]/40 p-4 rounded-lg border border-[#F2D760]/30 space-y-1.5">
+        <div className="bg-cream/40 p-4 rounded-lg border border-accent/30 space-y-1.5">
           <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block">
             📄 对应需求设计说明 (PRD Specification Note):
           </span>
@@ -189,7 +189,7 @@ export function EntryVersionMeta({ entry }: { entry: WikiEntry }) {
     <div className="bg-white border border-gray-200 rounded-xl p-3.5 shadow-sm space-y-3 text-xs" id="entry-version-meta-panel">
       <div className="flex items-center justify-between pb-1.5 border-b border-gray-100 select-none">
         <h3 className="font-extrabold text-gray-800 uppercase tracking-wide flex items-center">
-          <Clock className="w-3.5 h-3.5 text-[#DB5F5B] mr-1" />
+          <Clock className="w-3.5 h-3.5 text-brand mr-1" />
           <span>条目现行版本 (Revision)</span>
         </h3>
         <span className={`px-1.5 py-0.2 rounded font-mono text-[9px] font-bold ${
@@ -204,7 +204,7 @@ export function EntryVersionMeta({ entry }: { entry: WikiEntry }) {
       <div className="space-y-2 leading-relaxed">
         <div className="flex justify-between items-center">
           <span className="text-gray-400">条目版本号：</span>
-          <span className="font-mono font-extrabold text-[#2B3150]">{currentVersion}</span>
+          <span className="font-mono font-extrabold text-ink">{currentVersion}</span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-gray-400">最后更新：</span>
@@ -326,8 +326,8 @@ export function EntryVersionHistory({ entry, onRollbackSuccess }: EntryVersionHi
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4 shadow-sm" id="entry-version-history-panel">
       <div className="flex items-center justify-between pb-2 border-b border-gray-100 select-none">
-        <h3 className="text-xs font-extrabold text-[#2B3150] uppercase tracking-wide flex items-center">
-          <History className="w-4 h-4 mr-1.5 text-[#DB5F5B]" />
+        <h3 className="text-xs font-extrabold text-ink uppercase tracking-wide flex items-center">
+          <History className="w-4 h-4 mr-1.5 text-brand" />
           <span>条目物理修订与全量备份链 (Auditing Timeline)</span>
         </h3>
         <span className="text-[9px] text-gray-400 font-mono">
@@ -343,18 +343,18 @@ export function EntryVersionHistory({ entry, onRollbackSuccess }: EntryVersionHi
               {/* Timeline Indicator dot */}
               <span className={`absolute -left-[23px] top-1 w-2.5 h-2.5 rounded-full border-2 ${
                 hist.current 
-                  ? 'bg-[#DB5F5B] border-white ring-2 ring-[#DB5F5B]/30' 
+                  ? 'bg-brand border-white ring-2 ring-brand/30' 
                   : 'bg-gray-300 border-white'
               }`} />
 
               <div className="space-y-1">
                 <div className="flex items-center space-x-2">
-                  <span className={`font-mono font-bold text-xs ${hist.current ? 'text-[#DB5F5B]' : 'text-gray-700'}`}>
+                  <span className={`font-mono font-bold text-xs ${hist.current ? 'text-brand' : 'text-gray-700'}`}>
                     {hist.version}
                   </span>
                   
                   {hist.current && (
-                    <span className="bg-red-50 text-[#DB5F5B] border border-red-100 text-[8px] px-1 py-0.1 rounded font-bold uppercase scale-90">
+                    <span className="bg-red-50 text-brand border border-red-100 text-[8px] px-1 py-0.1 rounded font-bold uppercase scale-90">
                       当前最新版本
                     </span>
                   )}
@@ -376,7 +376,7 @@ export function EntryVersionHistory({ entry, onRollbackSuccess }: EntryVersionHi
                   <div className="mt-1.5 pt-1.5 border-t border-gray-200/50 flex justify-between select-none">
                     <button
                       onClick={() => setSelectedHistory(hist)}
-                      className="text-[#DB5F5B] font-bold text-[10px] hover:underline"
+                      className="text-brand font-bold text-[10px] hover:underline"
                     >
                       查看此版本全量备份 & 恢复 →
                     </button>
@@ -396,7 +396,7 @@ export function EntryVersionHistory({ entry, onRollbackSuccess }: EntryVersionHi
             {/* Header row */}
             <div className="flex justify-between items-start pb-2 border-b border-gray-150">
               <div className="space-y-0.5">
-                <h4 className="font-extrabold text-sm text-[#2B3150]">
+                <h4 className="font-extrabold text-sm text-ink">
                   历史备份快照详情 (Snapshot Preview)
                 </h4>
                 <div className="flex items-center space-x-2 text-[10px] text-gray-400 font-mono">
@@ -453,7 +453,7 @@ export function EntryVersionHistory({ entry, onRollbackSuccess }: EntryVersionHi
                 className={`flex-1 py-2 rounded text-white font-bold transition-all flex items-center justify-center space-x-1.5 ${
                   selectedHistory.current 
                     ? 'bg-gray-300 cursor-not-allowed' 
-                    : 'bg-[#DB5F5B] hover:bg-[#DB5F5B]/90'
+                    : 'bg-brand hover:bg-brand/90'
                 }`}
               >
                 <RotateCcw className="w-3.5 h-3.5" />

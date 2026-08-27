@@ -33,8 +33,8 @@ export default function DataItemPage() {
   return (
     <div className="space-y-5" id="data-item-page-panel">
       <div className="space-y-1 select-none">
-        <h2 className="text-base font-extrabold text-[#2B3150] flex items-center space-x-1.5 uppercase tracking-wide">
-          <Database className="w-5 h-5 text-[#DB5F5B]" />
+        <h2 className="text-base font-extrabold text-ink flex items-center space-x-1.5 uppercase tracking-wide">
+          <Database className="w-5 h-5 text-brand" />
           <span>研发数据规范与结构</span>
         </h2>
         <p className="text-[10px] text-gray-400">
@@ -43,12 +43,12 @@ export default function DataItemPage() {
       </div>
 
       <div className="bg-white border border-gray-200 rounded-xl p-3 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs">
-        <span className="font-extrabold text-[#2B3150] uppercase tracking-wide flex items-center">
-          <Database className="w-4 h-4 mr-1 text-[#DB5F5B]" />
+        <span className="font-extrabold text-ink uppercase tracking-wide flex items-center">
+          <Database className="w-4 h-4 mr-1 text-brand" />
           <span>数据条目 ({filteredItems.length} 项)</span>
         </span>
         <div className="relative max-w-xs w-full">
-          <input type="text" className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#DB5F5B] text-xs" placeholder="搜索数据规范..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+          <input type="text" className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-brand text-xs" placeholder="搜索数据规范..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
           <Search className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-gray-400" />
         </div>
       </div>
@@ -63,16 +63,16 @@ export default function DataItemPage() {
             <div key={entry.id} className="bg-white border border-gray-200 rounded-xl p-5 space-y-4 shadow-sm">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-gray-100">
                 <div className="space-y-1">
-                  <h3 className="font-extrabold text-sm text-[#2B3150] tracking-tight leading-relaxed">{entry.title}</h3>
+                  <h3 className="font-extrabold text-sm text-ink tracking-tight leading-relaxed">{entry.title}</h3>
                   <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1 text-[10px] text-gray-400">
                     <span className="flex items-center"><User className="w-3 h-3 mr-0.5" />{(entry.owner || '管理员')}</span>
                     <span className="flex items-center font-mono"><Calendar className="w-3 h-3 mr-0.5" />{entry.latestUpdatedAt}</span>
                     <span className="bg-red-50 text-red-600 border border-red-100 px-1.5 py-0.2 rounded font-mono font-bold">v1.0</span>
                   </div>
                 </div>
-                <button onClick={() => navigate("/entry/" + entry.id)} className="py-1 px-2.5 bg-gray-50 border border-gray-200 hover:border-[#DB5F5B]/30 text-gray-600 rounded text-[10px] font-bold flex items-center space-x-1">
+                <button onClick={() => navigate("/entry/" + entry.id)} className="py-1 px-2.5 bg-gray-50 border border-gray-200 hover:border-brand/30 text-gray-600 rounded text-[10px] font-bold flex items-center space-x-1">
                   <span>查看详情</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#DB5F5B]" />
+                  <ArrowRight className="w-3.5 h-3.5 text-brand" />
                 </button>
               </div>
 
@@ -80,7 +80,7 @@ export default function DataItemPage() {
                 <div className="bg-gray-50 p-3 rounded-lg border border-gray-150 space-y-1">
                   <span className="text-[10px] text-gray-400 font-bold block uppercase">存储规范</span>
                   <p className="text-gray-700 leading-relaxed flex items-start">
-                    <HardDrive className="w-3.5 h-3.5 text-[#DB5F5B] mr-1 shrink-0 mt-0.5" />
+                    <HardDrive className="w-3.5 h-3.5 text-brand mr-1 shrink-0 mt-0.5" />
                     <span>PostgreSQL 数据库</span>
                   </p>
                 </div>

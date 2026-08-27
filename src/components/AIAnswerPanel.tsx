@@ -55,10 +55,10 @@ export default function AIAnswerPanel({
 
   if (isLoading) {
     return (
-      <div className="bg-white border border-[#DB5F5B]/20 rounded-xl p-5 shadow-sm space-y-4" id="ai-answer-loading">
+      <div className="bg-white border border-brand/20 rounded-xl p-5 shadow-sm space-y-4" id="ai-answer-loading">
         <div className="flex items-center space-x-2 border-b border-gray-100 pb-2.5">
-          <Sparkles className="w-4 h-4 text-[#DB5F5B] animate-spin" />
-          <span className="font-semibold text-xs text-[#2B3150]">
+          <Sparkles className="w-4 h-4 text-brand animate-spin" />
+          <span className="font-semibold text-xs text-ink">
             {phrase}
           </span>
         </div>
@@ -76,11 +76,11 @@ export default function AIAnswerPanel({
   if (!answer) return null;
 
   return (
-    <div className="bg-white border border-[#DB5F5B]/15 rounded-xl p-4 shadow-sm space-y-4" id="ai-answer-panel">
+    <div className="bg-white border border-brand/15 rounded-xl p-4 shadow-sm space-y-4" id="ai-answer-panel">
       {/* Question Header */}
       <div className="flex items-start justify-between border-b border-gray-100 pb-2">
         <div className="flex items-center space-x-2">
-          <span className="bg-[#DB5F5B] text-white p-1 rounded-md">
+          <span className="bg-brand text-white p-1 rounded-md">
             <MessageSquare className="w-3.5 h-3.5" />
           </span>
           <div>
@@ -89,8 +89,8 @@ export default function AIAnswerPanel({
           </div>
         </div>
 
-        <div className="flex items-center space-x-1 text-[#DB5F5B] text-[10px] bg-[#F5F6E5] px-2 py-0.5 rounded border border-[#DB5F5B]/10 font-bold">
-          <Sparkles className="w-3 h-3 text-[#F2D760]" />
+        <div className="flex items-center space-x-1 text-brand text-[10px] bg-cream px-2 py-0.5 rounded border border-brand/10 font-bold">
+          <Sparkles className="w-3 h-3 text-accent" />
           <span>MiQi AI 综合解答</span>
         </div>
       </div>
@@ -103,7 +103,7 @@ export default function AIAnswerPanel({
           <p key={i} className="mb-2 last:mb-0">
             {para.split('**').map((chunk, j) => {
               if (j % 2 === 1) {
-                return <strong key={j} className="text-[#2B3150] font-bold">{chunk}</strong>;
+                return <strong key={j} className="text-ink font-bold">{chunk}</strong>;
               }
               return chunk;
             })}
@@ -113,9 +113,9 @@ export default function AIAnswerPanel({
 
       {/* Citations section - REFERENCE REQUIREMENTS MET IN FULL DETAIL */}
       <div>
-        <div className="flex items-center justify-between text-[#2B3150] font-bold text-[11px] mb-2 select-none">
+        <div className="flex items-center justify-between text-ink font-bold text-[11px] mb-2 select-none">
           <span className="flex items-center">
-            <BookOpen className="w-3.5 h-3.5 mr-1.5 text-[#DB5F5B]" />
+            <BookOpen className="w-3.5 h-3.5 mr-1.5 text-brand" />
             <span>引航文献与源文件参考 (Reference Citations)</span>
           </span>
           <span className="text-[10px] text-green-700 bg-green-50 border border-green-150 px-1.5 py-0.2 rounded font-normal font-mono">
@@ -127,12 +127,12 @@ export default function AIAnswerPanel({
           {references.map((ref, idx) => (
             <div
               key={ref.id || idx}
-              className="p-3 bg-[#F5F6E5]/40 rounded-lg border border-[#DB5F5B]/10 hover:border-[#DB5F5B]/30 transition-all text-xs"
+              className="p-3 bg-cream/40 rounded-lg border border-brand/10 hover:border-brand/30 transition-all text-xs"
             >
               {/* Ref Title Line */}
               <div className="flex items-start justify-between gap-1 mb-1.5">
                 <div>
-                  <span className="font-semibold text-[#2B3150] block">
+                  <span className="font-semibold text-ink block">
                     {idx + 1}. 《{ref.title || '数据参考规范'}》
                   </span>
                   <span className="text-[10px] text-gray-500 font-mono mt-0.5 block">
@@ -141,13 +141,13 @@ export default function AIAnswerPanel({
                   </span>
                 </div>
 
-                <span className="text-[10px] text-[#DB5F5B] font-semibold bg-white border border-[#DB5F5B]/10 px-1.5 py-0.5 rounded shrink-0">
+                <span className="text-[10px] text-brand font-semibold bg-white border border-brand/10 px-1.5 py-0.5 rounded shrink-0">
                   {ref.locator}
                 </span>
               </div>
 
               {/* Quote Quote block */}
-              <div className="pl-3 border-l-2 border-[#DB5F5B]/20 text-gray-600 italic font-mono mb-2 p-1 bg-white/50 rounded-r select-all text-[11px]">
+              <div className="pl-3 border-l-2 border-brand/20 text-gray-600 italic font-mono mb-2 p-1 bg-white/50 rounded-r select-all text-[11px]">
                 <Quote className="w-3 h-3 text-gray-300 inline mr-1 -mt-1.5" />
                 {ref.quote}
               </div>
@@ -162,7 +162,7 @@ export default function AIAnswerPanel({
                 {ref.fromEntryId && (
                   <button
                     onClick={() => navigate(`/entry/${ref.fromEntryId}`)}
-                    className="text-[#DB5F5B] hover:underline flex items-center font-semibold"
+                    className="text-brand hover:underline flex items-center font-semibold"
                   >
                     <span>跳转至原始条目详情</span>
                     <ChevronRight className="w-3 h-3 ml-0.5" />

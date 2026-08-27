@@ -43,8 +43,8 @@ export default function ReferenceView({ references }: ReferenceViewProps) {
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-      <h3 className="text-sm font-bold text-[#2B3150] mb-3 pb-2 border-b border-gray-100 flex items-center gap-1.5">
-        <Link2 className="w-3.5 h-3.5 text-[#DB5F5B]" />
+      <h3 className="text-sm font-bold text-ink mb-3 pb-2 border-b border-gray-100 flex items-center gap-1.5">
+        <Link2 className="w-3.5 h-3.5 text-brand" />
         参考文献与引用
         <span className="text-[10px] text-gray-400 font-normal">
           ({references.length})
@@ -59,10 +59,10 @@ export default function ReferenceView({ references }: ReferenceViewProps) {
           return (
             <div
               key={idx}
-              className="flex items-start gap-2 p-2.5 rounded-lg bg-gray-50/50 border border-gray-100 hover:border-[#DB5F5B]/20 transition-colors"
+              className="flex items-start gap-2 p-2.5 rounded-lg bg-gray-50/50 border border-gray-100 hover:border-brand/20 transition-colors"
             >
               {/* Index badge */}
-              <span className="shrink-0 flex items-center justify-center w-5 h-5 rounded bg-[#2B3150] text-white text-[10px] font-bold mt-0.5">
+              <span className="shrink-0 flex items-center justify-center w-5 h-5 rounded bg-ink text-white text-[10px] font-bold mt-0.5">
                 {idx + 1}
               </span>
 
@@ -80,13 +80,13 @@ export default function ReferenceView({ references }: ReferenceViewProps) {
                       href={ref.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs font-semibold text-[#1D70B8] hover:underline inline-flex items-center gap-1"
+                      className="text-xs font-semibold text-link hover:underline inline-flex items-center gap-1"
                     >
                       {ref.label}
                       <ExternalLink className="w-3 h-3 shrink-0" />
                     </a>
                   ) : (
-                    <span className="text-xs font-semibold text-[#2B3150]">
+                    <span className="text-xs font-semibold text-ink">
                       {ref.label}
                     </span>
                   )}
@@ -97,14 +97,14 @@ export default function ReferenceView({ references }: ReferenceViewProps) {
                       href={`https://doi.org/${ref.doi}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[10px] font-mono text-[#1D70B8] bg-blue-50/50 px-1.5 py-0.5 rounded border border-blue-100 hover:bg-blue-100 transition-colors"
+                      className="text-[10px] font-mono text-link bg-blue-50/50 px-1.5 py-0.5 rounded border border-blue-100 hover:bg-blue-100 transition-colors"
                     >
                       DOI: {ref.doi}
                     </a>
                   )}
 
                   {/* Type label */}
-                  <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-[#F5F6E5] text-[#2B3150] border border-[#DB5F5B]/10">
+                  <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-cream text-ink border border-brand/10">
                     {typeLabel}
                   </span>
                 </div>

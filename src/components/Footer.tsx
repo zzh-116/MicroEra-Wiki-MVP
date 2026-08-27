@@ -3,14 +3,14 @@ import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
-    <footer className="bg-[#2B3150] text-gray-300 text-xs mt-12 border-t-8 border-[#DB5F5B] select-none" id="gov-style-footer">
+    <footer className="bg-ink text-gray-300 text-xs mt-12 border-t-8 border-brand select-none" id="gov-style-footer">
       <div className="max-w-7xl mx-auto px-4 py-10">
         {/* Four Column Directory */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pb-8 border-b border-gray-700/60">
 
           {/* Col 1: Wiki内容 */}
           <div className="space-y-3">
-            <h4 className="font-extrabold text-[#F2D760] text-xs uppercase tracking-wider pb-1 border-b border-gray-700/55">
+            <h4 className="font-extrabold text-accent text-xs uppercase tracking-wider pb-1 border-b border-gray-700/55">
               Wiki 内容
             </h4>
             <ul className="space-y-2 text-[11px] text-gray-300">
@@ -25,7 +25,7 @@ export default function Footer() {
 
           {/* Col 2: 服务与工具 */}
           <div className="space-y-3">
-            <h4 className="font-extrabold text-[#F2D760] text-xs uppercase tracking-wider pb-1 border-b border-gray-700/55">
+            <h4 className="font-extrabold text-accent text-xs uppercase tracking-wider pb-1 border-b border-gray-700/55">
               服务与工具
             </h4>
             <ul className="space-y-2 text-[11px] text-gray-300">
@@ -40,7 +40,7 @@ export default function Footer() {
 
           {/* Col 3: 管理与规范 */}
           <div className="space-y-3">
-            <h4 className="font-extrabold text-[#F2D760] text-xs uppercase tracking-wider pb-1 border-b border-gray-700/55">
+            <h4 className="font-extrabold text-accent text-xs uppercase tracking-wider pb-1 border-b border-gray-700/55">
               管理与规范
             </h4>
             <ul className="space-y-2 text-[11px] text-gray-300">
@@ -55,7 +55,7 @@ export default function Footer() {
 
           {/* Col 4: 支持 */}
           <div className="space-y-3">
-            <h4 className="font-extrabold text-[#F2D760] text-xs uppercase tracking-wider pb-1 border-b border-gray-700/55">
+            <h4 className="font-extrabold text-accent text-xs uppercase tracking-wider pb-1 border-b border-gray-700/55">
               支持
             </h4>
             <ul className="space-y-2 text-[11px] text-gray-300">
@@ -72,7 +72,7 @@ export default function Footer() {
         <div className="pt-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="space-y-2 max-w-xl">
             <div className="flex items-center space-x-2">
-              <span className="font-extrabold text-sm tracking-wider text-[#F2D760] font-sans">
+              <span className="font-extrabold text-sm tracking-wider text-accent font-sans">
                 微观纪元 Wiki (Miqro Wiki)
               </span>
               <span className="border border-gray-500 text-gray-400 text-[8px] font-mono px-1 rounded uppercase">

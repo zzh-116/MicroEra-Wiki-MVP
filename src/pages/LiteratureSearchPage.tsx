@@ -321,14 +321,14 @@ export default function LiteratureSearchPage() {
           {/* Title */}
           <div className="text-center mb-7">
             <div className="inline-flex items-center gap-2 mb-3">
-              <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#DB5F5B]/10">
-                <BookOpen className="w-4 h-4 text-[#DB5F5B]" aria-hidden="true" />
+              <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-brand/10">
+                <BookOpen className="w-4 h-4 text-brand" aria-hidden="true" />
               </span>
-              <span className="text-xs font-semibold text-[#DB5F5B] uppercase tracking-wider">
+              <span className="text-xs font-semibold text-brand uppercase tracking-wider">
                 AI-Powered Discovery
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#2B3150] font-display tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-ink font-display tracking-tight">
               文献检索与导入
             </h1>
             <p className="mt-2 text-sm text-gray-500 max-w-lg mx-auto">
@@ -342,13 +342,13 @@ export default function LiteratureSearchPage() {
               className={`
                 relative flex items-center bg-white border-2 rounded-lg transition-all duration-200
                 ${searchFocused
-                  ? 'border-[#DB5F5B] shadow-[0_0_0_4px_rgba(219,95,91,0.12)]'
+                  ? 'border-brand shadow-[0_0_0_4px_rgba(219,95,91,0.12)]'
                   : 'border-gray-300 hover:border-gray-400'
                 }
               `}
             >
               <span className="absolute left-4 flex items-center pointer-events-none">
-                <BookOpen className={`w-5 h-5 transition-colors duration-200 ${searchFocused ? 'text-[#DB5F5B]' : 'text-gray-400'}`} aria-hidden="true" />
+                <BookOpen className={`w-5 h-5 transition-colors duration-200 ${searchFocused ? 'text-brand' : 'text-gray-400'}`} aria-hidden="true" />
               </span>
 
               <input
@@ -372,9 +372,9 @@ export default function LiteratureSearchPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="m-1.5 px-5 py-2 bg-[#2B3150] hover:bg-[#2B3150]/90 text-white text-sm font-semibold
+                className="m-1.5 px-5 py-2 bg-ink hover:bg-ink/90 text-white text-sm font-semibold
                            rounded-md border-2 border-transparent
-                           focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/40
+                           focus:outline-none focus:ring-2 focus:ring-brand/40
                            transition-all duration-150 shrink-0 disabled:opacity-60"
               >
                 {loading ? '搜索中...' : '搜索文献'}
@@ -414,7 +414,7 @@ export default function LiteratureSearchPage() {
                     key={q}
                     type="button"
                     onClick={() => { setKeyword(q); handleSearch(undefined, q); }}
-                    className="text-[11px] text-gray-500 hover:text-[#DB5F5B] transition-colors"
+                    className="text-[11px] text-gray-500 hover:text-brand transition-colors"
                   >
                     {q}
                   </button>
@@ -487,7 +487,7 @@ export default function LiteratureSearchPage() {
                   <button
                     onClick={handleBatchImport}
                     className="w-full inline-flex items-center justify-center gap-2 px-4 py-2
-                               bg-[#DB5F5B] hover:bg-[#DB5F5B]/90 text-white text-xs font-semibold
+                               bg-brand hover:bg-brand/90 text-white text-xs font-semibold
                                rounded-md transition-all duration-150"
                   >
                     <Download className="w-3.5 h-3.5" aria-hidden="true" />
@@ -517,9 +517,9 @@ export default function LiteratureSearchPage() {
 
             {/* Info card (before search) */}
             {!searched && (
-              <div className="bg-[#F5F6E5]/30 border border-gray-100 rounded-lg p-4 space-y-2 text-xs text-gray-500">
+              <div className="bg-cream/30 border border-gray-100 rounded-lg p-4 space-y-2 text-xs text-gray-500">
                 <p className="font-semibold text-gray-700 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-[#DB5F5B]" aria-hidden="true" />
+                  <Sparkles className="w-3.5 h-3.5 text-brand" aria-hidden="true" />
                   使用说明
                 </p>
                 <ol className="space-y-1 list-decimal list-inside text-[11px]">
@@ -553,8 +553,8 @@ export default function LiteratureSearchPage() {
                 {/* Trending topics */}
                 <section>
                   <div className="flex items-center gap-2 mb-3">
-                    <TrendingUp className="w-4 h-4 text-[#DB5F5B]" aria-hidden="true" />
-                    <h2 className="text-sm font-semibold text-[#2B3150] font-display">热门研究方向</h2>
+                    <TrendingUp className="w-4 h-4 text-brand" aria-hidden="true" />
+                    <h2 className="text-sm font-semibold text-ink font-display">热门研究方向</h2>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {TRENDING_TOPICS.map((topic) => (
@@ -562,14 +562,14 @@ export default function LiteratureSearchPage() {
                         key={topic.label}
                         onClick={() => { setKeyword(topic.label); handleSearch(undefined, topic.label); }}
                         className="group flex items-center gap-2.5 p-3 bg-white border border-gray-200 rounded-lg
-                                   hover:border-[#2B3150]/20 hover:shadow-sm hover:-translate-y-0.5
+                                   hover:border-ink/20 hover:shadow-sm hover:-translate-y-0.5
                                    transition-all duration-150 text-left"
                       >
                         <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50
-                                        group-hover:bg-[#DB5F5B]/10 transition-colors">
-                          <topic.icon className="w-4 h-4 text-gray-400 group-hover:text-[#DB5F5B] transition-colors" aria-hidden="true" />
+                                        group-hover:bg-brand/10 transition-colors">
+                          <topic.icon className="w-4 h-4 text-gray-400 group-hover:text-brand transition-colors" aria-hidden="true" />
                         </div>
-                        <span className="text-xs font-medium text-gray-700 group-hover:text-[#2B3150] transition-colors leading-tight">
+                        <span className="text-xs font-medium text-gray-700 group-hover:text-ink transition-colors leading-tight">
                           {topic.label}
                         </span>
                       </button>
@@ -578,10 +578,10 @@ export default function LiteratureSearchPage() {
                 </section>
 
                 {/* Quick start examples */}
-                <section className="bg-[#F5F6E5]/10 border border-gray-100 rounded-lg p-5">
+                <section className="bg-cream/10 border border-gray-100 rounded-lg p-5">
                   <div className="flex items-center gap-2 mb-3">
-                    <Sparkles className="w-4 h-4 text-[#F2D760]" aria-hidden="true" />
-                    <h3 className="text-sm font-semibold text-[#2B3150] font-display">快速开始</h3>
+                    <Sparkles className="w-4 h-4 text-accent" aria-hidden="true" />
+                    <h3 className="text-sm font-semibold text-ink font-display">快速开始</h3>
                   </div>
                   <p className="text-xs text-gray-500 mb-3">
                     输入论文标题、DOI、作者名或关键词，系统将同时检索 arXiv 和 CrossRef 数据库。
@@ -591,8 +591,8 @@ export default function LiteratureSearchPage() {
                       <button
                         key={t}
                         onClick={() => { setKeyword(t); handleSearch(undefined, t); }}
-                        className="px-3 py-1.5 text-[11px] text-[#1D70B8] bg-white border border-gray-200
-                                   rounded-full hover:border-[#1D70B8]/30 hover:bg-blue-50/50 transition-all"
+                        className="px-3 py-1.5 text-[11px] text-link bg-white border border-gray-200
+                                   rounded-full hover:border-link/30 hover:bg-blue-50/50 transition-all"
                       >
                         {t}
                       </button>
@@ -642,8 +642,8 @@ export default function LiteratureSearchPage() {
                 <div className="flex flex-wrap justify-center gap-2">
                   <button
                     onClick={() => { setKeyword(''); setSearched(false); }}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#2B3150] text-white text-sm font-semibold rounded-md
-                               hover:bg-[#2B3150]/90 transition-all duration-150"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-ink text-white text-sm font-semibold rounded-md
+                               hover:bg-ink/90 transition-all duration-150"
                   >
                     返回发现页
                   </button>
@@ -652,8 +652,8 @@ export default function LiteratureSearchPage() {
                     <button
                       key={q}
                       onClick={() => { setKeyword(q); handleSearch(undefined, q); }}
-                      className="px-3 py-1.5 text-xs text-[#1D70B8] bg-white border border-gray-200 rounded-full
-                                 hover:border-[#1D70B8]/30 transition-all"
+                      className="px-3 py-1.5 text-xs text-link bg-white border border-gray-200 rounded-full
+                                 hover:border-link/30 transition-all"
                     >
                       {q}
                     </button>
@@ -674,7 +674,7 @@ export default function LiteratureSearchPage() {
                       className={`
                         bg-white border rounded-lg transition-all duration-150
                         ${isExpanded
-                          ? 'border-[#2B3150]/20 shadow-sm'
+                          ? 'border-ink/20 shadow-sm'
                           : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
                         }
                       `}
@@ -685,7 +685,7 @@ export default function LiteratureSearchPage() {
                           {/* Expand toggle */}
                           <button
                             onClick={() => handleToggleDetail(paper)}
-                            className="shrink-0 mt-0.5 text-gray-400 hover:text-[#DB5F5B] transition-colors"
+                            className="shrink-0 mt-0.5 text-gray-400 hover:text-brand transition-colors"
                             aria-label={isExpanded ? '收起详情' : '展开详情'}
                           >
                             {isExpanded
@@ -698,7 +698,7 @@ export default function LiteratureSearchPage() {
                             {/* Title */}
                             <button
                               onClick={() => handleToggleDetail(paper)}
-                              className="text-sm font-bold text-[#1D70B8] hover:text-[#DB5F5B] transition-colors
+                              className="text-sm font-bold text-link hover:text-brand transition-colors
                                          text-left leading-snug"
                             >
                               {paper.title}
@@ -751,7 +751,7 @@ export default function LiteratureSearchPage() {
                                 <button
                                   onClick={(e) => { e.stopPropagation(); handleOpenReview(paper); }}
                                   className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold
-                                             text-white bg-[#DB5F5B] hover:bg-[#DB5F5B]/90 rounded-md transition-all"
+                                             text-white bg-brand hover:bg-brand/90 rounded-md transition-all"
                                 >
                                   <Download className="w-3 h-3" aria-hidden="true" />
                                   导入
@@ -814,14 +814,14 @@ export default function LiteratureSearchPage() {
                               <div className="flex items-center gap-3 text-[11px] pt-1">
                                 {paper.metadata?.doi && (
                                   <a href={`https://doi.org/${paper.metadata.doi}`} target="_blank" rel="noopener noreferrer"
-                                     className="inline-flex items-center gap-1 text-[#1D70B8] hover:underline">
+                                     className="inline-flex items-center gap-1 text-link hover:underline">
                                     <ExternalLink className="w-3 h-3" aria-hidden="true" />
                                     DOI: {paper.metadata.doi}
                                   </a>
                                 )}
                                 {detailDoc.attachments?.[0]?.url && (
                                   <a href={detailDoc.attachments[0].url} target="_blank" rel="noopener noreferrer"
-                                     className="inline-flex items-center gap-1 text-[#1D70B8] hover:underline">
+                                     className="inline-flex items-center gap-1 text-link hover:underline">
                                     <FileText className="w-3 h-3" aria-hidden="true" />
                                     查看 PDF
                                   </a>
@@ -855,7 +855,7 @@ export default function LiteratureSearchPage() {
             {/* Header */}
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-sm font-bold text-[#2B3150] font-display">确认导入</h3>
+                <h3 className="text-sm font-bold text-ink font-display">确认导入</h3>
                 <p className="text-[11px] text-gray-400 mt-0.5">预览元数据并选择导入配置</p>
               </div>
               <button onClick={() => setReviewPaper(null)} className="p-1 rounded hover:bg-gray-100 transition-colors" aria-label="关闭">
@@ -885,7 +885,7 @@ export default function LiteratureSearchPage() {
                     onClick={() => setReviewVisibility(opt.value)}
                     className={`flex-1 px-3 py-2 rounded-md border-2 text-xs font-medium transition-all ${
                       reviewVisibility === opt.value
-                        ? 'border-[#2B3150] bg-[#2B3150]/5 text-[#2B3150]'
+                        ? 'border-ink bg-ink/5 text-ink'
                         : 'border-gray-200 text-gray-500 hover:border-gray-300'
                     }`}
                   >
@@ -903,7 +903,7 @@ export default function LiteratureSearchPage() {
                 value={reviewSpace}
                 onChange={(e) => setReviewSpace(e.target.value)}
                 className="w-full border-2 border-gray-200 rounded-md px-3 py-2 text-xs font-medium bg-white
-                           focus:outline-none focus:border-[#2B3150] focus:ring-2 focus:ring-[#DB5F5B]/20"
+                           focus:outline-none focus:border-ink focus:ring-2 focus:ring-brand/20"
               >
                 <option value="s-papers">学术论文</option>
                 <option value="s-sandbox">Sandbox 项目</option>
@@ -951,7 +951,7 @@ export default function LiteratureSearchPage() {
                 onClick={handleConfirmImport}
                 disabled={importingId === reviewPaper.id}
                 className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-semibold
-                           text-white bg-[#2B3150] hover:bg-[#2B3150]/90 rounded-md
+                           text-white bg-ink hover:bg-ink/90 rounded-md
                            transition-all disabled:opacity-60"
               >
                 <Download className="w-3.5 h-3.5" aria-hidden="true" />
@@ -970,7 +970,7 @@ export default function LiteratureSearchPage() {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function StatRow({ label, value, color }: { label: string; value: string; color?: string }) {
-  const colorClass = color === 'emerald' ? 'text-emerald-600' : color === 'coral' ? 'text-[#DB5F5B]' : 'text-[#2B3150]';
+  const colorClass = color === 'emerald' ? 'text-emerald-600' : color === 'coral' ? 'text-brand' : 'text-ink';
   return (
     <div className="flex justify-between items-center">
       <span className="text-gray-500">{label}</span>

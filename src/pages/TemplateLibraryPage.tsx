@@ -33,8 +33,8 @@ export default function TemplateLibraryPage() {
   return (
     <div className="space-y-5" id="template-library-page-panel">
       <div className="space-y-1 select-none">
-        <h2 className="text-base font-extrabold text-[#2B3150] flex items-center space-x-1.5 uppercase tracking-wide">
-          <FileSignature className="w-5 h-5 text-[#DB5F5B]" />
+        <h2 className="text-base font-extrabold text-ink flex items-center space-x-1.5 uppercase tracking-wide">
+          <FileSignature className="w-5 h-5 text-brand" />
           <span>研发文档与合规模板</span>
         </h2>
         <p className="text-[10px] text-gray-400">
@@ -45,7 +45,7 @@ export default function TemplateLibraryPage() {
       <div className="bg-white border border-gray-200 rounded-xl p-3 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs">
         <span className="font-bold text-gray-700">文档列表（{filtered.length} 项）</span>
         <div className="relative max-w-xs w-full">
-          <input type="text" className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#DB5F5B] text-xs" placeholder="搜索文档..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+          <input type="text" className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-brand text-xs" placeholder="搜索文档..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
           <Search className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-gray-400" />
         </div>
       </div>
@@ -55,7 +55,7 @@ export default function TemplateLibraryPage() {
           <div className="text-center py-12 text-gray-400 italic bg-white border border-gray-200 rounded-xl col-span-2">暂无匹配的文档。</div>
         ) : (
           filtered.map((entry) => (
-            <div key={entry.id} className="bg-white border border-gray-200 p-4 rounded-xl flex flex-col justify-between space-y-4 hover:border-[#DB5F5B]/30 hover:shadow-sm transition-all shadow-sm">
+            <div key={entry.id} className="bg-white border border-gray-200 p-4 rounded-xl flex flex-col justify-between space-y-4 hover:border-brand/30 hover:shadow-sm transition-all shadow-sm">
               <div className="space-y-2">
                 <div className="flex items-center justify-between select-none">
                   <span className="text-[10px] text-teal-700 bg-teal-50 border border-teal-150 px-2 py-0.5 rounded font-bold uppercase font-mono">
@@ -75,11 +75,11 @@ export default function TemplateLibraryPage() {
                 </div>
               </div>
               <div className="flex items-center justify-between pt-3 border-t border-gray-100 text-[10px]">
-                <button onClick={() => navigate("/entry/" + entry.id)} className="px-3 py-1.5 bg-[#2B3150] hover:bg-[#2B3150]/90 text-white font-bold rounded flex items-center space-x-1 transition-all">
-                  <FileText className="w-3.5 h-3.5 text-[#F2D760]" />
+                <button onClick={() => navigate("/entry/" + entry.id)} className="px-3 py-1.5 bg-ink hover:bg-ink/90 text-white font-bold rounded flex items-center space-x-1 transition-all">
+                  <FileText className="w-3.5 h-3.5 text-accent" />
                   <span>查看文档</span>
                 </button>
-                <button onClick={() => navigate("/entry/" + entry.id)} className="text-[#DB5F5B] font-bold hover:underline flex items-center">
+                <button onClick={() => navigate("/entry/" + entry.id)} className="text-brand font-bold hover:underline flex items-center">
                   <span>详情</span>
                   <ArrowRight className="w-3.5 h-3.5 ml-0.5" />
                 </button>

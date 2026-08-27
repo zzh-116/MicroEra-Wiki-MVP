@@ -183,7 +183,7 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
     return (
       <div className="py-20 text-center">
         <div className="inline-flex items-center gap-2 text-sm text-gray-400 animate-pulse font-medium">
-          <span className="w-2 h-2 bg-[#DB5F5B] rounded-full animate-bounce" />
+          <span className="w-2 h-2 bg-brand rounded-full animate-bounce" />
           正在拉取科学文献元数据...
         </div>
       </div>
@@ -212,7 +212,7 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
             label={bookmarked ? '已收藏' : '收藏'}
             active={bookmarked}
             onClick={handleToggleBookmark}
-            activeClass="text-[#F2D760] fill-[#F2D760]"
+            activeClass="text-accent fill-accent"
           />
           <ToolbarButton
             icon={copied ? Link2 : Link2}
@@ -289,16 +289,16 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
           <button
             onClick={handleToggleBookmark}
             className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold border transition-all ${
-              bookmarked ? 'bg-[#F2D760]/10 border-[#F2D760]/30 text-[#2B3150]' : 'bg-white border-gray-200 text-gray-600'
+              bookmarked ? 'bg-accent/10 border-accent/30 text-ink' : 'bg-white border-gray-200 text-gray-600'
             }`}
           >
-            <Bookmark className={`w-3.5 h-3.5 ${bookmarked ? 'fill-[#F2D760] text-[#F2D760]' : ''}`} />
+            <Bookmark className={`w-3.5 h-3.5 ${bookmarked ? 'fill-accent text-accent' : ''}`} />
             {bookmarked ? '已收藏' : '收藏'}
           </button>
           <button
             onClick={() => setAiPanelOpen(!aiPanelOpen)}
             className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold border transition-all ${
-              aiPanelOpen ? 'bg-[#DB5F5B]/5 border-[#DB5F5B]/30 text-[#DB5F5B]' : 'bg-white border-gray-200 text-gray-600'
+              aiPanelOpen ? 'bg-brand/5 border-brand/30 text-brand' : 'bg-white border-gray-200 text-gray-600'
             }`}
           >
             <MessageSquare className="w-3.5 h-3.5" />
@@ -352,7 +352,7 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
                       w-full text-left py-1 text-xs transition-colors duration-150 truncate block
                       ${h.level === 1 ? 'font-semibold' : h.level === 2 ? 'pl-3' : 'pl-5 text-[11px]'}
                       ${isActive
-                        ? 'text-[#DB5F5B] border-l-2 border-[#DB5F5B] pl-[calc(theme(spacing.3)-2px)]'
+                        ? 'text-brand border-l-2 border-brand pl-[calc(theme(spacing.3)-2px)]'
                         : 'text-gray-500 hover:text-gray-800 border-l-2 border-transparent pl-[calc(theme(spacing.3)-2px)]'
                       }
                     `}
@@ -390,7 +390,7 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
           {viewModel.records.length > 0 && (
             <section id="records" aria-label="实验数据记录">
               <div className="flex items-center gap-2 mb-4">
-                <Database className="w-4 h-4 text-[#DB5F5B]" aria-hidden="true" />
+                <Database className="w-4 h-4 text-brand" aria-hidden="true" />
                 <h2 className="text-base font-bold text-gray-900 font-display">
                   实验数据记录
                 </h2>
@@ -422,7 +422,7 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
           {mdFile && (
             <section id="markdown-view" aria-label="MarkItDown 预览">
               <div className="flex items-center gap-2 mb-4">
-                <Terminal className="w-4 h-4 text-[#DB5F5B] animate-pulse" aria-hidden="true" />
+                <Terminal className="w-4 h-4 text-brand animate-pulse" aria-hidden="true" />
                 <h2 className="text-base font-bold text-gray-900 font-display">MarkItDown 解析预览</h2>
               </div>
               <MarkdownPreview markdownFile={mdFile} onClose={() => setMdFile(null)} />
@@ -445,7 +445,7 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
           {viewModel.entryType === 'project' && (
             <section id="services" aria-label="AI 服务">
               <div className="flex items-center gap-2 mb-4">
-                <Cpu className="w-4 h-4 text-[#DB5F5B]" aria-hidden="true" />
+                <Cpu className="w-4 h-4 text-brand" aria-hidden="true" />
                 <h2 className="text-base font-bold text-gray-900 font-display">可调用 AI 研发服务</h2>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -469,7 +469,7 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
           {/* Knowledge Graph */}
           <section id="graph" aria-label="知识图谱">
             <div className="flex items-center gap-2 mb-4">
-              <Network className="w-4 h-4 text-[#DB5F5B]" aria-hidden="true" />
+              <Network className="w-4 h-4 text-brand" aria-hidden="true" />
               <h2 className="text-base font-bold text-gray-900 font-display">知识图谱</h2>
             </div>
             <div className="bg-gray-50/50 border border-gray-100 rounded-lg overflow-hidden">
@@ -544,7 +544,7 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
           {/* AI Quick Actions */}
           <div className="bg-white border border-gray-100 rounded-lg p-4 space-y-3">
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#DB5F5B]" aria-hidden="true" />
+              <Sparkles className="w-3.5 h-3.5 text-brand" aria-hidden="true" />
               AI 快捷操作
             </h3>
             <div className="space-y-1">
@@ -553,7 +553,7 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
                   key={action.key}
                   onClick={() => handleQuickAI(action.key, action.prompt)}
                   className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-600
-                             hover:bg-[#DB5F5B]/5 hover:text-[#DB5F5B] rounded-md
+                             hover:bg-brand/5 hover:text-brand rounded-md
                              transition-all duration-150 text-left"
                 >
                   <action.icon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
@@ -581,13 +581,13 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
         <button
           onClick={() => setAiPanelOpen(true)}
           className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-3
-                     bg-[#2B3150] hover:bg-[#2B3150]/90 text-white text-sm font-semibold
+                     bg-ink hover:bg-ink/90 text-white text-sm font-semibold
                      rounded-full shadow-lg hover:shadow-xl
-                     focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/40
+                     focus:outline-none focus:ring-2 focus:ring-brand/40
                      transition-all duration-200 hover:-translate-y-0.5"
           aria-label="打开 AI 助手"
         >
-          <Sparkles className="w-4 h-4 text-[#F2D760]" aria-hidden="true" />
+          <Sparkles className="w-4 h-4 text-accent" aria-hidden="true" />
           <span>AI 助手</span>
         </button>
       )}
@@ -599,8 +599,8 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
           {/* Panel header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 shrink-0">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#DB5F5B]" aria-hidden="true" />
-              <span className="text-sm font-semibold text-[#2B3150] font-display">AI 助手</span>
+              <Sparkles className="w-4 h-4 text-brand" aria-hidden="true" />
+              <span className="text-sm font-semibold text-ink font-display">AI 助手</span>
               <span className="text-[10px] text-gray-400">基于当前文档</span>
             </div>
             <button
@@ -678,12 +678,12 @@ function ToolbarButton({
       className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-medium
                   transition-all duration-150
                   ${active
-                    ? `bg-[#DB5F5B]/5 text-[#DB5F5B] border border-[#DB5F5B]/10 ${activeClass || ''}`
+                    ? `bg-brand/5 text-brand border border-brand/10 ${activeClass || ''}`
                     : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100 border border-transparent'
                   }`}
       aria-label={label}
     >
-      <Icon className={`w-3.5 h-3.5 ${active ? (activeClass || 'text-[#DB5F5B]') : ''}`} aria-hidden="true" />
+      <Icon className={`w-3.5 h-3.5 ${active ? (activeClass || 'text-brand') : ''}`} aria-hidden="true" />
       <span className="hidden lg:inline">{label}</span>
     </button>
   );

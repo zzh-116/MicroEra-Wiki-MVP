@@ -418,7 +418,7 @@ function buildTooltipHtml(node: SeedGraphNode): string {
     <div class="min-w-[180px] text-left">
       <div class="mb-1.5 flex items-center gap-1.5">
         <span class="inline-block h-2 w-2 rounded-full" style="background:${color};box-shadow:0 0 0 3px ${color}40"></span>
-        <span class="font-mono text-[9px] font-semibold uppercase tracking-wider text-[#DB5F5B]">${escapeHtml(node.type)}</span>
+        <span class="font-mono text-[9px] font-semibold uppercase tracking-wider text-brand">${escapeHtml(node.type)}</span>
       </div>
       <div class="mb-1 text-[12px] font-bold leading-snug text-slate-900">${escapeHtml(meta.title || node.label)}</div>
       ${meta.author ? `<div class="mb-1 text-[10px] text-slate-500">作者：${escapeHtml(meta.author)}</div>` : ''}
@@ -441,7 +441,7 @@ function buildEdgeTooltipHtml(model: SeedGraphEdge): string {
         <span class="font-mono text-[8px] uppercase tracking-wider text-slate-400">${escapeHtml(String(model.relation))}</span>
       </div>
       <div class="space-y-0.5 text-[10px] leading-relaxed">
-        <div class="text-slate-500">相似度：<span class="font-mono font-semibold text-[#2B3150]">${escapeHtml(score)}</span></div>
+        <div class="text-slate-500">相似度：<span class="font-mono font-semibold text-ink">${escapeHtml(score)}</span></div>
         <div class="text-slate-400">来源：${escapeHtml(source)}</div>
       </div>
     </div>
@@ -1182,9 +1182,9 @@ export default function KnowledgeGraphPage() {
   const legendItems = visibleTypes.slice(0, 6);
 
   const kpis: { key: string; label: string; value: string; hint: string; icon: LucideIcon; color: string }[] = [
-    { key: 'nodes', label: '文档节点', value: String(stats.nodeCount), hint: viewMode === 'global' ? '全局范围' : '局部范围', icon: Database, color: '#2B3150' },
-    { key: 'edges', label: '关系连线', value: String(stats.edgeCount), hint: `平均度数 ${stats.avgDegree}`, icon: GitBranch, color: '#DB5F5B' },
-    { key: 'types', label: '知识分类', value: String(stats.typeCount), hint: `密度 ${(stats.density * 100).toFixed(1)}%`, icon: Layers, color: '#F2D760' },
+    { key: 'nodes', label: '文档节点', value: String(stats.nodeCount), hint: viewMode === 'global' ? '全局范围' : '局部范围', icon: Database, color: 'var(--color-ink)' },
+    { key: 'edges', label: '关系连线', value: String(stats.edgeCount), hint: `平均度数 ${stats.avgDegree}`, icon: GitBranch, color: 'var(--color-brand)' },
+    { key: 'types', label: '知识分类', value: String(stats.typeCount), hint: `密度 ${(stats.density * 100).toFixed(1)}%`, icon: Layers, color: 'var(--color-accent)' },
     { key: 'hub', label: '核心节点', value: stats.hubLabel, hint: `${stats.hubDegree} 条关联`, icon: Target, color: '#3F7E5F' },
   ];
 
@@ -1200,23 +1200,23 @@ export default function KnowledgeGraphPage() {
       className="kg-dashboard-grid kg-panel relative overflow-hidden rounded-xl border border-slate-200 text-slate-700 shadow-[0_18px_50px_-24px_rgba(15,23,42,0.18)]"
       id="knowledge-graph-dashboard"
     >
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-[#DB5F5B]/70 via-[#2B3150]/50 to-[#F2D760]/40" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-brand/70 via-ink/50 to-accent/40" aria-hidden="true" />
 
       {/* Dashboard header */}
       <header className="relative z-10 flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white/60 px-4 py-3.5 sm:px-5">
         <div className="flex min-w-0 items-center gap-3">
-          <span className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-lg border border-[#DB5F5B]/30 bg-[#DB5F5B]/10 text-[#DB5F5B] shadow-[0_0_12px_rgba(219,95,91,0.18)]">
+          <span className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-lg border border-brand/30 bg-brand/10 text-brand shadow-[0_0_12px_rgba(219,95,91,0.18)]">
             <Network className="h-5 w-5" aria-hidden="true" />
           </span>
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <h1 className="truncate font-display text-sm font-bold tracking-wide text-slate-900">知识图谱分析台</h1>
-              <span className="hidden rounded-md border border-[#DB5F5B]/30 bg-[#DB5F5B]/10 px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-widest text-[#DB5F5B] sm:inline-block">
+              <span className="hidden rounded-md border border-brand/30 bg-brand/10 px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-widest text-brand sm:inline-block">
                 探索模式
               </span>
             </div>
             <p className="mt-0.5 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.16em] text-slate-400">
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#DB5F5B] shadow-[0_0_6px_rgba(219,95,91,0.5)]" aria-hidden="true" />
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-brand shadow-[0_0_6px_rgba(219,95,91,0.5)]" aria-hidden="true" />
               semantic knowledge explorer
             </p>
           </div>
@@ -1226,7 +1226,7 @@ export default function KnowledgeGraphPage() {
           <div className="relative flex items-center gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" aria-hidden="true" />
-              <span className="pointer-events-none absolute left-8 top-1/2 -translate-y-1/2 rounded-md bg-[#DB5F5B]/12 px-1.5 py-0.5 font-mono text-[9px] font-bold text-[#DB5F5B]">
+              <span className="pointer-events-none absolute left-8 top-1/2 -translate-y-1/2 rounded-md bg-brand/12 px-1.5 py-0.5 font-mono text-[9px] font-bold text-brand">
                 搜全库
               </span>
               <input
@@ -1234,14 +1234,14 @@ export default function KnowledgeGraphPage() {
                 onChange={(e) => setKnowledgeQuery(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleKnowledgeSearch(); }}
                 placeholder="输入关键词，定位知识节点…"
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 py-1.5 pl-[86px] pr-3 text-xs text-slate-700 placeholder:text-slate-400 focus:border-[#1D70B8]/60 focus:outline-none focus:ring-2 focus:ring-[#1D70B8]/20"
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 py-1.5 pl-[86px] pr-3 text-xs text-slate-700 placeholder:text-slate-400 focus:border-link/60 focus:outline-none focus:ring-2 focus:ring-link/20"
               />
             </div>
             <button
               type="button"
               onClick={handleKnowledgeSearch}
               disabled={searching || !knowledgeQuery.trim()}
-              className="inline-flex flex-shrink-0 items-center gap-1 rounded-lg bg-[#2B3150] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#2B3150]/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex flex-shrink-0 items-center gap-1 rounded-lg bg-ink px-3 py-1.5 text-xs font-bold text-white transition hover:bg-ink/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
             >
               {searching ? '搜索中...' : '搜索'}
             </button>
@@ -1256,14 +1256,14 @@ export default function KnowledgeGraphPage() {
             <button
               type="button"
               onClick={switchToFocused}
-              className={`rounded-md px-2.5 py-1 text-[10px] font-bold transition ${viewMode === 'focused' ? 'bg-[#2B3150] text-white' : 'text-slate-600 hover:bg-white'}`}
+              className={`rounded-md px-2.5 py-1 text-[10px] font-bold transition ${viewMode === 'focused' ? 'bg-ink text-white' : 'text-slate-600 hover:bg-white'}`}
             >
               聚焦
             </button>
             <button
               type="button"
               onClick={loadGlobal}
-              className={`rounded-md px-2.5 py-1 text-[10px] font-bold transition ${viewMode === 'global' ? 'bg-[#2B3150] text-white' : 'text-slate-600 hover:bg-white'}`}
+              className={`rounded-md px-2.5 py-1 text-[10px] font-bold transition ${viewMode === 'global' ? 'bg-ink text-white' : 'text-slate-600 hover:bg-white'}`}
             >
               全局
             </button>
@@ -1287,7 +1287,7 @@ export default function KnowledgeGraphPage() {
             type="button"
             onClick={handleViewEntry}
             disabled={!selectedNode}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-[#DB5F5B] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#DB5F5B]/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-brand px-3 py-1.5 text-xs font-bold text-white transition hover:bg-brand/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
           >
             <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
             查看条目
@@ -1300,7 +1300,7 @@ export default function KnowledgeGraphPage() {
         <aside className="kg-panel kg-panel-left kg-scroll-thin flex flex-col gap-3 lg:col-span-3 lg:max-h-[calc(100vh-230px)] lg:overflow-y-auto lg:pr-0.5">
           <section className="rounded-lg border border-slate-200 bg-white p-3 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
             <div className="flex items-center justify-between gap-2">
-              <h2 className="text-[11px] font-extrabold tracking-wide text-[#2B3150]">核心指标</h2>
+              <h2 className="text-[11px] font-extrabold tracking-wide text-ink">核心指标</h2>
               <span className="font-mono text-[9px] uppercase tracking-widest text-slate-400">overview</span>
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2">
@@ -1322,8 +1322,8 @@ export default function KnowledgeGraphPage() {
           <section className="rounded-lg border border-slate-200 bg-white p-3 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-1.5">
-                <Boxes className="h-3.5 w-3.5 text-[#DB5F5B]" aria-hidden="true" />
-                <h2 className="text-[11px] font-extrabold tracking-wide text-[#2B3150]">节点类型分布</h2>
+                <Boxes className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
+                <h2 className="text-[11px] font-extrabold tracking-wide text-ink">节点类型分布</h2>
               </div>
               <span className="font-mono text-[9px] font-semibold text-slate-400">{stats.typeCount} 类</span>
             </div>
@@ -1361,7 +1361,7 @@ export default function KnowledgeGraphPage() {
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-1.5">
                 <CircleDot className="h-3.5 w-3.5 text-violet-600" aria-hidden="true" />
-                <h2 className="text-[11px] font-extrabold tracking-wide text-[#2B3150]">关系构成</h2>
+                <h2 className="text-[11px] font-extrabold tracking-wide text-ink">关系构成</h2>
               </div>
               <span className="rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-mono text-[8px] font-semibold uppercase tracking-wider text-slate-400">
                 密度 {stats.density.toFixed(3)}
@@ -1413,14 +1413,14 @@ export default function KnowledgeGraphPage() {
         <section className="kg-panel flex min-h-[560px] flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-[0_18px_50px_-24px_rgba(15,23,42,0.18)] lg:col-span-6 lg:h-[calc(100vh-230px)]">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-slate-50/80 px-3 py-2.5">
             <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-[#DB5F5B] shadow-[0_0_8px_rgba(219,95,91,0.35)]" aria-hidden="true" />
-              <h2 className="text-xs font-extrabold tracking-wide text-[#2B3150]">关系网络视图</h2>
+              <span className="h-2 w-2 rounded-full bg-brand shadow-[0_0_8px_rgba(219,95,91,0.35)]" aria-hidden="true" />
+              <h2 className="text-xs font-extrabold tracking-wide text-ink">关系网络视图</h2>
               <span className="hidden font-mono text-[9px] uppercase tracking-[0.14em] text-slate-400 sm:inline">
                 {layoutMode === 'force' ? 'force layout' : layoutMode === 'circular' ? 'circular layout' : 'dagre layout'}
               </span>
             </div>
             <div className="relative w-full sm:w-64">
-              <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 rounded-md bg-[#1D70B8]/12 px-1.5 py-0.5 font-mono text-[9px] font-bold text-[#1D70B8]">
+              <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 rounded-md bg-link/12 px-1.5 py-0.5 font-mono text-[9px] font-bold text-link">
                 筛当前
               </span>
               <input
@@ -1428,7 +1428,7 @@ export default function KnowledgeGraphPage() {
                 onChange={(e) => { setSearch(e.target.value); applySearch(e.target.value); }}
                 onKeyDown={(e) => { if (e.key === 'Enter') applySearch(search); }}
                 placeholder="高亮当前视图匹配节点"
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 py-1.5 pl-[64px] pr-7 text-xs text-slate-700 placeholder:text-slate-400 focus:border-[#1D70B8]/60 focus:outline-none focus:ring-2 focus:ring-[#1D70B8]/20"
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 py-1.5 pl-[64px] pr-7 text-xs text-slate-700 placeholder:text-slate-400 focus:border-link/60 focus:outline-none focus:ring-2 focus:ring-link/20"
               />
               {search && (
                 <button
@@ -1448,7 +1448,7 @@ export default function KnowledgeGraphPage() {
               <button
                 type="button"
                 onClick={() => applyTypeFilter('')}
-                className={`inline-flex flex-shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1 text-[10px] font-bold ring-1 transition ${activeType === '' ? 'bg-[#2B3150] text-white ring-[#2B3150]' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-100'}`}
+                className={`inline-flex flex-shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1 text-[10px] font-bold ring-1 transition ${activeType === '' ? 'bg-ink text-white ring-ink' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-100'}`}
               >
                 全部
                 <span className="font-mono text-[9px] opacity-80">{stats.nodeCount}</span>
@@ -1458,7 +1458,7 @@ export default function KnowledgeGraphPage() {
                   key={item.type}
                   type="button"
                   onClick={() => applyTypeFilter(activeType === item.type ? '' : item.type)}
-                  className={`inline-flex flex-shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1 text-[10px] font-bold ring-1 transition ${activeType === item.type ? 'bg-[#2B3150] text-white ring-[#2B3150]' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-100'}`}
+                  className={`inline-flex flex-shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1 text-[10px] font-bold ring-1 transition ${activeType === item.type ? 'bg-ink text-white ring-ink' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-100'}`}
                 >
                   <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: item.color }} />
                   {item.type}
@@ -1486,7 +1486,7 @@ export default function KnowledgeGraphPage() {
                   onClick={item.onClick}
                   title={item.label}
                   aria-label={item.label}
-                  className="grid h-8 w-8 place-items-center rounded-lg border border-slate-200 bg-white/95 text-slate-500 shadow-sm transition hover:bg-[#2B3150] hover:text-white active:scale-95"
+                  className="grid h-8 w-8 place-items-center rounded-lg border border-slate-200 bg-white/95 text-slate-500 shadow-sm transition hover:bg-ink hover:text-white active:scale-95"
                 >
                   <item.icon className="h-4 w-4" aria-hidden="true" />
                 </button>
@@ -1496,7 +1496,7 @@ export default function KnowledgeGraphPage() {
             {/* Legend */}
             <div className="kg-legend-panel pointer-events-none max-w-[220px] rounded-lg border border-slate-200 bg-white/90 px-2.5 py-2 shadow-sm backdrop-blur">
               <div className="mb-1.5 flex items-center gap-1.5 text-[9px] font-extrabold uppercase tracking-widest text-slate-500">
-                <CircleDot className="h-3 w-3 text-[#DB5F5B]" aria-hidden="true" />
+                <CircleDot className="h-3 w-3 text-brand" aria-hidden="true" />
                 图例
               </div>
               <div className="space-y-1">
@@ -1522,7 +1522,7 @@ export default function KnowledgeGraphPage() {
             {loading && (
               <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/70 backdrop-blur-[2px]">
                 <div className="flex items-center gap-2.5 rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm shadow-slate-900/10">
-                  <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-[#DB5F5B] border-t-transparent" aria-hidden="true" />
+                  <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-brand border-t-transparent" aria-hidden="true" />
                   <span className="text-xs font-semibold text-slate-500">正在加载图谱数据...</span>
                 </div>
               </div>
@@ -1539,7 +1539,7 @@ export default function KnowledgeGraphPage() {
                   <button
                     type="button"
                     onClick={() => navigate('/admin/import')}
-                    className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-[#2B3150] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#2B3150]/90 active:scale-[0.98]"
+                    className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-ink px-3 py-1.5 text-xs font-bold text-white transition hover:bg-ink/90 active:scale-[0.98]"
                   >
                     <Database className="h-3.5 w-3.5" aria-hidden="true" />
                     去知识导入
@@ -1556,7 +1556,7 @@ export default function KnowledgeGraphPage() {
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-1.5">
                 <SlidersHorizontal className="h-3.5 w-3.5 text-slate-500" aria-hidden="true" />
-                <h2 className="text-[11px] font-extrabold tracking-wide text-[#2B3150]">图谱设置</h2>
+                <h2 className="text-[11px] font-extrabold tracking-wide text-ink">图谱设置</h2>
               </div>
               <span className="font-mono text-[8px] uppercase tracking-widest text-slate-400">graph view</span>
             </div>
@@ -1574,7 +1574,7 @@ export default function KnowledgeGraphPage() {
                       key={mode}
                       type="button"
                       onClick={() => changeLayout(mode)}
-                      className={`rounded-md px-2 py-1.5 text-[10px] font-bold ring-1 transition ${layoutMode === mode ? 'bg-[#2B3150] text-white ring-[#2B3150]' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-100'}`}
+                      className={`rounded-md px-2 py-1.5 text-[10px] font-bold ring-1 transition ${layoutMode === mode ? 'bg-ink text-white ring-ink' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-100'}`}
                     >
                       {label}
                     </button>
@@ -1593,7 +1593,7 @@ export default function KnowledgeGraphPage() {
                       key={mode}
                       type="button"
                       onClick={() => changeSizeMode(mode)}
-                      className={`rounded-md px-2 py-1.5 text-[10px] font-bold ring-1 transition ${sizeMode === mode ? 'bg-[#1D70B8] text-white ring-[#1D70B8]' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-100'}`}
+                      className={`rounded-md px-2 py-1.5 text-[10px] font-bold ring-1 transition ${sizeMode === mode ? 'bg-link text-white ring-link' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-100'}`}
                     >
                       {label}
                     </button>
@@ -1608,7 +1608,7 @@ export default function KnowledgeGraphPage() {
                   className="flex w-full items-center justify-between rounded-md border border-slate-200 bg-slate-50/60 px-2.5 py-2 text-left"
                 >
                   <span className="text-[10px] font-bold text-slate-600">节点标签</span>
-                  <span className={`relative h-4 w-8 rounded-full transition ${showLabels ? 'bg-[#DB5F5B]' : 'bg-slate-300'}`}>
+                  <span className={`relative h-4 w-8 rounded-full transition ${showLabels ? 'bg-brand' : 'bg-slate-300'}`}>
                     <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white shadow transition ${showLabels ? 'left-4.5' : 'left-0.5'}`} />
                   </span>
                 </button>
@@ -1618,7 +1618,7 @@ export default function KnowledgeGraphPage() {
                   className="flex w-full items-center justify-between rounded-md border border-slate-200 bg-slate-50/60 px-2.5 py-2 text-left"
                 >
                   <span className="text-[10px] font-bold text-slate-600">边权重显示</span>
-                  <span className={`relative h-4 w-8 rounded-full transition ${showEdgeWeight ? 'bg-[#DB5F5B]' : 'bg-slate-300'}`}>
+                  <span className={`relative h-4 w-8 rounded-full transition ${showEdgeWeight ? 'bg-brand' : 'bg-slate-300'}`}>
                     <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white shadow transition ${showEdgeWeight ? 'left-4.5' : 'left-0.5'}`} />
                   </span>
                 </button>
@@ -1627,7 +1627,7 @@ export default function KnowledgeGraphPage() {
               <div>
                 <div className="mb-1.5 flex items-center justify-between">
                   <p className="text-[10px] font-bold text-slate-600">最小关联阈值</p>
-                  <span className="font-mono text-[10px] font-bold text-[#DB5F5B]">{minSimilarity.toFixed(2)}</span>
+                  <span className="font-mono text-[10px] font-bold text-brand">{minSimilarity.toFixed(2)}</span>
                 </div>
                 <input
                   type="range"
@@ -1636,7 +1636,7 @@ export default function KnowledgeGraphPage() {
                   step={0.05}
                   value={minSimilarity}
                   onChange={(e) => changeThreshold(Number(e.target.value))}
-                  className="w-full accent-[#1D70B8]"
+                  className="w-full accent-link"
                 />
                 <div className="mt-0.5 flex justify-between font-mono text-[8px] text-slate-400">
                   <span>0</span>
@@ -1650,7 +1650,7 @@ export default function KnowledgeGraphPage() {
           <section className="rounded-lg border border-slate-200 bg-white p-3 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
             <div className="flex items-center justify-between gap-2">
               <div>
-                <h2 className="text-[11px] font-extrabold tracking-wide text-[#2B3150]">关键词筛选</h2>
+                <h2 className="text-[11px] font-extrabold tracking-wide text-ink">关键词筛选</h2>
                 <p className="mt-0.5 font-mono text-[8px] uppercase tracking-[0.16em] text-slate-400">tag filter</p>
               </div>
               <span className="rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-mono text-[9px] font-semibold text-slate-400">
@@ -1661,7 +1661,7 @@ export default function KnowledgeGraphPage() {
               <button
                 type="button"
                 onClick={clearKeywordFilter}
-                className={`rounded-md px-2.5 py-1 text-[10px] font-bold transition ${activeKeyword === '' ? 'bg-[#2B3150] text-white' : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-100'}`}
+                className={`rounded-md px-2.5 py-1 text-[10px] font-bold transition ${activeKeyword === '' ? 'bg-ink text-white' : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-100'}`}
               >
                 全部
               </button>
@@ -1670,7 +1670,7 @@ export default function KnowledgeGraphPage() {
                   key={item.keyword}
                   type="button"
                   onClick={() => applyKeywordFilter(item.keyword)}
-                  className={`rounded-md px-2.5 py-1 text-[10px] font-bold transition ${activeKeyword === item.keyword ? 'bg-[#DB5F5B] text-white' : 'border border-slate-200 bg-white text-slate-600 hover:border-[#DB5F5B]/40 hover:bg-[#DB5F5B]/10 hover:text-[#DB5F5B]'}`}
+                  className={`rounded-md px-2.5 py-1 text-[10px] font-bold transition ${activeKeyword === item.keyword ? 'bg-brand text-white' : 'border border-slate-200 bg-white text-slate-600 hover:border-brand/40 hover:bg-brand/10 hover:text-brand'}`}
                 >
                   {item.keyword}
                   <span className="ml-1 font-mono text-[9px] opacity-70">{item.count}</span>
@@ -1685,7 +1685,7 @@ export default function KnowledgeGraphPage() {
           <section className="flex min-h-[280px] flex-1 flex-col rounded-lg border border-slate-200 bg-white p-3 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
             <div className="flex items-center justify-between gap-2 border-b border-slate-200 pb-2">
               <div>
-                <h2 className="text-[11px] font-extrabold tracking-wide text-[#2B3150]">节点分析</h2>
+                <h2 className="text-[11px] font-extrabold tracking-wide text-ink">节点分析</h2>
                 <p className="mt-0.5 font-mono text-[8px] uppercase tracking-[0.16em] text-slate-400">node inspector</p>
               </div>
               {selectedNode && (
@@ -1738,7 +1738,7 @@ export default function KnowledgeGraphPage() {
                     type="button"
                     onClick={() => expandNode(selectedNode.id)}
                     disabled={expanding}
-                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#2B3150] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#2B3150]/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
+                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-ink px-3 py-2 text-xs font-bold text-white transition hover:bg-ink/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     <GitBranch className="h-3.5 w-3.5" aria-hidden="true" />
                     {expanding ? '展开中...' : '展开关联知识'}
@@ -1746,7 +1746,7 @@ export default function KnowledgeGraphPage() {
                   <button
                     type="button"
                     onClick={() => navigate(`/entry/${selectedNode.id}`)}
-                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-[#DB5F5B]/40 bg-[#DB5F5B]/10 px-3 py-2 text-xs font-bold text-[#DB5F5B] transition hover:bg-[#DB5F5B]/15 active:scale-[0.99]"
+                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-brand/40 bg-brand/10 px-3 py-2 text-xs font-bold text-brand transition hover:bg-brand/15 active:scale-[0.99]"
                   >
                     <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
                     查看知识条目

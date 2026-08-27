@@ -126,22 +126,22 @@ export default function PublicHomePage() {
         className="relative overflow-hidden bg-white border-b border-gray-200"
         aria-label="Hero"
       >
-        <div className="h-1 bg-gradient-to-r from-[#2B3150] via-[#DB5F5B]/60 to-transparent" />
+        <div className="h-1 bg-gradient-to-r from-ink via-brand/60 to-transparent" />
 
         <div className="max-w-5xl mx-auto px-4 py-12 sm:py-16 lg:py-20">
           {/* Brand */}
           <div className="inline-flex items-center gap-2 mb-5">
-            <span className="flex items-center justify-center w-8 h-8 rounded bg-[#2B3150]">
-              <Sparkles className="w-4 h-4 text-[#F2D760]" aria-hidden="true" />
+            <span className="flex items-center justify-center w-8 h-8 rounded bg-ink">
+              <Sparkles className="w-4 h-4 text-accent" aria-hidden="true" />
             </span>
-            <span className="text-xs font-semibold text-[#2B3150] uppercase tracking-wider font-mono">
+            <span className="text-xs font-semibold text-ink uppercase tracking-wider font-mono">
               微观纪元
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#2B3150] font-display tracking-tight leading-tight">
+          <h1 className="text-3xl sm:text-4xl font-bold text-ink font-display tracking-tight leading-tight">
             企业知识资产目录
-            <span className="block text-[#2B3150]/70 font-normal mt-1">与 AI 知识平台</span>
+            <span className="block text-ink/70 font-normal mt-1">与 AI 知识平台</span>
           </h1>
           <p className="mt-4 text-sm text-gray-500 max-w-xl leading-relaxed">
             连接 Sandbox 项目过程、实验结果、引用文献、数据条目与 MiQi 知识服务 —
@@ -154,14 +154,14 @@ export default function PublicHomePage() {
               className={`
                 relative flex items-center bg-white border-2 rounded-lg transition-all duration-200
                 ${searchFocused
-                  ? 'border-[#DB5F5B] shadow-[0_0_0_4px_rgba(219,95,91,0.12)]'
+                  ? 'border-brand shadow-[0_0_0_4px_rgba(219,95,91,0.12)]'
                   : 'border-gray-300 hover:border-gray-400'
                 }
               `}
             >
               <span className="absolute left-4 flex items-center pointer-events-none">
                 <Search
-                  className={`w-5 h-5 transition-colors duration-200 ${searchFocused ? 'text-[#DB5F5B]' : 'text-gray-400'}`}
+                  className={`w-5 h-5 transition-colors duration-200 ${searchFocused ? 'text-brand' : 'text-gray-400'}`}
                   aria-hidden="true"
                 />
               </span>
@@ -188,9 +188,9 @@ export default function PublicHomePage() {
 
               <button
                 type="submit"
-                className="m-1.5 px-5 py-2 bg-[#2B3150] hover:bg-[#2B3150]/90 text-white text-sm font-semibold
+                className="m-1.5 px-5 py-2 bg-ink hover:bg-ink/90 text-white text-sm font-semibold
                            rounded-md border-2 border-transparent
-                           focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/40
+                           focus:outline-none focus:ring-2 focus:ring-brand/40
                            transition-all duration-150 shrink-0"
               >
                 搜索
@@ -203,8 +203,8 @@ export default function PublicHomePage() {
                 <button
                   key={link.label}
                   onClick={() => navigate(link.route)}
-                  className="inline-flex items-center gap-1 text-xs font-medium text-[#1D70B8]
-                             hover:underline hover:text-[#DB5F5B] transition-colors"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-link
+                             hover:underline hover:text-brand transition-colors"
                 >
                   {link.label}
                   <ChevronRight className="w-3 h-3 text-gray-400" aria-hidden="true" />
@@ -243,17 +243,17 @@ export default function PublicHomePage() {
           FEATURED CONTENT
           ═══════════════════════════════════════════════════════════════════════ */}
       <section
-        className="py-12 sm:py-16 bg-[#F5F6E5]/10"
+        className="py-12 sm:py-16 bg-cream/10"
         aria-label="重点推荐"
       >
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center gap-2 mb-2">
-            <Zap className="w-4 h-4 text-[#DB5F5B]" aria-hidden="true" />
-            <h2 className="text-sm font-semibold text-[#DB5F5B] uppercase tracking-wider">
+            <Zap className="w-4 h-4 text-brand" aria-hidden="true" />
+            <h2 className="text-sm font-semibold text-brand uppercase tracking-wider">
               重点推荐
             </h2>
           </div>
-          <p className="text-lg font-bold text-[#2B3150] font-display mb-8">
+          <p className="text-lg font-bold text-ink font-display mb-8">
             探索平台核心能力
           </p>
 
@@ -262,22 +262,22 @@ export default function PublicHomePage() {
             <button
               onClick={() => navigate('/entry/e-stabilizer-project')}
               className="group bg-white border border-gray-200 rounded-lg p-5 text-left
-                         hover:border-[#2B3150]/20 hover:shadow-md hover:-translate-y-0.5
-                         focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/30
+                         hover:border-ink/20 hover:shadow-md hover:-translate-y-0.5
+                         focus:outline-none focus:ring-2 focus:ring-brand/30
                          transition-all duration-200"
             >
               <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-amber-50 mb-3
                               group-hover:bg-amber-100 transition-colors">
                 <Beaker className="w-5 h-5 text-amber-600" aria-hidden="true" />
               </div>
-              <h3 className="text-sm font-bold text-gray-900 mb-1.5 group-hover:text-[#2B3150] transition-colors">
+              <h3 className="text-sm font-bold text-gray-900 mb-1.5 group-hover:text-ink transition-colors">
                 稳定子算法 Sandbox 计算项目
               </h3>
               <p className="text-xs text-gray-500 leading-relaxed line-clamp-2 mb-4">
                 查看完整仿真过程记录、结果文件、物理模型引用文献、知识图谱及 MCP 知识工具包。
               </p>
-              <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#1D70B8]
-                               group-hover:text-[#DB5F5B] transition-colors">
+              <span className="inline-flex items-center gap-1 text-xs font-semibold text-link
+                               group-hover:text-brand transition-colors">
                 查看详情
                 <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
               </span>
@@ -287,22 +287,22 @@ export default function PublicHomePage() {
             <button
               onClick={() => navigate('/papers')}
               className="group bg-white border border-gray-200 rounded-lg p-5 text-left
-                         hover:border-[#2B3150]/20 hover:shadow-md hover:-translate-y-0.5
-                         focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/30
+                         hover:border-ink/20 hover:shadow-md hover:-translate-y-0.5
+                         focus:outline-none focus:ring-2 focus:ring-brand/30
                          transition-all duration-200"
             >
               <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-50 mb-3
                               group-hover:bg-blue-100 transition-colors">
                 <BookOpen className="w-5 h-5 text-blue-600" aria-hidden="true" />
               </div>
-              <h3 className="text-sm font-bold text-gray-900 mb-1.5 group-hover:text-[#2B3150] transition-colors">
+              <h3 className="text-sm font-bold text-gray-900 mb-1.5 group-hover:text-ink transition-colors">
                 论文知识库：量子计算方向
               </h3>
               <p className="text-xs text-gray-500 leading-relaxed line-clamp-2 mb-4">
                 收录 Gottesman 及团队前沿论文，支持 PDF 入库、公式自动提取和知识图谱节点关联。
               </p>
-              <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#1D70B8]
-                               group-hover:text-[#DB5F5B] transition-colors">
+              <span className="inline-flex items-center gap-1 text-xs font-semibold text-link
+                               group-hover:text-brand transition-colors">
                 浏览论文库
                 <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
               </span>
@@ -312,22 +312,22 @@ export default function PublicHomePage() {
             <button
               onClick={() => navigate('/ai-query')}
               className="group bg-white border border-gray-200 rounded-lg p-5 text-left
-                         hover:border-[#2B3150]/20 hover:shadow-md hover:-translate-y-0.5
-                         focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/30
+                         hover:border-ink/20 hover:shadow-md hover:-translate-y-0.5
+                         focus:outline-none focus:ring-2 focus:ring-brand/30
                          transition-all duration-200"
             >
               <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-purple-50 mb-3
                               group-hover:bg-purple-100 transition-colors">
                 <Sparkles className="w-5 h-5 text-purple-600" aria-hidden="true" />
               </div>
-              <h3 className="text-sm font-bold text-gray-900 mb-1.5 group-hover:text-[#2B3150] transition-colors">
+              <h3 className="text-sm font-bold text-gray-900 mb-1.5 group-hover:text-ink transition-colors">
                 项目知识服务化流程
               </h3>
               <p className="text-xs text-gray-500 leading-relaxed line-clamp-2 mb-4">
                 了解研发人员如何将冷数据一键打包，在 MiQi 智能体内进行免配置、可追溯的安全调用。
               </p>
-              <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#1D70B8]
-                               group-hover:text-[#DB5F5B] transition-colors">
+              <span className="inline-flex items-center gap-1 text-xs font-semibold text-link
+                               group-hover:text-brand transition-colors">
                 AI 查询
                 <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
               </span>
@@ -347,19 +347,19 @@ export default function PublicHomePage() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Clock className="w-4 h-4 text-[#DB5F5B]" aria-hidden="true" />
-                <h2 className="text-sm font-semibold text-[#DB5F5B] uppercase tracking-wider">
+                <Clock className="w-4 h-4 text-brand" aria-hidden="true" />
+                <h2 className="text-sm font-semibold text-brand uppercase tracking-wider">
                   最新公开条目
                 </h2>
               </div>
-              <p className="text-lg font-bold text-[#2B3150] font-display">
+              <p className="text-lg font-bold text-ink font-display">
                 公开知识资产
               </p>
             </div>
             <button
               onClick={() => navigate('/search')}
               className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-gray-500
-                         hover:text-[#2B3150] transition-colors"
+                         hover:text-ink transition-colors"
             >
               查看全部
               <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
@@ -388,11 +388,11 @@ export default function PublicHomePage() {
                   key={entry.id}
                   onClick={() => navigate(`/entry/${entry.id}`)}
                   className="group flex flex-col p-4 bg-white border border-gray-200 rounded-lg text-left
-                             hover:border-[#2B3150]/20 hover:shadow-sm hover:-translate-y-0.5
-                             focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/30
+                             hover:border-ink/20 hover:shadow-sm hover:-translate-y-0.5
+                             focus:outline-none focus:ring-2 focus:ring-brand/30
                              transition-all duration-200"
                 >
-                  <h3 className="text-sm font-semibold text-gray-900 group-hover:text-[#1D70B8] transition-colors leading-snug">
+                  <h3 className="text-sm font-semibold text-gray-900 group-hover:text-link transition-colors leading-snug">
                     {entry.title}
                   </h3>
                   {entry.summary && (
@@ -405,7 +405,7 @@ export default function PublicHomePage() {
                     <span aria-hidden="true">·</span>
                     <span>{formatDate(entry.latestUpdatedAt)}</span>
                     <span className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-                      <ArrowUpRight className="w-3.5 h-3.5 text-[#DB5F5B]" aria-hidden="true" />
+                      <ArrowUpRight className="w-3.5 h-3.5 text-brand" aria-hidden="true" />
                     </span>
                   </div>
                 </button>
@@ -416,7 +416,7 @@ export default function PublicHomePage() {
           <button
             onClick={() => navigate('/search')}
             className="sm:hidden mt-4 w-full text-center text-xs font-semibold text-gray-500
-                       hover:text-[#2B3150] transition-colors py-2"
+                       hover:text-ink transition-colors py-2"
           >
             查看全部 →
           </button>
@@ -427,17 +427,17 @@ export default function PublicHomePage() {
           MORE ON MICROERA WIKI
           ═══════════════════════════════════════════════════════════════════════ */}
       <section
-        className="py-12 sm:py-16 bg-[#F5F6E5]/10"
+        className="py-12 sm:py-16 bg-cream/10"
         aria-label="更多内容"
       >
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center gap-2 mb-2">
-            <Layers className="w-4 h-4 text-[#DB5F5B]" aria-hidden="true" />
-            <h2 className="text-sm font-semibold text-[#DB5F5B] uppercase tracking-wider">
+            <Layers className="w-4 h-4 text-brand" aria-hidden="true" />
+            <h2 className="text-sm font-semibold text-brand uppercase tracking-wider">
               更多内容
             </h2>
           </div>
-          <p className="text-lg font-bold text-[#2B3150] font-display mb-6">
+          <p className="text-lg font-bold text-ink font-display mb-6">
             探索 MicroEra Wiki
           </p>
 
@@ -446,8 +446,8 @@ export default function PublicHomePage() {
               <button
                 key={link.label}
                 onClick={() => navigate(link.route)}
-                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#1D70B8]
-                           hover:text-[#DB5F5B] hover:bg-white rounded-md border border-transparent
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-link
+                           hover:text-brand hover:bg-white rounded-md border border-transparent
                            hover:border-gray-200 transition-all duration-150 text-left"
               >
                 {link.label}
@@ -467,7 +467,7 @@ export default function PublicHomePage() {
       >
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center gap-2 mb-5">
-            <TrendingUp className="w-4 h-4 text-[#DB5F5B]" aria-hidden="true" />
+            <TrendingUp className="w-4 h-4 text-brand" aria-hidden="true" />
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
               最新知识活动
             </h2>
@@ -506,7 +506,7 @@ export default function PublicHomePage() {
             ].map((item, i) => (
               <div key={i} className="flex items-start gap-4 pl-4 relative">
                 {/* Timeline dot + line */}
-                <div className="absolute left-0 top-1.5 w-2.5 h-2.5 rounded-full border-2 border-white bg-[#DB5F5B]"
+                <div className="absolute left-0 top-1.5 w-2.5 h-2.5 rounded-full border-2 border-white bg-brand"
                      style={item.isLatest ? {} : { backgroundColor: '#D1D5DB' }} />
                 {i < 3 && <div className="absolute left-[4px] top-4 bottom-0 w-0.5 bg-gray-200" />}
 
@@ -517,7 +517,7 @@ export default function PublicHomePage() {
                   <div className="text-xs leading-relaxed">
                     <button
                       onClick={() => navigate(item.route)}
-                      className="text-[#1D70B8] hover:underline font-semibold inline"
+                      className="text-link hover:underline font-semibold inline"
                     >
                       {item.entry}
                     </button>
@@ -549,11 +549,11 @@ function PublicStatBadge({
 }) {
   return (
     <div className="flex items-center gap-3 px-4 py-2.5 rounded-lg">
-      <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#2B3150]/5">
-        <Icon className="w-4 h-4 text-[#2B3150]/60" aria-hidden="true" />
+      <div className="flex items-center justify-center w-9 h-9 rounded-full bg-ink/5">
+        <Icon className="w-4 h-4 text-ink/60" aria-hidden="true" />
       </div>
       <div>
-        <p className="text-lg font-bold text-[#2B3150] font-mono leading-none">
+        <p className="text-lg font-bold text-ink font-mono leading-none">
           {value.toLocaleString()}
         </p>
         <p className="text-[11px] text-gray-400 mt-0.5 leading-tight">{label}</p>
