@@ -14,7 +14,7 @@ export default function AppLayout() {
   const showSidebar = sidebarPaths.some(p => location.pathname.startsWith(p));
 
   return (
-    <div className="min-h-screen bg-[#F5F6E5]/20 flex flex-col font-sans text-[#333333]" id="app-shell-root">
+    <div className="min-h-screen bg-cream/20 flex flex-col font-sans text-[#333333]" id="app-shell-root">
       {/* Upper Navigation Rail */}
       <TopNav />
 

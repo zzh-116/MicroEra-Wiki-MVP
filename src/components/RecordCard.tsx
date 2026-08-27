@@ -32,7 +32,7 @@ function renderPropertyValue(prop: RecordProperty) {
   switch (type) {
     case 'code':
       return (
-        <code className="text-[11px] font-mono bg-gray-100 text-[#2B3150] px-1.5 py-0.5 rounded">
+        <code className="text-[11px] font-mono bg-gray-100 text-ink px-1.5 py-0.5 rounded">
           {value}
         </code>
       );
@@ -43,7 +43,7 @@ function renderPropertyValue(prop: RecordProperty) {
           href={value}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[#1D70B8] hover:underline break-all"
+          className="text-link hover:underline break-all"
         >
           {value}
         </a>
@@ -74,15 +74,15 @@ export default function RecordCard({ record, defaultExpanded = true }: RecordCar
         <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/50">
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-center gap-1.5 min-w-0">
-              <span className="shrink-0 flex items-center justify-center w-5 h-5 rounded bg-[#2B3150] text-white text-[10px] font-bold">
+              <span className="shrink-0 flex items-center justify-center w-5 h-5 rounded bg-ink text-white text-[10px] font-bold">
                 {index}
               </span>
-              <h3 className="font-bold text-sm text-[#2B3150] truncate">
+              <h3 className="font-bold text-sm text-ink truncate">
                 Record {index}: {title}
               </h3>
             </div>
             {domain && (
-              <span className="shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded bg-[#F5F6E5] text-[#2B3150] border border-[#DB5F5B]/10">
+              <span className="shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded bg-cream text-ink border border-brand/10">
                 {domain}
               </span>
             )}
@@ -147,7 +147,7 @@ export default function RecordCard({ record, defaultExpanded = true }: RecordCar
                   <img
                     src={img.url}
                     alt={img.caption || `图片 ${i + 1}`}
-                    className="w-24 h-24 object-cover rounded-lg border border-gray-200 cursor-pointer hover:border-[#DB5F5B]/40 transition-colors"
+                    className="w-24 h-24 object-cover rounded-lg border border-gray-200 cursor-pointer hover:border-brand/40 transition-colors"
                     onClick={() => setLightboxUrl(img.url)}
                   />
                   {img.caption && (

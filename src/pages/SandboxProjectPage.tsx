@@ -149,12 +149,12 @@ export default function SandboxProjectPage({ entryId }: { entryId: string }) {
               <button
                 key={i}
                 onClick={() => { setNavHeading(h.text); setTimeout(() => setNavHeading(null), 100); }}
-                className={`w-full text-left py-1 text-gray-600 hover:text-[#DB5F5B] hover:underline font-medium block truncate transition-colors ${
+                className={`w-full text-left py-1 text-gray-600 hover:text-brand hover:underline font-medium block truncate transition-colors ${
                   h.level === 1 ? 'font-bold text-gray-800' : h.level === 2 ? 'pl-2' : 'pl-4 text-[11px]'
                 }`}
               >
                 <span className="flex items-center gap-1">
-                  {h.level === 1 && <ChevronRight className="w-3 h-3 text-[#DB5F5B]" />}
+                  {h.level === 1 && <ChevronRight className="w-3 h-3 text-brand" />}
                   <span>{h.text.slice(0, 40)}</span>
                 </span>
               </button>
@@ -167,7 +167,7 @@ export default function SandboxProjectPage({ entryId }: { entryId: string }) {
         <div className="lg:col-span-7 space-y-6">
           {/* Title + Tags */}
           <section id="overview">
-            <div className="text-sm font-extrabold text-[#DB5F5B] uppercase tracking-wider font-mono mb-2">
+            <div className="text-sm font-extrabold text-brand uppercase tracking-wider font-mono mb-2">
               最新更新时间：{viewModel.updatedAt}
             </div>
             <div className="flex items-center space-x-2 mb-2">
@@ -178,7 +178,7 @@ export default function SandboxProjectPage({ entryId }: { entryId: string }) {
               {viewModel.title}
             </h1>
             {viewModel.summary && (
-              <div className="border-l-4 border-[#2B3150] bg-gray-50 p-3.5 text-xs text-gray-600 leading-relaxed font-sans italic mt-3">
+              <div className="border-l-4 border-ink bg-gray-50 p-3.5 text-xs text-gray-600 leading-relaxed font-sans italic mt-3">
                 <strong>条目摘要：</strong>{viewModel.summary}
               </div>
             )}
@@ -190,7 +190,7 @@ export default function SandboxProjectPage({ entryId }: { entryId: string }) {
 
           {/* Content — paginated reader */}
           <section id="content" className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-            <h2 className="text-sm font-extrabold text-[#2B3150] uppercase tracking-wider pb-1.5 border-b border-gray-100 mb-3 flex items-center select-none">
+            <h2 className="text-sm font-extrabold text-ink uppercase tracking-wider pb-1.5 border-b border-gray-100 mb-3 flex items-center select-none">
               <FileText className="w-4 h-4 mr-1 text-gray-500" />
               项目背景与正文
             </h2>
@@ -207,8 +207,8 @@ export default function SandboxProjectPage({ entryId }: { entryId: string }) {
           {/* Sandbox Data Records */}
           {viewModel.records.length > 0 && (
             <section id="records" className="space-y-3">
-              <h2 className="text-sm font-extrabold text-[#2B3150] uppercase tracking-wider pb-1.5 border-b border-gray-100 flex items-center select-none">
-                <Database className="w-4 h-4 mr-1 text-[#DB5F5B]" />
+              <h2 className="text-sm font-extrabold text-ink uppercase tracking-wider pb-1.5 border-b border-gray-100 flex items-center select-none">
+                <Database className="w-4 h-4 mr-1 text-brand" />
                 实验数据记录 ({viewModel.records.length})
               </h2>
               {viewModel.records.map((rec) => (
@@ -222,7 +222,7 @@ export default function SandboxProjectPage({ entryId }: { entryId: string }) {
           {/* Source Files */}
           {files.length > 0 && (
             <section className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-              <h3 className="text-sm font-extrabold text-[#2B3150] uppercase tracking-wider pb-1.5 border-b border-gray-100 mb-3 flex items-center select-none">
+              <h3 className="text-sm font-extrabold text-ink uppercase tracking-wider pb-1.5 border-b border-gray-100 mb-3 flex items-center select-none">
                 <Database className="w-4 h-4 mr-1 text-gray-500" />
                 本实验输出物理文件
               </h3>
@@ -244,7 +244,7 @@ export default function SandboxProjectPage({ entryId }: { entryId: string }) {
           {/* References */}
           {viewModel.references.length > 0 && (
             <section id="refs" className="space-y-3">
-              <h2 className="text-sm font-extrabold text-[#2B3150] uppercase tracking-wider pb-1.5 border-b border-gray-100 flex items-center select-none">
+              <h2 className="text-sm font-extrabold text-ink uppercase tracking-wider pb-1.5 border-b border-gray-100 flex items-center select-none">
                 <History className="w-4 h-4 mr-1 text-gray-500" />
                 参考文献 ({viewModel.references.length})
               </h2>
@@ -255,7 +255,7 @@ export default function SandboxProjectPage({ entryId }: { entryId: string }) {
           {/* Services */}
           <section className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm space-y-3">
             <h3 className="font-extrabold text-xs text-gray-800 uppercase tracking-wide flex items-center select-none pb-1.5 border-b border-gray-150">
-              <Cpu className="w-4 h-4 mr-1 text-[#DB5F5B]" />
+              <Cpu className="w-4 h-4 mr-1 text-brand" />
               注册的 AI 活性研发服务
             </h3>
             {['RAG 知识检索服务', 'MCP 工具服务', 'MiQi 活性可调用服务'].map((svc) => (
@@ -269,15 +269,15 @@ export default function SandboxProjectPage({ entryId }: { entryId: string }) {
           {/* ROI Metrics */}
           {metrics.length > 0 && (
             <section id="roi" className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm space-y-3">
-              <h3 className="font-extrabold text-xs text-[#2B3150] uppercase tracking-wide flex items-center space-x-1.5 border-b border-gray-150 pb-2 select-none">
-                <TrendingUp className="w-4 h-4 text-[#DB5F5B]" />
+              <h3 className="font-extrabold text-xs text-ink uppercase tracking-wide flex items-center space-x-1.5 border-b border-gray-150 pb-2 select-none">
+                <TrendingUp className="w-4 h-4 text-brand" />
                 项目商业化价值评估 (ROI Metrics)
               </h3>
               <div className="space-y-2 text-xs">
                 {metrics.map((metric) => (
                   <div key={metric.id} className="flex justify-between items-baseline border-b border-gray-100 pb-2">
                     <span className="font-extrabold text-gray-900">{metric.metricName}</span>
-                    <span className="font-mono text-[#DB5F5B] font-extrabold">{metric.metricValue}</span>
+                    <span className="font-mono text-brand font-extrabold">{metric.metricValue}</span>
                   </div>
                 ))}
               </div>
@@ -287,7 +287,7 @@ export default function SandboxProjectPage({ entryId }: { entryId: string }) {
           {/* Knowledge Graph */}
           <section className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm space-y-3">
             <h3 className="font-extrabold text-xs text-gray-800 uppercase tracking-wide flex items-center select-none pb-1.5 border-b border-gray-100">
-              <Network className="w-4 h-4 mr-1 text-[#DB5F5B]" />
+              <Network className="w-4 h-4 mr-1 text-brand" />
               关联物理知识关系网图
             </h3>
             <KnowledgeGraph nodes={graph.nodes} edges={graph.edges} height={240} />
@@ -295,11 +295,11 @@ export default function SandboxProjectPage({ entryId }: { entryId: string }) {
 
           {/* AI Chat */}
           <section id="chat" className="space-y-3">
-            <h2 className="text-sm font-extrabold text-[#2B3150] uppercase tracking-wider pb-1.5 border-b border-gray-100 flex items-center select-none">
-              <MessageSquare className="w-4 h-4 mr-1 text-[#DB5F5B]" />
+            <h2 className="text-sm font-extrabold text-ink uppercase tracking-wider pb-1.5 border-b border-gray-100 flex items-center select-none">
+              <MessageSquare className="w-4 h-4 mr-1 text-brand" />
               AI 问答 · 基于当前项目上下文
             </h2>
-            <div className="bg-white border border-[#DB5F5B]/10 rounded-xl shadow-sm">
+            <div className="bg-white border border-brand/10 rounded-xl shadow-sm">
               <ConversationPanel
                 messages={chat.messages}
                 onSend={chat.send}

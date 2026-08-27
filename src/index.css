@@ -5,6 +5,27 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Space Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* ── Brand palette ──
+     Single source of truth for accent colors. Prefer these tokens over
+     hardcoded hex values so the palette stays consistent and editable in one
+     place.
+       brand  = coral (primary accent / active states)
+       ink    = navy  (headings / primary buttons / dark text)
+       accent = gold  (secondary highlight)
+       link   = blue  (body & external links) */
+  --color-brand: #DB5F5B;
+  --color-brand-strong: #C14A46;
+  --color-brand-soft: #FBEDEC;
+  --color-ink: #2B3150;
+  --color-ink-muted: #4A5173;
+  --color-ink-soft: #EAECF3;
+  --color-accent: #F2D760;
+  --color-accent-strong: #D9BC3C;
+  --color-accent-soft: #FBF3D0;
+  --color-link: #1D70B8;
+  --color-link-strong: #155C99;
+  --color-cream: #F5F6E5;
 }
 
 /* Animations & premium transitions */
@@ -25,8 +46,8 @@
 
 /* Custom interactive selections */
 ::selection {
-  background-color: rgba(219, 95, 91, 0.2);
-  color: #2B3150;
+  background-color: color-mix(in srgb, var(--color-brand) 20%, transparent);
+  color: var(--color-ink);
 }
 
 /* Document styling rules */

@@ -18,7 +18,7 @@ function renderValue(item: MetadataItem) {
   switch (type) {
     case 'code':
       return (
-        <code className="text-[11px] font-mono bg-gray-100 text-[#2B3150] px-1.5 py-0.5 rounded">
+        <code className="text-[11px] font-mono bg-gray-100 text-ink px-1.5 py-0.5 rounded">
           {value}
         </code>
       );
@@ -36,7 +36,7 @@ function renderValue(item: MetadataItem) {
           href={value}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[#1D70B8] hover:underline inline-flex items-center gap-1"
+          className="text-link hover:underline inline-flex items-center gap-1"
         >
           <span className="break-all">{value}</span>
           <ExternalLink className="w-3 h-3 shrink-0" />
@@ -59,7 +59,7 @@ export default function MetadataCard({ items, title = '基本信息' }: Metadata
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-      <h3 className="text-sm font-bold text-[#2B3150] mb-3 pb-2 border-b border-gray-100">
+      <h3 className="text-sm font-bold text-ink mb-3 pb-2 border-b border-gray-100">
         {title}
       </h3>
       <div className="space-y-0.5">

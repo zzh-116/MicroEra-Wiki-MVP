@@ -175,8 +175,8 @@ export default function AdminContentManagePage() {
     <div className="space-y-5" id="admin-content-panel">
       {/* Page Header */}
       <div className="space-y-1 select-none">
-        <h2 className="text-base font-extrabold text-[#2B3150] flex items-center space-x-1.5 uppercase tracking-wide">
-          <Settings className="w-5 h-5 text-[#DB5F5B]" />
+        <h2 className="text-base font-extrabold text-ink flex items-center space-x-1.5 uppercase tracking-wide">
+          <Settings className="w-5 h-5 text-brand" />
           <span>全域知识库内容审查与维护控制台 (Wiki Metadata Registry)</span>
         </h2>
         <p className="text-[10px] text-gray-400">
@@ -196,7 +196,7 @@ export default function AdminContentManagePage() {
               <div className="relative max-w-xs w-full">
                 <input
                   type="text"
-                  className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#DB5F5B] text-xs font-sans"
+                  className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-brand text-xs font-sans"
                   placeholder="检索需要审核的条目标题..."
                   value={searchQuery}
                   onChange={(e) => handleSearchChange(e.target.value)}
@@ -237,7 +237,7 @@ export default function AdminContentManagePage() {
                   <div className="flex sm:flex-col justify-end gap-2 shrink-0 items-end select-none relative z-10">
                     <button
                       onClick={() => startEditing(entry)}
-                      className="px-2.5 py-1 bg-white border border-gray-200 hover:border-[#DB5F5B]/30 hover:bg-[#F5F6E5]/40 text-gray-600 hover:text-[#DB5F5B] rounded text-[10px] font-bold transition-all flex items-center space-x-1 whitespace-nowrap"
+                      className="px-2.5 py-1 bg-white border border-gray-200 hover:border-brand/30 hover:bg-cream/40 text-gray-600 hover:text-brand rounded text-[10px] font-bold transition-all flex items-center space-x-1 whitespace-nowrap"
                     >
                       <Edit className="w-3 h-3" />
                       <span>修订与备份管理</span>
@@ -275,9 +275,9 @@ export default function AdminContentManagePage() {
         {/* Right Side: Quick Edit Form */}
         <div className="lg:col-span-4 space-y-4">
           {editingEntry ? (
-            <div className="bg-white border border-[#DB5F5B]/20 rounded-xl p-4 shadow-sm space-y-4">
-              <h3 className="font-extrabold text-xs text-[#2B3150] pb-1.5 border-b border-gray-100 uppercase tracking-wide flex items-center select-none">
-                <Edit className="w-4 h-4 mr-1 text-[#DB5F5B]" />
+            <div className="bg-white border border-brand/20 rounded-xl p-4 shadow-sm space-y-4">
+              <h3 className="font-extrabold text-xs text-ink pb-1.5 border-b border-gray-100 uppercase tracking-wide flex items-center select-none">
+                <Edit className="w-4 h-4 mr-1 text-brand" />
                 <span>知识条目在线修改与全量备份</span>
               </h3>
 
@@ -290,7 +290,7 @@ export default function AdminContentManagePage() {
                   <input
                     type="text"
                     required
-                    className="w-full border border-gray-200 rounded-lg p-2 bg-white focus:outline-none focus:ring-1 focus:ring-[#DB5F5B] text-xs font-bold"
+                    className="w-full border border-gray-200 rounded-lg p-2 bg-white focus:outline-none focus:ring-1 focus:ring-brand text-xs font-bold"
                     value={editingEntry.title}
                     onChange={(e) => setEditingEntry({ ...editingEntry, title: e.target.value })}
                   />
@@ -304,7 +304,7 @@ export default function AdminContentManagePage() {
                   <textarea
                     rows={3}
                     required
-                    className="w-full border border-gray-200 rounded-lg p-2 bg-white focus:outline-none focus:ring-1 focus:ring-[#DB5F5B] text-xs leading-relaxed"
+                    className="w-full border border-gray-200 rounded-lg p-2 bg-white focus:outline-none focus:ring-1 focus:ring-brand text-xs leading-relaxed"
                     value={editingEntry.summary}
                     onChange={(e) => setEditingEntry({ ...editingEntry, summary: e.target.value })}
                   />
@@ -318,7 +318,7 @@ export default function AdminContentManagePage() {
                   <textarea
                     rows={8}
                     required
-                    className="w-full border border-gray-200 rounded-lg p-2 bg-white focus:outline-none focus:ring-1 focus:ring-[#DB5F5B] text-[11px] font-mono leading-relaxed"
+                    className="w-full border border-gray-200 rounded-lg p-2 bg-white focus:outline-none focus:ring-1 focus:ring-brand text-[11px] font-mono leading-relaxed"
                     value={editContent}
                     onChange={(e) => setEditContent(e.target.value)}
                   />
@@ -334,7 +334,7 @@ export default function AdminContentManagePage() {
                       type="text"
                       required
                       placeholder="e.g. v1.1"
-                      className="w-full border border-gray-200 rounded-lg p-2 bg-white focus:outline-none focus:ring-1 focus:ring-[#DB5F5B] text-xs font-mono font-bold"
+                      className="w-full border border-gray-200 rounded-lg p-2 bg-white focus:outline-none focus:ring-1 focus:ring-brand text-xs font-mono font-bold"
                       value={editVersion}
                       onChange={(e) => setEditVersion(e.target.value)}
                     />
@@ -346,7 +346,7 @@ export default function AdminContentManagePage() {
                     <label className="flex items-center space-x-1.5 cursor-pointer mt-1">
                       <input
                         type="checkbox"
-                        className="rounded border-gray-300 focus:ring-[#DB5F5B]"
+                        className="rounded border-gray-300 focus:ring-brand"
                         checked={editIsStable}
                         onChange={(e) => setEditIsStable(e.target.checked)}
                       />
@@ -367,7 +367,7 @@ export default function AdminContentManagePage() {
                     type="text"
                     required
                     placeholder="e.g. 补充了 Monte Carlo 模拟残余错误..."
-                    className="w-full border border-gray-200 rounded-lg p-2 bg-white focus:outline-none focus:ring-1 focus:ring-[#DB5F5B] text-xs"
+                    className="w-full border border-gray-200 rounded-lg p-2 bg-white focus:outline-none focus:ring-1 focus:ring-brand text-xs"
                     value={editVersionNote}
                     onChange={(e) => setEditVersionNote(e.target.value)}
                   />
@@ -405,9 +405,9 @@ export default function AdminContentManagePage() {
                 <div className="flex gap-2 select-none pt-2 border-t border-gray-100">
                   <button
                     type="submit"
-                    className="flex-1 py-2 bg-[#2B3150] hover:bg-[#2B3150]/95 text-white font-bold rounded text-[11px] transition-all flex items-center justify-center space-x-1"
+                    className="flex-1 py-2 bg-ink hover:bg-ink/95 text-white font-bold rounded text-[11px] transition-all flex items-center justify-center space-x-1"
                   >
-                    <Check className="w-3.5 h-3.5 text-[#F2D760]" />
+                    <Check className="w-3.5 h-3.5 text-accent" />
                     <span>确认同步并做快照备份</span>
                   </button>
 

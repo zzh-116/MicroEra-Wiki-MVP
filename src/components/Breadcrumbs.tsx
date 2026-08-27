@@ -11,7 +11,7 @@ export default function Breadcrumbs({ paths }: BreadcrumbsProps) {
     <nav className="flex items-center space-x-1 text-xs text-gray-500 mb-3 select-none" id="breadcrumbs-nav">
       <Link
         to="/"
-        className="flex items-center hover:text-[#DB5F5B] transition-colors"
+        className="flex items-center hover:text-brand transition-colors"
       >
         <Home className="w-3 h-3 mr-1" />
         <span>首页</span>
@@ -27,7 +27,7 @@ export default function Breadcrumbs({ paths }: BreadcrumbsProps) {
           ) : (
             <Link
               to={path.to}
-              className="hover:text-[#DB5F5B] transition-colors truncate max-w-[150px]"
+              className="hover:text-brand transition-colors truncate max-w-[150px]"
             >
               {path.label}
             </Link>

@@ -47,7 +47,7 @@ export default function ContentRenderer({ content, maxHeight }: ContentRendererP
       {needsCollapse && (
         <button
           onClick={() => setExpanded(!expanded)}
-          className="mt-2 flex items-center space-x-1 text-[10px] font-bold text-[#1D70B8] hover:text-[#DB5F5B] transition-colors"
+          className="mt-2 flex items-center space-x-1 text-[10px] font-bold text-link hover:text-brand transition-colors"
         >
           {expanded ? '收起 ▲' : '展开全部 ▼'}
         </button>
@@ -64,7 +64,7 @@ function BlockRenderer({ block }: { block: ContentBlock }) {
         return <h3 className="text-base font-extrabold text-gray-900 mt-5 mb-2">{block.text}</h3>;
       }
       if (block.level === 2) {
-        return <h4 className="text-xs font-extrabold text-[#DB5F5B] uppercase tracking-wide mt-4 mb-1">{block.text}</h4>;
+        return <h4 className="text-xs font-extrabold text-brand uppercase tracking-wide mt-4 mb-1">{block.text}</h4>;
       }
       if (block.level === 3) {
         return <h5 className="text-xs font-bold text-gray-800 mt-3 mb-1">{block.text}</h5>;
@@ -89,7 +89,7 @@ function BlockRenderer({ block }: { block: ContentBlock }) {
         <ul className="space-y-0.5 ml-3 my-1">
           {block.items.map((item, i) => (
             <li key={i} className="flex items-start space-x-1.5 text-gray-600">
-              <span className="text-[#DB5F5B] font-bold shrink-0 mt-0.5">•</span>
+              <span className="text-brand font-bold shrink-0 mt-0.5">•</span>
               <span>{item}</span>
             </li>
           ))}
@@ -146,7 +146,7 @@ function BlockRenderer({ block }: { block: ContentBlock }) {
 
     case 'blockquote':
       return (
-        <blockquote className="border-l-4 border-[#DB5F5B]/30 bg-[#F5F6E5]/30 px-3 py-1.5 my-2 text-gray-600 italic">
+        <blockquote className="border-l-4 border-brand/30 bg-cream/30 px-3 py-1.5 my-2 text-gray-600 italic">
           {block.text}
         </blockquote>
       );

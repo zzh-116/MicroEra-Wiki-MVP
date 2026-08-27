@@ -44,8 +44,8 @@ export default function MessageBubble({
       <div
         className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
           isUser
-            ? 'bg-[#2B3150] text-white'
-            : 'bg-gradient-to-br from-[#DB5F5B]/10 to-[#DB5F5B]/20 text-[#DB5F5B]'
+            ? 'bg-ink text-white'
+            : 'bg-gradient-to-br from-brand/10 to-brand/20 text-brand'
         }`}
       >
         {isUser ? (
@@ -70,14 +70,14 @@ export default function MessageBubble({
               className="flex items-center gap-1.5 text-[11px] font-medium text-gray-500 hover:text-gray-700 transition-colors mb-1.5"
             >
               {thinkingOpen ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
-              <Sparkles className="w-3 h-3 text-[#F2D760]" />
+              <Sparkles className="w-3 h-3 text-accent" />
               思考过程
             </button>
             {thinkingOpen && (
-              <div className="space-y-0.5 pl-2 border-l-2 border-[#F2D760]/30">
+              <div className="space-y-0.5 pl-2 border-l-2 border-accent/30">
                 {thinkingSteps.map((step, i) => (
                   <div key={i} className="flex items-center gap-2 text-[11px] text-gray-500 py-0.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#F2D760]/60 shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent/60 shrink-0" />
                     <span>{step}</span>
                   </div>
                 ))}
@@ -90,7 +90,7 @@ export default function MessageBubble({
         <div
           className={`inline-block px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap break-words ${
             isUser
-              ? 'bg-[#2B3150] text-white rounded-2xl rounded-br-sm max-w-[85%]'
+              ? 'bg-ink text-white rounded-2xl rounded-br-sm max-w-[85%]'
               : 'bg-white text-gray-800 rounded-2xl rounded-bl-sm border border-gray-200 max-w-[90%]'
           }`}
         >
@@ -110,8 +110,8 @@ export default function MessageBubble({
                   key={source.id}
                   onClick={() => onSourceClick?.(source.id)}
                   className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium
-                             bg-[#F5F6E5]/40 text-[#1D70B8] border border-[#F5F6E5] rounded-lg
-                             hover:border-[#DB5F5B]/30 hover:bg-[#DB5F5B]/5 transition-all"
+                             bg-cream/40 text-link border border-cream rounded-lg
+                             hover:border-brand/30 hover:bg-brand/5 transition-all"
                   title={source.title}
                 >
                   <FileText className="w-3 h-3 shrink-0" aria-hidden="true" />

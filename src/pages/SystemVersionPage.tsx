@@ -26,8 +26,8 @@ export default function SystemVersionPage() {
 
       {/* Main Title Header */}
       <div className="space-y-1 select-none">
-        <h2 className="text-base font-extrabold text-[#2B3150] flex items-center space-x-1.5 uppercase tracking-wide">
-          <Info className="w-5 h-5 text-[#DB5F5B]" />
+        <h2 className="text-base font-extrabold text-ink flex items-center space-x-1.5 uppercase tracking-wide">
+          <Info className="w-5 h-5 text-brand" />
           <span>关于 Wiki 与平台信息架构 (About System)</span>
         </h2>
         <p className="text-[10px] text-gray-400">
@@ -44,8 +44,8 @@ export default function SystemVersionPage() {
 
           {/* Standard FAQ / Release Info Block */}
           <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-3.5 shadow-sm text-xs">
-            <h3 className="font-extrabold text-[#2B3150] uppercase tracking-wide flex items-center select-none pb-2 border-b border-gray-100">
-              <Award className="w-4 h-4 mr-1 text-[#DB5F5B]" />
+            <h3 className="font-extrabold text-ink uppercase tracking-wide flex items-center select-none pb-2 border-b border-gray-100">
+              <Award className="w-4 h-4 mr-1 text-brand" />
               <span>本原型（Alpha）功能达成情况审计</span>
             </h3>
 
@@ -88,7 +88,7 @@ export default function SystemVersionPage() {
                 </div>
               </div>
 
-              <div className="bg-[#DB5F5B]/5 border border-[#DB5F5B]/10 p-3 rounded-lg text-gray-500 text-[10px] select-none">
+              <div className="bg-brand/5 border border-brand/10 p-3 rounded-lg text-gray-500 text-[10px] select-none">
                 <strong>后续演进提示 (MCP & RAG Integration):</strong> 
                 <span className="ml-1">在 beta 及正式版本中，三类版本控制字段将作为持久化字段写入 PostgreSQL，并绑定 pgvector RAG。届时大模型查询时，可以附加 `v1.0 (Stable)` 版本的过滤条件，从源头上屏蔽老旧废弃草案，保障智能体输出的准确性。</span>
               </div>
@@ -119,9 +119,9 @@ export default function SystemVersionPage() {
             </div>
           </div>
 
-          <div className="bg-[#2B3150] text-white rounded-xl p-4 shadow-sm space-y-3 text-xs border border-[#DB5F5B]/15">
-            <h3 className="font-extrabold text-[#F2D760] pb-1 border-b border-white/10 uppercase tracking-wide flex items-center">
-              <History className="w-4 h-4 mr-1 text-[#F2D760]" />
+          <div className="bg-ink text-white rounded-xl p-4 shadow-sm space-y-3 text-xs border border-brand/15">
+            <h3 className="font-extrabold text-accent pb-1 border-b border-white/10 uppercase tracking-wide flex items-center">
+              <History className="w-4 h-4 mr-1 text-accent" />
               <span>前往体验版本功能</span>
             </h3>
             <p className="text-[10px] text-gray-200 leading-relaxed font-sans">
@@ -130,7 +130,7 @@ export default function SystemVersionPage() {
             <div className="pt-1.5">
               <button
                 onClick={() => navigate('/admin/manage')}
-                className="w-full py-1.5 bg-[#DB5F5B] hover:bg-[#DB5F5B]/90 text-white font-bold rounded text-[11px] transition-all"
+                className="w-full py-1.5 bg-brand hover:bg-brand/90 text-white font-bold rounded text-[11px] transition-all"
               >
                 前往“管理维护端”修改条目
               </button>

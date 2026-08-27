@@ -80,7 +80,7 @@ export default function KnowledgeCard(props: KnowledgeCardProps) {
               <p className="text-xs text-gray-500 mt-1 line-clamp-2">{abstract}</p>
             )}
           </div>
-          <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded bg-[#2B3150] text-white uppercase">
+          <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded bg-ink text-white uppercase">
             {TYPE_LABELS[type] || type}
           </span>
         </div>
@@ -92,7 +92,7 @@ export default function KnowledgeCard(props: KnowledgeCardProps) {
             {tags.map((t) => (
               <span
                 key={t}
-                className="text-[10px] px-1.5 py-0.5 bg-[#F5F6E5] text-[#2B3150] border border-[#DB5F5B]/10 rounded font-medium"
+                className="text-[10px] px-1.5 py-0.5 bg-cream text-ink border border-brand/10 rounded font-medium"
               >
                 {t}
               </span>
@@ -125,7 +125,7 @@ export default function KnowledgeCard(props: KnowledgeCardProps) {
                       <span className="text-gray-500 w-32 shrink-0 font-medium">{p.key}</span>
                       <span className={`text-gray-800 break-all ${p.type === 'code' ? 'font-mono text-[11px]' : ''}`}>
                         {p.type === 'link' ? (
-                          <a href={p.value} target="_blank" rel="noopener noreferrer" className="text-[#1D70B8] hover:underline">
+                          <a href={p.value} target="_blank" rel="noopener noreferrer" className="text-link hover:underline">
                             {p.value.length > 60 ? p.value.slice(0, 60) + '…' : p.value}
                           </a>
                         ) : p.type === 'json' ? (

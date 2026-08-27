@@ -23,10 +23,10 @@ export default function RelatedKnowledge({ relatedEntries }: RelatedKnowledgePro
         <div
           key={entry.id}
           onClick={() => navigate(`/entry/${entry.id}`)}
-          className="p-2.5 bg-white rounded-lg border border-gray-100 hover:border-[#DB5F5B]/30 hover:shadow-sm cursor-pointer transition-all flex flex-col justify-between group"
+          className="p-2.5 bg-white rounded-lg border border-gray-100 hover:border-brand/30 hover:shadow-sm cursor-pointer transition-all flex flex-col justify-between group"
         >
           <div className="flex items-start justify-between gap-1 mb-1">
-            <span className="font-medium text-xs text-gray-800 line-clamp-1 group-hover:text-[#DB5F5B] transition-colors" title={entry.title}>
+            <span className="font-medium text-xs text-gray-800 line-clamp-1 group-hover:text-brand transition-colors" title={entry.title}>
               {entry.title}
             </span>
             <Link2 className="w-3 h-3 text-gray-400 flex-shrink-0" />
@@ -38,7 +38,7 @@ export default function RelatedKnowledge({ relatedEntries }: RelatedKnowledgePro
 
           <div className="flex items-center justify-between text-[10px]">
             <EntryTypeBadge type={entry.entryType} />
-            <span className="text-[#DB5F5B] font-medium opacity-0 group-hover:opacity-100 transition-opacity flex items-center">
+            <span className="text-brand font-medium opacity-0 group-hover:opacity-100 transition-opacity flex items-center">
               <span>阅读</span>
               <ArrowRight className="w-2.5 h-2.5 ml-0.5" />
             </span>

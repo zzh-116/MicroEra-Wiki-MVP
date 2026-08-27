@@ -40,7 +40,7 @@ function parseContent(text: string): React.ReactNode[] {
     if (line.startsWith('# ')) {
       flushParagraph();
       nodes.push(
-        <h3 key={key++} className="text-sm font-bold text-[#2B3150] mt-3 mb-1.5">
+        <h3 key={key++} className="text-sm font-bold text-ink mt-3 mb-1.5">
           {line.slice(2)}
         </h3>
       );
@@ -51,7 +51,7 @@ function parseContent(text: string): React.ReactNode[] {
     if (line.startsWith('## ')) {
       flushParagraph();
       nodes.push(
-        <h4 key={key++} className="text-xs font-bold text-[#2B3150] mt-2.5 mb-1">
+        <h4 key={key++} className="text-xs font-bold text-ink mt-2.5 mb-1">
           {line.slice(3)}
         </h4>
       );
@@ -127,7 +127,7 @@ export default function ExpandableContent({ content, maxHeight = 300 }: Expandab
         <div className="flex justify-center mt-2">
           <button
             onClick={() => setExpanded(!expanded)}
-            className="inline-flex items-center gap-1 text-[11px] font-medium text-[#1D70B8] hover:text-[#2B3150] bg-white border border-gray-200 rounded-lg px-3 py-1.5 shadow-sm hover:border-[#DB5F5B]/30 transition-all"
+            className="inline-flex items-center gap-1 text-[11px] font-medium text-link hover:text-ink bg-white border border-gray-200 rounded-lg px-3 py-1.5 shadow-sm hover:border-brand/30 transition-all"
           >
             {expanded ? (
               <>

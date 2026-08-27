@@ -136,11 +136,11 @@ export default function AIQueryPage() {
           ═══════════════════════════════════════════════════════════════════════ */}
       <div className="shrink-0 flex items-center justify-between px-4 sm:px-6 py-3 border-b border-gray-100 bg-white">
         <div className="flex items-center gap-2.5">
-          <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-[#DB5F5B]/10">
-            <Sparkles className="w-3.5 h-3.5 text-[#DB5F5B]" aria-hidden="true" />
+          <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-brand/10">
+            <Sparkles className="w-3.5 h-3.5 text-brand" aria-hidden="true" />
           </span>
           <div>
-            <h1 className="text-sm font-bold text-[#2B3150] font-display">MiQi AI</h1>
+            <h1 className="text-sm font-bold text-ink font-display">MiQi AI</h1>
             <p className="text-[10px] text-gray-400">企业知识库智能问答</p>
           </div>
         </div>
@@ -151,7 +151,7 @@ export default function AIQueryPage() {
             onClick={() => setGraphPanelOpen(!graphPanelOpen)}
             className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-medium transition-all ${
               graphPanelOpen
-                ? 'bg-[#DB5F5B]/5 text-[#DB5F5B] border border-[#DB5F5B]/10'
+                ? 'bg-brand/5 text-brand border border-brand/10'
                 : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100 border border-transparent'
             }`}
           >
@@ -189,10 +189,10 @@ export default function AIQueryPage() {
               {isEmpty && (
                 <div className="flex flex-col items-center justify-center min-h-[60vh] py-8">
                   {/* MIQi branding */}
-                  <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#DB5F5B]/10 to-[#DB5F5B]/20 mb-5">
-                    <Sparkles className="w-8 h-8 text-[#DB5F5B]" aria-hidden="true" />
+                  <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-brand/10 to-brand/20 mb-5">
+                    <Sparkles className="w-8 h-8 text-brand" aria-hidden="true" />
                   </div>
-                  <h2 className="text-xl font-bold text-[#2B3150] font-display mb-1.5">
+                  <h2 className="text-xl font-bold text-ink font-display mb-1.5">
                     MiQi AI 智能问答
                   </h2>
                   <p className="text-sm text-gray-500 max-w-md text-center leading-relaxed mb-8">
@@ -206,12 +206,12 @@ export default function AIQueryPage() {
                         key={q.text}
                         onClick={() => handleSend(q.text)}
                         className="group flex items-start gap-3 p-3.5 bg-white border border-gray-200 rounded-xl
-                                   hover:border-[#DB5F5B]/30 hover:shadow-sm hover:-translate-y-0.5
+                                   hover:border-brand/30 hover:shadow-sm hover:-translate-y-0.5
                                    transition-all duration-150 text-left"
                       >
                         <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50
-                                        group-hover:bg-[#DB5F5B]/10 shrink-0 transition-colors">
-                          <q.icon className="w-4 h-4 text-gray-400 group-hover:text-[#DB5F5B] transition-colors" aria-hidden="true" />
+                                        group-hover:bg-brand/10 shrink-0 transition-colors">
+                          <q.icon className="w-4 h-4 text-gray-400 group-hover:text-brand transition-colors" aria-hidden="true" />
                         </div>
                         <div className="min-w-0">
                           <p className="text-[11px] font-semibold text-gray-500 mb-0.5">{q.category}</p>
@@ -265,15 +265,15 @@ export default function AIQueryPage() {
               {/* Loading indicator for initial response */}
               {chat.isLoading && chat.messages.length <= 1 && (
                 <div className="flex items-start gap-3 mb-5 animate-fade-in">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#DB5F5B]/10 to-[#DB5F5B]/20 flex items-center justify-center shrink-0">
-                    <Sparkles className="w-4 h-4 text-[#DB5F5B]" aria-hidden="true" />
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand/10 to-brand/20 flex items-center justify-center shrink-0">
+                    <Sparkles className="w-4 h-4 text-brand" aria-hidden="true" />
                   </div>
                   <div className="flex-1">
                     <p className="text-[10px] font-semibold text-gray-400 mb-1">MiQi AI</p>
                     <div className="flex items-center gap-1 px-1 py-2">
-                      <span className="w-2 h-2 bg-[#DB5F5B] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                      <span className="w-2 h-2 bg-[#DB5F5B] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                      <span className="w-2 h-2 bg-[#DB5F5B] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      <span className="w-2 h-2 bg-brand rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <span className="w-2 h-2 bg-brand rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <span className="w-2 h-2 bg-brand rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                     </div>
                   </div>
                 </div>
@@ -303,7 +303,7 @@ export default function AIQueryPage() {
           <aside className="hidden lg:block w-80 shrink-0 border-l border-gray-200 bg-white overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between">
               <h3 className="text-xs font-semibold text-gray-700 flex items-center gap-1.5">
-                <Network className="w-3.5 h-3.5 text-[#DB5F5B]" aria-hidden="true" />
+                <Network className="w-3.5 h-3.5 text-brand" aria-hidden="true" />
                 知识图谱
               </h3>
               <button
@@ -339,10 +339,10 @@ export default function AIQueryPage() {
                       <button
                         key={s.id}
                         onClick={() => chat.navigateToSource(s.id)}
-                        className="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-[#1D70B8]
-                                   hover:bg-[#DB5F5B]/5 rounded-md transition-all text-left"
+                        className="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-link
+                                   hover:bg-brand/5 rounded-md transition-all text-left"
                       >
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#DB5F5B] shrink-0" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-brand shrink-0" />
                         <span className="truncate">{s.title}</span>
                         <ArrowRight className="w-3 h-3 shrink-0 ml-auto text-gray-300" aria-hidden="true" />
                       </button>
@@ -352,15 +352,15 @@ export default function AIQueryPage() {
               )}
 
               {/* Knowledge source stats */}
-              <div className="bg-[#F5F6E5]/20 border border-gray-100 rounded-lg p-3 space-y-2">
+              <div className="bg-cream/20 border border-gray-100 rounded-lg p-3 space-y-2">
                 <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">知识库状态</p>
                 <div className="grid grid-cols-2 gap-2 text-[10px]">
                   <div className="bg-white rounded-md p-2 border border-gray-100 text-center">
-                    <p className="font-bold text-[#2B3150] font-mono">{globalGraph.nodes.length}</p>
+                    <p className="font-bold text-ink font-mono">{globalGraph.nodes.length}</p>
                     <p className="text-gray-400">知识节点</p>
                   </div>
                   <div className="bg-white rounded-md p-2 border border-gray-100 text-center">
-                    <p className="font-bold text-[#2B3150] font-mono">{globalGraph.edges.length}</p>
+                    <p className="font-bold text-ink font-mono">{globalGraph.edges.length}</p>
                     <p className="text-gray-400">关联边</p>
                   </div>
                 </div>

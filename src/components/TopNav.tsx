@@ -15,7 +15,7 @@ export default function TopNav() {
   };
 
   return (
-    <header className="bg-[#2B3150] text-white border-b border-[#DB5F5B]/20 sticky top-0 z-50 select-none shadow-sm" id="global-header">
+    <header className="bg-ink text-white border-b border-brand/20 sticky top-0 z-50 select-none shadow-sm" id="global-header">
       <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
         {/* Left Side Logo & Branding */}
         <div className="flex items-center space-x-3.5">
@@ -24,7 +24,7 @@ export default function TopNav() {
             className="flex items-center space-x-2 cursor-pointer group"
           >
             {/* Custom SVG logo representing a quantum-orbit node lattice */}
-            <div className="bg-[#DB5F5B] p-1.5 rounded-lg border border-[#F2D760]/30 group-hover:rotate-12 transition-transform">
+            <div className="bg-brand p-1.5 rounded-lg border border-accent/30 group-hover:rotate-12 transition-transform">
               <svg className="w-5 h-5 text-white fill-current" viewBox="0 0 24 24">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z" />
               </svg>
@@ -32,14 +32,14 @@ export default function TopNav() {
 
             <div className="flex flex-col">
               <div className="flex items-center space-x-1.5">
-                <span className="font-extrabold text-sm tracking-wider text-[#F2D760] font-sans">
+                <span className="font-extrabold text-sm tracking-wider text-accent font-sans">
                   Miqro Wiki
                 </span>
                 <span className="bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[8px] font-mono px-1 rounded font-bold select-none uppercase scale-90">
                   v0.1.0-alpha
                 </span>
               </div>
-              <span className="text-[9px] text-[#F5F6E5] font-mono tracking-tight font-bold -mt-0.5 uppercase">
+              <span className="text-[9px] text-cream font-mono tracking-tight font-bold -mt-0.5 uppercase">
                 微观纪元 AI Wiki
               </span>
             </div>
@@ -51,7 +51,7 @@ export default function TopNav() {
               onClick={() => navigate('/')}
               className={`px-2.5 py-1 rounded transition-all font-bold ${
                 isActive('/')
-                  ? 'bg-white/10 text-[#F2D760]'
+                  ? 'bg-white/10 text-accent'
                   : 'text-gray-200 hover:text-white hover:bg-white/5'
               }`}
             >
@@ -61,7 +61,7 @@ export default function TopNav() {
               onClick={() => navigate('/search')}
               className={`px-2.5 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
                 isActive('/search')
-                  ? 'bg-white/10 text-[#F2D760]'
+                  ? 'bg-white/10 text-accent'
                   : 'text-gray-200 hover:text-white hover:bg-white/5'
               }`}
             >
@@ -72,7 +72,7 @@ export default function TopNav() {
               onClick={() => navigate('/literature')}
               className={`px-2.5 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
                 isActive('/literature')
-                  ? 'bg-white/10 text-[#F2D760]'
+                  ? 'bg-white/10 text-accent'
                   : 'text-gray-200 hover:text-white hover:bg-white/5'
               }`}
             >
@@ -83,18 +83,18 @@ export default function TopNav() {
               onClick={() => navigate('/ai-query')}
               className={`px-2.5 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
                 isActive('/ai-query')
-                  ? 'bg-white/10 text-[#F2D760]'
+                  ? 'bg-white/10 text-accent'
                   : 'text-gray-200 hover:text-white hover:bg-white/5'
               }`}
             >
-              <Sparkles className="w-3.5 h-3.5 text-[#F2D760] animate-pulse" />
+              <Sparkles className="w-3.5 h-3.5 text-accent animate-pulse" />
               <span>AI 查询问答</span>
             </button>
             <button
               onClick={() => navigate('/knowledge-graph')}
               className={`px-2.5 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
                 isActive('/knowledge-graph') || isActive('/graph')
-                  ? 'bg-white/10 text-[#F2D760]'
+                  ? 'bg-white/10 text-accent'
                   : 'text-gray-200 hover:text-white hover:bg-white/5'
               }`}
             >
@@ -105,7 +105,7 @@ export default function TopNav() {
               onClick={() => navigate('/system-version')}
               className={`px-2.5 py-1 rounded transition-all font-bold ${
                 isActive('/system-version')
-                  ? 'bg-white/10 text-[#F2D760]'
+                  ? 'bg-white/10 text-accent'
                   : 'text-gray-200 hover:text-white hover:bg-white/5'
               }`}
             >
@@ -118,7 +118,7 @@ export default function TopNav() {
                   onClick={() => navigate('/templates')}
                   className={`px-2.5 py-1 rounded transition-all font-bold ${
                     isActive('/templates')
-                      ? 'bg-white/10 text-[#F2D760]'
+                      ? 'bg-white/10 text-accent'
                       : 'text-gray-200 hover:text-white hover:bg-white/5'
                   }`}
                 >
@@ -128,7 +128,7 @@ export default function TopNav() {
                   onClick={() => navigate('/admin/import')}
                   className={`px-2.5 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
                     isActive('/admin/import')
-                      ? 'bg-white/10 text-[#F2D760]'
+                      ? 'bg-white/10 text-accent'
                       : 'text-gray-200 hover:text-white hover:bg-white/5'
                   }`}
                 >
@@ -139,7 +139,7 @@ export default function TopNav() {
                   onClick={() => navigate('/admin/logs')}
                   className={`px-2.5 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
                     isActive('/admin/logs')
-                      ? 'bg-white/10 text-[#F2D760]'
+                      ? 'bg-white/10 text-accent'
                       : 'text-gray-200 hover:text-white hover:bg-white/5'
                   }`}
                 >
@@ -156,9 +156,9 @@ export default function TopNav() {
           {/* Natural Language Prompt Shortcut Button */}
           <button
             onClick={() => navigate('/ai-query')}
-            className="hidden lg:flex items-center space-x-1 bg-[#DB5F5B] hover:bg-[#DB5F5B]/90 text-white font-extrabold px-3 py-1.5 rounded-md transition-all shadow-md text-xs border border-[#F2D760]/20"
+            className="hidden lg:flex items-center space-x-1 bg-brand hover:bg-brand/90 text-white font-extrabold px-3 py-1.5 rounded-md transition-all shadow-md text-xs border border-accent/20"
           >
-            <Sparkles className="w-3.5 h-3.5 text-[#F2D760] animate-bounce" />
+            <Sparkles className="w-3.5 h-3.5 text-accent animate-bounce" />
             <span>问答 MiQi</span>
           </button>
 
@@ -167,10 +167,10 @@ export default function TopNav() {
               {/* User Profiler button */}
               <button
                 onClick={() => setShowProfile(!showProfile)}
-                className="flex items-center space-x-2 bg-white/10 hover:bg-white/15 px-2.5 py-1.5 rounded-lg border border-[#F2D760]/10 transition-all cursor-pointer"
+                className="flex items-center space-x-2 bg-white/10 hover:bg-white/15 px-2.5 py-1.5 rounded-lg border border-accent/10 transition-all cursor-pointer"
                 id="top-nav-profile-btn"
               >
-                <div className="bg-[#F2D760] text-[#2B3150] w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px]">
+                <div className="bg-accent text-ink w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px]">
                   AD
                 </div>
                 <span className="font-semibold text-gray-100 hidden sm:inline">
@@ -246,7 +246,7 @@ export default function TopNav() {
               className="flex items-center space-x-1 bg-white/10 hover:bg-white/15 px-3 py-1.5 rounded-lg border border-gray-300/30 font-bold transition-all"
               id="top-nav-login-btn"
             >
-              <LogIn className="w-3.5 h-3.5 text-[#F2D760]" />
+              <LogIn className="w-3.5 h-3.5 text-accent" />
               <span>内部登录</span>
             </button>
           )}

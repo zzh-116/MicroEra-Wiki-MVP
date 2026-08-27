@@ -42,10 +42,10 @@ export default function LoginPage() {
     <div className="max-w-md mx-auto my-14 bg-white border border-gray-200 rounded-2xl shadow-lg p-6 space-y-5 select-none" id="login-screen-panel">
       {/* Brand Header */}
       <div className="text-center space-y-1">
-        <div className="bg-[#2B3150] p-3 rounded-full inline-block border-2 border-[#F2D760]/30 shadow-md">
-          <ShieldCheck className="w-8 h-8 text-[#F2D760]" />
+        <div className="bg-ink p-3 rounded-full inline-block border-2 border-accent/30 shadow-md">
+          <ShieldCheck className="w-8 h-8 text-accent" />
         </div>
-        <h2 className="text-base font-extrabold text-[#2B3150] uppercase tracking-wide">
+        <h2 className="text-base font-extrabold text-ink uppercase tracking-wide">
           微观纪元 Wiki 内部登录
         </h2>
         <p className="text-[10px] text-gray-400">
@@ -54,7 +54,7 @@ export default function LoginPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 text-[#DB5F5B] text-xs p-3 rounded-lg border border-red-100 flex items-start space-x-1.5 animate-pulse">
+        <div className="bg-red-50 text-brand text-xs p-3 rounded-lg border border-red-100 flex items-start space-x-1.5 animate-pulse">
           <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
           <span>{error}</span>
         </div>
@@ -70,7 +70,7 @@ export default function LoginPage() {
             <input
               type="text"
               required
-              className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/30 focus:border-[#DB5F5B] text-xs font-sans transition-all"
+              className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand text-xs font-sans transition-all"
               placeholder="请输入企业工号..."
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -88,7 +88,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={handleQuickFill}
-              className="text-[9px] text-[#DB5F5B] hover:underline font-bold"
+              className="text-[9px] text-brand hover:underline font-bold"
             >
               一键填入演示账号
             </button>
@@ -97,7 +97,7 @@ export default function LoginPage() {
             <input
               type="password"
               required
-              className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/30 focus:border-[#DB5F5B] text-xs font-sans transition-all"
+              className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand text-xs font-sans transition-all"
               placeholder="请输入安全密码..."
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -111,7 +111,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 bg-[#2B3150] hover:bg-[#2B3150]/95 text-white font-bold rounded-lg text-xs transition-all flex items-center justify-center"
+            className="w-full py-2.5 bg-ink hover:bg-ink/95 text-white font-bold rounded-lg text-xs transition-all flex items-center justify-center"
             id="login-submit-btn"
           >
             {loading ? (

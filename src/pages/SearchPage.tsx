@@ -80,7 +80,7 @@ function highlightMatches(text: string, query: string): React.ReactNode {
   const parts = text.split(pattern);
   return parts.map((part, i) =>
     pattern.test(part) ? (
-      <mark key={i} className="bg-[#F2D760]/40 text-gray-900 font-semibold rounded-sm px-0.5">{part}</mark>
+      <mark key={i} className="bg-accent/40 text-gray-900 font-semibold rounded-sm px-0.5">{part}</mark>
     ) : (
       part
     )
@@ -319,7 +319,7 @@ export default function SearchPage() {
           {/* Title (shown when no active search) */}
           {!hasSearched && (
             <div className="text-center mb-6">
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#2B3150] font-display tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-bold text-ink font-display tracking-tight">
                 企业知识搜索
               </h1>
               <p className="mt-2 text-sm text-gray-500 max-w-lg mx-auto">
@@ -331,7 +331,7 @@ export default function SearchPage() {
           {/* Compact title when results are showing */}
           {hasSearched && (
             <div className="mb-4">
-              <h1 className="text-lg font-bold text-[#2B3150] font-display">
+              <h1 className="text-lg font-bold text-ink font-display">
                 搜索企业知识
               </h1>
             </div>
@@ -343,7 +343,7 @@ export default function SearchPage() {
               className={`
                 relative flex items-center bg-white border-2 rounded-lg transition-all duration-200
                 ${searchFocused
-                  ? 'border-[#DB5F5B] shadow-[0_0_0_4px_rgba(219,95,91,0.12)]'
+                  ? 'border-brand shadow-[0_0_0_4px_rgba(219,95,91,0.12)]'
                   : 'border-gray-300 hover:border-gray-400'
                 }
               `}
@@ -351,7 +351,7 @@ export default function SearchPage() {
               {/* Search icon */}
               <span className="absolute left-4 flex items-center pointer-events-none">
                 <Search
-                  className={`w-5 h-5 transition-colors duration-200 ${searchFocused ? 'text-[#DB5F5B]' : 'text-gray-400'}`}
+                  className={`w-5 h-5 transition-colors duration-200 ${searchFocused ? 'text-brand' : 'text-gray-400'}`}
                   aria-hidden="true"
                 />
               </span>
@@ -391,9 +391,9 @@ export default function SearchPage() {
 
               <button
                 type="submit"
-                className="m-1.5 px-5 py-2 bg-[#2B3150] hover:bg-[#2B3150]/90 text-white text-sm font-semibold
+                className="m-1.5 px-5 py-2 bg-ink hover:bg-ink/90 text-white text-sm font-semibold
                            rounded-md border-2 border-transparent
-                           focus:outline-none focus:ring-2 focus:ring-[#DB5F5B]/40
+                           focus:outline-none focus:ring-2 focus:ring-brand/40
                            transition-all duration-150 shrink-0"
               >
                 搜索
@@ -448,7 +448,7 @@ export default function SearchPage() {
                       key={term}
                       type="button"
                       onClick={() => handleSuggestedSearch(term)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs text-[#1D70B8]
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs text-link
                                  bg-blue-50/50 hover:bg-blue-50 border border-blue-100 rounded-full
                                  transition-all duration-150"
                     >
@@ -478,7 +478,7 @@ export default function SearchPage() {
               {activeFilters.length > 0 && (
                 <button
                   onClick={handleClearFilters}
-                  className="text-[10px] text-[#DB5F5B] hover:underline font-semibold flex items-center gap-1"
+                  className="text-[10px] text-brand hover:underline font-semibold flex items-center gap-1"
                 >
                   <RotateCcw className="w-3 h-3" aria-hidden="true" />
                   重置
@@ -558,17 +558,17 @@ export default function SearchPage() {
                   <span
                     key={f.key}
                     className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium
-                               bg-[#2B3150]/5 text-[#2B3150] rounded-full"
+                               bg-ink/5 text-ink rounded-full"
                   >
                     {f.label}
-                    <button onClick={f.onRemove} className="hover:text-[#DB5F5B] transition-colors" aria-label={`取消 ${f.label} 筛选`}>
+                    <button onClick={f.onRemove} className="hover:text-brand transition-colors" aria-label={`取消 ${f.label} 筛选`}>
                       <X className="w-3 h-3" aria-hidden="true" />
                     </button>
                   </span>
                 ))}
                 <button
                   onClick={handleClearFilters}
-                  className="text-[10px] text-gray-400 hover:text-[#DB5F5B] transition-colors ml-1"
+                  className="text-[10px] text-gray-400 hover:text-brand transition-colors ml-1"
                 >
                   清除全部
                 </button>
@@ -581,12 +581,12 @@ export default function SearchPage() {
                 <span className="font-semibold text-gray-700">
                   {loading ? (
                     <span className="inline-flex items-center gap-2">
-                      <span className="w-3 h-3 border-2 border-[#DB5F5B] border-t-transparent rounded-full animate-spin" aria-hidden="true" />
+                      <span className="w-3 h-3 border-2 border-brand border-t-transparent rounded-full animate-spin" aria-hidden="true" />
                       正在检索...
                     </span>
                   ) : (
                     <>
-                      共 <span className="font-bold text-[#2B3150] font-mono">{total}</span> 条结果
+                      共 <span className="font-bold text-ink font-mono">{total}</span> 条结果
                       {filteredResults.length !== total && (
                         <span className="text-gray-400 ml-1">（筛选后 {filteredResults.length} 条）</span>
                       )}
@@ -640,7 +640,7 @@ export default function SearchPage() {
                 <div className="flex flex-wrap items-center justify-center gap-2">
                   <button
                     onClick={handleClearFilters}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#2B3150] hover:bg-[#2B3150]/90
+                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-ink hover:bg-ink/90
                                text-white text-sm font-semibold rounded-md
                                border-2 border-transparent transition-all duration-150"
                   >
@@ -652,8 +652,8 @@ export default function SearchPage() {
                     <button
                       key={term}
                       onClick={() => handleSuggestedSearch(term)}
-                      className="inline-flex items-center gap-1 px-3 py-1 text-xs text-[#1D70B8]
-                                 bg-white border border-gray-200 rounded-full hover:border-[#1D70B8]/30
+                      className="inline-flex items-center gap-1 px-3 py-1 text-xs text-link
+                                 bg-white border border-gray-200 rounded-full hover:border-link/30
                                  transition-all duration-150"
                     >
                       {term}
@@ -670,8 +670,8 @@ export default function SearchPage() {
                   <article
                     key={res.id}
                     className="group p-4 bg-white border border-gray-200 rounded-lg
-                               hover:border-[#2B3150]/20 hover:shadow-sm hover:-translate-y-0.5
-                               focus-within:ring-2 focus-within:ring-[#DB5F5B]/30
+                               hover:border-ink/20 hover:shadow-sm hover:-translate-y-0.5
+                               focus-within:ring-2 focus-within:ring-brand/30
                                transition-all duration-150 cursor-pointer"
                     onClick={() => navigate(`/entry/${res.id}`)}
                     tabIndex={0}
@@ -681,11 +681,11 @@ export default function SearchPage() {
                   >
                     {/* Title row */}
                     <div className="flex items-start justify-between gap-3 mb-2">
-                      <h3 className="text-sm font-bold text-[#1D70B8] group-hover:text-[#DB5F5B] transition-colors leading-snug">
+                      <h3 className="text-sm font-bold text-link group-hover:text-brand transition-colors leading-snug">
                         {res.title}
                       </h3>
                       <span className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <ArrowUpRight className="w-4 h-4 text-[#DB5F5B]" aria-hidden="true" />
+                        <ArrowUpRight className="w-4 h-4 text-brand" aria-hidden="true" />
                       </span>
                     </div>
 
@@ -699,7 +699,7 @@ export default function SearchPage() {
                     {/* Match reason snippet */}
                     {res.matchReason && (
                       <div className="text-[11px] text-gray-500 mb-3 flex items-start gap-1.5">
-                        <Sparkles className="w-3 h-3 text-[#F2D760] shrink-0 mt-0.5" aria-hidden="true" />
+                        <Sparkles className="w-3 h-3 text-accent shrink-0 mt-0.5" aria-hidden="true" />
                         <span>
                           <span className="font-semibold text-gray-600">匹配：</span>
                           {highlightMatches(res.matchReason, query)}
@@ -730,7 +730,7 @@ export default function SearchPage() {
                       )}
 
                       {/* Quick open button */}
-                      <span className="ml-auto hidden sm:inline-flex items-center gap-1 text-[#1D70B8] font-semibold
+                      <span className="ml-auto hidden sm:inline-flex items-center gap-1 text-link font-semibold
                                        opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         打开
                         <ArrowRight className="w-3 h-3" aria-hidden="true" />
@@ -783,7 +783,7 @@ function FilterChip({
       className={`
         w-full flex items-center justify-between px-2.5 py-1.5 text-xs rounded-md transition-all duration-150 text-left
         ${active
-          ? 'bg-[#2B3150]/5 text-[#2B3150] font-semibold border border-[#2B3150]/10'
+          ? 'bg-ink/5 text-ink font-semibold border border-ink/10'
           : 'text-gray-600 hover:bg-gray-50 border border-transparent'
         }
         ${disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}
@@ -791,7 +791,7 @@ function FilterChip({
     >
       <span>{label}</span>
       {count !== undefined && (
-        <span className={`text-[10px] font-mono ${active ? 'text-[#2B3150]/60' : 'text-gray-400'}`}>
+        <span className={`text-[10px] font-mono ${active ? 'text-ink/60' : 'text-gray-400'}`}>
           {count}
         </span>
       )}
@@ -817,7 +817,7 @@ function FilterGroup({
     <div className="border-b border-gray-100 pb-3">
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between py-2 text-xs font-semibold text-gray-700 uppercase tracking-wide hover:text-[#2B3150] transition-colors"
+        className="w-full flex items-center justify-between py-2 text-xs font-semibold text-gray-700 uppercase tracking-wide hover:text-ink transition-colors"
       >
         <span className="flex items-center gap-1.5">
           {icon}

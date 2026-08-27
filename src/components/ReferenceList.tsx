@@ -21,11 +21,11 @@ export default function ReferenceList({ references }: ReferenceListProps) {
       {references.map((ref) => (
         <div
           key={ref.id}
-          className="p-3 bg-[#F5F6E5]/40 rounded-lg border border-[#DB5F5B]/10 hover:border-[#DB5F5B]/30 transition-all text-xs"
+          className="p-3 bg-cream/40 rounded-lg border border-brand/10 hover:border-brand/30 transition-all text-xs"
         >
           <div className="flex items-center justify-between mb-1.5">
-            <span className="font-semibold text-[#2B3150] flex items-center">
-              <FileText className="w-3.5 h-3.5 mr-1 text-[#DB5F5B]" />
+            <span className="font-semibold text-ink flex items-center">
+              <FileText className="w-3.5 h-3.5 mr-1 text-brand" />
               {ref.title || '引用文献'}
             </span>
             <span className="text-[10px] text-gray-500 bg-white px-1.5 py-0.5 rounded border border-gray-100">
@@ -33,7 +33,7 @@ export default function ReferenceList({ references }: ReferenceListProps) {
             </span>
           </div>
 
-          <div className="pl-3 border-l-2 border-[#DB5F5B]/20 text-gray-600 italic mb-2 select-all">
+          <div className="pl-3 border-l-2 border-brand/20 text-gray-600 italic mb-2 select-all">
             <Quote className="w-3 h-3 text-gray-300 inline mr-1 -mt-1.5" />
             {ref.quote}
           </div>
@@ -43,7 +43,7 @@ export default function ReferenceList({ references }: ReferenceListProps) {
             {ref.toEntryId && (
               <button
                 onClick={() => navigate(`/entry/${ref.toEntryId}`)}
-                className="text-[#DB5F5B] hover:underline flex items-center font-medium"
+                className="text-brand hover:underline flex items-center font-medium"
               >
                 <span>跳转至关联条目</span>
                 <ChevronRight className="w-3 h-3 ml-0.5" />

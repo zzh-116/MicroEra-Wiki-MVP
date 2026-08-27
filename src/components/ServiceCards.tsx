@@ -67,13 +67,13 @@ export default function ServiceCards({ services }: ServiceCardsProps) {
         return (
           <div
             key={service.id}
-            className="bg-white border border-gray-150 rounded-lg p-3 shadow-sm hover:shadow-md hover:border-[#DB5F5B]/30 transition-all text-xs"
+            className="bg-white border border-gray-150 rounded-lg p-3 shadow-sm hover:shadow-md hover:border-brand/30 transition-all text-xs"
           >
             {/* Header */}
             <div className="flex items-start justify-between mb-2">
               <div className="pr-2">
                 <div className="flex items-center space-x-1.5 mb-1">
-                  <span className="bg-[#2B3150] p-1 rounded">
+                  <span className="bg-ink p-1 rounded">
                     <Settings className="w-3.5 h-3.5 text-white" />
                   </span>
                   <span className="font-semibold text-gray-800 tracking-tight">
@@ -107,7 +107,7 @@ export default function ServiceCards({ services }: ServiceCardsProps) {
                   输入载荷参数 (Payload Schema/JSON)：
                 </label>
                 <textarea
-                  className="w-full h-14 bg-gray-900 text-green-400 p-2 rounded-md font-mono text-[10px] focus:outline-none focus:ring-1 focus:ring-[#DB5F5B]"
+                  className="w-full h-14 bg-gray-900 text-green-400 p-2 rounded-md font-mono text-[10px] focus:outline-none focus:ring-1 focus:ring-brand"
                   value={payloads[service.id] !== undefined ? payloads[service.id] : service.inputSchema}
                   onChange={(e) => handlePayloadChange(service.id, e.target.value)}
                   placeholder="请输入参数JSON..."
@@ -124,7 +124,7 @@ export default function ServiceCards({ services }: ServiceCardsProps) {
                 <button
                   onClick={() => handleRun(service)}
                   disabled={isRunning}
-                  className="px-2.5 py-1.5 bg-[#2B3150] hover:bg-[#2B3150]/90 text-white font-bold rounded transition-all flex items-center space-x-1 text-[10px]"
+                  className="px-2.5 py-1.5 bg-ink hover:bg-ink/90 text-white font-bold rounded transition-all flex items-center space-x-1 text-[10px]"
                 >
                   {isRunning ? (
                     <>
@@ -133,7 +133,7 @@ export default function ServiceCards({ services }: ServiceCardsProps) {
                     </>
                   ) : (
                     <>
-                      <Play className="w-3 h-3 text-[#F2D760]" />
+                      <Play className="w-3 h-3 text-accent" />
                       <span>沙箱调用测试</span>
                     </>
                   )}
@@ -142,10 +142,10 @@ export default function ServiceCards({ services }: ServiceCardsProps) {
 
               {/* Response output */}
               {result && (
-                <div className="mt-2.5 bg-[#F5F6E5]/40 border border-[#DB5F5B]/10 rounded-md p-2 text-[10px]">
-                  <div className="flex items-center justify-between text-gray-500 font-semibold mb-1 border-b border-[#DB5F5B]/10 pb-1 font-mono">
-                    <span className="flex items-center text-[#2B3150]">
-                      <Terminal className="w-3 h-3 mr-1 text-[#DB5F5B]" />
+                <div className="mt-2.5 bg-cream/40 border border-brand/10 rounded-md p-2 text-[10px]">
+                  <div className="flex items-center justify-between text-gray-500 font-semibold mb-1 border-b border-brand/10 pb-1 font-mono">
+                    <span className="flex items-center text-ink">
+                      <Terminal className="w-3 h-3 mr-1 text-brand" />
                       <span>API RESPONSE OUTPUT</span>
                     </span>
                     <span className="text-green-600">
