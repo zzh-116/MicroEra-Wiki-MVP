@@ -99,7 +99,7 @@ mapfile -t samples < <(
 
 for f in "${samples[@]}"; do
   rel="${f#"$REPO_DIR"/}"
-  expected_oid=$(git lfs ls-files | grep -F " * $rel" | awk '{print $1}' | head -n1)
+  expected_oid=$(git lfs ls-files --long | grep -F " * $rel" | awk '{print $1}' | head -n1)
   [ -n "$expected_oid" ] || fail "no LFS pointer found for $rel"
   actual_sha=$(sha256sum "$f" | awk '{print $1}')
   if [ "$expected_oid" != "$actual_sha" ]; then
@@ -162,7 +162,7 @@ mapfile -t image_samples < <(
 
 for f in "${image_samples[@]}"; do
   rel="${f#"$REPO_DIR"/}"
-  expected_oid=$(git lfs ls-files | grep -F " * $rel" | awk '{print $1}' | head -n1)
+  expected_oid=$(git lfs ls-files --long | grep -F " * $rel" | awk '{print $1}' | head -n1)
   [ -n "$expected_oid" ] || fail "no LFS pointer found for $rel"
   actual_sha=$(sha256sum "$f" | awk '{print $1}')
   if [ "$expected_oid" != "$actual_sha" ]; then
