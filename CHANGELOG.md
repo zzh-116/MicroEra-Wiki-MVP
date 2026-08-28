@@ -85,7 +85,7 @@
 - 修复 findMany() 返回类型变更、TagList `[object Object]`、AI 多轮 conversationId 丢失、SSE 缓存跨页、分页截断。
 - 修复文献导入假成功与 entry_type 映射（preprint / academic_paper → tech）。
 
-### 维护
+### Maintenance
 
 - 清理废弃的 `src/pages/KnowledgeGraphPage.tsx`（自 G6 探索器接管 `/graph` 与 `/knowledge-graph` 后未再使用）。
 - 清理 `.gitignore` 中误提交的本机绝对路径；新增 test-results 忽略规则与图谱预览图。
