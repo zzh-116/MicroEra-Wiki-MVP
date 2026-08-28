@@ -403,7 +403,7 @@ function computeStats(nodes: any[], edges: any[]): GraphStats {
     typeCount: typeSet.size,
     avgDegree,
     density,
-    hubLabel: hubNode?.label || '—',
+    hubLabel: hubNode?.metadata?.title || hubNode?.label || '—',
     hubDegree: hub?.[1] || 0,
     relations,
     relationSources,
@@ -1682,8 +1682,8 @@ export default function KnowledgeGraphPage() {
             </div>
           </section>
 
-          <section className="flex min-h-[280px] flex-1 flex-col rounded-lg border border-slate-200 bg-white p-3 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
-            <div className="flex items-center justify-between gap-2 border-b border-slate-200 pb-2">
+          <section className="flex min-h-[280px] flex-1 flex-col overflow-hidden rounded-lg border border-slate-200 bg-white p-3 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+            <div className="flex shrink-0 items-center justify-between gap-2 border-b border-slate-200 pb-2">
               <div>
                 <h2 className="text-[11px] font-extrabold tracking-wide text-ink">节点分析</h2>
                 <p className="mt-0.5 font-mono text-[8px] uppercase tracking-[0.16em] text-slate-400">node inspector</p>
@@ -1696,44 +1696,46 @@ export default function KnowledgeGraphPage() {
               )}
             </div>
             {selectedNode ? (
-              <div className="mt-3 flex flex-1 flex-col">
-                <h3 className="text-[13px] font-extrabold leading-snug text-slate-900">{selectedNode.label}</h3>
-                <span
-                  className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-md px-2 py-1 text-[10px] font-bold"
-                  style={{
-                    color: TYPE_COLOR_MAP[selectedNode.type] || '#666666',
-                    backgroundColor: `${TYPE_COLOR_MAP[selectedNode.type] || '#999999'}15`,
-                    boxShadow: `inset 0 0 0 1px ${TYPE_COLOR_MAP[selectedNode.type] || '#999999'}35`,
-                  }}
-                >
-                  <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: TYPE_COLOR_MAP[selectedNode.type] || '#999999' }} />
-                  {selectedNode.type}
-                </span>
-                <p className="mt-3 text-xs leading-relaxed text-slate-500">{selectedNode.metadata?.summary || '暂无描述'}</p>
-                <dl className="mt-3 space-y-2 border-t border-slate-200 pt-3 text-[10px]">
-                  <div className="flex items-center justify-between gap-3">
-                    <dt className="text-slate-400">编号</dt>
-                    <dd className="font-mono font-semibold text-slate-600">{selectedNode.id}</dd>
-                  </div>
-                  <div className="flex items-center justify-between gap-3">
-                    <dt className="text-slate-400">关联数</dt>
-                    <dd className="font-mono font-semibold text-slate-600">{selectedDegree}</dd>
-                  </div>
-                  <div className="flex items-center justify-between gap-3">
-                    <dt className="text-slate-400">更新时间</dt>
-                    <dd className="text-slate-600">{selectedNode.metadata?.updatedAt || '—'}</dd>
-                  </div>
-                  <div className="flex items-start justify-between gap-3">
-                    <dt className="mt-0.5 text-slate-400">标签</dt>
-                    <dd className="flex flex-wrap justify-end gap-1">
-                      {(selectedNode.metadata?.tags || []).map((tag) => (
-                        <span key={tag} className="rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-medium text-slate-600">{tag}</span>
-                      ))}
-                      {(selectedNode.metadata?.tags || []).length === 0 && <span className="text-slate-400">—</span>}
-                    </dd>
-                  </div>
-                </dl>
-                <div className="mt-auto flex flex-col gap-2 pt-3">
+              <div className="mt-3 flex min-h-0 flex-1 flex-col">
+                <div className="kg-scroll-thin min-h-0 flex-1 overflow-y-auto pr-0.5">
+                  <h3 className="line-clamp-3 break-words text-[13px] font-extrabold leading-snug text-slate-900">{selectedNode.metadata?.title || selectedNode.label}</h3>
+                  <span
+                    className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-md px-2 py-1 text-[10px] font-bold"
+                    style={{
+                      color: TYPE_COLOR_MAP[selectedNode.type] || '#666666',
+                      backgroundColor: `${TYPE_COLOR_MAP[selectedNode.type] || '#999999'}15`,
+                      boxShadow: `inset 0 0 0 1px ${TYPE_COLOR_MAP[selectedNode.type] || '#999999'}35`,
+                    }}
+                  >
+                    <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: TYPE_COLOR_MAP[selectedNode.type] || '#999999' }} />
+                    {selectedNode.type}
+                  </span>
+                  <p className="mt-3 line-clamp-4 break-words text-xs leading-relaxed text-slate-500">{selectedNode.metadata?.summary || '暂无描述'}</p>
+                  <dl className="mt-3 space-y-2 border-t border-slate-200 pt-3 text-[10px]">
+                    <div className="flex items-center justify-between gap-3">
+                      <dt className="text-slate-400">编号</dt>
+                      <dd className="font-mono font-semibold text-slate-600">{selectedNode.id}</dd>
+                    </div>
+                    <div className="flex items-center justify-between gap-3">
+                      <dt className="text-slate-400">关联数</dt>
+                      <dd className="font-mono font-semibold text-slate-600">{selectedDegree}</dd>
+                    </div>
+                    <div className="flex items-center justify-between gap-3">
+                      <dt className="text-slate-400">更新时间</dt>
+                      <dd className="text-slate-600">{selectedNode.metadata?.updatedAt || '—'}</dd>
+                    </div>
+                    <div className="flex items-start justify-between gap-3">
+                      <dt className="mt-0.5 text-slate-400">标签</dt>
+                      <dd className="flex flex-wrap justify-end gap-1">
+                        {(selectedNode.metadata?.tags || []).map((tag) => (
+                          <span key={tag} className="rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-medium text-slate-600">{tag}</span>
+                        ))}
+                        {(selectedNode.metadata?.tags || []).length === 0 && <span className="text-slate-400">—</span>}
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+                <div className="flex shrink-0 flex-col gap-2 pt-3">
                   <button
                     type="button"
                     onClick={() => expandNode(selectedNode.id)}
