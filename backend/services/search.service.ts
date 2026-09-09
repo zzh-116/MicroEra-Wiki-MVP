@@ -19,9 +19,21 @@ export class SearchService {
         const vectorResults = await vectorStore.search(queryVector, topK);
         console.log(`[Search] vector search: ${Date.now() - tSearch}ms (${vectorResults.length} hits)`);
 
+        // 每篇文档最多取 3 个 chunk，防止单文档垄断 Top-K
+        const maxChunksPerDoc = 3;
+        const docChunkCount = new Map<number, number>();
+        const filteredResults: typeof vectorResults = [];
+        for (const r of vectorResults) {
+          const count = docChunkCount.get(r.entry_id) || 0;
+          if (count < maxChunksPerDoc) {
+            docChunkCount.set(r.entry_id, count + 1);
+            filteredResults.push(r);
+          }
+        }
+
         if (vectorResults.length > 0) {
-          const chunkIds = vectorResults.map((r) => r.chunk_id);
-          const entryIds = [...new Set(vectorResults.map((r) => r.entry_id))];
+          const chunkIds = filteredResults.map((r) => r.chunk_id);
+          const entryIds = [...new Set(filteredResults.map((r) => r.entry_id))];
 
           // Log what we found for diagnostics
           console.log(`[Search] hit entryIds: [${entryIds.join(', ')}]  chunkIds: [${chunkIds.slice(0, 5).join(', ')}${chunkIds.length > 5 ? '...' : ''}]`);
@@ -43,7 +55,7 @@ export class SearchService {
           }
 
           // Log per-result diagnostics
-          const mapped = vectorResults
+          const mapped = filteredResults
             .map((r) => {
               const entry = entryMap.get(r.entry_id);
               if (!entry) {
