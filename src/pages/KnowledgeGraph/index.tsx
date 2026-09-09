@@ -496,7 +496,7 @@ export default function KnowledgeGraphPage() {
       const selected = !!model && it === item;
       graph.setItemState(it, 'selected', selected);
       if (showLabelsRef.current) {
-        graph.updateItem(it, { label: formatNodeLabel(m.label, selected) });
+        graph.updateItem(it, { label: formatNodeLabel(m.metadata?.title || m.label, selected) });
       }
     }
     selectedNodeIdRef.current = model?.id || null;
@@ -652,7 +652,7 @@ export default function KnowledgeGraphPage() {
         graph.setItemState(item, 'selected', true);
         const model = item.getModel() as SeedGraphNode;
         if (showLabelsRef.current) {
-          graph.updateItem(item, { label: formatNodeLabel(model.label, true) });
+          graph.updateItem(item, { label: formatNodeLabel(model.metadata?.title || model.label, true) });
         }
       }
     } catch {
@@ -919,7 +919,7 @@ export default function KnowledgeGraphPage() {
       const m = it.getModel() as SeedGraphNode;
       const selected = selectedNodeIdRef.current === m.id;
       graph.updateItem(it, {
-        label: next ? formatNodeLabel(m.label, selected) : '',
+        label: next ? formatNodeLabel(m.metadata?.title || m.label, selected) : '',
       });
     }
   };
