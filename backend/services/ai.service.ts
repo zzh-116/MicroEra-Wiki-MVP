@@ -17,7 +17,15 @@ class AiService {
   async search(query: string, isInternal = false): Promise<Entry[]> {
     try {
       const results = await searchService.semanticSearch(query, isInternal, 10);
-      return results.filter((r) => r.entry).map((r) => r.entry);
+      // 搜索框要文档级去重：semanticSearch 返回块级结果，此处按 entry.id 保留首次出现（最高分）
+      const seen = new Set<number>();
+      const entries: Entry[] = [];
+      for (const r of results) {
+        if (!r.entry || seen.has(r.entry.id)) continue;
+        seen.add(r.entry.id);
+        entries.push(r.entry);
+      }
+      return entries;
     } catch {
       const allEntries = await entryRepository.findAll({ isInternal });
       if (allEntries.length === 0) return [];
