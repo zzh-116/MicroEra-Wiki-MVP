@@ -43,7 +43,7 @@ const CORE_TAG_PATTERNS = [
 
 export interface VectorStore {
   insert(records: VectorRecord[]): Promise<void>;
-  search(queryVector: number[], topK: number): Promise<VectorSearchResult[]>;
+  search(queryVector: number[], topK: number, entryId?: number): Promise<VectorSearchResult[]>;
   deleteByEntryId(entryId: number): Promise<void>;
   clear(): Promise<void>;
   isReady(): boolean;
@@ -74,8 +74,9 @@ class PgvectorStore implements VectorStore {
     }
   }
 
-  async search(queryVector: number[], topK: number): Promise<VectorSearchResult[]> {
+  async search(queryVector: number[], topK: number, entryId?: number): Promise<VectorSearchResult[]> {
     // Return chunk-level results ranked by distance (no title dedup).
+    // 文档内检索（entryId 指定）只按 entry_id 过滤，不套类型白名单。
     const results = await db
       .select({
         chunk_id: vectors.chunkId,
@@ -84,7 +85,11 @@ class PgvectorStore implements VectorStore {
       })
       .from(vectors)
       .innerJoin(entries, eq(vectors.entryId, entries.id))
-      .where(inArray(entries.entryType, ALLOWED_ENTRY_TYPES))
+      .where(
+        entryId !== undefined
+          ? eq(vectors.entryId, entryId)
+          : inArray(entries.entryType, ALLOWED_ENTRY_TYPES),
+      )
       .orderBy(cosineDistance(vectors.embedding, queryVector))
       .limit(topK);
 
@@ -137,8 +142,8 @@ export class VectorRepository implements VectorStore {
     return this.store.insert(records);
   }
 
-  async search(queryVector: number[], topK: number): Promise<VectorSearchResult[]> {
-    return this.store.search(queryVector, topK);
+  async search(queryVector: number[], topK: number, entryId?: number): Promise<VectorSearchResult[]> {
+    return this.store.search(queryVector, topK, entryId);
   }
 
   async deleteByEntryId(entryId: number): Promise<void> {

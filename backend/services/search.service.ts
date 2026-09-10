@@ -3,10 +3,10 @@ import { entryRepository } from '../repositories/entry.repository.js';
 import { chunkRepository } from '../repositories/chunk.repository.js';
 import { vectorRepository } from '../repositories/vector.repository.js';
 import { ollamaEmbedder } from '../embedding/ollama.js';
-import type { Entry, RetrievalResult } from '../types.js';
+import type { Entry, RetrievalResult, VectorSearchResult } from '../types.js';
 
 export class SearchService {
-  async semanticSearch(query: string, isInternal = false, topK = 10): Promise<RetrievalResult[]> {
+  async semanticSearch(query: string, isInternal = false, topK = 10, entryId?: number): Promise<RetrievalResult[]> {
     const vectorStore = vectorRepository;
 
     if (vectorStore.isReady()) {
@@ -16,22 +16,17 @@ export class SearchService {
         console.log(`[Search] embed query: ${Date.now() - tEmbed}ms`);
 
         const tSearch = Date.now();
-        const vectorResults = await vectorStore.search(queryVector, topK);
+        const vectorResults = await vectorStore.search(queryVector, topK, entryId);
         console.log(`[Search] vector search: ${Date.now() - tSearch}ms (${vectorResults.length} hits)`);
 
-        // 每篇文档最多取 3 个 chunk，防止单文档垄断 Top-K
-        const maxChunksPerDoc = 3;
-        const docChunkCount = new Map<number, number>();
-        const filteredResults: typeof vectorResults = [];
-        for (const r of vectorResults) {
-          const count = docChunkCount.get(r.entry_id) || 0;
-          if (count < maxChunksPerDoc) {
-            docChunkCount.set(r.entry_id, count + 1);
-            filteredResults.push(r);
-          }
-        }
+        // 全局检索时每篇文档最多取 3 个 chunk，防止单文档垄断 Top-K；
+        // 文档内检索（entryId 指定）不限制 chunk 数量。
+        const filteredResults =
+          entryId === undefined
+            ? this.capChunksPerDoc(vectorResults, 3)
+            : vectorResults;
 
-        if (vectorResults.length > 0) {
+        if (filteredResults.length > 0) {
           const chunkIds = filteredResults.map((r) => r.chunk_id);
           const entryIds = [...new Set(filteredResults.map((r) => r.entry_id))];
 
@@ -56,7 +51,7 @@ export class SearchService {
 
           // Log per-result diagnostics
           const mapped = filteredResults
-            .map((r) => {
+            .map((r): RetrievalResult | null => {
               const entry = entryMap.get(r.entry_id);
               if (!entry) {
                 console.warn(`[Search] entry #${r.entry_id} not found in DB (score=${r.score?.toFixed(3)}) — skipping`);
@@ -75,14 +70,18 @@ export class SearchService {
             })
             .filter((r): r is RetrievalResult => r !== null);
 
-          // Also attempt keyword search for entries NOT found by vector search,
-          // then merge results — this ensures documents with poor vector similarity
-          // but exact keyword matches are still surfaced (hybrid retrieval)
-          const vectorEntryIds = new Set(mapped.map((r) => r.entry.id));
-          const keywordResults = await this.keywordSearch(query, isInternal, Math.max(topK - mapped.length, 3));
-          const freshKeyword = keywordResults.filter((r) => !vectorEntryIds.has(r.entry.id));
-          if (freshKeyword.length > 0) {
-            console.log(`[Search] keyword supplement: ${freshKeyword.length} additional entries not in vector results`);
+          // 全局检索才做关键词补充；文档内检索（entryId 指定）不应混入其它文档。
+          let freshKeyword: RetrievalResult[] = [];
+          if (entryId === undefined) {
+            // Also attempt keyword search for entries NOT found by vector search,
+            // then merge results — this ensures documents with poor vector similarity
+            // but exact keyword matches are still surfaced (hybrid retrieval)
+            const vectorEntryIds = new Set(mapped.map((r) => r.entry.id));
+            const keywordResults = await this.keywordSearch(query, isInternal, Math.max(topK - mapped.length, 3));
+            freshKeyword = keywordResults.filter((r) => !vectorEntryIds.has(r.entry.id));
+            if (freshKeyword.length > 0) {
+              console.log(`[Search] keyword supplement: ${freshKeyword.length} additional entries not in vector results`);
+            }
           }
 
           return [...mapped, ...freshKeyword].slice(0, topK);
@@ -92,7 +91,50 @@ export class SearchService {
       }
     }
 
+    if (entryId !== undefined) {
+      return this.getEntryChunks(entryId);
+    }
     return this.keywordSearch(query, isInternal, topK);
+  }
+
+  /** 全局检索时限制每篇文档最多 maxPerDoc 个 chunk，防止单文档垄断 Top-K。 */
+  private capChunksPerDoc(results: VectorSearchResult[], maxPerDoc: number): VectorSearchResult[] {
+    const counts = new Map<number, number>();
+    const capped: VectorSearchResult[] = [];
+    for (const r of results) {
+      const count = counts.get(r.entry_id) || 0;
+      if (count < maxPerDoc) {
+        counts.set(r.entry_id, count + 1);
+        capped.push(r);
+      }
+    }
+    return capped;
+  }
+
+  /** 文档内检索：直接返回该文档的全部 chunk（无 chunk 则回退到 entry.content）。 */
+  private async getEntryChunks(entryId: number): Promise<RetrievalResult[]> {
+    const entry = await entryRepository.findById(entryId);
+    if (!entry) return [];
+    const chunks = await chunkRepository.findByEntryId(entryId);
+    if (chunks.length === 0) {
+      if (!entry.content?.trim()) return [];
+      return [
+        {
+          entry,
+          score: 1,
+          chunkId: `entry_${entryId}_content`,
+          chunkHeading: undefined,
+          chunkText: entry.content,
+        },
+      ];
+    }
+    return chunks.map((c) => ({
+      entry,
+      score: 1,
+      chunkId: c.id,
+      chunkHeading: c.metadata?.heading,
+      chunkText: c.text,
+    }));
   }
 
   private async keywordSearch(query: string, isInternal: boolean, topK: number): Promise<RetrievalResult[]> {
