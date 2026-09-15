@@ -109,6 +109,10 @@ export default function SearchPage() {
   const [visibilityFilter, setVisibilityFilter] = useState('all');
   const [timeFilter, setTimeFilter] = useState('all');
 
+  // ── Search mode ────────────────────────────────────────────────────────────
+  // nlp = 智能（动态意图，默认）; title = 按标题/文件名; keyword = 按内容
+  const [searchMode, setSearchMode] = useState<'nlp' | 'keyword' | 'title'>('nlp');
+
   // ── UI state ──────────────────────────────────────────────────────────────
   const [searchFocused, setSearchFocused] = useState(false);
   const [typeExpanded, setTypeExpanded] = useState(true);
@@ -148,13 +152,14 @@ export default function SearchPage() {
     currentQuery: string,
     currentType: string,
     currentVisibility: string,
+    currentMode: 'nlp' | 'keyword' | 'title',
     currentPage: number,
     currentPageSize: number,
   ) => {
     setLoading(true);
     try {
       const data = await searchApi.search(
-        currentQuery, currentType, 'nlp', currentPage, currentPageSize, currentVisibility,
+        currentQuery, currentType, currentMode, currentPage, currentPageSize, currentVisibility,
       );
       setResults(data.results);
       setTotal(data.total);
@@ -170,9 +175,9 @@ export default function SearchPage() {
     const p = newPage ?? page;
     const ps = newPageSize ?? pageSize;
     updateUrlParams({ q: query, type: typeFilter, page: String(p), pageSize: ps !== 10 ? String(ps) : '' });
-    executeSearch(query, typeFilter, visibilityFilter, p, ps);
+    executeSearch(query, typeFilter, visibilityFilter, searchMode, p, ps);
     if (query.trim()) saveRecentSearch(query.trim());
-  }, [query, typeFilter, visibilityFilter, page, pageSize, updateUrlParams, executeSearch]);
+  }, [query, typeFilter, visibilityFilter, searchMode, page, pageSize, updateUrlParams, executeSearch]);
 
   // ── Initial load ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -184,7 +189,7 @@ export default function SearchPage() {
       storage.removeSearchQuery();
       storage.removeQuickQuestion();
     }
-    executeSearch(q, typeFilter, visibilityFilter, page, pageSize);
+    executeSearch(q, typeFilter, visibilityFilter, searchMode, page, pageSize);
   }, [isLoggedIn]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Load the full visible knowledge base once so type-filter counts match the
@@ -218,16 +223,21 @@ export default function SearchPage() {
   const handleTypeChange = (value: string) => {
     setTypeFilter(value);
     updateUrlParams({ type: value, page: '' });
-    executeSearch(query, value, visibilityFilter, 1, pageSize);
+    executeSearch(query, value, visibilityFilter, searchMode, 1, pageSize);
   };
 
   const handleVisibilityChange = (value: string) => {
     setVisibilityFilter(value);
-    executeSearch(query, typeFilter, value, 1, pageSize);
+    executeSearch(query, typeFilter, value, searchMode, 1, pageSize);
   };
 
   const handleTimeChange = (value: string) => {
     setTimeFilter(value);
+  };
+
+  const handleModeChange = (mode: 'nlp' | 'keyword' | 'title') => {
+    setSearchMode(mode);
+    executeSearch(query, typeFilter, visibilityFilter, mode, 1, pageSize);
   };
 
   const handleClearFilters = () => {
@@ -236,7 +246,7 @@ export default function SearchPage() {
     setTimeFilter('all');
     setQuery('');
     setSearchParams({}, { replace: true });
-    executeSearch('', 'all', 'all', 1, pageSize);
+    executeSearch('', 'all', 'all', searchMode, 1, pageSize);
   };
 
   const handlePageChange = (p: number) => doSearch(p);
@@ -245,14 +255,14 @@ export default function SearchPage() {
   const handleSuggestedSearch = (term: string) => {
     setQuery(term);
     updateUrlParams({ q: term, page: '' });
-    executeSearch(term, typeFilter, visibilityFilter, 1, pageSize);
+    executeSearch(term, typeFilter, visibilityFilter, searchMode, 1, pageSize);
     saveRecentSearch(term);
   };
 
   const handleRecentClick = (term: string) => {
     setQuery(term);
     updateUrlParams({ q: term, page: '' });
-    executeSearch(term, typeFilter, visibilityFilter, 1, pageSize);
+    executeSearch(term, typeFilter, visibilityFilter, searchMode, 1, pageSize);
   };
 
   const handleRemoveRecent = (term: string, e: React.MouseEvent) => {
@@ -400,6 +410,39 @@ export default function SearchPage() {
               </button>
             </div>
           </form>
+
+          {/* Search mode selector */}
+          <div className="flex items-center justify-center gap-1.5 mt-4">
+            <span className="text-[11px] text-gray-400 shrink-0">搜索模式：</span>
+            <div className="inline-flex rounded-lg bg-gray-100 p-1">
+              {([
+                { value: 'nlp', label: '智能', icon: Sparkles },
+                { value: 'title', label: '按标题/文件名', icon: FileText },
+                { value: 'keyword', label: '按内容', icon: BookOpen },
+              ] as const).map((m) => {
+                const Icon = m.icon;
+                const active = searchMode === m.value;
+                return (
+                  <button
+                    key={m.value}
+                    type="button"
+                    onClick={() => handleModeChange(m.value)}
+                    className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-150 ${
+                      active
+                        ? 'bg-white text-ink shadow-sm border border-gray-200'
+                        : 'text-gray-500 hover:text-gray-800'
+                    }`}
+                  >
+                    <Icon
+                      className={`w-3.5 h-3.5 ${m.value === 'nlp' ? 'text-brand' : active ? 'text-ink' : 'text-gray-400'}`}
+                      aria-hidden="true"
+                    />
+                    {m.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           {/* Recent & Suggested searches (only when no active search) */}
           {showHeroSuggestions && (
