@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { adminApi, ImportJob } from '../api/adminApi';
+import { uploadManager } from '../services/uploadManager';
+import type { UploadJob } from '../services/uploadManager';
 import {
   FileUp, Play, CheckCircle, AlertCircle, RefreshCw,
   Lock, Globe, FileText, X, ArrowUpRight, Clock,
@@ -52,6 +53,19 @@ const SAMPLE_FILES = [
 const ACCEPT_STRING =
   '.pdf,.docx,.doc,.xlsx,.xls,.pptx,.ppt,.html,.htm,.md,.adoc,.asciidoc,.csv,.txt,.json,.xml,.yaml,.yml,.log,.png,.jpg,.jpeg,.gif,.webp';
 
+// ─── Stage display metadata ──────────────────────────────────────────────────
+const STAGE_LABELS: Record<string, string> = {
+  parse: '解析文档',
+  chunk: '智能分块',
+  embed: '向量嵌入',
+};
+
+const STAGE_DESCRIPTIONS: Record<string, string> = {
+  parse: 'MarkItDown → 统一 Markdown',
+  chunk: '语义分块 + 元数据提取',
+  embed: 'BGE-M3 → pgvector 存储',
+};
+
 // ─── Helper: derive a display label for a file extension ──────────────────────
 function fileTypeLabel(fileName: string): string {
   const ext = fileName.split('.').pop()?.toUpperCase() || 'FILE';
@@ -79,14 +93,34 @@ export default function AdminImportPage() {
   const [mockFileName, setMockFileName] = useState('');
   const [visibility, setVisibility] = useState<'public' | 'internal'>('internal');
   const [targetSpaceId, setTargetSpaceId] = useState('s-sandbox');
-  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
-  const [jobState, setJobState] = useState<ImportJob | null>(null);
-  const [historyJobs, setHistoryJobs] = useState<ImportJob[]>([]);
-  const [pipelineError, setPipelineError] = useState<string | null>(null);
+  const [activeJob, setActiveJob] = useState<UploadJob | null>(null);
+  const [historyJobs, setHistoryJobs] = useState<UploadJob[]>([]);
   const [dragOver, setDragOver] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const pendingFile = useRef<File | null>(null);
+  const activeJobIdRef = useRef<string | null>(null);
+  const archivedRef = useRef<Set<string>>(new Set());
+
+  // ── Subscribe to the global upload manager ─────────────────────────────────
+  useEffect(() => {
+    return uploadManager.subscribe(() => {
+      if (!activeJobIdRef.current) return;
+      const job = uploadManager.getJob(activeJobIdRef.current);
+      if (!job) return;
+
+      // Spread into a new object — the manager mutates the source object in place,
+      // so passing the same reference would skip React re-render.
+      setActiveJob({ ...job });
+
+      if (
+        (job.status === 'success' || job.status === 'failed') &&
+        !archivedRef.current.has(job.id)
+      ) {
+        archivedRef.current.add(job.id);
+        setHistoryJobs((prev) => [job, ...prev]);
+      }
+    });
+  }, []);
 
   // ── Auth guard ─────────────────────────────────────────────────────────────
   if (!isLoggedIn) {
@@ -137,175 +171,46 @@ export default function AdminImportPage() {
     setSelectedFile(null);
     setMockFileName('');
     setCurrentStep(1);
-    setJobState(null);
-    setPipelineError(null);
-    setUploadProgress(null);
+    setActiveJob(null);
+    activeJobIdRef.current = null;
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleStartImport = () => {
-    if (!mockFileName || !selectedFile) return;
+    if (!selectedFile) return;
 
     setCurrentStep(3);
-    setUploadProgress(0);
-    setJobState(null);
-    setPipelineError(null);
-    pendingFile.current = selectedFile;
-
-    // Trigger real upload — the upload progress comes from XHR events
-    triggerJob();
+    setActiveJob(null);
+    const jobId = uploadManager.startUpload(selectedFile, targetSpaceId);
+    activeJobIdRef.current = jobId;
+    setActiveJob({ ...uploadManager.getJob(jobId)! });
   };
-
-  const triggerJob = () => {
-    const file = pendingFile.current;
-    if (!file) {
-      setPipelineError('文件丢失，请重新选择');
-      setUploadProgress(null);
-      return;
-    }
-
-    const isText = /\.(md|txt|csv|json|xml|yaml|yml|log|html|htm|adoc|asciidoc)$/i.test(file.name);
-
-    if (isText) {
-      // Small text files — read as text (fast, no memory issue)
-      const reader = new FileReader();
-      reader.onload = () => {
-        const text = reader.result as string;
-        adminApi.startImportJob(
-          { name: file.name, size: file.size, data: text },
-          targetSpaceId,
-        ).then((job) => {
-          setJobState(job);
-          setUploadProgress(null);
-          if (job.status === 'success') setHistoryJobs((prev) => [job, ...prev]);
-          else if (job.status === 'failed') {
-            setHistoryJobs((prev) => [job, ...prev]);
-            const failedStep = job.steps.find((s) => s.status === 'failed');
-            setPipelineError(failedStep?.error || '管道执行失败');
-          }
-        }).catch((err: any) => {
-          setPipelineError(`API 调用失败: ${err.message || '网络错误'}`);
-          setUploadProgress(null);
-        });
-      };
-      reader.onerror = () => {
-        setPipelineError('文件读取失败');
-        setUploadProgress(null);
-      };
-      // Simulate read progress since FileReader has no progress event
-      setUploadProgress(25);
-      setTimeout(() => setUploadProgress(50), 50);
-      setTimeout(() => setUploadProgress(75), 100);
-      reader.readAsText(file);
-      return;
-    }
-
-    // Binary/large files — stream via XHR with real upload progress
-    const formData = new FormData();
-    formData.append('file', file, file.name);
-    formData.append('metadata', JSON.stringify({
-      title: file.name.replace(/\.[^.]+$/, ''),
-      entry_type: mapSpaceToEntryType(targetSpaceId),
-      summary: `Auto-imported: ${file.name}`,
-      visibility: 'internal',
-      tags: ['auto-import'],
-    }));
-    formData.append('chunkConfig', JSON.stringify({ strategy: 'markdown', chunkSize: 1024, overlap: 128 }));
-
-    const xhr = new XMLHttpRequest();
-
-    xhr.upload.addEventListener('progress', (e) => {
-      if (e.lengthComputable) {
-        const pct = Math.round((e.loaded / e.total) * 100);
-        setUploadProgress(pct);
-      }
-    });
-
-    xhr.addEventListener('load', () => {
-      setUploadProgress(null);
-      try {
-        const data = JSON.parse(xhr.responseText);
-        // Build a job object from the API response
-        const steps: ImportJob['steps'] = [
-          { id: 1, name: '解析文档', description: 'MarkItDown → 统一 Markdown', status: data.success ? 'success' : 'failed' },
-          { id: 2, name: '智能分块', description: '语义分块 + 元数据提取', status: data.success ? 'success' : 'failed' },
-          { id: 3, name: '向量嵌入', description: 'BGE-M3 → pgvector 存储', status: data.success ? 'success' : 'failed' },
-        ];
-        const job: ImportJob = {
-          id: `job-${Date.now()}`,
-          filename: file.name,
-          fileSize: file.size > 1024 * 1024 ? (file.size / (1024 * 1024)).toFixed(2) + ' MB' : (file.size / 1024).toFixed(1) + ' KB',
-          targetType: targetSpaceId,
-          currentStepIndex: data.success ? 2 : 0,
-          status: data.success ? 'success' : 'failed',
-          steps,
-          startedAt: new Date().toISOString().replace('T', ' ').substring(0, 19),
-          entryId: data.entryId,
-        };
-        setJobState(job);
-        if (job.status === 'success') setHistoryJobs((prev) => [job, ...prev]);
-        else {
-          setHistoryJobs((prev) => [job, ...prev]);
-          setPipelineError(data.message || data.error || '导入失败');
-        }
-      } catch (err: any) {
-        setPipelineError('响应解析失败: ' + (err.message || '未知错误'));
-      }
-    });
-
-    xhr.addEventListener('error', () => {
-      setUploadProgress(null);
-      setPipelineError('网络错误，上传失败');
-    });
-
-    xhr.addEventListener('abort', () => {
-      setUploadProgress(null);
-      setPipelineError('上传已取消');
-    });
-
-    xhr.open('POST', '/api/pipeline/import');
-    const token = localStorage.getItem('miqro_wiki_token');
-    if (token) {
-      try { xhr.setRequestHeader('Authorization', `Bearer ${JSON.parse(token)}`); } catch {}
-    }
-    xhr.send(formData);
-  };
-
-  // Helper: map space to entry type (mirrors adminApi)
-  function mapSpaceToEntryType(spaceId: string): string {
-    const map: Record<string, string> = {
-      's-sandbox': 'sandbox_project', 's-papers': 'academic_paper', 's-data': 'data_standard',
-      's-tech': 'tech_doc', 's-business': 'business_material', 's-template': 'template',
-      's-product': 'tech_doc', 's-patent': 'patent', 's-handwritten': 'handwritten_note',
-    };
-    return map[spaceId] || 'tech_doc';
-  }
 
   const handleResetAndNew = () => {
     setCurrentStep(1);
     setSelectedFile(null);
     setMockFileName('');
-    setJobState(null);
-    setPipelineError(null);
-    setUploadProgress(null);
+    setActiveJob(null);
+    activeJobIdRef.current = null;
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   // ── Derived display state ──────────────────────────────────────────────────
   const hasFile = !!mockFileName && !!selectedFile;
-  const isUploading = uploadProgress !== null;
-  const isWaitingForApi = currentStep === 3 && uploadProgress === null && !jobState && !pipelineError;
-  const isPipelineRunning = jobState?.status === 'running';
-  const isSuccess = jobState?.status === 'success';
-  const isFailure = jobState?.status === 'failed' || !!pipelineError;
+  const isUploading = activeJob?.status === 'uploading';
+  const isWaitingForApi = activeJob?.status === 'pending';
+  const isPipelineRunning = activeJob?.status === 'running';
+  const isSuccess = activeJob?.status === 'success';
+  const isFailure = activeJob?.status === 'failed' || activeJob?.status === 'cancelled';
+  const isCancelled = activeJob?.status === 'cancelled';
   const showConfig = hasFile && !isUploading && !isWaitingForApi && !isPipelineRunning && !isSuccess && !isFailure;
   const showProcessing = isUploading || isWaitingForApi || isPipelineRunning;
   const showResult = isSuccess || isFailure;
   const showSamples = !hasFile && !showProcessing && !showResult;
 
-  const failedStep = jobState?.steps.find((s) => s.status === 'failed');
-  const pipelineProgress = jobState
-    ? Math.round(((jobState.currentStepIndex + 1) / jobState.steps.length) * 100)
+  const failedStage = activeJob?.stages.find((s) => s.status === 'failed');
+  const pipelineProgress = activeJob
+    ? Math.min(Math.round((activeJob.stages.length / 3) * 100), 100)
     : 0;
 
   // ── Helpers for render ─────────────────────────────────────────────────────
@@ -584,7 +489,7 @@ export default function AdminImportPage() {
               className="bg-white border border-gray-200 rounded-lg p-5 space-y-5 animate-fade-in"
             >
               <h3 className="text-sm font-semibold text-ink font-display">
-                {isUploading ? '正在上传文件...' : isWaitingForApi ? '正在启动处理管道...' : '正在处理中...'}
+                {isUploading ? '正在上传文件...' : isWaitingForApi ? '正在排队等待处理...' : '正在处理中...'}
               </h3>
 
               {/* ── Upload progress bar ─────────────────────────────────── */}
@@ -593,26 +498,26 @@ export default function AdminImportPage() {
                   <div className="flex justify-between items-center text-xs">
                     <span className="font-medium text-gray-600">上传进度</span>
                     <span className="font-bold text-ink font-mono">
-                      {uploadProgress}%
+                      {activeJob!.uploadProgress}%
                     </span>
                   </div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden" role="progressbar" aria-valuenow={uploadProgress!} aria-valuemin={0} aria-valuemax={100}>
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden" role="progressbar" aria-valuenow={activeJob!.uploadProgress!} aria-valuemin={0} aria-valuemax={100}>
                     <div
                       className="h-full bg-ink rounded-full transition-all duration-150 ease-out"
-                      style={{ width: `${uploadProgress}%` }}
+                      style={{ width: `${activeJob!.uploadProgress}%` }}
                     />
                   </div>
                   <p className="text-[11px] text-gray-400">
-                    {uploadProgress! < 100 ? '正在传输文件二进制数据...' : '文件已接收，等待后端管道启动...'}
+                    {activeJob!.uploadProgress! < 100 ? '正在传输文件二进制数据...' : '文件已接收，等待后端管道启动...'}
                   </p>
                 </div>
               )}
 
-              {/* ── Waiting for API ──────────────────────────────────────── */}
+              {/* ── Waiting for API (queued) ─────────────────────────────── */}
               {isWaitingForApi && (
                 <div className="flex items-center justify-center gap-3 py-6 text-gray-500">
                   <RefreshCw className="w-5 h-5 animate-spin" aria-hidden="true" />
-                  <span className="text-sm font-medium">正在启动 Ingestion Pipeline...</span>
+                  <span className="text-sm font-medium">正在排队等待处理（最多同时处理 2 个）...</span>
                 </div>
               )}
 
@@ -635,70 +540,73 @@ export default function AdminImportPage() {
                     </div>
                   </div>
 
-                  {/* Stage list */}
-                  <ul className="space-y-1.5" role="list">
-                    {jobState!.steps.map((st) => {
-                      const isActive = st.status === 'running';
-                      const isComplete = st.status === 'success';
-                      const isStepFailed = st.status === 'failed';
-                      const isPending = st.status === 'pending';
+                  {activeJob!.stages.length === 0 ? (
+                    <div className="flex items-center justify-center gap-3 py-6 text-gray-500">
+                      <RefreshCw className="w-5 h-5 animate-spin" aria-hidden="true" />
+                      <span className="text-sm font-medium">正在解析文档...</span>
+                    </div>
+                  ) : (
+                    <ul className="space-y-1.5" role="list">
+                      {activeJob!.stages.map((st) => {
+                        const isComplete = st.status === 'success';
+                        const isStepFailed = st.status === 'failed';
+                        const isSkipped = st.status === 'skipped';
+                        const name = STAGE_LABELS[st.stage] || st.stage;
+                        const description = STAGE_DESCRIPTIONS[st.stage] || '';
 
-                      return (
-                        <li
-                          key={st.id}
-                          className={`
-                            flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-300
-                            ${isActive ? 'bg-yellow-50 border border-yellow-200' : ''}
-                            ${isComplete ? 'bg-green-50/50' : ''}
-                            ${isStepFailed ? 'bg-red-50 border border-red-200' : ''}
-                          `}
-                        >
-                          {/* Status icon */}
-                          <span className="flex-shrink-0 flex items-center justify-center w-6 h-6" aria-hidden="true">
-                            {isPending && <span className="w-2 h-2 rounded-full bg-gray-300" />}
-                            {isActive && <RefreshCw className="w-4 h-4 text-yellow-600 animate-spin" />}
-                            {isComplete && <CheckCircle className="w-4 h-4 text-green-600" />}
-                            {isStepFailed && <AlertCircle className="w-4 h-4 text-red-600" />}
-                          </span>
+                        return (
+                          <li
+                            key={st.stage}
+                            className={`
+                              flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-300
+                              ${isComplete ? 'bg-green-50/50' : ''}
+                              ${isStepFailed ? 'bg-red-50 border border-red-200' : ''}
+                              ${isSkipped ? 'bg-gray-50' : ''}
+                            `}
+                          >
+                            {/* Status icon */}
+                            <span className="flex-shrink-0 flex items-center justify-center w-6 h-6" aria-hidden="true">
+                              {isSkipped && <span className="w-2 h-2 rounded-full bg-gray-300" />}
+                              {isComplete && <CheckCircle className="w-4 h-4 text-green-600" />}
+                              {isStepFailed && <AlertCircle className="w-4 h-4 text-red-600" />}
+                            </span>
 
-                          {/* Stage info */}
-                          <div className="flex-1 min-w-0">
-                            <p className={`
-                              text-sm font-medium
-                              ${isActive ? 'text-yellow-800' : ''}
-                              ${isComplete ? 'text-green-800' : ''}
-                              ${isStepFailed ? 'text-red-800' : ''}
-                              ${isPending ? 'text-gray-400' : ''}
-                            `}>
-                              {st.name}
-                            </p>
-                            {st.description && (
-                              <p className="text-xs text-gray-400 mt-0.5">{st.description}</p>
-                            )}
-                            {isStepFailed && st.error && (
-                              <p className="text-xs text-red-600 mt-1 bg-red-100/50 px-2 py-1 rounded">
-                                {st.error}
+                            {/* Stage info */}
+                            <div className="flex-1 min-w-0">
+                              <p className={`
+                                text-sm font-medium
+                                ${isComplete ? 'text-green-800' : ''}
+                                ${isStepFailed ? 'text-red-800' : ''}
+                                ${isSkipped ? 'text-gray-500' : ''}
+                              `}>
+                                {name}
                               </p>
-                            )}
-                          </div>
+                              {description && (
+                                <p className="text-xs text-gray-400 mt-0.5">{description}</p>
+                              )}
+                              {isStepFailed && st.detail && (
+                                <p className="text-xs text-red-600 mt-1 bg-red-100/50 px-2 py-1 rounded">
+                                  {st.detail}
+                                </p>
+                              )}
+                            </div>
 
-                          {/* Status label */}
-                          <span className={`
-                            flex-shrink-0 text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded
-                            ${isActive ? 'text-yellow-700 bg-yellow-100' : ''}
-                            ${isComplete ? 'text-green-700 bg-green-100' : ''}
-                            ${isStepFailed ? 'text-red-700 bg-red-100' : ''}
-                            ${isPending ? 'text-gray-400 bg-gray-100' : ''}
-                          `}>
-                            {isPending && '等待'}
-                            {isActive && '进行中'}
-                            {isComplete && '完成'}
-                            {isStepFailed && '失败'}
-                          </span>
-                        </li>
-                      );
-                    })}
-                  </ul>
+                            {/* Status label */}
+                            <span className={`
+                              flex-shrink-0 text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded
+                              ${isComplete ? 'text-green-700 bg-green-100' : ''}
+                              ${isStepFailed ? 'text-red-700 bg-red-100' : ''}
+                              ${isSkipped ? 'text-gray-400 bg-gray-100' : ''}
+                            `}>
+                              {isSkipped && '跳过'}
+                              {isComplete && '完成'}
+                              {isStepFailed && '失败'}
+                            </span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
                 </div>
               )}
             </section>
@@ -731,24 +639,24 @@ export default function AdminImportPage() {
                   </div>
 
                   {/* Pipeline summary — show completed steps */}
-                  {jobState && (
+                  {activeJob && activeJob.stages.length > 0 && (
                     <div className="flex flex-wrap gap-1.5">
-                      {jobState.steps.filter((s) => s.status === 'success').map((st) => (
+                      {activeJob.stages.filter((s) => s.status === 'success').map((st) => (
                         <span
-                          key={st.id}
+                          key={st.stage}
                           className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[11px] font-medium bg-green-100 text-green-800"
                         >
                           <CheckCircle className="w-3 h-3" aria-hidden="true" />
-                          {st.name}
+                          {STAGE_LABELS[st.stage] || st.stage}
                         </span>
                       ))}
                     </div>
                   )}
 
                   <div className="flex flex-wrap gap-2.5 pt-1">
-                    {jobState?.entryId && (
+                    {activeJob?.entryId && (
                       <button
-                        onClick={() => navigate(`/entry/${jobState.entryId}`)}
+                        onClick={() => navigate(`/entry/${activeJob.entryId}`)}
                         className="inline-flex items-center gap-1.5 px-4 py-2 bg-ink hover:bg-ink/90
                                    text-white text-sm font-medium rounded-md
                                    border-2 border-transparent
@@ -784,7 +692,7 @@ export default function AdminImportPage() {
                 </>
               )}
 
-              {/* ── Failure ──────────────────────────────────────────────── */}
+              {/* ── Failure / Cancelled ───────────────────────────────────── */}
               {isFailure && (
                 <>
                   <div className="flex items-center gap-3">
@@ -793,30 +701,31 @@ export default function AdminImportPage() {
                     </div>
                     <div>
                       <h3 className="text-base font-semibold text-red-900">
-                        导入失败
+                        {isCancelled ? '已取消' : '导入失败'}
                       </h3>
                       <p className="text-sm text-red-700 mt-0.5">
-                        {pipelineError || failedStep?.error || '管道执行过程中发生未知错误，请重试。'}
+                        {isCancelled
+                          ? '导入已取消。'
+                          : activeJob?.error || failedStage?.detail || '管道执行过程中发生未知错误，请重试。'}
                       </p>
                     </div>
                   </div>
 
                   {/* Show which step failed */}
-                  {failedStep && (
+                  {!isCancelled && failedStage && (
                     <div className="bg-red-100/50 border border-red-200 rounded-md px-3 py-2 text-xs text-red-800">
                       <span className="font-semibold">失败环节：</span>
-                      {failedStep.name}
-                      {failedStep.description && ` — ${failedStep.description}`}
+                      {STAGE_LABELS[failedStage.stage] || failedStage.stage}
+                      {STAGE_DESCRIPTIONS[failedStage.stage] && ` — ${STAGE_DESCRIPTIONS[failedStage.stage]}`}
                     </div>
                   )}
 
                   <div className="flex flex-wrap gap-2.5 pt-1">
                     <button
                       onClick={() => {
-                        setPipelineError(null);
-                        setJobState(null);
+                        setActiveJob(null);
+                        activeJobIdRef.current = null;
                         setCurrentStep(2);
-                        setUploadProgress(null);
                       }}
                       className="inline-flex items-center gap-1.5 px-4 py-2 bg-ink hover:bg-ink/90
                                  text-white text-sm font-medium rounded-md
@@ -864,63 +773,73 @@ export default function AdminImportPage() {
               </div>
             ) : (
               <ul className="divide-y divide-gray-100" role="list">
-                {historyJobs.slice(0, 5).map((job) => (
-                  <li key={job.id} className="py-3 first:pt-3 last:pb-0">
-                    <div className="flex items-start gap-3">
-                      {/* Status dot */}
-                      <span
-                        className={`flex-shrink-0 mt-1 w-2 h-2 rounded-full ${
-                          job.status === 'success'
-                            ? 'bg-green-500'
-                            : job.status === 'failed'
-                              ? 'bg-red-500'
-                              : 'bg-yellow-500 animate-pulse'
-                        }`}
-                        aria-hidden="true"
-                      />
+                {historyJobs.slice(0, 5).map((job) => {
+                  const isJobSuccess = job.status === 'success';
+                  const isJobFailed = job.status === 'failed';
+                  const isJobCancelled = job.status === 'cancelled';
 
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-gray-900 truncate font-mono">
-                          {job.filename}
-                        </p>
-                        <p className="text-[11px] text-gray-400 mt-0.5 font-mono">
-                          {job.startedAt}
-                        </p>
+                  return (
+                    <li key={job.id} className="py-3 first:pt-3 last:pb-0">
+                      <div className="flex items-start gap-3">
+                        {/* Status dot */}
+                        <span
+                          className={`flex-shrink-0 mt-1 w-2 h-2 rounded-full ${
+                            isJobSuccess
+                              ? 'bg-green-500'
+                              : isJobFailed
+                                ? 'bg-red-500'
+                                : isJobCancelled
+                                  ? 'bg-gray-400'
+                                  : 'bg-yellow-500 animate-pulse'
+                          }`}
+                          aria-hidden="true"
+                        />
 
-                        {/* Failed step detail */}
-                        {job.status === 'failed' && job.steps.find((s) => s.status === 'failed')?.error && (
-                          <p className="text-[11px] text-red-600 mt-1 line-clamp-2">
-                            {job.steps.find((s) => s.status === 'failed')!.error}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-gray-900 truncate font-mono">
+                            {job.filename}
                           </p>
-                        )}
+                          <p className="text-[11px] text-gray-400 mt-0.5 font-mono">
+                            {job.createdAt}
+                          </p>
 
-                        {/* Success: quick link to entry */}
-                        {job.status === 'success' && job.entryId && (
-                          <button
-                            onClick={() => navigate(`/entry/${job.entryId}`)}
-                            className="inline-flex items-center gap-1 text-[11px] text-link hover:underline mt-1"
-                          >
-                            查看条目
-                            <ArrowUpRight className="w-3 h-3" aria-hidden="true" />
-                          </button>
-                        )}
+                          {/* Failed detail */}
+                          {isJobFailed && job.error && (
+                            <p className="text-[11px] text-red-600 mt-1 line-clamp-2">
+                              {job.error}
+                            </p>
+                          )}
+
+                          {/* Success: quick link to entry */}
+                          {isJobSuccess && job.entryId && (
+                            <button
+                              onClick={() => navigate(`/entry/${job.entryId}`)}
+                              className="inline-flex items-center gap-1 text-[11px] text-link hover:underline mt-1"
+                            >
+                              查看条目
+                              <ArrowUpRight className="w-3 h-3" aria-hidden="true" />
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Status badge */}
+                        <span
+                          className={`flex-shrink-0 text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded ${
+                            isJobSuccess
+                              ? 'text-green-700 bg-green-50'
+                              : isJobFailed
+                                ? 'text-red-700 bg-red-50'
+                                : isJobCancelled
+                                  ? 'text-gray-600 bg-gray-100'
+                                  : 'text-yellow-700 bg-yellow-50'
+                          }`}
+                        >
+                          {isJobSuccess ? '成功' : isJobFailed ? '失败' : isJobCancelled ? '已取消' : '处理中'}
+                        </span>
                       </div>
-
-                      {/* Status badge */}
-                      <span
-                        className={`flex-shrink-0 text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded ${
-                          job.status === 'success'
-                            ? 'text-green-700 bg-green-50'
-                            : job.status === 'failed'
-                              ? 'text-red-700 bg-red-50'
-                              : 'text-yellow-700 bg-yellow-50'
-                        }`}
-                      >
-                        {job.status === 'success' ? '成功' : job.status === 'failed' ? '失败' : '运行中'}
-                      </span>
-                    </div>
-                  </li>
-                ))}
+                    </li>
+                  );
+                })}
               </ul>
             )}
 

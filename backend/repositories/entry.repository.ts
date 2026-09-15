@@ -1,6 +1,6 @@
 import { BaseRepository, DbClient } from './base.js';
 import { entries, entryTags, tags, wikiFiles } from '../db/schema.js';
-import { eq, like, and, or, inArray, desc, isNull, sql } from 'drizzle-orm';
+import { eq, and, or, inArray, desc, isNull, sql, ilike, exists } from 'drizzle-orm';
 import type { Entry } from '../types.js';
 
 export interface CreateEntryInput {
@@ -88,8 +88,30 @@ export class EntryRepository extends BaseRepository {
     return this.hydrateTags(rows);
   }
 
+  /** Case-insensitive keyword match. `matchFields` narrows which columns are
+   * searched — `title` (title + original filename, for "按标题" mode), `content`
+   * (summary + content, for "按内容" mode), or `all` (the default). Filename is
+   * included because the parser may overwrite entry.title with a heading from the
+   * document body, which would otherwise make a file unsearchable by its own name. */
+  private keywordCondition(kw: string, matchFields: 'all' | 'title' | 'content' = 'all') {
+    const titleCond = ilike(entries.title, kw);
+    const fileCond = exists(
+      this.db
+        .select({ one: sql`1` })
+        .from(wikiFiles)
+        .where(and(eq(wikiFiles.entryId, entries.id), ilike(wikiFiles.originalFilename, kw))),
+    );
+    const summaryCond = ilike(entries.summary, kw);
+    const contentCond = ilike(entries.content, kw);
+
+    if (matchFields === 'title') return or(titleCond, fileCond)!;
+    if (matchFields === 'content') return or(summaryCond, contentCond)!;
+    return or(titleCond, summaryCond, contentCond, fileCond)!;
+  }
+
   async findMany(params?: {
     keyword?: string;
+    matchFields?: 'all' | 'title' | 'content';
     entry_type?: string;
     visibility?: string;
     category_id?: string;
@@ -107,13 +129,7 @@ export class EntryRepository extends BaseRepository {
     if (params) {
       if (params.keyword) {
         const kw = `%${params.keyword.toLowerCase()}%`;
-        conditions.push(
-          or(
-            like(sql`lower(${entries.title})`, kw),
-            like(sql`lower(${entries.summary})`, kw),
-            like(sql`lower(${entries.content})`, kw),
-          )!,
-        );
+        conditions.push(this.keywordCondition(kw, params.matchFields));
       }
       if (params.entry_type && params.entry_type !== 'all') {
         conditions.push(eq(entries.entryType, params.entry_type));
@@ -198,13 +214,7 @@ export class EntryRepository extends BaseRepository {
     if (params) {
       if (params.keyword) {
         const kw = `%${params.keyword.toLowerCase()}%`;
-        conditions.push(
-          or(
-            like(sql`lower(${entries.title})`, kw),
-            like(sql`lower(${entries.summary})`, kw),
-            like(sql`lower(${entries.content})`, kw),
-          )!,
-        );
+        conditions.push(this.keywordCondition(kw));
       }
       if (params.entry_type && params.entry_type !== 'all') {
         conditions.push(eq(entries.entryType, params.entry_type));

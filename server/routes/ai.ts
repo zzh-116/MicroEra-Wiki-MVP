@@ -12,10 +12,11 @@ export const aiRouter = Router();
 // POST /api/ai/chat — non-streaming RAG Q&A (backward compatible)
 aiRouter.post('/chat', async (req: Request, res: Response) => {
   try {
-    const { question, history, conversationId } = req.body || {};
+    const { question, history, conversationId, entryId } = req.body || {};
     if (!question?.trim()) { res.json({ answer: '请提出一个问题。', sources: [] }); return; }
     const userId = req.user?.userId;
-    const result = await aiService.chat(question, userId, conversationId);
+    const entryIdNum = entryId != null && entryId !== '' && Number.isFinite(Number(entryId)) ? Number(entryId) : undefined;
+    const result = await aiService.chat(question, userId, conversationId, entryIdNum);
     res.json({ answer: result.answer, sources: result.sources.map((s) => ({ id: s.id, title: s.title, entry_type: s.entry_type })), conversationId: result.conversationId });
   } catch (err: any) {
     res.status(503).json({ error: 'AI_SERVICE_UNAVAILABLE', message: err.message });
@@ -30,7 +31,7 @@ aiRouter.post('/chat/stream', async (req: Request, res: Response) => {
   const send = sseStart(res);
 
   try {
-    const { question, conversationId } = req.body || {};
+    const { question, conversationId, entryId } = req.body || {};
     if (!question?.trim()) {
       sseError(send, res, '请提出一个问题。');
       return;
@@ -52,8 +53,9 @@ aiRouter.post('/chat/stream', async (req: Request, res: Response) => {
       }
     });
 
+    const entryIdNum = entryId != null && entryId !== '' && Number.isFinite(Number(entryId)) ? Number(entryId) : undefined;
     let eventCount = 0;
-    for await (const event of aiService.streamChat(question, userId, conversationId)) {
+    for await (const event of aiService.streamChat(question, userId, conversationId, entryIdNum)) {
       eventCount++;
       if (!streamingStarted) streamingStarted = true;
       switch (event.type) {
