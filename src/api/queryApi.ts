@@ -56,6 +56,7 @@ export const queryApi = {
     question: string,
     callbacks: StreamCallbacks,
     conversationId?: number,
+    entryId?: string,
   ): AbortController {
     const abort = new AbortController();
     const tStart = Date.now();
@@ -69,7 +70,7 @@ export const queryApi = {
     fetch('/api/ai/chat/stream', {
       method: 'POST',
       headers,
-      body: JSON.stringify({ question, conversationId }),
+      body: JSON.stringify({ question, conversationId, entryId }),
       signal: abort.signal,
     })
       .then(async (response) => {

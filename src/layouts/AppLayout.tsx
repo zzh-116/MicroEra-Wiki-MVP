@@ -2,6 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import TopNav from '../components/TopNav';
 import WikiSidebar from '../components/WikiSidebar';
 import Footer from '../components/Footer';
+import GlobalUploadIndicator from '../components/GlobalUploadIndicator';
 
 export default function AppLayout() {
   const location = useLocation();
@@ -17,6 +18,9 @@ export default function AppLayout() {
     <div className="min-h-screen bg-cream/20 flex flex-col font-sans text-[#333333]" id="app-shell-root">
       {/* Upper Navigation Rail */}
       <TopNav />
+
+      {/* Floating upload progress — visible on every page */}
+      <GlobalUploadIndicator />
 
       {/* Main layout container */}
       <main className="flex-grow max-w-7xl mx-auto w-full px-4 py-6">

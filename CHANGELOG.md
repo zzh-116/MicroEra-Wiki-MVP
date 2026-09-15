@@ -39,6 +39,7 @@
 - **文档解析（Docling / pdf-parse / mammoth）**：集成 Docling CLI、pdf-parse、mammoth 解析 PDF / DOCX，文件上传读取真实内容。
 - **PostgreSQL 持久化与 Repository 模式**：用 PostgreSQL + Repository Pattern 替换 JSON 文件存储，作为后端数据层基础。
 - **Vercel 部署**：新增 serverless API 函数与 `vercel.json`；`start.ps1` 一键启动脚本。
+- **基于当前文档询问 AI**: 实现文档内检索功能，entryId 从页面贯通到检索层；空文档提问时返回固定提示，不调用 LLM。
 
 ### Changed
 
@@ -84,6 +85,8 @@
 - 修复 merge 丢失的 backend/main.ts、swagger 文档与 milvus 客户端。
 - 修复 findMany() 返回类型变更、TagList `[object Object]`、AI 多轮 conversationId 丢失、SSE 缓存跨页、分页截断。
 - 修复文献导入假成功与 entry_type 映射（preprint / academic_paper → tech）。
+- **RAG 语义检索召回**: 移除按标题去重逻辑，补全类型白名单（7 种扩展至 12 种），修复排序按字母序而非相关性错乱的问题。
+- **知识索引搜索框**: 同一文档出现多条重复结果，改为按 entry.id 去重，每个文档只显示一条。
 
 ### Maintenance
 

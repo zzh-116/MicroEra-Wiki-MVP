@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import { getParser, ParserError } from '../../backend/parser/index.js';
 import { chunkService } from '../../backend/chunk/service.js';
 import { importService } from '../../backend/services/import.service.js';
+import { importJobService } from '../../backend/services/import-job.service.js';
 import { searchService } from '../../backend/services/search.service.js';
 import { entryRepository } from '../../backend/repositories/entry.repository.js';
 import { vectorRepository } from '../../backend/repositories/vector.repository.js';
@@ -170,11 +171,18 @@ pipelineRouter.post('/import', async (req: Request, res: Response) => {
           return;
         }
 
-        const result = await importService.importFromUpload(buffer, file.originalname,
-          req.body.metadata ? JSON.parse(req.body.metadata) : undefined,
-          { skipEmbedding: req.body.skipEmbedding === 'true', chunkConfig: req.body.chunkConfig ? JSON.parse(req.body.chunkConfig) : undefined });
-        try { fs.unlinkSync(file.path); } catch { /* ignore */ }
-        res.status(result.success ? 200 : 422).json(result);
+        // Hand off to a background job — return immediately, client polls /jobs/:id.
+        // The job runner owns the file lifecycle (rename + cleanup) from here on.
+        const metadata = req.body.metadata ? JSON.parse(req.body.metadata) : undefined;
+        const chunkConfig = req.body.chunkConfig ? JSON.parse(req.body.chunkConfig) : undefined;
+        const job = importJobService.createJob(file, { metadata, chunkConfig });
+
+        res.status(202).json({
+          success: true,
+          jobId: job.id,
+          status: job.status,
+          message: 'Upload accepted; processing in background.',
+        });
       });
       return;
     }
@@ -252,4 +260,33 @@ pipelineRouter.post('/search', async (req: Request, res: Response) => {
 pipelineRouter.get('/status', async (_req: Request, res: Response) => {
   const count = await entryRepository.count(true);
   res.json({ pipeline: { ollama: { url: config.ollama.url, chatModel: config.ollama.chatModel, embeddingModel: config.ollama.embeddingModel }, vectorStore: { pgvector: 'connected' }, data: { totalEntries: count, dataDir: config.dataDir }, embeddingDimension: 1024 }, timestamp: new Date().toISOString() });
+});
+
+// Import job status — polled by the frontend UploadManager
+pipelineRouter.get('/jobs/:id', (req: Request, res: Response) => {
+  const job = importJobService.getJob(req.params.id);
+  if (!job) {
+    res.status(404).json({ error: 'JOB_NOT_FOUND' });
+    return;
+  }
+  res.json({
+    success: job.status === 'success',
+    failed: job.status === 'failed' || job.status === 'cancelled',
+    job,
+  });
+});
+
+// List recent import jobs
+pipelineRouter.get('/jobs', (_req: Request, res: Response) => {
+  res.json({ jobs: importJobService.listJobs() });
+});
+
+// Cancel an import job
+pipelineRouter.delete('/jobs/:id', (req: Request, res: Response) => {
+  const job = importJobService.cancelJob(req.params.id);
+  if (!job) {
+    res.status(404).json({ error: 'JOB_NOT_FOUND' });
+    return;
+  }
+  res.json({ success: true, job });
 });

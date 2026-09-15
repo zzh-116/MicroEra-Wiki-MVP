@@ -1,4 +1,4 @@
-import { getToken } from './client';
+import { getToken, get, del } from './client';
 
 // ---- Log Types ----
 
@@ -50,6 +50,19 @@ export interface ImportJob {
   entryId?: number;
 }
 
+/** Backend async import job, as returned by /pipeline/jobs/:id */
+export interface ServerImportJob {
+  id: string;
+  status: 'pending' | 'running' | 'success' | 'failed' | 'cancelled';
+  filename: string;
+  fileSize: number;
+  createdAt: string;
+  updatedAt: string;
+  stages: { stage: string; status: 'success' | 'failed' | 'skipped'; ms: number; detail: string }[];
+  error?: string;
+  entryId?: number;
+}
+
 /** Backend stage → frontend step mapping */
 const STAGE_TO_STEP: Record<string, number> = {
   parse: 0,
@@ -60,7 +73,7 @@ const STAGE_TO_STEP: Record<string, number> = {
 const activeJobs: ImportJob[] = [];
 const API_BASE = '/api';
 
-function mapSpaceToEntryType(spaceId: string): string {
+export function mapSpaceToEntryType(spaceId: string): string {
   const map: Record<string, string> = {
     's-sandbox': 'sandbox_project', 's-papers': 'academic_paper', 's-data': 'data_standard',
     's-tech': 'tech_doc', 's-business': 'business_material', 's-template': 'template',
@@ -254,6 +267,18 @@ export const adminApi = {
   tickJob(jobId: string): ImportJob | null {
     const job = activeJobs.find((j) => j.id === jobId);
     return job ? { ...job } : null;
+  },
+
+  // ---- Async import jobs (backend) ----
+
+  /** Poll the status of a background import job. */
+  async getImportJobStatus(jobId: string): Promise<{ success: boolean; failed: boolean; job: ServerImportJob }> {
+    return get(`/pipeline/jobs/${jobId}`);
+  },
+
+  /** Cancel a background import job. */
+  async cancelImportJob(jobId: string): Promise<{ success: boolean; job: ServerImportJob }> {
+    return del(`/pipeline/jobs/${jobId}`);
   },
 
   // ---- Logs ----
