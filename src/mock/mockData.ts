@@ -302,7 +302,7 @@ export const mockDataItems: DataItem[] = [
     id: 'd-1',
     entryId: 'e-data-stabilizer-schema',
     dataName: '稳定子计算结果数据结构 (stabilizer_result_schema)',
-    dataDefinition: '该数据条目定义了在 Sandbox 项目或 MiQi 中调用仿真计算时，输出结果的 JSON Schema 标准，便于后续自动化 RAG 与结果提取。',
+    dataDefinition: '该数据条目定义了在 Sandbox 项目或 MiQroForge Desktop 中调用仿真计算时，输出结果的 JSON Schema 标准，便于后续自动化 RAG 与结果提取。',
     dataFormat: 'JSON / Drizzle Schema',
     schemaVersion: 'v0.2',
     storageDescription: '存储于 /nas/metadata/schemas/stabilizer_result.json 或数据库表 simulation_outputs',
@@ -375,7 +375,7 @@ export const mockServiceCards: ServiceCard[] = [
     entryId: 'e-stabilizer-project',
     serviceType: 'mcp',
     name: 'Stabilizer Simulator MCP 工具服务',
-    description: '封装为 MCP (Model Context Protocol) 协议标准工具。使 AI 智能体（如 MiQi、Claude）能直接在聊天窗口中触发对稳定子算法的代码仿真或日志检索。',
+    description: '封装为 MCP (Model Context Protocol) 协议标准工具。使 AI 智能体（如 MiQroForge Desktop、Claude）能直接在聊天窗口中触发对稳定子算法的代码仿真或日志检索。',
     inputSchema: '{"simulator_params": {"d": "int", "error_rate": "float", "runs": "int"}}',
     outputSchema: '{"status": "success", "fidelity": "float", "plot_url": "string"}',
     status: 'connected',
@@ -384,13 +384,13 @@ export const mockServiceCards: ServiceCard[] = [
   {
     id: 'sc-3',
     entryId: 'e-stabilizer-project',
-    serviceType: 'miqi',
-    name: 'MiQi 稳定子算法智能体可调用服务',
-    description: '在 MiQi 大脑中注册为此项目的专有动作服务。当用户向 MiQi 询问“帮我分析 SB-8849-QC 项目的纠错阈值”时，MiQi 将自动联动本服务。',
+    serviceType: 'MiQroForge Desktop',
+    name: 'MiQroForge Desktop 稳定子算法智能体可调用服务',
+    description: '在 MiQroForge Desktop 大脑中注册为此项目的专有动作服务。当用户向 MiQroForge Desktop 询问“帮我分析 SB-8849-QC 项目的纠错阈值”时，MiQroForge Desktop 将自动联动本服务。',
     inputSchema: '{"session_id": "string", "analyze_threshold": "boolean"}',
     outputSchema: '{"report_summary": "string", "critical_plots": ["string"]}',
     status: 'planning',
-    mockEndpoint: '/api/v1/miqi/actions/analyze_stabilizer'
+    mockEndpoint: '/api/v1/MiQroForge Desktop/actions/analyze_stabilizer'
   }
 ];
 
@@ -416,7 +416,7 @@ export const mockEntries: WikiEntry[] = [
     spaceId: 's-sandbox',
     title: '稳定子算法 Sandbox 计算项目',
     entryType: 'sandbox_project',
-    summary: '该项目记录稳定子算法在 Sandbox 中的计算过程、结果文件、引用文献和可服务化调用方式。不仅沉淀了仿真过程和 Monte Carlo 的拟合计算指标，更能通过 RAG、MCP 以及 MiQi 在全平台进行调用。',
+    summary: '该项目记录稳定子算法在 Sandbox 中的计算过程、结果文件、引用文献和可服务化调用方式。不仅沉淀了仿真过程和 Monte Carlo 的拟合计算指标，更能通过 RAG、MCP 以及 MiQroForge Desktop 在全平台进行调用。',
     content: `
 # 稳定子算法 Sandbox 计算项目 (Stabilizer Monte Carlo Simulation)
 
@@ -426,7 +426,7 @@ export const mockEntries: WikiEntry[] = [
 
 ## 关联 Sandbox ID与 Session ID
 - **Sandbox-ID**: \`SB-8849-QC\`
-- **Session-ID**: \`MQ-SESS-9922\` (微观纪元 MiQi Session)
+- **Session-ID**: \`MQ-SESS-9922\` (微观纪元 MiQroForge Desktop Session)
 
 ## 项目核心过程
 1. **[需求提出 - 2026-06-25]**: 量子计算实验室提出需要多达 7 比特距离的纠错码伪阈值模拟指标。
@@ -440,7 +440,7 @@ export const mockEntries: WikiEntry[] = [
 详细的 ROI 看板请点击右侧 **[量子计算项目商业价值摘要]** 关联卡片跳转。
 `,
     visibility: 'internal',
-    tags: ['量子纠错', '稳定子码', 'Sandbox', 'Monte Carlo', '伪阈值', 'MiQi 可调用'],
+    tags: ['量子纠错', '稳定子码', 'Sandbox', 'Monte Carlo', '伪阈值', 'MiQroForge Desktop 可调用'],
     owner: '张研究员',
     ownerDepartment: '量子算法实验室',
     latestUpdatedAt: '2026-06-30 15:45:00',
@@ -463,8 +463,8 @@ export const mockEntries: WikiEntry[] = [
         note: '内容正式定稿，经技术安全委员会核准发布，已挂载为稳定 RAG 神经检索大模型与 MCP 沙箱算子服务。',
         current: true,
         titleBackup: '稳定子算法 Sandbox 计算项目',
-        summaryBackup: '该项目记录稳定子算法在 Sandbox 中的计算过程、结果文件、引用文献和可服务化调用方式。不仅沉淀了仿真过程和 Monte Carlo 的拟合计算指标，更能通过 RAG、MCP 以及 MiQi 在全平台进行调用。',
-        contentBackup: `\n# 稳定子算法 Sandbox 计算项目 (Stabilizer Monte Carlo Simulation)\n\n## 项目背景\n本条目详细归档了微观纪元量子计算硬件仿真团队，在 **Sandbox SB-8849-QC** 沙箱环境中所运行的稳定子纠错码（Stabilizer Codes）实验。\n该实验基于 Daniel Gottesman 在 1997 年提出的稳定子群论，旨在研究在特定的物理缺陷率下，纠错后逻辑比特的残余错误。\n\n## 关联 Sandbox ID与 Session ID\n- **Sandbox-ID**: \`SB-8849-QC\`\n- **Session-ID**: \`MQ-SESS-9922\` (微观纪元 MiQi Session)\n\n## 项目核心过程\n1. **[需求提出 - 2026-06-25]**: 量子计算实验室提出需要多达 7 比特距离的纠错码伪阈值模拟指标。\n2. **[算法编写与编译 - 2026-06-26]**: 采用微观纪元自研的编译引擎，优化稳定子哈密顿量的纠错矩阵。\n3. **[计算任务提交 - 2026-06-28]**: 将模拟任务提交到 **Sandbox 虚拟算力算子大厅**，执行 Monte Carlo 模拟。\n4. **[结果生成与转换 - 2026-06-30]**: 仿真结果生成完毕。自动调用平台底层的 **MarkItDown** 工具将实验日志和 PDF 导出文件转化为标准的富文本 Markdown 进行索引和知识归档。\n5. **[人工复核与归档 - 2026-06-30]**: 经由张研究员审核确认，零错保真度阈值符合预期，正式发布该 Wiki 知识条目。\n\n## 关键技术指标与商业价值\n经核算，相较于在传统的全状态保真度数值模拟（State Vector），本稳定子群论高效模拟算法将**计算开销降低了 90%**，为后续大比特模拟节省了数十万的算力采购。\n详细的 ROI 看板请点击右侧 **[量子计算项目商业价值摘要]** 关联卡片跳转。\n`
+        summaryBackup: '该项目记录稳定子算法在 Sandbox 中的计算过程、结果文件、引用文献和可服务化调用方式。不仅沉淀了仿真过程和 Monte Carlo 的拟合计算指标，更能通过 RAG、MCP 以及 MiQroForge Desktop 在全平台进行调用。',
+        contentBackup: `\n# 稳定子算法 Sandbox 计算项目 (Stabilizer Monte Carlo Simulation)\n\n## 项目背景\n本条目详细归档了微观纪元量子计算硬件仿真团队，在 **Sandbox SB-8849-QC** 沙箱环境中所运行的稳定子纠错码（Stabilizer Codes）实验。\n该实验基于 Daniel Gottesman 在 1997 年提出的稳定子群论，旨在研究在特定的物理缺陷率下，纠错后逻辑比特的残余错误。\n\n## 关联 Sandbox ID与 Session ID\n- **Sandbox-ID**: \`SB-8849-QC\`\n- **Session-ID**: \`MQ-SESS-9922\` (微观纪元 MiQroForge Desktop Session)\n\n## 项目核心过程\n1. **[需求提出 - 2026-06-25]**: 量子计算实验室提出需要多达 7 比特距离的纠错码伪阈值模拟指标。\n2. **[算法编写与编译 - 2026-06-26]**: 采用微观纪元自研的编译引擎，优化稳定子哈密顿量的纠错矩阵。\n3. **[计算任务提交 - 2026-06-28]**: 将模拟任务提交到 **Sandbox 虚拟算力算子大厅**，执行 Monte Carlo 模拟。\n4. **[结果生成与转换 - 2026-06-30]**: 仿真结果生成完毕。自动调用平台底层的 **MarkItDown** 工具将实验日志和 PDF 导出文件转化为标准的富文本 Markdown 进行索引和知识归档。\n5. **[人工复核与归档 - 2026-06-30]**: 经由张研究员审核确认，零错保真度阈值符合预期，正式发布该 Wiki 知识条目。\n\n## 关键技术指标与商业价值\n经核算，相较于在传统的全状态保真度数值模拟（State Vector），本稳定子群论高效模拟算法将**计算开销降低了 90%**，为后续大比特模拟节省了数十万的算力采购。\n详细的 ROI 看板请点击右侧 **[量子计算项目商业价值摘要]** 关联卡片跳转。\n`
       },
       {
         version: 'v0.3',
@@ -507,7 +507,7 @@ export const mockEntries: WikiEntry[] = [
 # AI 驱动的实验数据分析能力 (AI-Driven Experimental Data Analysis)
 
 ## 概述
-微观纪元致力于将 AI 模型、Agent 技术（如 MiQi 智能助手）与高维科学实验沙箱（Sandbox）深度打通。
+微观纪元致力于将 AI 模型、Agent 技术（如 MiQroForge Desktop 智能助手）与高维科学实验沙箱（Sandbox）深度打通。
 我们的核心能力在于，不仅让 AI 作为一个被动的对话窗口，而是让它主动解析复杂的科学输出结果（如 CIF 结晶格式、仿真 HDF5、计算日志等），自动通过 **MarkItDown** 组件抽取语义，并形成**可演化、可追溯、可联动**的知识图谱。
 
 ## 核心优势
@@ -573,7 +573,7 @@ export const mockEntries: WikiEntry[] = [
 # 稳定子计算结果数据结构 (Stabilizer Result Metadata & Database Schema)
 
 ## 概述
-为了让 AI 智能体（如 MiQi）能够无缝、精确地提取 Sandbox 中的实验指标，系统对稳定子模拟结果的落库和导出格式进行了严格的 Schema 定义。
+为了让 AI 智能体（如 MiQroForge Desktop）能够无缝、精确地提取 Sandbox 中的实验指标，系统对稳定子模拟结果的落库和导出格式进行了严格的 Schema 定义。
 
 ## 字段规范 (Schema v0.2)
 - \`project_id\` (String, Required): 对应 Sandbox 运行沙箱 ID。
@@ -617,7 +617,7 @@ export const mockEntries: WikiEntry[] = [
 3. **研发开销与耗时**: 详细列出消耗的算力、机时、API 调用次数。
 4. **源文件及哈希清单**: 要求列出关键输出文件、存储路径与 SHA256 哈希值（用于防篡改校验）。
 5. **引用来源**: 项目所引用的国际顶级期刊论文、前置专利或标准文档。
-6. **商业转化可能**: 包含 ROI 预测、是否可转化为平台 MCP 服务、是否能被 MiQi 智能体独立调用。
+6. **商业转化可能**: 包含 ROI 预测、是否可转化为平台 MCP 服务、是否能被 MiQroForge Desktop 智能体独立调用。
 `,
     visibility: 'internal',
     tags: ['办公模板', '项目复盘', '核准发布', '标准流程'],
@@ -651,7 +651,7 @@ export const mockEntries: WikiEntry[] = [
 - **论文产出**: Gottesman 论文平台内引用次数大幅攀升，助力多项子项目并行推进。
 `,
     visibility: 'internal',
-    tags: ['商业价值', 'ROI看板', '节约成本', '成果展示', 'MiQi 汇报素材'],
+    tags: ['商业价值', 'ROI看板', '节约成本', '成果展示', 'MiQroForge Desktop 汇报素材'],
     owner: '商业智能组',
     ownerDepartment: '市场部 / 商业化中心',
     latestUpdatedAt: '2026-06-30 15:45:00',
@@ -669,7 +669,7 @@ export const mockEntries: WikiEntry[] = [
     spaceId: 's-tech',
     title: '稳定子算法知识与工具调用服务',
     entryType: 'tech_doc',
-    summary: '此条目归档了本算法和知识库能对外或对内提供的 RAG 查询接口、MCP 工具集以及 MiQi 可直接调用的微服务列表，展示真正的知识服务化价值。',
+    summary: '此条目归档了本算法和知识库能对外或对内提供的 RAG 查询接口、MCP 工具集以及 MiQroForge Desktop 可直接调用的微服务列表，展示真正的知识服务化价值。',
     content: `
 # 稳定子算法知识与工具调用服务 (Stabilizer Algorithm Knowledge Service & APIs)
 
@@ -687,13 +687,13 @@ export const mockEntries: WikiEntry[] = [
 - **状态**: \`已接入 (Connected)\`
 - **调用地址**: \`/api/mcp/v1/tools/simulate_stabilizer\`
 
-## 3. MiQi 大脑可调用服务
-- **服务说明**: 深度融入微观纪元 MiQi 专有动作库中。MiQi 在分析用户项目进度的决策环中能直接触发运行。
+## 3. MiQroForge Desktop 大脑可调用服务
+- **服务说明**: 深度融入微观纪元 MiQroForge Desktop 专有动作库中。MiQroForge Desktop 在分析用户项目进度的决策环中能直接触发运行。
 - **状态**: \`规划中 (Planning)\`
-- **调用地址**: \`/api/v1/miqi/actions/analyze_stabilizer\`
+- **调用地址**: \`/api/v1/MiQroForge Desktop/actions/analyze_stabilizer\`
 `,
     visibility: 'internal',
-    tags: ['RAG服务', 'MCP协议', 'MiQi可调用', 'API服务化'],
+    tags: ['RAG服务', 'MCP协议', 'MiQroForge Desktop可调用', 'API服务化'],
     owner: '平台研发部',
     ownerDepartment: '集成集成与协议组',
     latestUpdatedAt: '2026-06-30 15:50:00',
@@ -712,7 +712,7 @@ export const mockGraphNodes: KnowledgeGraphNode[] = [
   { id: 'gn-2', label: 'Daniel Gottesman 经典量子纠错论文', type: 'academic_paper', entryId: 'e-paper-correction', description: 'Gottesman 1997 纠错码群论开山论文' },
   { id: 'gn-3', label: '稳定子计算结果 Schema 定义', type: 'data_standard', entryId: 'e-data-stabilizer-schema', description: 'v0.2 格式 Schema 与关系表规约' },
   { id: 'gn-4', label: '量子计算项目商业价值摘要', type: 'business_material', entryId: 'e-business-quantum-value', description: 'ROI 320%、节约 45.2万算力、衍生专利看板' },
-  { id: 'gn-5', label: '稳定子算法知识与工具调用服务', type: 'tech_doc', entryId: 'e-stabilizer-service-entry', description: 'RAG、MCP工具、MiQi可调用服务三合一卡片' },
+  { id: 'gn-5', label: '稳定子算法知识与工具调用服务', type: 'tech_doc', entryId: 'e-stabilizer-service-entry', description: 'RAG、MCP工具、MiQroForge Desktop可调用服务三合一卡片' },
   { id: 'gn-6', label: '项目复盘报告标准模板', type: 'template', entryId: 'e-template-retrospective', description: 'QA 发布的官方项目成果总结 Word 模板 v1.3' },
   { id: 'gn-7', label: 'AI 驱动实验分析能力', type: 'tech_doc', entryId: 'e-ai-data-analysis', description: '微观纪元领先的 AI 语义提取与知识图谱架构' }
 ];
@@ -773,7 +773,7 @@ export const mockQAData: MockQA[] = [
   {
     id: 'qa-3',
     question: '该量子纠错项目的商业转化价值与算力开销节省是多少？',
-    answer: '由于稳定子算法不需要进行全态保真度的矩阵连乘，模拟耗时下降了 90% 以上。在 Monte Carlo 运行过程中，累计为平台节省了约 45.2 万元的算力租赁开销。此外，项目衍生出了 2 项核心发明专利，并为 MiQi 智能助手、MCP 插件和 RAG 工具链提供了现成的工具库，ROI 预估达到 320%。',
+    answer: '由于稳定子算法不需要进行全态保真度的矩阵连乘，模拟耗时下降了 90% 以上。在 Monte Carlo 运行过程中，累计为平台节省了约 45.2 万元的算力租赁开销。此外，项目衍生出了 2 项核心发明专利，并为 MiQroForge Desktop 智能助手、MCP 插件和 RAG 工具链提供了现成的工具库，ROI 预估达到 320%。',
     references: [
       {
         id: 'ref-qa-3-1',

@@ -37,7 +37,7 @@ Please select the affected module.
 * [ ] Document Import（文件导入 / MarkItDown）
 * [ ] Document Parser（Docling 解析）
 * [ ] Search（搜索 / 知识索引）
-* [ ] AI Chat（MiQi 问答）
+* [ ] AI Chat（MiQroForge Desktop 问答）
 * [ ] Knowledge Graph（知识图谱）
 * [ ] Data Items（数据条目）
 * [ ] Template Library（模板库）

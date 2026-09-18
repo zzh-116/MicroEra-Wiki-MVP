@@ -31,7 +31,7 @@ export default function Footer() {
             <ul className="space-y-2 text-[11px] text-gray-300">
               <li><Link to="/ai-query" className="hover:underline hover:text-white">RAG 服务 (RAG Q&A)</Link></li>
               <li><Link to="/system-version" className="hover:underline hover:text-white">MCP 工具 (MCP Sandbox)</Link></li>
-              <li><Link to="/ai-query" className="hover:underline hover:text-white">MiQi 智能调用 (MiQi Assistance)</Link></li>
+              <li><Link to="/ai-query" className="hover:underline hover:text-white">MiQroForge Desktop 智能调用 (MiQroForge Desktop Assistance)</Link></li>
               <li><Link to="/search" className="hover:underline hover:text-white">查询接口 (Search Hub)</Link></li>
               <li><Link to="/admin/import" className="hover:underline hover:text-white">知识导入 (Knowledge Import)</Link></li>
               <li><Link to="/system-version" className="hover:underline hover:text-white">API 文档 (Integrations)</Link></li>

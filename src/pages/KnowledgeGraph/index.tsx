@@ -237,7 +237,7 @@ const MOCK_GRAPH: SeedGraphData = {
     { id: '10', label: 'MOF 材料计算论文', type: '学术论文', metadata: { title: 'MOF 材料计算论文', author: '材料组', tags: ['MOF', 'DFT'], summary: '金属有机框架材料的高通量计算与筛选研究。', updatedAt: '2026-06-12' } },
     { id: '11', label: 'Sandbox 155 项目', type: 'Sandbox项目', metadata: { title: 'Sandbox 155 项目', author: '仿真组', tags: ['Sandbox', '仿真'], summary: '多项式仿真过程与实验结果记录。', updatedAt: '2026-06-11' } },
     { id: '12', label: '传感器数据标准', type: '数据标准', metadata: { title: '传感器数据标准', author: '数据组', tags: ['传感器', '数据'], summary: '气体传感器响应数据的标准化字段定义。', updatedAt: '2026-06-14' } },
-    { id: '13', label: 'MiQi 问答服务', type: '技术文档', metadata: { title: 'MiQi 问答服务', author: '平台组', tags: ['MiQi', '问答'], summary: '企业知识问答与 Agent 工具调用服务。', updatedAt: '2026-06-13' } },
+    { id: '13', label: 'MiQroForge Desktop 问答服务', type: '技术文档', metadata: { title: 'MiQroForge Desktop 问答服务', author: '平台组', tags: ['MiQroForge Desktop', '问答'], summary: '企业知识问答与 Agent 工具调用服务。', updatedAt: '2026-06-13' } },
     { id: '14', label: '生物材料 ROI', type: '商业资料', metadata: { title: '生物材料 ROI', author: '战略部', tags: ['ROI', '生物'], summary: '生物质材料方向的商业回报评估。', updatedAt: '2026-06-09' } },
     { id: '15', label: '生物智能体路线', type: 'Sandbox项目', metadata: { title: '生物智能体完整路线', author: '生物组', tags: ['生物智能体', '路线'], summary: '从数据到智能体的生物制造技术路线图。', updatedAt: '2026-06-08' } },
     { id: '16', label: '木质素高值化论文', type: '学术论文', metadata: { title: '木质素高值化论文', author: '生物组', tags: ['木质素', '高值化'], summary: '木质素基材料的高值化利用研究。', updatedAt: '2026-06-07' } },

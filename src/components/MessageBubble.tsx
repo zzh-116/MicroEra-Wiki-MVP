@@ -59,7 +59,7 @@ export default function MessageBubble({
       <div className={`flex-1 min-w-0 ${isUser ? 'flex flex-col items-end' : ''}`}>
         {/* Role label */}
         <div className={`text-[10px] font-semibold text-gray-400 mb-1 ${isUser ? 'text-right' : 'text-left'}`}>
-          {isUser ? 'You' : 'MiQi AI'}
+          {isUser ? 'You' : 'MiQroForge Desktop AI'}
         </div>
 
         {/* Thinking process (assistant only, when provided) */}

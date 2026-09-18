@@ -144,7 +144,7 @@ export default function PublicHomePage() {
             <span className="block text-ink/70 font-normal mt-1">与 AI 知识平台</span>
           </h1>
           <p className="mt-4 text-sm text-gray-500 max-w-xl leading-relaxed">
-            连接 Sandbox 项目过程、实验结果、引用文献、数据条目与 MiQi 知识服务 —
+            连接 Sandbox 项目过程、实验结果、引用文献、数据条目与 MiQroForge Desktop 知识服务 —
             搜索、查阅、提问，企业知识一站触达。
           </p>
 
@@ -324,7 +324,7 @@ export default function PublicHomePage() {
                 项目知识服务化流程
               </h3>
               <p className="text-xs text-gray-500 leading-relaxed line-clamp-2 mb-4">
-                了解研发人员如何将冷数据一键打包，在 MiQi 智能体内进行免配置、可追溯的安全调用。
+                了解研发人员如何将冷数据一键打包，在 MiQroForge Desktop 智能体内进行免配置、可追溯的安全调用。
               </p>
               <span className="inline-flex items-center gap-1 text-xs font-semibold text-link
                                group-hover:text-brand transition-colors">

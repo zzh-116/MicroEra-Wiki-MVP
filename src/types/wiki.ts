@@ -136,7 +136,7 @@ export interface KnowledgeGraphEdge {
 export interface ServiceCard {
   id: string;
   entryId: string;
-  serviceType: 'rag' | 'mcp' | 'miqi';
+  serviceType: 'rag' | 'mcp' | 'MiQroForge Desktop';
   name: string;
   description: string;
   inputSchema: string; // JSON or text description

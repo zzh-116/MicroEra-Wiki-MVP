@@ -18,7 +18,7 @@ export default function TopNav() {
     <header className="bg-ink text-white border-b border-brand/20 sticky top-0 z-50 select-none shadow-sm" id="global-header">
       <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
         {/* Left Side Logo & Branding */}
-        <div className="flex items-center space-x-3.5">
+        <div className="flex items-center space-x-3 min-w-0">
           <div
             onClick={() => navigate('/')}
             className="flex items-center space-x-2 cursor-pointer group"
@@ -46,10 +46,10 @@ export default function TopNav() {
           </div>
 
           {/* Navigation Items (Middle Rail) */}
-          <nav className="hidden md:flex items-center space-x-1.5 text-xs">
+          <nav className="hidden md:flex items-center space-x-1 text-xs whitespace-nowrap min-w-0">
             <button
               onClick={() => navigate('/')}
-              className={`px-2.5 py-1 rounded transition-all font-bold ${
+              className={`px-2 py-1 rounded transition-all font-bold ${
                 isActive('/')
                   ? 'bg-white/10 text-accent'
                   : 'text-gray-200 hover:text-white hover:bg-white/5'
@@ -59,7 +59,7 @@ export default function TopNav() {
             </button>
             <button
               onClick={() => navigate('/search')}
-              className={`px-2.5 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
+              className={`px-2 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
                 isActive('/search')
                   ? 'bg-white/10 text-accent'
                   : 'text-gray-200 hover:text-white hover:bg-white/5'
@@ -70,7 +70,7 @@ export default function TopNav() {
             </button>
             <button
               onClick={() => navigate('/literature')}
-              className={`px-2.5 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
+              className={`px-2 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
                 isActive('/literature')
                   ? 'bg-white/10 text-accent'
                   : 'text-gray-200 hover:text-white hover:bg-white/5'
@@ -81,7 +81,7 @@ export default function TopNav() {
             </button>
             <button
               onClick={() => navigate('/ai-query')}
-              className={`px-2.5 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
+              className={`px-2 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
                 isActive('/ai-query')
                   ? 'bg-white/10 text-accent'
                   : 'text-gray-200 hover:text-white hover:bg-white/5'
@@ -92,7 +92,7 @@ export default function TopNav() {
             </button>
             <button
               onClick={() => navigate('/knowledge-graph')}
-              className={`px-2.5 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
+              className={`px-2 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
                 isActive('/knowledge-graph') || isActive('/graph')
                   ? 'bg-white/10 text-accent'
                   : 'text-gray-200 hover:text-white hover:bg-white/5'
@@ -103,7 +103,7 @@ export default function TopNav() {
             </button>
             <button
               onClick={() => navigate('/system-version')}
-              className={`px-2.5 py-1 rounded transition-all font-bold ${
+              className={`px-2 py-1 rounded transition-all font-bold ${
                 isActive('/system-version')
                   ? 'bg-white/10 text-accent'
                   : 'text-gray-200 hover:text-white hover:bg-white/5'
@@ -116,7 +116,7 @@ export default function TopNav() {
               <>
                 <button
                   onClick={() => navigate('/templates')}
-                  className={`px-2.5 py-1 rounded transition-all font-bold ${
+                  className={`px-2 py-1 rounded transition-all font-bold ${
                     isActive('/templates')
                       ? 'bg-white/10 text-accent'
                       : 'text-gray-200 hover:text-white hover:bg-white/5'
@@ -126,7 +126,7 @@ export default function TopNav() {
                 </button>
                 <button
                   onClick={() => navigate('/admin/import')}
-                  className={`px-2.5 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
+                  className={`px-2 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
                     isActive('/admin/import')
                       ? 'bg-white/10 text-accent'
                       : 'text-gray-200 hover:text-white hover:bg-white/5'
@@ -137,7 +137,7 @@ export default function TopNav() {
                 </button>
                 <button
                   onClick={() => navigate('/admin/logs')}
-                  className={`px-2.5 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
+                  className={`px-2 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
                     isActive('/admin/logs')
                       ? 'bg-white/10 text-accent'
                       : 'text-gray-200 hover:text-white hover:bg-white/5'
@@ -152,14 +152,14 @@ export default function TopNav() {
         </div>
 
         {/* Right Side Auth Status & Quick Action */}
-        <div className="flex items-center space-x-2.5 text-xs">
+        <div className="flex items-center space-x-2 text-xs shrink-0">
           {/* Natural Language Prompt Shortcut Button */}
           <button
             onClick={() => navigate('/ai-query')}
             className="hidden lg:flex items-center space-x-1 bg-brand hover:bg-brand/90 text-white font-extrabold px-3 py-1.5 rounded-md transition-all shadow-md text-xs border border-accent/20"
           >
             <Sparkles className="w-3.5 h-3.5 text-accent animate-bounce" />
-            <span>问答 MiQi</span>
+            <span className="whitespace-nowrap">问答 MiQroForge Desktop</span>
           </button>
 
           {isLoggedIn && user ? (

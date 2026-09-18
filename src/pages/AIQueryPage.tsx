@@ -140,7 +140,7 @@ export default function AIQueryPage() {
             <Sparkles className="w-3.5 h-3.5 text-brand" aria-hidden="true" />
           </span>
           <div>
-            <h1 className="text-sm font-bold text-ink font-display">MiQi AI</h1>
+            <h1 className="text-sm font-bold text-ink font-display">MiQroForge Desktop AI</h1>
             <p className="text-[10px] text-gray-400">企业知识库智能问答</p>
           </div>
         </div>
@@ -188,12 +188,12 @@ export default function AIQueryPage() {
               {/* ── Empty State ────────────────────────────────────────────── */}
               {isEmpty && (
                 <div className="flex flex-col items-center justify-center min-h-[60vh] py-8">
-                  {/* MIQi branding */}
+                  {/* MiQroForge Desktop branding */}
                   <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-brand/10 to-brand/20 mb-5">
                     <Sparkles className="w-8 h-8 text-brand" aria-hidden="true" />
                   </div>
                   <h2 className="text-xl font-bold text-ink font-display mb-1.5">
-                    MiQi AI 智能问答
+                    MiQroForge Desktop AI 智能问答
                   </h2>
                   <p className="text-sm text-gray-500 max-w-md text-center leading-relaxed mb-8">
                     基于企业知识库的 AI 研究助手 — 检索 Sandbox 项目、学术论文、数据标准与内部文档，提供溯源级回答。
@@ -269,7 +269,7 @@ export default function AIQueryPage() {
                     <Sparkles className="w-4 h-4 text-brand" aria-hidden="true" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[10px] font-semibold text-gray-400 mb-1">MiQi AI</p>
+                    <p className="text-[10px] font-semibold text-gray-400 mb-1">MiQroForge Desktop AI</p>
                     <div className="flex items-center gap-1 px-1 py-2">
                       <span className="w-2 h-2 bg-brand rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                       <span className="w-2 h-2 bg-brand rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -288,7 +288,7 @@ export default function AIQueryPage() {
               <ChatInput
                 onSubmit={handleSend}
                 disabled={chat.isLoading}
-                placeholder="输入您的问题，MiQi AI 将从企业知识库中检索并回答…"
+                placeholder="输入您的问题，MiQroForge Desktop AI 将从企业知识库中检索并回答…"
                 multiline
                 quickPrompts={QUICK_PROMPTS}
                 onQuickPrompt={handleQuickPrompt}

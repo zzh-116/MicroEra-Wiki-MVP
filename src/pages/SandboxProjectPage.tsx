@@ -258,7 +258,7 @@ export default function SandboxProjectPage({ entryId }: { entryId: string }) {
               <Cpu className="w-4 h-4 mr-1 text-brand" />
               注册的 AI 活性研发服务
             </h3>
-            {['RAG 知识检索服务', 'MCP 工具服务', 'MiQi 活性可调用服务'].map((svc) => (
+            {['RAG 知识检索服务', 'MCP 工具服务', 'MiQroForge Desktop 活性可调用服务'].map((svc) => (
               <div key={svc} className="flex items-center space-x-2 text-xs">
                 <span className="font-extrabold text-gray-900">{svc}</span>
                 <span className="bg-emerald-100 text-emerald-800 border border-emerald-200 text-[9px] px-1 rounded font-bold font-mono">可调用</span>
