@@ -75,7 +75,7 @@ export default function SystemVersionPage() {
                   <span className="text-emerald-500 font-bold mt-0.5">✓</span>
                   <div>
                     <span className="font-bold text-gray-800 text-[11px] block">附件解析与语义透传</span>
-                    <span className="text-[10px] text-gray-400 block mt-0.5">利用 MarkItDown 技术自动在背景提炼富文本摘要，让大模型（如 MiQi）具备文献检索根基。</span>
+                    <span className="text-[10px] text-gray-400 block mt-0.5">利用 MarkItDown 技术自动在背景提炼富文本摘要，让大模型（如 MiQroForge Desktop）具备文献检索根基。</span>
                   </div>
                 </div>
 

@@ -452,7 +452,7 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
                 {[
                   { name: 'RAG 知识检索', desc: '基于当前项目上下文检索' },
                   { name: 'MCP 工具服务', desc: '可编程知识工具包' },
-                  { name: 'MiQi 活性服务', desc: '自然语言交互调用' },
+                  { name: 'MiQroForge Desktop 活性服务', desc: '自然语言交互调用' },
                 ].map((svc) => (
                   <div key={svc.name} className="flex items-start gap-3 p-3 bg-gray-50/80 rounded-lg border border-gray-100">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 mt-1.5 shrink-0" />

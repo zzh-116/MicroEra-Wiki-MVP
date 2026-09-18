@@ -256,7 +256,7 @@ export default function InternalHomePage() {
                 type="text"
                 className="flex-1 pl-12 pr-20 py-3.5 bg-transparent text-sm text-gray-900 placeholder-gray-400
                            focus:outline-none font-medium"
-                placeholder="输入自然语言问题，向 MiQi / RAG 提问..."
+                placeholder="输入自然语言问题，向 MiQroForge Desktop / RAG 提问..."
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 onFocus={() => setSearchFocused(true)}

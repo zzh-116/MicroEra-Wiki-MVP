@@ -91,7 +91,7 @@ export default function AIAnswerPanel({
 
         <div className="flex items-center space-x-1 text-brand text-[10px] bg-cream px-2 py-0.5 rounded border border-brand/10 font-bold">
           <Sparkles className="w-3 h-3 text-accent" />
-          <span>MiQi AI 综合解答</span>
+          <span>MiQroForge Desktop AI 综合解答</span>
         </div>
       </div>
 
