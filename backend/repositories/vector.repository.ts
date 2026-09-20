@@ -16,9 +16,9 @@ export interface VectorSearchResult {
   score: number;
 }
 
-/** Core knowledge types shown in the graph: papers, patents, and tech docs.
- *  Legacy technical aliases are kept so existing real-data entries still match. */
-const CORE_ENTRY_TYPES = [
+/** Entry types eligible for vector retrieval. Includes legacy aliases
+ *  (product/tech) and non-core types (template, business, notes, sandbox). */
+const ALLOWED_ENTRY_TYPES = [
   'academic_paper',
   'patent',
   'tech_doc',
@@ -26,6 +26,11 @@ const CORE_ENTRY_TYPES = [
   'tech',
   'data_standard',
   'data_item',
+  'template',
+  'business_material',
+  'handwritten_note',
+  'asset',
+  'sandbox_project',
 ] as const;
 
 /** Core tags: MOF, quantum (量子), papermaking (造纸), computational materials (计算材料). */
@@ -38,7 +43,7 @@ const CORE_TAG_PATTERNS = [
 
 export interface VectorStore {
   insert(records: VectorRecord[]): Promise<void>;
-  search(queryVector: number[], topK: number): Promise<VectorSearchResult[]>;
+  search(queryVector: number[], topK: number, entryId?: number): Promise<VectorSearchResult[]>;
   deleteByEntryId(entryId: number): Promise<void>;
   clear(): Promise<void>;
   isReady(): boolean;
@@ -69,19 +74,23 @@ class PgvectorStore implements VectorStore {
     }
   }
 
-  async search(queryVector: number[], topK: number): Promise<VectorSearchResult[]> {
-    // Restrict graph neighbors to core knowledge types and dedupe by title
-    // (DISTINCT ON (title) keeps the best-scoring record for each title).
+  async search(queryVector: number[], topK: number, entryId?: number): Promise<VectorSearchResult[]> {
+    // Return chunk-level results ranked by distance (no title dedup).
+    // 文档内检索（entryId 指定）只按 entry_id 过滤，不套类型白名单。
     const results = await db
-      .selectDistinctOn([entries.title], {
+      .select({
         chunk_id: vectors.chunkId,
         entry_id: vectors.entryId,
         distance: cosineDistance(vectors.embedding, queryVector),
       })
       .from(vectors)
       .innerJoin(entries, eq(vectors.entryId, entries.id))
-      .where(inArray(entries.entryType, CORE_ENTRY_TYPES))
-      .orderBy(entries.title, cosineDistance(vectors.embedding, queryVector))
+      .where(
+        entryId !== undefined
+          ? eq(vectors.entryId, entryId)
+          : inArray(entries.entryType, ALLOWED_ENTRY_TYPES),
+      )
+      .orderBy(cosineDistance(vectors.embedding, queryVector))
       .limit(topK);
 
     if (results.length === 0) return [];
@@ -133,8 +142,8 @@ export class VectorRepository implements VectorStore {
     return this.store.insert(records);
   }
 
-  async search(queryVector: number[], topK: number): Promise<VectorSearchResult[]> {
-    return this.store.search(queryVector, topK);
+  async search(queryVector: number[], topK: number, entryId?: number): Promise<VectorSearchResult[]> {
+    return this.store.search(queryVector, topK, entryId);
   }
 
   async deleteByEntryId(entryId: number): Promise<void> {

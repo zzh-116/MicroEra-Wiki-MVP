@@ -113,6 +113,9 @@ export interface VectorSearchResult {
 export interface RetrievalResult {
   entry: Entry;
   score: number;
+  /** True when the title or original file name exactly equals the query (or a
+   * query token) — used to rank unambiguous matches above semantic results. */
+  exactMatch?: boolean;
   chunkId?: string;
   chunkText?: string;
   /** Nearest markdown heading from chunk metadata (e.g. "## Training Data") */
