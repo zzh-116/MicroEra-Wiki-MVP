@@ -8,6 +8,9 @@ import { conversationRepository } from '../repositories/conversation.repository.
 import { buildChatSystemPrompt, buildSummarizeMessages, buildSearchMessages } from '../ai/prompts.js';
 import type { ChatMessage, Entry, RetrievalResult } from '../types.js';
 
+/** 文档内检索无可用内容时的固定提示，避免 LLM 基于自身知识乱答。 */
+const EMPTY_DOCUMENT_MESSAGE = '该文档暂无内容可回答你的问题';
+
 class AiService {
   private get provider(): LLMProvider {
     return getLLMProvider();
@@ -17,7 +20,15 @@ class AiService {
   async search(query: string, isInternal = false): Promise<Entry[]> {
     try {
       const results = await searchService.semanticSearch(query, isInternal, 10);
-      return results.filter((r) => r.entry).map((r) => r.entry);
+      // 搜索框要文档级去重：semanticSearch 返回块级结果，此处按 entry.id 保留首次出现（最高分）
+      const seen = new Set<number>();
+      const entries: Entry[] = [];
+      for (const r of results) {
+        if (!r.entry || seen.has(r.entry.id)) continue;
+        seen.add(r.entry.id);
+        entries.push(r.entry);
+      }
+      return entries;
     } catch {
       const allEntries = await entryRepository.findAll({ isInternal });
       if (allEntries.length === 0) return [];
@@ -32,10 +43,12 @@ class AiService {
   private async buildRagMessages(
     question: string,
     conversationId?: number,
+    entryId?: number,
   ): Promise<{
     messages: ChatMessage[];
     sources: Entry[];
     results: RetrievalResult[];
+    emptyDocument: boolean;
   }> {
     // Parallelize: history fetch and semantic search are independent
     const t0 = Date.now();
@@ -43,7 +56,7 @@ class AiService {
       conversationId
         ? conversationRepository.getHistory(conversationId)
         : Promise.resolve([] as ChatMessage[]),
-      searchService.semanticSearch(question, true, 10),
+      searchService.semanticSearch(question, true, 10, entryId),
     ]);
     console.log(`[AI] buildRag: getHistory+semanticSearch = ${Date.now() - t0}ms`);
 
@@ -105,7 +118,9 @@ class AiService {
       }
     }
 
-    return { messages, sources, results };
+    const emptyDocument = entryId !== undefined && chunks.length === 0;
+
+    return { messages, sources, results, emptyDocument };
   }
 
   /** Non-streaming RAG chat with conversation persistence */
@@ -113,6 +128,7 @@ class AiService {
     question: string,
     userId?: number,
     conversationId?: number,
+    entryId?: number,
   ): Promise<{
     answer: string;
     sources: Entry[];
@@ -126,7 +142,20 @@ class AiService {
       await conversationRepository.addMessage({ conversationId, role: 'user', content: question });
     }
 
-    const { messages, sources } = await this.buildRagMessages(question, conversationId);
+    const { messages, sources, emptyDocument } = await this.buildRagMessages(question, conversationId, entryId);
+
+    if (emptyDocument) {
+      if (conversationId) {
+        await conversationRepository.addMessage({
+          conversationId,
+          role: 'assistant',
+          content: EMPTY_DOCUMENT_MESSAGE,
+          sources: [],
+        });
+      }
+      return { answer: EMPTY_DOCUMENT_MESSAGE, sources: [], conversationId: conversationId ?? 0 };
+    }
+
     const answer = await this.provider.chat(messages, { temperature: 0.3 });
 
     if (conversationId) {
@@ -155,6 +184,7 @@ class AiService {
     question: string,
     userId?: number,
     conversationId?: number,
+    entryId?: number,
     signal?: AbortSignal,
   ): AsyncGenerator<StreamChatEvent> {
     const t0 = Date.now();
@@ -173,13 +203,32 @@ class AiService {
     // These are independent: addMessage doesn't affect getHistory (current msg not yet saved)
     const cid = conversationId;
     const t1 = Date.now();
-    const [, { messages, sources }] = await Promise.all([
+    const [, { messages, sources, emptyDocument }] = await Promise.all([
       cid
         ? conversationRepository.addMessage({ conversationId: cid, role: 'user', content: question })
         : Promise.resolve(null),
-      this.buildRagMessages(question, cid),
+      this.buildRagMessages(question, cid, entryId),
     ]);
     console.log(`[AI] buildRag+addMsg: ${Date.now() - t1}ms (total: ${Date.now() - t0}ms)`);
+
+    // 空文档：无上下文，直接返回固定提示，不调用 LLM 基于自身知识乱答
+    if (emptyDocument) {
+      yield { type: 'token', content: EMPTY_DOCUMENT_MESSAGE };
+      if (conversationId) {
+        await conversationRepository.addMessage({
+          conversationId,
+          role: 'assistant',
+          content: EMPTY_DOCUMENT_MESSAGE,
+          sources: [],
+        });
+      }
+      yield {
+        type: 'done',
+        sources: [],
+        conversationId: conversationId ?? 0,
+      };
+      return;
+    }
 
     // Stream tokens from provider
     let fullAnswer = '';

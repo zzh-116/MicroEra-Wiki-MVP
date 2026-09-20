@@ -130,6 +130,7 @@ export function useConversation(entryId: string) {
         },
       },
       stateRef.current.conversationId,
+      entryId,
     );
   }, [entryId, isLoading]);
 

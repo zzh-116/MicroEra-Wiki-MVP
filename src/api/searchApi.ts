@@ -28,7 +28,8 @@ export const searchApi = {
   async search(
     query: string,
     typeFilter: string = "all",
-    searchMode: "keyword" | "nlp" | "title" = "keyword",
+    // "nlp" = 智能（动态意图，默认）; "title" = 按标题/文件名; "keyword" = 按内容
+    searchMode: "keyword" | "nlp" | "title" = "nlp",
     page = 1,
     pageSize = 10,
     visibility?: string,

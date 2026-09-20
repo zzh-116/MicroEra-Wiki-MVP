@@ -9,6 +9,7 @@
 
 ### Added
 
+- **2026-09-09** 基于当前文档询问 AI: 实现文档内检索功能，entryId 从页面贯通到检索层；空文档提问时返回固定提示，不调用 LLM。
 - **知识图谱探索器（PR #9）**
   - **关系类型端到端保留**：边不再扁平化为 `semantic_related`，`references` / `produces` / `belongs_to` / `derived_from` / `shared_tags` 透传并按类型着色；重建时 `relation.repository` 保留 `relationType` / `relationSource` 而非覆盖。
   - **边样式三维编码**：线色 = 关系类型、粗细/透明度 = 相似度、虚线样式 = 来源（实线 embedding / 虚线 tag / 点线 manual）；边 tooltip 显示关系名与来源，关系构成面板新增按来源拆分。
@@ -40,6 +41,7 @@
 - **PostgreSQL 持久化与 Repository 模式**：用 PostgreSQL + Repository Pattern 替换 JSON 文件存储，作为后端数据层基础。
 - **Vercel 部署**：新增 serverless API 函数与 `vercel.json`；`start.ps1` 一键启动脚本。
 
+
 ### Changed
 
 - **颜色设计令牌全站迁移**：将散落在 45 个组件/页面中的 652 处硬编码品牌色统一收敛为设计令牌（design tokens），实现单一色板来源。纯视觉等价、无功能变化。
@@ -69,6 +71,9 @@
 
 ### Fixed
 
+- **2026-09-08** 
+- RAG语义检索召回: 移除按标题去重逻辑，补全类型白名单（7 种扩展至 12 种），修复排序按字母序而非相关性错乱的问题。
+- 知识索引搜索框: 同一文档出现多条重复结果，改为按 entry.id 去重，每个文档只显示一条。
 - **知识图谱性能**：`/api/graph/focused` 改用 SQL 有界 BFS（`findTouching` / `findWithin`），不再加载整张关系表；`/seed` 与 `/global` 有界拉取；外部访客在图中看不到内部条目。
 - 修复知识图谱渲染、首页统计与重复条目问题。
 - 搜索类型筛选展示全量知识库计数。
@@ -84,6 +89,7 @@
 - 修复 merge 丢失的 backend/main.ts、swagger 文档与 milvus 客户端。
 - 修复 findMany() 返回类型变更、TagList `[object Object]`、AI 多轮 conversationId 丢失、SSE 缓存跨页、分页截断。
 - 修复文献导入假成功与 entry_type 映射（preprint / academic_paper → tech）。
+
 
 ### Maintenance
 
