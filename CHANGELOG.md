@@ -71,6 +71,11 @@
 
 ### Fixed
 
+- **2026-09-22**
+- **运行日志筛选与搜索失效修复**
+  - `src/pages/AdminLogsPage.tsx`：把时间范围 `startDate` / `endDate` 传给后端；搜索框改为 400ms 防抖输入触发，回车立即触发。
+  - `src/api/adminApi.ts`：`getLogs` 增加 `startDate`、`endDate` 查询参数。
+  - `backend/repositories/log.repository.ts`：关键词搜索扩展为同时匹配 `message`、`module`、`stack`。
 - **2026-09-08** 
 - RAG语义检索召回: 移除按标题去重逻辑，补全类型白名单（7 种扩展至 12 种），修复排序按字母序而非相关性错乱的问题。
 - 知识索引搜索框: 同一文档出现多条重复结果，改为按 entry.id 去重，每个文档只显示一条。

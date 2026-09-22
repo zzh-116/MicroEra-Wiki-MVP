@@ -2,7 +2,7 @@
 // Provides insert, query, cleanup, and statistics methods.
 import { BaseRepository } from './base.js';
 import { runLogs } from '../db/schema.js';
-import { eq, like, and, desc, lt, sql, inArray } from 'drizzle-orm';
+import { eq, like, and, or, desc, lt, sql, inArray } from 'drizzle-orm';
 import type { LogEntry as LoggerLogEntry } from '../utils/logger.js';
 
 export interface InsertLogEntry {
@@ -91,7 +91,11 @@ export class LogRepository extends BaseRepository {
     }
     if (params.search) {
       const kw = `%${params.search.toLowerCase()}%`;
-      conditions.push(like(sql`lower(${runLogs.message})`, kw));
+      conditions.push(or(
+        like(sql`lower(${runLogs.message})`, kw),
+        like(sql`lower(${runLogs.module})`, kw),
+        like(sql`lower(coalesce(${runLogs.stack}, ''))`, kw),
+      ));
     }
     if (params.startDate) {
       conditions.push(sql`${runLogs.createdAt} >= ${params.startDate}::timestamptz`);

@@ -286,12 +286,15 @@ export const adminApi = {
   /** Fetch paginated, filtered logs */
   async getLogs(params: {
     level?: string; module?: string; search?: string;
+    startDate?: string; endDate?: string;
     page?: number; pageSize?: number;
   } = {}): Promise<LogsResponse> {
     const qs = new URLSearchParams();
     if (params.level) qs.set('level', params.level);
     if (params.module) qs.set('module', params.module);
     if (params.search) qs.set('search', params.search);
+    if (params.startDate) qs.set('startDate', params.startDate);
+    if (params.endDate) qs.set('endDate', params.endDate);
     if (params.page) qs.set('page', String(params.page));
     if (params.pageSize) qs.set('pageSize', String(params.pageSize));
 
