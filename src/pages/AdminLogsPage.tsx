@@ -61,6 +61,8 @@ export default function AdminLogsPage() {
   const { isLoggedIn } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const toastTimer = useRef<ReturnType<typeof setTimeout>>();
+  const searchQueryRef = useRef(searchParams.get('search') || '');
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   // Data
   const [logs, setLogs] = useState<LogEntry[]>([]);
@@ -114,11 +116,14 @@ export default function AdminLogsPage() {
       else if (timeFilter === '24h') startDate = new Date(Date.now() - 86400000).toISOString();
       else if (timeFilter === '7d') startDate = new Date(Date.now() - 604800000).toISOString();
       else if (timeFilter === '30d') startDate = new Date(Date.now() - 2592000000).toISOString();
+      const endDate = new Date().toISOString();
 
       const result = await adminApi.getLogs({
         level: levelFilter || undefined,
         module: moduleFilter || undefined,
-        search: searchQuery || undefined,
+        search: searchQueryRef.current || undefined,
+        startDate,
+        endDate,
         page,
         pageSize,
       });
@@ -131,7 +136,12 @@ export default function AdminLogsPage() {
     } finally {
       if (!silent) setLoading(false);
     }
-  }, [levelFilter, moduleFilter, searchQuery, timeFilter, page, pageSize]);
+  }, [levelFilter, moduleFilter, timeFilter, page, pageSize]);
+
+  // Keep latest callbacks available for debounced search without re-triggering effects
+  useEffect(() => { searchQueryRef.current = searchQuery; }, [searchQuery]);
+  const loadLogsRef = useRef<(silent?: boolean) => Promise<void>>(async () => {});
+  useEffect(() => { loadLogsRef.current = loadLogs; }, [loadLogs]);
 
   // Initial load
   useEffect(() => {
@@ -146,13 +156,15 @@ export default function AdminLogsPage() {
   }, [autoRefresh, loadLogs, fetchStats]);
 
   // ── URL sync ───────────────────────────────────────────────
-  const updateParams = (updates: Record<string, string>) => {
-    const params = new URLSearchParams(searchParams);
-    for (const [k, v] of Object.entries(updates)) {
-      if (v) params.set(k, v); else params.delete(k);
-    }
-    setSearchParams(params, { replace: true });
-  };
+  const updateParams = useCallback((updates: Record<string, string>) => {
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+      for (const [k, v] of Object.entries(updates)) {
+        if (v) params.set(k, v); else params.delete(k);
+      }
+      return params;
+    }, { replace: true });
+  }, [setSearchParams]);
 
   // ── Actions ─────────────────────────────────────────────────
   const toggleExpand = (id: number) => {
@@ -350,9 +362,21 @@ export default function AdminLogsPage() {
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearchQuery(value);
+                if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+                searchTimerRef.current = setTimeout(() => {
+                  updateParams({ search: value, page: '1' });
+                  loadLogsRef.current();
+                }, 400);
+              }}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') { updateParams({ search: searchQuery, page: '1' }); loadLogs(); }
+                if (e.key === 'Enter') {
+                  if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+                  updateParams({ search: searchQuery, page: '1' });
+                  loadLogsRef.current();
+                }
               }}
               placeholder="搜索日志消息、模块或错误信息..."
               className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-3 py-2 text-xs text-slate-700
