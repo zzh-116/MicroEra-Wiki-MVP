@@ -14,6 +14,7 @@ backend/data/vectors.json
 backend/data/documents/
 backend/data/metadata/
 backend/data/imports/
+backend/data/.dedupe-trash/
 
 # Python bytecode
 __pycache__/
