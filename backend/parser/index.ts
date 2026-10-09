@@ -9,7 +9,8 @@
 //   import { ParserFactory } from '../parser/index.js';
 //   import { MyParser } from './my-parser.js';
 //   ParserFactory.register('my-parser', () => new MyParser());
-export { getParser, resetParser, ParserFactory } from './factory.js';
+export { getParser, resetParser, ParserFactory, getParserForFile } from './factory.js';
+export { TextFallbackParser, textFallbackParser } from './text.js';
 export { ParserError } from './models.js';
 export type { DocumentParser } from './base.js';
 export type {

@@ -23,6 +23,7 @@ import {
 import type { ParsedProperty } from '../types.js';
 import { config } from '../config.js';
 import { markdownParser } from './markdown.js';
+import { sha256Buffer, sha256 } from '../utils/hash.js';
 
 const execFileAsync = promisify(execFile);
 
@@ -330,6 +331,10 @@ export class DoclingParser implements DocumentParser {
       );
     }
 
+    // Content integrity: sha256 of the raw source bytes, computed once up-front
+    // so every result (text fast-path and Docling path alike) carries it.
+    const sourceChecksum = sha256Buffer(fs.readFileSync(filePath));
+
     const fileName = path.basename(filePath);
     const format = (options.format && options.format !== 'auto')
       ? options.format
@@ -385,6 +390,7 @@ export class DoclingParser implements DocumentParser {
       return {
         markdown,
         sourceFormat: format,
+        checksum: sourceChecksum,
         metadata,
         properties,
         warnings,
@@ -619,6 +625,7 @@ export class DoclingParser implements DocumentParser {
     return {
       markdown,
       sourceFormat: format,
+      checksum: sourceChecksum,
       metadata,
       properties,
       warnings,
@@ -690,6 +697,7 @@ export class DoclingParser implements DocumentParser {
     return {
       markdown,
       sourceFormat: format,
+      checksum: sha256(content),
       metadata: {
         fileName,
         fileSize: Buffer.byteLength(content, 'utf-8'),

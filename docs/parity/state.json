@@ -8,7 +8,7 @@
   "required_ops_total": 162,
   "fully_verified_ops": 33,
   "last_verified_commit": "ddd6bd6",
-  "notes": "P0 complete; P1 complete (P1-01..P1-06). Knowledge domain (K01-K06) shipped end to end: schema+migration (0008/0009), read-only backfill adapter, KB/folder/document/revision CRUD, preview/download/artifacts/export/import (28 ops registered handler+cli+mcp+schema), React frontend (/knowledge), and CLI+MCP parity with contract tests (generic flag→input mapping over inputSchema; kb.import --file support). Live CLI smoke verified kb list/create/check/delete; MCP tools auto-derived from the registry. 190 tests passing; parity:check 33/162 full-parity. Moving to P2 (parser/chunk/ingest). accepted_points stays 0: evaluate_delivery.py is the authority.",
+  "notes": "P0 complete; P1 complete (P1-01..P1-06). P2 in progress: P2-01 parser adapters done (TextFallbackParser adapter + content-integrity sha256 on every ParseResult + format-aware fallback resolver getParserForFile; 10 tests). DoclingParser now carries checksum on all parse paths. P2-02 layout-aware elements next.",
   "open_tasks": [
     { "id": "P0-01", "status": "done", "depends_on": [] },
     { "id": "P0-02", "status": "done", "depends_on": ["P0-01"] },
@@ -21,13 +21,13 @@
     { "id": "P1-04", "status": "done", "depends_on": ["P1-03"] },
     { "id": "P1-05", "status": "done", "depends_on": ["P1-03"] },
     { "id": "P1-06", "status": "done", "depends_on": ["P1-03"] },
-    { "id": "P2-01", "status": "in_progress", "depends_on": ["P1-06"] },
-    { "id": "P2-02", "status": "todo", "depends_on": ["P2-01"] },
+    { "id": "P2-01", "status": "done", "depends_on": ["P1-06"] },
+    { "id": "P2-02", "status": "in_progress", "depends_on": ["P2-01"] },
     { "id": "P2-03", "status": "todo", "depends_on": ["P2-01"] },
     { "id": "P2-04", "status": "todo", "depends_on": ["P2-01"] },
     { "id": "P2-05", "status": "todo", "depends_on": ["P2-02", "P2-03", "P2-04"] },
     { "id": "P2-06", "status": "todo", "depends_on": ["P2-05"] }
   ],
   "blockers": [],
-  "next_action": "P2-01: parser adapters — Docling + text fallback with content integrity (checksummed), feeding the document.parse/reparse/upload path."
+  "next_action": "P2-02: layout-aware parsed elements — extract heading/table/image/page coordinates and blob refs from parsed markdown (doc.images/doc.tables/doc.ocr)."
 }

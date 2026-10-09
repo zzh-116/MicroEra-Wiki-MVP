@@ -40,6 +40,8 @@ export interface ParseResult {
   markdown: string;
   /** Detected or specified source format */
   sourceFormat: InputFormat;
+  /** sha256 of the raw source bytes — the content-integrity anchor (P01). */
+  checksum: string;
   /** Document metadata */
   metadata: ParseMetadata;
   /** Structured properties extracted from tables (materials data) */

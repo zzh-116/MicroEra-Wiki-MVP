@@ -5,3 +5,9 @@ import { createHash } from 'node:crypto';
 export function sha256(text: string): string {
   return createHash('sha256').update(text, 'utf8').digest('hex');
 }
+
+/** sha256 of raw bytes — the integrity anchor for uploaded source files (P01).
+ *  Re-imports are de-duplicated and integrity-checked against this digest. */
+export function sha256Buffer(buffer: Buffer): string {
+  return createHash('sha256').update(buffer).digest('hex');
+}
