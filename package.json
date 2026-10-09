@@ -23,6 +23,7 @@
     "storage:upload": "tsx scripts/upload-local-file-to-minio.mts",
     "storage:migrate": "tsx scripts/migrate-files-to-minio.mts",
     "parity:check": "tsx scripts/parity-check.ts",
+    "smoke": "tsx scripts/smoke.ts",
     "cli": "tsx cli/src/main.ts",
     "mcp:stdio": "tsx cli/src/main.ts mcp serve --transport stdio",
     "mcp:http": "tsx cli/src/main.ts mcp serve --transport http"
