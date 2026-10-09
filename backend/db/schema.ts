@@ -448,6 +448,62 @@ export const knowledgeVectors = pgTable(
   (table) => [index('knowledge_vectors_doc_idx').on(table.documentId)],
 );
 
+// ---- Parse Jobs (P2-04 durable queue) ----
+// A durable parse job with worker lease + checkpoint. Retries count up to
+// max_attempts; when exhausted the job is moved to parse_deadletters so no
+// parse is silently lost.
+export const parseJobs = pgTable(
+  'parse_jobs',
+  {
+    id: text('id').primaryKey(),
+    type: text('type').notNull().default('parse'),
+    documentId: integer('document_id').references(() => documents.id, { onDelete: 'set null' }),
+    kbId: integer('kb_id').references(() => knowledgeBases.id, { onDelete: 'set null' }),
+    status: text('status', { enum: ['pending', 'running', 'succeeded', 'failed', 'cancelled'] })
+      .notNull()
+      .default('pending'),
+    attempt: integer('attempt').notNull().default(0),
+    maxAttempts: integer('max_attempts').notNull().default(3),
+    stage: text('stage'),
+    progress: integer('progress').notNull().default(0),
+    leaseOwner: text('lease_owner'),
+    leaseExpiresAt: timestamp('lease_expires_at', { withTimezone: true }),
+    checkpoint: jsonb('checkpoint').notNull().default({}),
+    error: text('error'),
+    errorCode: text('error_code'),
+    payload: jsonb('payload').notNull().default({}),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    startedAt: timestamp('started_at', { withTimezone: true }),
+    finishedAt: timestamp('finished_at', { withTimezone: true }),
+  },
+  (table) => [
+    index('parse_jobs_status_idx').on(table.status),
+    index('parse_jobs_document_idx').on(table.documentId),
+    index('parse_jobs_lease_idx').on(table.leaseExpiresAt),
+  ],
+);
+
+// ---- Parse Deadletters (P2-04 DLQ) ----
+export const parseDeadletters = pgTable(
+  'parse_deadletters',
+  {
+    id: text('id').primaryKey(),
+    jobId: text('job_id').notNull(),
+    documentId: integer('document_id').references(() => documents.id, { onDelete: 'set null' }),
+    error: text('error'),
+    errorCode: text('error_code'),
+    attempts: integer('attempts').notNull().default(0),
+    payload: jsonb('payload').notNull().default({}),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    replayedAt: timestamp('replayed_at', { withTimezone: true }),
+  },
+  (table) => [
+    index('parse_deadletters_job_idx').on(table.jobId),
+    index('parse_deadletters_document_idx').on(table.documentId),
+  ],
+);
+
 // ---- Relations ----
 export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
   user: one(users, { fields: [bookmarks.userId], references: [users.id] }),

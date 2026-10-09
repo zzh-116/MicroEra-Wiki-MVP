@@ -85,6 +85,13 @@
       "when": 1791540400000,
       "tag": "0011_add_knowledge_chunks",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1791540500000,
+      "tag": "0012_add_parse_jobs",
+      "breakpoints": true
     }
   ]
 }
