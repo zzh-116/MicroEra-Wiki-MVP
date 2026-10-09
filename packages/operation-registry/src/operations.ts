@@ -966,37 +966,76 @@ export function registerOperations(api: ApiClient): void {
     },
   });
 
-  // ── P3: search (wired to existing /api/search) ──────────────────────────
+  // ── P3-03: search.hybrid + search.explain (RRF fusion) ───────────────────
   operationRegistry.register({
     id: 'search.hybrid',
     version: '1',
     title: 'Hybrid retrieval',
-    description: 'Semantic + keyword retrieval over the knowledge base.',
-    kind: 'query',
+    description: 'Fuses vector and lexical results with reciprocal-rank fusion (RRF) into a single deterministic ranking.',
+    kind: 'mutation',
     risk: 'read',
     inputSchema: {
       type: 'object',
-      properties: { query: { type: 'string' }, kb_ids: { type: 'array', items: { type: 'string' } }, top_k: { type: 'integer' } },
+      properties: {
+        query: { type: 'string' },
+        kb_id: { type: 'integer' },
+        folder_id: { type: 'integer' },
+        top_k: { type: 'integer' },
+        is_internal: { type: 'boolean' },
+        rrf_k: { type: 'integer' },
+      },
       required: ['query'],
     },
-    outputSchema: { type: 'object', properties: { hits: { type: 'array', items: { type: 'object' } } } },
-    http: { method: 'POST', path: '/api/search' },
-    cli: { command: 'microera search hybrid', examples: ['microera search hybrid "MOF pore aperture"'] },
+    outputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        items: { type: 'array', items: { type: 'object' } },
+        total: { type: 'integer' },
+      },
+    },
+    http: { method: 'POST', path: '/api/v2/ops/search/hybrid' },
+    cli: { command: 'microera search hybrid', examples: ['microera search hybrid "MOF pore aperture" --kb-id 1 --top-k 5'] },
     mcp: { toolName: 'search_hybrid', readOnlyHint: true, scopes: ['search:read'] },
     transport: 'remote',
     async handler(input: any, ctx: OperationContext) {
-      const body = await api.request<any>('POST', '/api/search', { query: input.query, searchMode: 'nlp' }, ctx);
-      const results: any[] = body?.results ?? [];
-      return {
-        hits: results.map((r: any) => ({
-          documentId: String(r.id),
-          chunkId: `entry_${r.id}`,
-          revisionId: 'legacy',
-          text: r.summary ?? '',
-          score: 1,
-        })),
-        count: results.length,
-      };
+      return callV2(api, 'POST', '/api/v2/ops/search/hybrid', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'search.explain',
+    version: '1',
+    title: 'Explain hybrid retrieval',
+    description: 'Hybrid retrieval with a per-source score trace: vector rank/score, lexical rank/score, and the fused RRF score.',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        kb_id: { type: 'integer' },
+        folder_id: { type: 'integer' },
+        top_k: { type: 'integer' },
+        is_internal: { type: 'boolean' },
+        rrf_k: { type: 'integer' },
+      },
+      required: ['query'],
+    },
+    outputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        items: { type: 'array', items: { type: 'object' } },
+        total: { type: 'integer' },
+      },
+    },
+    http: { method: 'POST', path: '/api/v2/ops/search/explain' },
+    cli: { command: 'microera search explain', examples: ['microera search explain "MOF pore aperture" --kb-id 1'] },
+    mcp: { toolName: 'search_explain', readOnlyHint: true, scopes: ['search:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/search/explain', input, ctx);
     },
   });
 

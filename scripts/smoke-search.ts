@@ -105,13 +105,27 @@ async function main() {
   const lexNorm = await v2('POST', '/api/v2/ops/search/lexical', token, { query: '  PORE   Aperture ', kb_id: kb.id, top_k: 20, is_internal: true });
   check(Array.isArray(lexNorm?.items) && lexNorm.items.length >= 2, 'search.lexical normalizes whitespace/case');
 
+  // ── P3-03: hybrid RRF fusion + explain trace ──────────────────────────────
+  const hyb = await v2('POST', '/api/v2/ops/search/hybrid', token, { query: QUERY, kb_id: kb.id, top_k: 20, is_internal: true });
+  check(Array.isArray(hyb?.items) && hyb.items.length >= 2, 'search.hybrid (internal) returns ≥2 chunks');
+  const hybScores = (hyb.items as any[]).map((x) => x.score);
+  check(hybScores.every((s, i) => i === 0 || hybScores[i - 1] >= s), 'search.hybrid returns descending RRF scores');
+
+  const hybPub = await v2('POST', '/api/v2/ops/search/hybrid', token, { query: QUERY, kb_id: kb.id, top_k: 20, is_internal: false });
+  check(Array.isArray(hybPub?.items) && hybPub.items.length > 0, 'search.hybrid (public) returns hits');
+  check(hybPub.items.every((x: any) => x.visibility === 'public'), 'search.hybrid (public) excludes internal documents');
+
+  const expl = await v2('POST', '/api/v2/ops/search/explain', token, { query: QUERY, kb_id: kb.id, top_k: 20, is_internal: true });
+  check(Array.isArray(expl?.items) && expl.items.length >= 2, 'search.explain returns a score trace');
+  check(expl.items.every((x: any) => typeof x.rrf_score === 'number' && (x.vector !== null || x.lexical !== null)), 'search.explain exposes per-source ranks + rrf_score');
+
   // Soft-delete the public document → its chunks vanish from the index.
   await v2('DELETE', '/api/v2/ops/doc/delete', token, { doc_id: publicDoc.document_id });
   const afterDelete = await v2('POST', '/api/v2/ops/search/vector', token, { query: QUERY, kb_id: kb.id, top_k: 20, is_internal: true });
   check(afterDelete.items.every((x: any) => x.document_id !== publicDoc.document_id), 'search.vector excludes soft-deleted documents');
 
   await v2('DELETE', '/api/v2/ops/kb/delete', token, { kb_id: kb.id });
-  console.log(`\nP3-01/P3-02 smoke: ${pass} passed, ${fail} failed`);
+  console.log(`\nP3-01/P3-02/P3-03 smoke: ${pass} passed, ${fail} failed`);
   if (fail) { console.error(failures.map((f) => `  - ${f}`).join('\n')); process.exit(1); }
 }
 

@@ -69,3 +69,29 @@ retrievalV2Router.post('/search/lexical', (req, res) =>
     });
     return { query: req.body?.query ?? '', items, total: items.length };
   }));
+
+retrievalV2Router.post('/search/hybrid', (req, res) =>
+  handle('search.hybrid', req, res, async () => {
+    const items = await retrievalService.hybridSearch({
+      query: req.body?.query,
+      kb_id: toInt(req.body?.kb_id),
+      folder_id: toInt(req.body?.folder_id),
+      top_k: toInt(req.body?.top_k),
+      is_internal: req.body?.is_internal,
+      rrf_k: toInt(req.body?.rrf_k),
+    });
+    return { query: req.body?.query ?? '', items, total: items.length };
+  }));
+
+retrievalV2Router.post('/search/explain', (req, res) =>
+  handle('search.explain', req, res, async () => {
+    const items = await retrievalService.explainSearch({
+      query: req.body?.query,
+      kb_id: toInt(req.body?.kb_id),
+      folder_id: toInt(req.body?.folder_id),
+      top_k: toInt(req.body?.top_k),
+      is_internal: req.body?.is_internal,
+      rrf_k: toInt(req.body?.rrf_k),
+    });
+    return { query: req.body?.query ?? '', items, total: items.length };
+  }));
