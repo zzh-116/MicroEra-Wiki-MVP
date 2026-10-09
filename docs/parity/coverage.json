@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-09T12:11:59.260Z",
+  "generatedAt": "2026-10-09T12:17:35.209Z",
   "planVersion": "2026-10-09-v1",
   "totalRequiredOps": 162,
-  "registeredOps": 152,
-  "withHandler": 151,
-  "withCli": 151,
-  "withMcp": 151,
-  "fullParityOps": 151,
-  "coveragePercent": 93.2,
+  "registeredOps": 163,
+  "withHandler": 162,
+  "withCli": 162,
+  "withMcp": 162,
+  "fullParityOps": 162,
+  "coveragePercent": 100,
   "fullParityIds": [
     "kb.create",
     "kb.list",
@@ -159,10 +159,7 @@
     "job.events",
     "job.artifacts",
     "job.deadletters",
-    "job.replay_deadletter"
-  ],
-  "contractOnlyIds": [],
-  "missingIds": [
+    "job.replay_deadletter",
     "api.operations",
     "api.schema",
     "api.version",
@@ -175,5 +172,7 @@
     "cli.doctor",
     "cli.schema"
   ],
+  "contractOnlyIds": [],
+  "missingIds": [],
   "note": "Full parity = handler + cli.command + mcp.toolName for a required operation. Grows phase by phase; target is 100% of 162 required ops at P9."
 }

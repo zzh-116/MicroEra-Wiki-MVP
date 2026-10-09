@@ -3147,4 +3147,205 @@ export function registerOperations(api: ApiClient): void {
       return api.request<any>('GET', '/api/auth/me', undefined, ctx);
     },
   });
+
+  // ── P9 X01: api.* introspection ─────────────────────────────────────────
+  operationRegistry.register({
+    id: 'api.operations',
+    version: '1',
+    title: 'List API operations',
+    description: 'Enumerate every registered operation with its REST/CLI/MCP bindings.',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: {} },
+    outputSchema: { type: 'object', properties: { items: { type: 'array', items: { type: 'object' } }, total: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/api/operations' },
+    cli: { command: 'microera api operations', examples: ['microera api operations'] },
+    mcp: { toolName: 'api_operations', readOnlyHint: true, scopes: ['meta:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/api/operations', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'api.schema',
+    version: '1',
+    title: 'Show the operation schema',
+    description: 'Return the full operation manifest, or one operation contract when operation_id is given.',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { operation_id: { type: 'string' } } },
+    outputSchema: { type: 'object', properties: { operationRegistryVersion: { type: 'string' }, operations: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'GET', path: '/api/v2/ops/api/schema' },
+    cli: { command: 'microera api schema', examples: ['microera api schema', 'microera api schema --operation-id kb.create'] },
+    mcp: { toolName: 'api_schema', readOnlyHint: true, scopes: ['meta:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/api/schema', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'api.version',
+    version: '1',
+    title: 'Show API versions',
+    description: 'Report the running API/CLI/MCP/registry versions.',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: {} },
+    outputSchema: { type: 'object', properties: { api_version: { type: 'string' }, cli_version: { type: 'string' }, mcp_protocol_version: { type: 'string' } } },
+    http: { method: 'GET', path: '/api/v2/ops/api/version' },
+    cli: { command: 'microera api version', examples: ['microera api version'] },
+    mcp: { toolName: 'api_version', readOnlyHint: true, scopes: ['meta:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/api/version', input, ctx);
+    },
+  });
+
+  // ── P9 X02: mcp.* introspection ─────────────────────────────────────────
+  operationRegistry.register({
+    id: 'mcp.tools',
+    version: '1',
+    title: 'List MCP tools',
+    description: 'Enumerate the MCP tools the host exposes.',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: {} },
+    outputSchema: { type: 'object', properties: { tools: { type: 'array', items: { type: 'object' } }, total: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/mcp/tools' },
+    cli: { command: 'microera mcp tools', examples: ['microera mcp tools'] },
+    mcp: { toolName: 'mcp_tools', readOnlyHint: true, scopes: ['meta:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/mcp/tools', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'mcp.resources',
+    version: '1',
+    title: 'List MCP resources',
+    description: 'Enumerate the MCP resources the host exposes.',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: {} },
+    outputSchema: { type: 'object', properties: { resources: { type: 'array', items: { type: 'object' } }, total: { type: 'integer' } } },
+    http: { method: 'POST', path: '/api/v2/ops/mcp/resources' },
+    cli: { command: 'microera mcp resources', examples: ['microera mcp resources'] },
+    mcp: { toolName: 'mcp_resources', readOnlyHint: true, scopes: ['meta:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/mcp/resources', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'mcp.prompts',
+    version: '1',
+    title: 'List MCP prompts',
+    description: 'Enumerate the MCP prompts the host exposes.',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: {} },
+    outputSchema: { type: 'object', properties: { prompts: { type: 'array', items: { type: 'object' } }, total: { type: 'integer' } } },
+    http: { method: 'POST', path: '/api/v2/ops/mcp/prompts' },
+    cli: { command: 'microera mcp prompts', examples: ['microera mcp prompts'] },
+    mcp: { toolName: 'mcp_prompts', readOnlyHint: true, scopes: ['meta:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/mcp/prompts', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'mcp.health',
+    version: '1',
+    title: 'MCP health',
+    description: 'Report MCP host liveness: name, version, and tool/resource/prompt counts.',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: {} },
+    outputSchema: { type: 'object', properties: { ok: { type: 'boolean' }, name: { type: 'string' }, tools: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/mcp/health' },
+    cli: { command: 'microera mcp health', examples: ['microera mcp health'] },
+    mcp: { toolName: 'mcp_health', readOnlyHint: true, scopes: ['meta:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/mcp/health', input, ctx);
+    },
+  });
+
+  // ── P9 X03: cli.* introspection ─────────────────────────────────────────
+  operationRegistry.register({
+    id: 'cli.commands',
+    version: '1',
+    title: 'List CLI commands',
+    description: 'Enumerate every CLI command and the operation it dispatches to.',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: {} },
+    outputSchema: { type: 'object', properties: { commands: { type: 'array', items: { type: 'object' } }, total: { type: 'integer' } } },
+    http: { method: 'POST', path: '/api/v2/ops/cli/commands' },
+    cli: { command: 'microera cli commands', examples: ['microera cli commands'] },
+    mcp: { toolName: 'cli_commands', readOnlyHint: true, scopes: ['meta:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/cli/commands', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'cli.version',
+    version: '1',
+    title: 'Show CLI version',
+    description: 'Report the CLI + API + MCP protocol versions.',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: {} },
+    outputSchema: { type: 'object', properties: { version: { type: 'string' }, api_version: { type: 'string' }, mcp_protocol_version: { type: 'string' } } },
+    http: { method: 'GET', path: '/api/v2/ops/cli/version' },
+    cli: { command: 'microera cli version', examples: ['microera cli version'] },
+    mcp: { toolName: 'cli_version', readOnlyHint: true, scopes: ['meta:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/cli/version', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'cli.doctor',
+    version: '1',
+    title: 'Run CLI diagnostics',
+    description: 'Report database reachability and registry integrity.',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: {} },
+    outputSchema: { type: 'object', properties: { server: { type: 'string' }, database: { type: 'string' }, registry_valid: { type: 'boolean' } } },
+    http: { method: 'POST', path: '/api/v2/ops/cli/doctor' },
+    cli: { command: 'microera cli doctor', examples: ['microera cli doctor'] },
+    mcp: { toolName: 'cli_doctor', readOnlyHint: true, scopes: ['meta:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/cli/doctor', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'cli.schema',
+    version: '1',
+    title: 'Show the CLI schema',
+    description: 'Return the machine-readable operation manifest used by `microera schema`.',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: {} },
+    outputSchema: { type: 'object', properties: { operationRegistryVersion: { type: 'string' }, operations: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'GET', path: '/api/v2/ops/cli/schema' },
+    cli: { command: 'microera cli schema', examples: ['microera cli schema'] },
+    mcp: { toolName: 'cli_schema', readOnlyHint: true, scopes: ['meta:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/cli/schema', input, ctx);
+    },
+  });
 }

@@ -178,7 +178,8 @@ async function main(): Promise<number> {
   }
 
   // `mcp serve` is handled by the MCP host (stdio/HTTP) — delegated entry.
-  if (cmd0 === 'mcp') {
+  // Other `mcp *` verbs (tools/resources/prompts/health) dispatch as ops below.
+  if (cmd0 === 'mcp' && parsed.command[1] === 'serve') {
     const { runMcpServe } = await import('../../packages/mcp/src/index.js');
     return runMcpServe(parsed.command.slice(1));
   }

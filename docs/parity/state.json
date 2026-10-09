@@ -3,12 +3,12 @@
   "reference_sha": "602d0c388bf17d894f467fe0cd65d1d62c73d303",
   "baseline_target_sha": "4bd5bf417df090351b91de205e6b34a457eb47a2",
   "local_repo_sha": "01343a2",
-  "current_phase": "P9",
+  "current_phase": "P10",
   "accepted_points": 0,
   "required_ops_total": 162,
-  "fully_verified_ops": 151,
+  "fully_verified_ops": 162,
   "last_verified_commit": "ddd6bd6",
-  "notes": "P0–P8 complete. P8 model registry (M01/M03, 9 ops) + generic job dashboard (O01, 5 ops) done: models table (0018_add_model_registry.sql), model.repository.ts + model.service.ts (list/view/create/update/delete/test/set_default + rerank_list/rerank_test, offline-safe test/rerank probes), model-v2.ts router (9 routes), job.service.ts (wait/cancel/retry/events/artifacts over the durable parse_jobs queue) + job-v2.ts router (5 routes). Fixed a latent snake_case/camelCase bug in parse-job.repository JobUpdate + parse-job.service callers so job transitions persist correctly. 369 tests green, full-parity 151 (93.2%), missing 11 (all P9: api.* 3 + mcp.* 4 + cli.* 4). Live smoke model/job 20/20. Remaining 11 required ops are P9 (api.operations/schema/version, mcp.tools/resources/prompts/health, cli.commands/version/doctor/schema).",
+  "notes": "P0–P9 complete, full parity 162/162 (100%). P9 added the final 11 introspection ops (api.operations/schema/version, mcp.tools/resources/prompts/health, cli.commands/version/doctor/schema) via a new meta.service.ts + meta-v2.ts router, all reading the Operation Registry and the shared mcp-core builders as the single source of truth. Fixed the CLI so `microera mcp tools/resources/prompts/health` dispatch as ops instead of being swallowed by the `mcp serve` intercept. 382 tests green, live smoke meta 13/13, CLI introspection verified live. Remaining work is P10 (docs/closeout, migration disaster recovery, final coverage report, local git closeout).",
   "open_tasks": [
     { "id": "P0-01", "status": "done", "depends_on": [] },
     { "id": "P0-02", "status": "done", "depends_on": ["P0-01"] },
@@ -57,12 +57,12 @@
     { "id": "P8-03", "status": "done", "depends_on": ["P8-01"] },
     { "id": "P8-04", "status": "done", "depends_on": ["P8-01"] },
     { "id": "P8-05", "status": "done", "depends_on": ["P8-01"] },
-    { "id": "P9-01", "status": "in_progress", "depends_on": ["P8-05"] },
-    { "id": "P9-02", "status": "todo", "depends_on": ["P9-01"] },
-    { "id": "P9-03", "status": "todo", "depends_on": ["P9-01"] },
-    { "id": "P9-04", "status": "todo", "depends_on": ["P9-01"] },
-    { "id": "P9-05", "status": "todo", "depends_on": ["P9-01"] },
-    { "id": "P9-06", "status": "todo", "depends_on": ["P9-01"] },
+    { "id": "P9-01", "status": "done", "depends_on": ["P8-05"] },
+    { "id": "P9-02", "status": "done", "depends_on": ["P9-01"] },
+    { "id": "P9-03", "status": "done", "depends_on": ["P9-01"] },
+    { "id": "P9-04", "status": "done", "depends_on": ["P9-01"] },
+    { "id": "P9-05", "status": "done", "depends_on": ["P9-01"] },
+    { "id": "P9-06", "status": "done", "depends_on": ["P9-01"] },
     { "id": "P10-01", "status": "todo", "depends_on": ["P9-06"] },
     { "id": "P10-02", "status": "todo", "depends_on": ["P10-01"] },
     { "id": "P10-03", "status": "todo", "depends_on": ["P10-01"] },
@@ -71,5 +71,5 @@
     { "id": "P10-06", "status": "todo", "depends_on": ["P10-01"] }
   ],
   "blockers": [],
-  "next_action": "P9-01/P9-02/P9-03/P9-04: the final 11 required ops — api.operations/schema/version (X01), mcp.tools/resources/prompts/health (X02), cli.commands/version/doctor/schema (X03)."
+  "next_action": "P10-01..P10-06: docs/closeout — migration disaster recovery, final coverage report, README parity note, and local git closeout (no push)."
 }

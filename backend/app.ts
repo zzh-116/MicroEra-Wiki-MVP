@@ -56,6 +56,7 @@ export async function createApp(options: AppOptions = {}) {
   const { datasourceV2Router } = await import('../server/routes/datasource-v2.js');
   const { modelV2Router } = await import('../server/routes/model-v2.js');
   const { jobV2Router } = await import('../server/routes/job-v2.js');
+  const { metaV2Router } = await import('../server/routes/meta-v2.js');
 
   app.use('/api/auth', authRouter);
   app.use('/api/categories', categoriesRouter);
@@ -80,6 +81,7 @@ export async function createApp(options: AppOptions = {}) {
   app.use('/api/v2/ops', datasourceV2Router);
   app.use('/api/v2/ops', modelV2Router);
   app.use('/api/v2/ops', jobV2Router);
+  app.use('/api/v2/ops', metaV2Router);
 
   for (const { path: p, router } of extraRoutes) app.use(p, router);
 
