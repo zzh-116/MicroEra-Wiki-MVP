@@ -3,12 +3,12 @@
   "reference_sha": "602d0c388bf17d894f467fe0cd65d1d62c73d303",
   "baseline_target_sha": "4bd5bf417df090351b91de205e6b34a457eb47a2",
   "local_repo_sha": "01343a2",
-  "current_phase": "P5",
+  "current_phase": "P6",
   "accepted_points": 0,
   "required_ops_total": 162,
-  "fully_verified_ops": 78,
+  "fully_verified_ops": 98,
   "last_verified_commit": "ddd6bd6",
-  "notes": "P0/P1/P2/P3/P4 complete. P3 retrieval (vector/lexical/hybrid/rerank/eval/filtered) done. P4 chat done — new v2 chat slice (sessions+messages tables via 0014_add_chat.sql, chat.service.ts, chat-v2.ts) over the knowledge pipeline: chat.ask grounded Q&A with citations + trace, chat.stream (SSE + JSON fallback) + chat.cancel/session.stop (abort registry), session.*/message.* CRUD + search, citation_read/verify_citations, chat.scope, chat.trace, session.export. 306 tests green, full-parity 78. Live smoke 31 (search) + 15 (eval) + 26 (chat). P5 (wiki W01-W04) next.",
+  "notes": "P0–P5 complete. P3 retrieval + P4 chat + P5 wiki (W01-W04) done. P5 wiki: wikis/wiki_revisions/wiki_sources/wiki_links tables (0015_add_wiki.sql), wiki.service.ts (synthesis + grounding, CRUD + versioning with LCS diff, link graph), wiki-v2.ts router, 20 wiki.*/graph.* ops registered (CLI+MCP parity). 317 tests green, full-parity 98 (60.5%). Live smoke 31 (search) + 15 (eval) + 26 (chat) + 25 (wiki). P6 (agent A01-A06) next.",
   "open_tasks": [
     { "id": "P0-01", "status": "done", "depends_on": [] },
     { "id": "P0-02", "status": "done", "depends_on": ["P0-01"] },
@@ -39,11 +39,17 @@
     { "id": "P4-04", "status": "done", "depends_on": ["P4-03"] },
     { "id": "P4-05", "status": "done", "depends_on": ["P4-03"] },
     { "id": "P4-06", "status": "done", "depends_on": ["P4-03"] },
-    { "id": "P5-01", "status": "in_progress", "depends_on": ["P4-06"] },
-    { "id": "P5-02", "status": "todo", "depends_on": ["P5-01"] },
-    { "id": "P5-03", "status": "todo", "depends_on": ["P5-01"] },
-    { "id": "P5-04", "status": "todo", "depends_on": ["P5-01"] }
+    { "id": "P5-01", "status": "done", "depends_on": ["P4-06"] },
+    { "id": "P5-02", "status": "done", "depends_on": ["P5-01"] },
+    { "id": "P5-03", "status": "done", "depends_on": ["P5-01"] },
+    { "id": "P5-04", "status": "done", "depends_on": ["P5-01"] },
+    { "id": "P6-01", "status": "in_progress", "depends_on": ["P5-04"] },
+    { "id": "P6-02", "status": "todo", "depends_on": ["P6-01"] },
+    { "id": "P6-03", "status": "todo", "depends_on": ["P6-01"] },
+    { "id": "P6-04", "status": "todo", "depends_on": ["P6-01"] },
+    { "id": "P6-05", "status": "todo", "depends_on": ["P6-01"] },
+    { "id": "P6-06", "status": "todo", "depends_on": ["P6-01"] }
   ],
   "blockers": [],
-  "next_action": "P5-01: wiki.* (W01) — wiki.generate/status/list/read/search over the knowledge pipeline (long-running job status + persisted wiki output + search)."
+  "next_action": "P6-01: agent.* (A01) — agent CRUD (create/list/view/update/delete) + agent.run (grounded multi-step run over the retrieval + tool pipeline)."
 }

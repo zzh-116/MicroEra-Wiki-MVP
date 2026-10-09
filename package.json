@@ -29,6 +29,7 @@
     "smoke:search": "tsx scripts/smoke-search.ts",
     "smoke:eval": "tsx scripts/smoke-eval.ts",
     "smoke:chat": "tsx scripts/smoke-chat.ts",
+    "smoke:wiki": "tsx scripts/smoke-wiki.ts",
     "cli": "tsx cli/src/main.ts",
     "mcp:stdio": "tsx cli/src/main.ts mcp serve --transport stdio",
     "mcp:http": "tsx cli/src/main.ts mcp serve --transport http"

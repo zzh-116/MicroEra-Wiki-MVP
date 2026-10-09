@@ -1687,6 +1687,373 @@ export function registerOperations(api: ApiClient): void {
     },
   });
 
+  // ── P5: wiki (W01–W04) + graph ────────────────────────────────────────────
+  const wikiSchema = {
+    type: 'object',
+    properties: {
+      id: { type: 'integer' },
+      title: { type: 'string' },
+      summary: { type: 'string' },
+      content: { type: 'string' },
+      kb_id: { type: 'integer' },
+      status: { type: 'string' },
+      revision_no: { type: 'integer' },
+      created_at: { type: 'string' },
+      updated_at: { type: 'string' },
+    },
+  };
+
+  operationRegistry.register({
+    id: 'wiki.generate',
+    version: '1',
+    title: 'Generate a wiki page',
+    description: 'Synthesize a wiki article from the top chunks of a knowledge base (or explicit document set) and record its grounding sources.',
+    kind: 'job',
+    risk: 'write',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        title: { type: 'string' },
+        question: { type: 'string' },
+        kb_id: { type: 'integer' },
+        document_ids: { type: 'array', items: { type: 'integer' } },
+        top_k: { type: 'integer' },
+        method: { type: 'string', enum: ['vector', 'lexical', 'hybrid'] },
+      },
+    },
+    outputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' }, title: { type: 'string' }, status: { type: 'string' }, revision_no: { type: 'integer' }, source_count: { type: 'integer' } } },
+    http: { method: 'POST', path: '/api/v2/ops/wiki/generate' },
+    cli: { command: 'microera wiki generate', examples: ['microera wiki generate --title "Zeolites overview" --kb-id 1'] },
+    mcp: { toolName: 'wiki_generate', readOnlyHint: false, scopes: ['wiki:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/wiki/generate', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'wiki.status',
+    version: '1',
+    title: 'Wiki generation status',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' } }, required: ['wiki_id'] },
+    outputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' }, status: { type: 'string' }, revision_no: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/wiki/status' },
+    cli: { command: 'microera wiki status', examples: ['microera wiki status --wiki-id 1'] },
+    mcp: { toolName: 'wiki_status', readOnlyHint: true, scopes: ['wiki:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/wiki/status', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'wiki.list',
+    version: '1',
+    title: 'List wiki pages',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { page: { type: 'integer' }, page_size: { type: 'integer' }, kb_id: { type: 'integer' } } },
+    outputSchema: { type: 'object', properties: { items: { type: 'array', items: wikiSchema }, total: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/wiki/list' },
+    cli: { command: 'microera wiki list', examples: ['microera wiki list'] },
+    mcp: { toolName: 'wiki_list', readOnlyHint: true, scopes: ['wiki:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/wiki/list', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'wiki.read',
+    version: '1',
+    title: 'Read a wiki page',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' } }, required: ['wiki_id'] },
+    outputSchema: wikiSchema,
+    http: { method: 'GET', path: '/api/v2/ops/wiki/read' },
+    cli: { command: 'microera wiki read', examples: ['microera wiki read --wiki-id 1'] },
+    mcp: { toolName: 'wiki_read', readOnlyHint: true, scopes: ['wiki:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/wiki/read', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'wiki.search',
+    version: '1',
+    title: 'Search wiki pages',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { q: { type: 'string' }, page: { type: 'integer' }, page_size: { type: 'integer' } }, required: ['q'] },
+    outputSchema: { type: 'object', properties: { items: { type: 'array', items: wikiSchema }, total: { type: 'integer' } } },
+    http: { method: 'POST', path: '/api/v2/ops/wiki/search' },
+    cli: { command: 'microera wiki search', examples: ['microera wiki search "zeolite"'] },
+    mcp: { toolName: 'wiki_search', readOnlyHint: true, scopes: ['wiki:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/wiki/search', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'wiki.sources',
+    version: '1',
+    title: 'List wiki sources',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' } }, required: ['wiki_id'] },
+    outputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' }, sources: { type: 'array', items: { type: 'object' } }, total: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/wiki/sources' },
+    cli: { command: 'microera wiki sources', examples: ['microera wiki sources --wiki-id 1'] },
+    mcp: { toolName: 'wiki_sources', readOnlyHint: true, scopes: ['wiki:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/wiki/sources', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'wiki.citation_read',
+    version: '1',
+    title: 'Read a wiki citation chunk',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { chunk_id: { type: 'string' } }, required: ['chunk_id'] },
+    outputSchema: { type: 'object', properties: { chunk_id: { type: 'string' }, document_id: { type: 'integer' }, title: { type: 'string' }, text: { type: 'string' } } },
+    http: { method: 'GET', path: '/api/v2/ops/wiki/citation_read' },
+    cli: { command: 'microera wiki citation-read', examples: ['microera wiki citation-read --chunk-id chunk_...'] },
+    mcp: { toolName: 'wiki_citation_read', readOnlyHint: true, scopes: ['wiki:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/wiki/citation_read', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'wiki.verify',
+    version: '1',
+    title: 'Verify wiki citations',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' } }, required: ['wiki_id'] },
+    outputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' }, citations: { type: 'array', items: { type: 'object' } }, resolved: { type: 'integer' }, total: { type: 'integer' } } },
+    http: { method: 'POST', path: '/api/v2/ops/wiki/verify' },
+    cli: { command: 'microera wiki verify', examples: ['microera wiki verify --wiki-id 1'] },
+    mcp: { toolName: 'wiki_verify', readOnlyHint: true, scopes: ['wiki:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/wiki/verify', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'wiki.links',
+    version: '1',
+    title: 'List wiki links',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' } }, required: ['wiki_id'] },
+    outputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' }, outgoing: { type: 'array', items: { type: 'object' } }, incoming: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'GET', path: '/api/v2/ops/wiki/links' },
+    cli: { command: 'microera wiki links', examples: ['microera wiki links --wiki-id 1'] },
+    mcp: { toolName: 'wiki_links', readOnlyHint: true, scopes: ['wiki:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/wiki/links', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'wiki.link',
+    version: '1',
+    title: 'Link two wiki pages',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { source_wiki_id: { type: 'integer' }, target_wiki_id: { type: 'integer' } }, required: ['source_wiki_id', 'target_wiki_id'] },
+    outputSchema: { type: 'object', properties: { source_wiki_id: { type: 'integer' }, target_wiki_id: { type: 'integer' }, created_at: { type: 'string' } } },
+    http: { method: 'POST', path: '/api/v2/ops/wiki/link' },
+    cli: { command: 'microera wiki link', examples: ['microera wiki link --source-wiki-id 1 --target-wiki-id 2'] },
+    mcp: { toolName: 'wiki_link', readOnlyHint: false, scopes: ['wiki:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/wiki/link', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'wiki.unlink',
+    version: '1',
+    title: 'Remove a wiki link',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { source_wiki_id: { type: 'integer' }, target_wiki_id: { type: 'integer' } }, required: ['source_wiki_id', 'target_wiki_id'] },
+    outputSchema: { type: 'object', properties: { removed: { type: 'boolean' } } },
+    http: { method: 'POST', path: '/api/v2/ops/wiki/unlink' },
+    cli: { command: 'microera wiki unlink', examples: ['microera wiki unlink --source-wiki-id 1 --target-wiki-id 2'] },
+    mcp: { toolName: 'wiki_unlink', readOnlyHint: false, scopes: ['wiki:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/wiki/unlink', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'wiki.graph',
+    version: '1',
+    title: 'Wiki graph view',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' } } },
+    outputSchema: { type: 'object', properties: { nodes: { type: 'array', items: { type: 'object' } }, edges: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'GET', path: '/api/v2/ops/wiki/graph' },
+    cli: { command: 'microera wiki graph', examples: ['microera wiki graph'] },
+    mcp: { toolName: 'wiki_graph', readOnlyHint: true, scopes: ['wiki:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/wiki/graph', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'graph.neighbors',
+    version: '1',
+    title: 'Wiki graph neighbors',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' }, depth: { type: 'integer' } }, required: ['wiki_id'] },
+    outputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' }, depth: { type: 'integer' }, neighbors: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'GET', path: '/api/v2/ops/graph/neighbors' },
+    cli: { command: 'microera graph neighbors', examples: ['microera graph neighbors --wiki-id 1 --depth 2'] },
+    mcp: { toolName: 'graph_neighbors', readOnlyHint: true, scopes: ['wiki:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/graph/neighbors', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'graph.search',
+    version: '1',
+    title: 'Search wiki graph nodes',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { q: { type: 'string' } }, required: ['q'] },
+    outputSchema: { type: 'object', properties: { nodes: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'POST', path: '/api/v2/ops/graph/search' },
+    cli: { command: 'microera graph search', examples: ['microera graph search "zeolite"'] },
+    mcp: { toolName: 'graph_search', readOnlyHint: true, scopes: ['wiki:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/graph/search', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'wiki.create',
+    version: '1',
+    title: 'Create a wiki page',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { title: { type: 'string' }, content: { type: 'string' }, summary: { type: 'string' }, kb_id: { type: 'integer' } }, required: ['title'] },
+    outputSchema: wikiSchema,
+    http: { method: 'POST', path: '/api/v2/ops/wiki/create' },
+    cli: { command: 'microera wiki create', examples: ['microera wiki create --title "My page" --content "# Hi"'] },
+    mcp: { toolName: 'wiki_create', readOnlyHint: false, scopes: ['wiki:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/wiki/create', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'wiki.edit',
+    version: '1',
+    title: 'Edit a wiki page',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' }, title: { type: 'string' }, content: { type: 'string' }, summary: { type: 'string' } }, required: ['wiki_id'] },
+    outputSchema: wikiSchema,
+    http: { method: 'PATCH', path: '/api/v2/ops/wiki/edit' },
+    cli: { command: 'microera wiki edit', examples: ['microera wiki edit --wiki-id 1 --content "# Updated"'] },
+    mcp: { toolName: 'wiki_edit', readOnlyHint: false, scopes: ['wiki:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'PATCH', '/api/v2/ops/wiki/edit', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'wiki.delete',
+    version: '1',
+    title: 'Delete a wiki page',
+    kind: 'mutation',
+    risk: 'destructive',
+    inputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' } }, required: ['wiki_id'] },
+    outputSchema: { type: 'object', properties: { deleted: { type: 'boolean' }, id: { type: 'integer' } } },
+    http: { method: 'DELETE', path: '/api/v2/ops/wiki/delete' },
+    cli: { command: 'microera wiki delete', examples: ['microera wiki delete --wiki-id 1'] },
+    mcp: { toolName: 'wiki_delete', readOnlyHint: false, scopes: ['wiki:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'DELETE', '/api/v2/ops/wiki/delete', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'wiki.diff',
+    version: '1',
+    title: 'Diff wiki revisions',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' }, from_revision_no: { type: 'integer' }, to_revision_no: { type: 'integer' } }, required: ['wiki_id'] },
+    outputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' }, from_revision_no: { type: 'integer' }, to_revision_no: { type: 'integer' }, added_lines: { type: 'integer' }, removed_lines: { type: 'integer' }, changed: { type: 'boolean' } } },
+    http: { method: 'POST', path: '/api/v2/ops/wiki/diff' },
+    cli: { command: 'microera wiki diff', examples: ['microera wiki diff --wiki-id 1'] },
+    mcp: { toolName: 'wiki_diff', readOnlyHint: true, scopes: ['wiki:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/wiki/diff', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'wiki.revert',
+    version: '1',
+    title: 'Revert a wiki revision',
+    kind: 'mutation',
+    risk: 'destructive',
+    inputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' }, revision_no: { type: 'integer' } }, required: ['wiki_id', 'revision_no'] },
+    outputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' }, reverted_from_revision_no: { type: 'integer' }, new_revision_no: { type: 'integer' } } },
+    http: { method: 'POST', path: '/api/v2/ops/wiki/revert' },
+    cli: { command: 'microera wiki revert', examples: ['microera wiki revert --wiki-id 1 --revision-no 1'] },
+    mcp: { toolName: 'wiki_revert', readOnlyHint: false, scopes: ['wiki:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/wiki/revert', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'wiki.revisions',
+    version: '1',
+    title: 'List wiki revisions',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' } }, required: ['wiki_id'] },
+    outputSchema: { type: 'object', properties: { wiki_id: { type: 'integer' }, items: { type: 'array', items: { type: 'object' } }, total: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/wiki/revisions' },
+    cli: { command: 'microera wiki revisions', examples: ['microera wiki revisions --wiki-id 1'] },
+    mcp: { toolName: 'wiki_revisions', readOnlyHint: true, scopes: ['wiki:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/wiki/revisions', input, ctx);
+    },
+  });
+
   // ── P8: jobs (wired to existing /api/pipeline/jobs) ─────────────────────
   operationRegistry.register({
     id: 'job.view',

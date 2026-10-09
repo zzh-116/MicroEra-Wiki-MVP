@@ -603,6 +603,89 @@ export const messages = pgTable(
   (table) => [index('messages_session_idx').on(table.sessionId)],
 );
 
+// ---- Wiki (P5) ----
+// A wiki page: a synthesized or manually-authored article scoped to a knowledge
+// base, versioned like documents (every content edit appends a revision) and
+// grounded by wiki_sources citations. `status` tracks generation (draft for
+// manual pages, completed for generated pages).
+export const wikis = pgTable(
+  'wikis',
+  {
+    id: serial('id').primaryKey(),
+    title: text('title').notNull(),
+    summary: text('summary').notNull().default(''),
+    content: text('content').notNull().default(''),
+    kbId: integer('kb_id').references(() => knowledgeBases.id, { onDelete: 'set null' }),
+    status: text('status', { enum: ['draft', 'generating', 'completed'] }).notNull().default('draft'),
+    revisionNo: integer('revision_no').notNull().default(1),
+    createdBy: integer('created_by').references(() => users.id, { onDelete: 'set null' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
+  },
+  (table) => [
+    index('wikis_kb_idx').on(table.kbId),
+    index('wikis_deleted_at_idx').on(table.deletedAt),
+  ],
+);
+
+// ---- Wiki Revisions (P5) ----
+export const wikiRevisions = pgTable(
+  'wiki_revisions',
+  {
+    id: serial('id').primaryKey(),
+    wikiId: integer('wiki_id')
+      .notNull()
+      .references(() => wikis.id, { onDelete: 'cascade' }),
+    revisionNo: integer('revision_no').notNull(),
+    title: text('title').notNull(),
+    content: text('content').notNull(),
+    checksum: text('checksum').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index('wiki_revisions_wiki_idx').on(table.wikiId)],
+);
+
+// ---- Wiki Sources (P5) ----
+// Grounding anchors: which chunks/documents back a wiki page (W02 citations).
+export const wikiSources = pgTable(
+  'wiki_sources',
+  {
+    id: serial('id').primaryKey(),
+    wikiId: integer('wiki_id')
+      .notNull()
+      .references(() => wikis.id, { onDelete: 'cascade' }),
+    chunkId: text('chunk_id').notNull(),
+    documentId: integer('document_id').notNull(),
+    index: integer('index').notNull().default(0),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('wiki_sources_wiki_idx').on(table.wikiId),
+    index('wiki_sources_chunk_idx').on(table.chunkId),
+  ],
+);
+
+// ---- Wiki Links (P5) ----
+// Directed links between wiki pages (W03), forming the wiki knowledge graph.
+export const wikiLinks = pgTable(
+  'wiki_links',
+  {
+    id: serial('id').primaryKey(),
+    sourceWikiId: integer('source_wiki_id')
+      .notNull()
+      .references(() => wikis.id, { onDelete: 'cascade' }),
+    targetWikiId: integer('target_wiki_id')
+      .notNull()
+      .references(() => wikis.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('wiki_links_src_tgt_idx').on(table.sourceWikiId, table.targetWikiId),
+    index('wiki_links_target_idx').on(table.targetWikiId),
+  ],
+);
+
 // ---- Relations ----
 export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
   user: one(users, { fields: [bookmarks.userId], references: [users.id] }),
