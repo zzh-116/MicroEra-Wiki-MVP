@@ -597,24 +597,373 @@ export function registerOperations(api: ApiClient): void {
     },
   });
 
-  // ── P2: document upload (contract only for now) ─────────────────────────
+  // ── P2: upload / import / parse / reparse / wait (P01) ──────────────────
+  const jobHandleSchema = {
+    type: 'object',
+    properties: { document_id: { type: 'integer' }, job_id: { type: 'string' } },
+    required: ['document_id', 'job_id'],
+  };
+  const jobStatusSchema = {
+    type: 'object',
+    properties: {
+      job_id: { type: 'string' },
+      status: { type: 'string' },
+      type: { type: 'string' },
+      document_id: { type: 'integer' },
+      attempt: { type: 'integer' },
+      max_attempts: { type: 'integer' },
+      stage: { type: 'string' },
+      progress: { type: 'integer' },
+      error: { type: 'string' },
+      error_code: { type: 'string' },
+      created_at: { type: 'string' },
+      updated_at: { type: 'string' },
+    },
+    required: ['job_id', 'status'],
+  };
+  const chunkSchema = {
+    type: 'object',
+    properties: {
+      id: { type: 'string' },
+      document_id: { type: 'integer' },
+      index: { type: 'integer' },
+      text: { type: 'string' },
+      strategy: { type: 'string' },
+      heading: { type: 'string' },
+      start_char: { type: 'integer' },
+      end_char: { type: 'integer' },
+    },
+    required: ['id', 'document_id', 'index', 'text'],
+  };
+
   operationRegistry.register({
     id: 'doc.upload',
     version: '1',
     title: 'Upload a document',
-    description: 'Upload a file into a knowledge base; returns a document id and job id (not "already indexed").',
+    description: 'Upload text/markdown into a KB; returns a document id and a durable parse job id (not "already indexed").',
     kind: 'job',
     risk: 'write',
     inputSchema: {
       type: 'object',
-      properties: { kb_id: { type: 'string' }, file_path: { type: 'string' } },
-      required: ['kb_id', 'file_path'],
+      properties: {
+        kb_id: { type: 'integer' },
+        title: { type: 'string' },
+        content: { type: 'string' },
+        file_name: { type: 'string' },
+        file_path: { type: 'string' },
+        visibility: { type: 'string', enum: ['public', 'internal'] },
+      },
+      required: ['kb_id'],
     },
-    outputSchema: { type: 'object', properties: { document_id: { type: 'string' }, job_id: { type: 'string' } }, required: ['document_id', 'job_id'] },
+    outputSchema: jobHandleSchema,
     http: { method: 'POST', path: '/api/v2/ops/doc/upload' },
-    cli: { command: 'microera doc upload', examples: ['microera doc upload --kb-id kb_x --file paper.pdf'] },
+    cli: { command: 'microera doc upload', examples: ['microera doc upload --kb-id 1 --title "Paper" --content "# H"'] },
     mcp: { toolName: 'doc_upload', readOnlyHint: false, scopes: ['doc:write'] },
     transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/doc/upload', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'doc.import_url',
+    version: '1',
+    title: 'Import a document from a URL',
+    kind: 'job',
+    risk: 'write',
+    inputSchema: {
+      type: 'object',
+      properties: { kb_id: { type: 'integer' }, url: { type: 'string' }, title: { type: 'string' }, visibility: { type: 'string', enum: ['public', 'internal'] } },
+      required: ['kb_id', 'url'],
+    },
+    outputSchema: jobHandleSchema,
+    http: { method: 'POST', path: '/api/v2/ops/doc/import_url' },
+    cli: { command: 'microera doc import-url', examples: ['microera doc import-url --kb-id 1 --url https://example.com/paper.md'] },
+    mcp: { toolName: 'doc_import_url', readOnlyHint: false, scopes: ['doc:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/doc/import_url', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'doc.parse',
+    version: '1',
+    title: 'Parse a document',
+    description: 'Enqueue a durable parse job for an existing document.',
+    kind: 'job',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { doc_id: { type: 'integer' } }, required: ['doc_id'] },
+    outputSchema: jobHandleSchema,
+    http: { method: 'POST', path: '/api/v2/ops/doc/parse' },
+    cli: { command: 'microera doc parse', examples: ['microera doc parse --doc-id 1'] },
+    mcp: { toolName: 'doc_parse', readOnlyHint: false, scopes: ['doc:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/doc/parse', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'doc.reparse',
+    version: '1',
+    title: 'Re-parse a document',
+    kind: 'job',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { doc_id: { type: 'integer' } }, required: ['doc_id'] },
+    outputSchema: jobHandleSchema,
+    http: { method: 'POST', path: '/api/v2/ops/doc/reparse' },
+    cli: { command: 'microera doc reparse', examples: ['microera doc reparse --doc-id 1'] },
+    mcp: { toolName: 'doc_reparse', readOnlyHint: false, scopes: ['doc:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/doc/reparse', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'doc.wait',
+    version: '1',
+    title: 'Wait for a parse job',
+    kind: 'job',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { job_id: { type: 'string' }, timeout_ms: { type: 'integer' } }, required: ['job_id'] },
+    outputSchema: { type: 'object', properties: { job_id: { type: 'string' }, status: { type: 'string' }, document_id: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/doc/wait' },
+    cli: { command: 'microera doc wait', examples: ['microera doc wait --job-id parse_x'] },
+    mcp: { toolName: 'doc_wait', readOnlyHint: true, scopes: ['doc:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/doc/wait', input, ctx);
+    },
+  });
+
+  // ── P2: parsed elements (P02) ───────────────────────────────────────────
+  operationRegistry.register({
+    id: 'doc.images',
+    version: '1',
+    title: 'List document images',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { doc_id: { type: 'integer' } }, required: ['doc_id'] },
+    outputSchema: { type: 'object', properties: { doc_id: { type: 'integer' }, items: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'GET', path: '/api/v2/ops/doc/images' },
+    cli: { command: 'microera doc images', examples: ['microera doc images --doc-id 1'] },
+    mcp: { toolName: 'doc_images', readOnlyHint: true, scopes: ['doc:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/doc/images', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'doc.tables',
+    version: '1',
+    title: 'List document tables',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { doc_id: { type: 'integer' } }, required: ['doc_id'] },
+    outputSchema: { type: 'object', properties: { doc_id: { type: 'integer' }, items: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'GET', path: '/api/v2/ops/doc/tables' },
+    cli: { command: 'microera doc tables', examples: ['microera doc tables --doc-id 1'] },
+    mcp: { toolName: 'doc_tables', readOnlyHint: true, scopes: ['doc:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/doc/tables', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'doc.ocr',
+    version: '1',
+    title: 'Run OCR over document images',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { doc_id: { type: 'integer' } }, required: ['doc_id'] },
+    outputSchema: { type: 'object', properties: { doc_id: { type: 'integer' }, ocr_status: { type: 'string' }, images: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'POST', path: '/api/v2/ops/doc/ocr' },
+    cli: { command: 'microera doc ocr', examples: ['microera doc ocr --doc-id 1'] },
+    mcp: { toolName: 'doc_ocr', readOnlyHint: true, scopes: ['doc:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/doc/ocr', input, ctx);
+    },
+  });
+
+  // ── P2: chunks (P03) ────────────────────────────────────────────────────
+  operationRegistry.register({
+    id: 'chunk.list',
+    version: '1',
+    title: 'List document chunks',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { doc_id: { type: 'integer' } }, required: ['doc_id'] },
+    outputSchema: { type: 'object', properties: { doc_id: { type: 'integer' }, items: { type: 'array', items: chunkSchema }, total: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/chunk/list' },
+    cli: { command: 'microera chunk list', examples: ['microera chunk list --doc-id 1'] },
+    mcp: { toolName: 'chunk_list', readOnlyHint: true, scopes: ['doc:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/chunk/list', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'chunk.view',
+    version: '1',
+    title: 'View a document chunk',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { doc_id: { type: 'integer' }, chunk_id: { type: 'string' } }, required: ['doc_id', 'chunk_id'] },
+    outputSchema: chunkSchema,
+    http: { method: 'GET', path: '/api/v2/ops/chunk/view' },
+    cli: { command: 'microera chunk view', examples: ['microera chunk view --doc-id 1 --chunk-id c1'] },
+    mcp: { toolName: 'chunk_view', readOnlyHint: true, scopes: ['doc:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/chunk/view', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'chunk.preview',
+    version: '1',
+    title: 'Preview chunking of a document',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: {
+      type: 'object',
+      properties: { doc_id: { type: 'integer' }, strategy: { type: 'string' }, chunk_size: { type: 'integer' }, overlap: { type: 'integer' }, min_chunk_size: { type: 'integer' } },
+      required: ['doc_id'],
+    },
+    outputSchema: { type: 'object', properties: { doc_id: { type: 'integer' }, strategy: { type: 'string' }, chunk_size: { type: 'integer' }, overlap: { type: 'integer' }, chunks: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'POST', path: '/api/v2/ops/chunk/preview' },
+    cli: { command: 'microera chunk preview', examples: ['microera chunk preview --doc-id 1 --strategy markdown'] },
+    mcp: { toolName: 'chunk_preview', readOnlyHint: true, scopes: ['doc:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/chunk/preview', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'chunk.update',
+    version: '1',
+    title: 'Update a chunk',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { doc_id: { type: 'integer' }, chunk_id: { type: 'string' }, text: { type: 'string' } }, required: ['doc_id', 'chunk_id', 'text'] },
+    outputSchema: chunkSchema,
+    http: { method: 'PATCH', path: '/api/v2/ops/chunk/update' },
+    cli: { command: 'microera chunk update', examples: ['microera chunk update --doc-id 1 --chunk-id c1 --text "new"'] },
+    mcp: { toolName: 'chunk_update', readOnlyHint: false, scopes: ['doc:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'PATCH', '/api/v2/ops/chunk/update', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'chunk.delete',
+    version: '1',
+    title: 'Delete a chunk',
+    kind: 'mutation',
+    risk: 'destructive',
+    inputSchema: { type: 'object', properties: { doc_id: { type: 'integer' }, chunk_id: { type: 'string' } }, required: ['doc_id', 'chunk_id'] },
+    outputSchema: { type: 'object', properties: { deleted: { type: 'boolean' }, id: { type: 'string' } } },
+    http: { method: 'DELETE', path: '/api/v2/ops/chunk/delete' },
+    cli: { command: 'microera chunk delete', examples: ['microera chunk delete --doc-id 1 --chunk-id c1'] },
+    mcp: { toolName: 'chunk_delete', readOnlyHint: false, scopes: ['doc:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'DELETE', '/api/v2/ops/chunk/delete', input, ctx);
+    },
+  });
+
+  // ── P2: durable parse jobs (P04) + deadletters (O03) ────────────────────
+  operationRegistry.register({
+    id: 'job.parse_status',
+    version: '1',
+    title: 'Parse job status',
+    kind: 'job',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { job_id: { type: 'string' } }, required: ['job_id'] },
+    outputSchema: jobStatusSchema,
+    http: { method: 'GET', path: '/api/v2/ops/job/parse_status' },
+    cli: { command: 'microera job parse-status', examples: ['microera job parse-status --job-id parse_x'] },
+    mcp: { toolName: 'job_parse_status', readOnlyHint: true, scopes: ['job:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/job/parse_status', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'job.parse_retry',
+    version: '1',
+    title: 'Retry a failed parse job',
+    kind: 'job',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { job_id: { type: 'string' } }, required: ['job_id'] },
+    outputSchema: jobStatusSchema,
+    http: { method: 'POST', path: '/api/v2/ops/job/parse_retry' },
+    cli: { command: 'microera job parse-retry', examples: ['microera job parse-retry --job-id parse_x'] },
+    mcp: { toolName: 'job_parse_retry', readOnlyHint: false, scopes: ['job:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/job/parse_retry', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'job.parse_cancel',
+    version: '1',
+    title: 'Cancel a parse job',
+    kind: 'job',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { job_id: { type: 'string' } }, required: ['job_id'] },
+    outputSchema: jobStatusSchema,
+    http: { method: 'POST', path: '/api/v2/ops/job/parse_cancel' },
+    cli: { command: 'microera job parse-cancel', examples: ['microera job parse-cancel --job-id parse_x'] },
+    mcp: { toolName: 'job_parse_cancel', readOnlyHint: false, scopes: ['job:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/job/parse_cancel', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'job.deadletters',
+    version: '1',
+    title: 'List dead-lettered parse jobs',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: {} },
+    outputSchema: { type: 'object', properties: { items: { type: 'array', items: { type: 'object' } }, total: { type: 'integer' } } },
+    http: { method: 'POST', path: '/api/v2/ops/job/deadletters' },
+    cli: { command: 'microera job deadletters', examples: ['microera job deadletters'] },
+    mcp: { toolName: 'job_deadletters', readOnlyHint: true, scopes: ['job:read'] },
+    transport: 'remote',
+    async handler(_input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/job/deadletters', {}, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'job.replay_deadletter',
+    version: '1',
+    title: 'Replay a dead-lettered job',
+    kind: 'mutation',
+    risk: 'destructive',
+    inputSchema: { type: 'object', properties: { deadletter_id: { type: 'string' } }, required: ['deadletter_id'] },
+    outputSchema: jobStatusSchema,
+    http: { method: 'POST', path: '/api/v2/ops/job/replay_deadletter' },
+    cli: { command: 'microera job replay-deadletter', examples: ['microera job replay-deadletter --deadletter-id dl_1'] },
+    mcp: { toolName: 'job_replay_deadletter', readOnlyHint: false, scopes: ['job:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/job/replay_deadletter', input, ctx);
+    },
   });
 
   // ── P3: search (wired to existing /api/search) ──────────────────────────

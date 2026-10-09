@@ -4,6 +4,10 @@
 import { Router, Request, Response } from 'express';
 import { requireAuth } from '../middleware/auth.js';
 import { knowledgeService, ServiceError } from '../../backend/services/knowledge.service.js';
+import { elementService } from '../../backend/services/element.service.js';
+import { knowledgeChunkService } from '../../backend/services/chunk.service.js';
+import { parseJobService } from '../../backend/services/parse-job.service.js';
+import { parseApiService } from '../../backend/services/parse-api.service.js';
 import { ok, fail, newTraceId } from '../../packages/contracts/src/wire.js';
 import type { ErrorKindKey } from '../../packages/contracts/src/wire.js';
 
@@ -247,4 +251,153 @@ knowledgeV2Router.post('/kb/import', (req, res) =>
     const id = toInt(inputOf(req).kb_id);
     if (!id) throw new ServiceError('validation_failed', 'kb_id is required');
     return knowledgeService.importKb(id, req.body?.documents);
+  }));
+
+// ── P2: upload / import / parse / reparse / wait (P01) ──────────────────────
+knowledgeV2Router.post('/doc/upload', (req, res) =>
+  handle('doc.upload', req, res, async () => {
+    const kbId = toInt(inputOf(req).kb_id);
+    if (!kbId) throw new ServiceError('validation_failed', 'kb_id is required');
+    return parseApiService.upload({
+      kb_id: kbId,
+      title: inputOf(req).title,
+      content: inputOf(req).content,
+      file_name: inputOf(req).file_name,
+      file_path: inputOf(req).file_path,
+      visibility: inputOf(req).visibility,
+      folder_id: toInt(inputOf(req).folder_id) ?? null,
+    });
+  }));
+
+knowledgeV2Router.post('/doc/import_url', (req, res) =>
+  handle('doc.import_url', req, res, async () => {
+    const kbId = toInt(inputOf(req).kb_id);
+    if (!kbId) throw new ServiceError('validation_failed', 'kb_id is required');
+    return parseApiService.importUrl({
+      kb_id: kbId,
+      url: inputOf(req).url,
+      title: inputOf(req).title,
+      visibility: inputOf(req).visibility,
+      folder_id: toInt(inputOf(req).folder_id) ?? null,
+    });
+  }));
+
+knowledgeV2Router.post('/doc/parse', (req, res) =>
+  handle('doc.parse', req, res, async () => {
+    const id = toInt(inputOf(req).doc_id);
+    if (!id) throw new ServiceError('validation_failed', 'doc_id is required');
+    return parseApiService.parse({ doc_id: id });
+  }));
+
+knowledgeV2Router.post('/doc/reparse', (req, res) =>
+  handle('doc.reparse', req, res, async () => {
+    const id = toInt(inputOf(req).doc_id);
+    if (!id) throw new ServiceError('validation_failed', 'doc_id is required');
+    return parseApiService.reparse({ doc_id: id });
+  }));
+
+knowledgeV2Router.get('/doc/wait', (req, res) =>
+  handle('doc.wait', req, res, async () => {
+    const jobId = req.query.job_id as string | undefined;
+    if (!jobId) throw new ServiceError('validation_failed', 'job_id is required');
+    return parseApiService.wait({ job_id: jobId, timeout_ms: toInt(req.query.timeout_ms) });
+  }));
+
+// ── P2: parsed elements (P02) ───────────────────────────────────────────────
+knowledgeV2Router.get('/doc/images', (req, res) =>
+  handle('doc.images', req, res, async () => {
+    const id = toInt(req.query.doc_id);
+    if (!id) throw new ServiceError('validation_failed', 'doc_id is required');
+    return elementService.listImages(id);
+  }));
+
+knowledgeV2Router.get('/doc/tables', (req, res) =>
+  handle('doc.tables', req, res, async () => {
+    const id = toInt(req.query.doc_id);
+    if (!id) throw new ServiceError('validation_failed', 'doc_id is required');
+    return elementService.listTables(id);
+  }));
+
+knowledgeV2Router.post('/doc/ocr', (req, res) =>
+  handle('doc.ocr', req, res, async () => {
+    const id = toInt(inputOf(req).doc_id);
+    if (!id) throw new ServiceError('validation_failed', 'doc_id is required');
+    return elementService.ocr(id);
+  }));
+
+// ── P2: chunks (P03) ────────────────────────────────────────────────────────
+knowledgeV2Router.get('/chunk/list', (req, res) =>
+  handle('chunk.list', req, res, async () => {
+    const id = toInt(req.query.doc_id);
+    if (!id) throw new ServiceError('validation_failed', 'doc_id is required');
+    return knowledgeChunkService.list(id);
+  }));
+
+knowledgeV2Router.get('/chunk/view', (req, res) =>
+  handle('chunk.view', req, res, async () => {
+    const id = toInt(req.query.doc_id);
+    const chunkId = req.query.chunk_id as string | undefined;
+    if (!id || !chunkId) throw new ServiceError('validation_failed', 'doc_id and chunk_id are required');
+    return knowledgeChunkService.view(id, chunkId);
+  }));
+
+knowledgeV2Router.post('/chunk/preview', (req, res) =>
+  handle('chunk.preview', req, res, async () => {
+    const id = toInt(inputOf(req).doc_id);
+    if (!id) throw new ServiceError('validation_failed', 'doc_id is required');
+    return knowledgeChunkService.preview(id, {
+      strategy: inputOf(req).strategy,
+      chunk_size: toInt(inputOf(req).chunk_size),
+      overlap: toInt(inputOf(req).overlap),
+      min_chunk_size: toInt(inputOf(req).min_chunk_size),
+    });
+  }));
+
+knowledgeV2Router.patch('/chunk/update', (req, res) =>
+  handle('chunk.update', req, res, async () => {
+    const id = toInt(inputOf(req).doc_id);
+    const chunkId = inputOf(req).chunk_id as string | undefined;
+    const text = inputOf(req).text as string | undefined;
+    if (!id || !chunkId) throw new ServiceError('validation_failed', 'doc_id and chunk_id are required');
+    return knowledgeChunkService.update(id, chunkId, text ?? '');
+  }));
+
+knowledgeV2Router.delete('/chunk/delete', (req, res) =>
+  handle('chunk.delete', req, res, async () => {
+    const id = toInt(inputOf(req).doc_id);
+    const chunkId = inputOf(req).chunk_id as string | undefined;
+    if (!id || !chunkId) throw new ServiceError('validation_failed', 'doc_id and chunk_id are required');
+    return knowledgeChunkService.remove(id, chunkId);
+  }));
+
+// ── P2: durable parse jobs (P04) + deadletters (O03) ────────────────────────
+knowledgeV2Router.get('/job/parse_status', (req, res) =>
+  handle('job.parse_status', req, res, async () => {
+    const jobId = req.query.job_id as string | undefined;
+    if (!jobId) throw new ServiceError('validation_failed', 'job_id is required');
+    return parseJobService.status(jobId);
+  }));
+
+knowledgeV2Router.post('/job/parse_retry', (req, res) =>
+  handle('job.parse_retry', req, res, async () => {
+    const jobId = inputOf(req).job_id as string | undefined;
+    if (!jobId) throw new ServiceError('validation_failed', 'job_id is required');
+    return parseJobService.retry(jobId);
+  }));
+
+knowledgeV2Router.post('/job/parse_cancel', (req, res) =>
+  handle('job.parse_cancel', req, res, async () => {
+    const jobId = inputOf(req).job_id as string | undefined;
+    if (!jobId) throw new ServiceError('validation_failed', 'job_id is required');
+    return parseJobService.cancel(jobId);
+  }));
+
+knowledgeV2Router.post('/job/deadletters', (req, res) =>
+  handle('job.deadletters', req, res, () => parseJobService.deadletters()));
+
+knowledgeV2Router.post('/job/replay_deadletter', (req, res) =>
+  handle('job.replay_deadletter', req, res, async () => {
+    const id = inputOf(req).deadletter_id as string | undefined;
+    if (!id) throw new ServiceError('validation_failed', 'deadletter_id is required');
+    return parseJobService.replayDeadletter(id);
   }));
