@@ -383,6 +383,32 @@ export const documentRevisions = pgTable(
   ],
 );
 
+// ---- Document Elements (layout-aware parse output, P2-02) ----
+// Extracted headings, tables, images, and page markers with their source
+// coordinates (char/line offsets). `content` is element-type-specific: headings
+// carry level+text, tables carry header+rows, images carry src (blob ref)+alt.
+export const documentElements = pgTable(
+  'document_elements',
+  {
+    id: serial('id').primaryKey(),
+    documentId: integer('document_id')
+      .notNull()
+      .references(() => documents.id, { onDelete: 'cascade' }),
+    elementType: text('element_type', { enum: ['heading', 'table', 'image', 'page'] }).notNull(),
+    position: integer('position').notNull().default(0),
+    content: jsonb('content').notNull().default({}),
+    startChar: integer('start_char'),
+    endChar: integer('end_char'),
+    startLine: integer('start_line'),
+    endLine: integer('end_line'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('document_elements_doc_idx').on(table.documentId),
+    index('document_elements_type_idx').on(table.elementType),
+  ],
+);
+
 // ---- Relations ----
 export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
   user: one(users, { fields: [bookmarks.userId], references: [users.id] }),
