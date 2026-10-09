@@ -7,21 +7,21 @@
   "accepted_points": 0,
   "required_ops_total": 162,
   "fully_verified_ops": 5,
-  "last_verified_commit": "15adfe7",
-  "notes": "P0 complete. accepted_points stays 0: the delivery harness (evaluate_delivery.py) is the authority, and P0 security work is excluded from the 80-point non-user/non-security target. parity:check reports 5/162 full-parity ops (search.hybrid, chat.ask, chat.references, job.list, job.view).",
+  "last_verified_commit": "736334e",
+  "notes": "P0 complete; P1 underway. P1-01 landed the knowledge domain schema (knowledge_bases/sources/documents/document_revisions) with a forward-only migration 0008; legacy entries untouched (345 rows). accepted_points stays 0: the delivery harness (evaluate_delivery.py) is the authority, and P0 security work is excluded from the 80-point non-user/non-security target. parity:check reports 5/162 full-parity ops.",
   "open_tasks": [
     { "id": "P0-01", "status": "done", "depends_on": [] },
     { "id": "P0-02", "status": "done", "depends_on": ["P0-01"] },
     { "id": "P0-03", "status": "done", "depends_on": ["P0-01"] },
     { "id": "P0-04", "status": "done", "depends_on": ["P0-01"] },
     { "id": "P0-05", "status": "done", "depends_on": ["P0-01"] },
-    { "id": "P1-01", "status": "in_progress", "depends_on": ["P0-05"] },
-    { "id": "P1-02", "status": "todo", "depends_on": ["P1-01"] },
+    { "id": "P1-01", "status": "done", "depends_on": ["P0-05"] },
+    { "id": "P1-02", "status": "in_progress", "depends_on": ["P1-01"] },
     { "id": "P1-03", "status": "todo", "depends_on": ["P1-01"] },
     { "id": "P1-04", "status": "todo", "depends_on": ["P1-01"] },
     { "id": "P1-05", "status": "todo", "depends_on": ["P1-01"] },
     { "id": "P1-06", "status": "todo", "depends_on": ["P1-01"] }
   ],
   "blockers": [],
-  "next_action": "P1-01: add KB/Source/Document/Revision records + forward migrations, then P1-02 backfill adapter and P1-03 CRUD CoreService."
+  "next_action": "P1-02: read-only dry-run backfill + mapped source + sha256 checksum + Entry→Document/Source/Revision compatibility adapter."
 }
