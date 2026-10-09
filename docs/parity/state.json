@@ -3,12 +3,12 @@
   "reference_sha": "602d0c388bf17d894f467fe0cd65d1d62c73d303",
   "baseline_target_sha": "4bd5bf417df090351b91de205e6b34a457eb47a2",
   "local_repo_sha": "01343a2",
-  "current_phase": "P1",
+  "current_phase": "P2",
   "accepted_points": 0,
   "required_ops_total": 162,
   "fully_verified_ops": 33,
-  "last_verified_commit": "1c16a60",
-  "notes": "P0 complete; P1 underway. P1-01 schema+migration 0008; P1-02 read-only backfill adapter; P1-03 KB/folder/document/revision CRUD; P1-04 preview/download/artifacts/export/import; P1-05 knowledge frontend: /knowledge page (KB tree + folder list + document preview/edit) via src/api/knowledgeApi.ts + KnowledgeManagementPage + TopNav link, with legacy routes verified intact (smoke 4/4, entries/auth/search/health unchanged). All 28 P1 knowledge ops registered (33/162 full-parity incl. search/chat/job). 185 tests passing. accepted_points stays 0: evaluate_delivery.py is the authority.",
+  "last_verified_commit": "ddd6bd6",
+  "notes": "P0 complete; P1 complete (P1-01..P1-06). Knowledge domain (K01-K06) shipped end to end: schema+migration (0008/0009), read-only backfill adapter, KB/folder/document/revision CRUD, preview/download/artifacts/export/import (28 ops registered handler+cli+mcp+schema), React frontend (/knowledge), and CLI+MCP parity with contract tests (generic flag→input mapping over inputSchema; kb.import --file support). Live CLI smoke verified kb list/create/check/delete; MCP tools auto-derived from the registry. 190 tests passing; parity:check 33/162 full-parity. Moving to P2 (parser/chunk/ingest). accepted_points stays 0: evaluate_delivery.py is the authority.",
   "open_tasks": [
     { "id": "P0-01", "status": "done", "depends_on": [] },
     { "id": "P0-02", "status": "done", "depends_on": ["P0-01"] },
@@ -20,8 +20,14 @@
     { "id": "P1-03", "status": "done", "depends_on": ["P1-01"] },
     { "id": "P1-04", "status": "done", "depends_on": ["P1-03"] },
     { "id": "P1-05", "status": "done", "depends_on": ["P1-03"] },
-    { "id": "P1-06", "status": "in_progress", "depends_on": ["P1-03"] }
+    { "id": "P1-06", "status": "done", "depends_on": ["P1-03"] },
+    { "id": "P2-01", "status": "in_progress", "depends_on": ["P1-06"] },
+    { "id": "P2-02", "status": "todo", "depends_on": ["P2-01"] },
+    { "id": "P2-03", "status": "todo", "depends_on": ["P2-01"] },
+    { "id": "P2-04", "status": "todo", "depends_on": ["P2-01"] },
+    { "id": "P2-05", "status": "todo", "depends_on": ["P2-02", "P2-03", "P2-04"] },
+    { "id": "P2-06", "status": "todo", "depends_on": ["P2-05"] }
   ],
   "blockers": [],
-  "next_action": "P1-06: Knowledge CLI+MCP parity — registry-bound verbs exposed through the CLI and MCP tools, plus contract tests; then advance to P2 (multi-format parser)."
+  "next_action": "P2-01: parser adapters — Docling + text fallback with content integrity (checksummed), feeding the document.parse/reparse/upload path."
 }

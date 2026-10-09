@@ -8,6 +8,7 @@ import { operationRegistry } from '../../packages/operation-registry/src/registr
 import { ensureOperationsRegistered } from '../../packages/operation-registry/src/operations.js';
 import { ok, fail, newTraceId, EXIT, ErrorKind } from '../../packages/contracts/src/wire.js';
 import type { OperationContext, OperationDef } from '../../packages/contracts/src/types.js';
+import { readFileSync } from 'node:fs';
 
 const VERSION = '0.1.0';
 
@@ -89,20 +90,47 @@ function findOperation(command: string[]): { def: OperationDef; consumed: number
 }
 
 /** Per-operation input builders: map remaining positional args + flags → input. */
-function buildInput(defId: string, rest: string[], flags: Record<string, string | boolean>): Record<string, unknown> {
+function buildInput(def: OperationDef, rest: string[], flags: Record<string, string | boolean>): Record<string, unknown> {
   const num = (v: unknown): number | undefined => (typeof v === 'string' && v !== '' ? Number(v) : undefined);
-  switch (defId) {
+  switch (def.id) {
     case 'search.hybrid': return { query: rest.join(' '), top_k: num(flags['top-k']) ?? num(flags.top_k) };
     case 'chat.ask': return { question: rest.join(' '), conversation_id: flags['conversation-id'] ?? flags.conversation_id };
     case 'chat.references': return { conversation_id: flags['conversation-id'] ?? flags.conversation_id };
     case 'job.view': return { job_id: flags['job-id'] ?? flags.job_id ?? rest[0] };
     case 'job.list': return {};
-    case 'kb.create': return { name: flags.name ?? rest[0], visibility: flags.visibility ?? 'internal' };
-    case 'kb.list': return {};
-    case 'doc.upload': return { kb_id: flags['kb-id'] ?? flags.kb_id, file_path: flags.file ?? rest[0] };
     case 'auth.whoami': return {};
-    default: return {};
+    case 'kb.import': {
+      // Accept either --file <export.json> (a kb.export payload or raw array)
+      // or --documents '<json array>' inline.
+      const input: Record<string, unknown> = {};
+      const kbId = num(flags['kb-id'] ?? flags.kb_id);
+      if (kbId !== undefined) input.kb_id = kbId;
+      if (typeof flags.file === 'string') {
+        const parsed = JSON.parse(readFileSync(flags.file, 'utf-8'));
+        input.documents = Array.isArray(parsed) ? parsed : (parsed.documents ?? []);
+      } else if (typeof flags.documents === 'string') {
+        input.documents = JSON.parse(flags.documents);
+      }
+      return input;
+    }
   }
+
+  // Generic: map kebab-case flags onto the operation's inputSchema properties
+  // (snake_case). Scalars pass through; integers/arrays are coerced.
+  const input: Record<string, unknown> = {};
+  const props = def.inputSchema?.properties ?? {};
+  for (const key of Object.keys(props)) {
+    const schema = (props as Record<string, { type?: string }>)[key] ?? {};
+    const kebab = key.replace(/_/g, '-');
+    const raw = flags[kebab] ?? flags[key];
+    if (raw === undefined || raw === false) continue;
+    if (schema.type === 'integer') { const n = Number(raw); if (Number.isFinite(n)) input[key] = n; }
+    else if (schema.type === 'array') input[key] = typeof raw === 'string' ? raw.split(',').map((s) => Number(s.trim())).filter(Number.isFinite) : raw;
+    else input[key] = raw;
+  }
+  // Positional name convenience for kb.create.
+  if (def.id === 'kb.create' && !input.name && rest[0]) input.name = rest[0];
+  return input;
 }
 
 async function main(): Promise<number> {
@@ -164,7 +192,7 @@ async function main(): Promise<number> {
 
   const { def, consumed } = found;
   const rest = parsed.command.slice(consumed);
-  const input = buildInput(def.id, rest, parsed.flags);
+  const input = buildInput(def, rest, parsed.flags);
 
   if (!def.handler) {
     printWire(fail(def.id, 'not_implemented', `Operation "${def.id}" is a declared contract but its handler lands in a later phase.`, traceId, `Planned route: ${def.http?.method} ${def.http?.path}`), parsed.format);
