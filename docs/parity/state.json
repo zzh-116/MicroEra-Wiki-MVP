@@ -7,8 +7,8 @@
   "accepted_points": 0,
   "required_ops_total": 162,
   "fully_verified_ops": 162,
-  "last_verified_commit": "ddd6bd6",
-  "notes": "P0–P9 complete, full parity 162/162 (100%). P9 added the final 11 introspection ops (api.operations/schema/version, mcp.tools/resources/prompts/health, cli.commands/version/doctor/schema) via a new meta.service.ts + meta-v2.ts router, all reading the Operation Registry and the shared mcp-core builders as the single source of truth. Fixed the CLI so `microera mcp tools/resources/prompts/health` dispatch as ops instead of being swallowed by the `mcp serve` intercept. 382 tests green, live smoke meta 13/13, CLI introspection verified live. Remaining work is P10 (docs/closeout, migration disaster recovery, final coverage report, local git closeout).",
+  "last_verified_commit": "5af85fb",
+  "notes": "P0–P10 complete — full parity 162/162 (100%). P9 added the 11 api/mcp/cli introspection ops; P10 delivered closeout: migration disaster-recovery drill (unknown-schema check + clean-DB from-zero migration + idempotency, 7/7) with a real fix (runMigrations now runs CREATE EXTENSION IF NOT EXISTS vector before migrating), a pg_dump backup, the final coverage report, a performance baseline, and full live E2E smoke (knowledge 32 + search 31 + chat 26 + wiki 25 + agent 31 + model 20 + meta 13 = 178 checks). 382 unit tests green. Known non-blocking limitations: durable parse_jobs queue has no auto-worker (by design); one benign orphan migration ledger entry (0002_layered_context.sql). No blockers against the 162-op contract. Local-only commits — no push, no production DB changes, no fabricated results.",
   "open_tasks": [
     { "id": "P0-01", "status": "done", "depends_on": [] },
     { "id": "P0-02", "status": "done", "depends_on": ["P0-01"] },
@@ -63,13 +63,13 @@
     { "id": "P9-04", "status": "done", "depends_on": ["P9-01"] },
     { "id": "P9-05", "status": "done", "depends_on": ["P9-01"] },
     { "id": "P9-06", "status": "done", "depends_on": ["P9-01"] },
-    { "id": "P10-01", "status": "todo", "depends_on": ["P9-06"] },
-    { "id": "P10-02", "status": "todo", "depends_on": ["P10-01"] },
-    { "id": "P10-03", "status": "todo", "depends_on": ["P10-01"] },
-    { "id": "P10-04", "status": "todo", "depends_on": ["P10-01"] },
-    { "id": "P10-05", "status": "todo", "depends_on": ["P10-01"] },
-    { "id": "P10-06", "status": "todo", "depends_on": ["P10-01"] }
+    { "id": "P10-01", "status": "done", "depends_on": ["P9-06"] },
+    { "id": "P10-02", "status": "done", "depends_on": ["P10-01"] },
+    { "id": "P10-03", "status": "done", "depends_on": ["P10-01"] },
+    { "id": "P10-04", "status": "done", "depends_on": ["P10-01"] },
+    { "id": "P10-05", "status": "done", "depends_on": ["P10-01"] },
+    { "id": "P10-06", "status": "done", "depends_on": ["P10-01"] }
   ],
   "blockers": [],
-  "next_action": "P10-01..P10-06: docs/closeout — migration disaster recovery, final coverage report, README parity note, and local git closeout (no push)."
+  "next_action": "complete — all 10 phases (P0–P10) done, 162/162 operation parity verified, closeout docs written and committed locally (no push)."
 }

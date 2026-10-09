@@ -23,6 +23,7 @@
     "storage:upload": "tsx scripts/upload-local-file-to-minio.mts",
     "storage:migrate": "tsx scripts/migrate-files-to-minio.mts",
     "parity:check": "tsx scripts/parity-check.ts",
+    "drill:migrations": "tsx scripts/p10-migration-drill.ts",
     "kb:backfill": "tsx scripts/kb-backfill.ts",
     "smoke": "tsx scripts/smoke.ts",
     "smoke:knowledge": "tsx scripts/smoke-knowledge.ts",

@@ -547,3 +547,17 @@ VITE_API_BASE_URL=http://localhost:3001
 ```
 
 完整环境变量说明见 [Handover 文档](docs/handover/06_Environment_Variables.md)。
+
+## 操作一致性 (Operation Parity)
+
+本项目对齐 WeKnora 的 162 个非用户/非安全类操作，REST / CLI / MCP 三端共用同一个
+`OperationRegistry`，一致性由 `npm run parity:check` 机械校验。
+
+- **一致性：162 / 162 (100%)**
+- **单元测试：382 通过**（`npm test`）
+- **端到端冒烟：178 项通过**（`smoke:knowledge/search/chat/wiki/agent/model/meta`）
+- **迁移灾难恢复：**`npm run drill:migrations`（未知 schema 检查 + 干净库从零迁移 + 幂等校验）
+
+完整报告见 [docs/parity/coverage-report.md](docs/parity/coverage-report.md)、
+[docs/parity/disaster-recovery.md](docs/parity/disaster-recovery.md) 与
+[docs/parity/performance-baseline.md](docs/parity/performance-baseline.md)。

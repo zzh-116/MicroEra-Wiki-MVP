@@ -256,6 +256,11 @@ async function autoSyncSandbox() {
 
 /** Execute migration SQL files in order */
 async function runMigrations(): Promise<void> {
+  // pgvector prerequisite — `vectors`/`knowledge_vectors` columns are typed
+  // `vector(1024)`, so the extension must exist before any migration that
+  // references the type. Idempotent: a no-op when already installed.
+  await pool.query('CREATE EXTENSION IF NOT EXISTS vector');
+
   await pool.query(`CREATE TABLE IF NOT EXISTS _migrations (name TEXT PRIMARY KEY, applied_at TIMESTAMPTZ DEFAULT NOW())`);
 
   const dir = path.resolve(import.meta.dirname, 'db', 'migrations');
