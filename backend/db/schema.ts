@@ -247,6 +247,118 @@ export const entryRelations = pgTable(
   ],
 );
 
+// ---- Knowledge Bases (KB) ----
+// The WeKnora knowledge domain: a KB is a scoped collection of documents,
+// grouped into folders. Legacy `entries` are mapped to `documents` via
+// `entry_id` (the P1-02 compatibility adapter) rather than migrated in place.
+export const knowledgeBases = pgTable(
+  'knowledge_bases',
+  {
+    id: serial('id').primaryKey(),
+    name: text('name').notNull(),
+    slug: text('slug').notNull().unique(),
+    description: text('description').notNull().default(''),
+    visibility: text('visibility', { enum: ['public', 'internal'] })
+      .notNull()
+      .default('internal'),
+    embeddingModel: text('embedding_model').notNull().default('bge-m3'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
+  },
+  (table) => [
+    index('knowledge_bases_visibility_idx').on(table.visibility),
+    index('knowledge_bases_deleted_at_idx').on(table.deletedAt),
+  ],
+);
+
+// ---- Sources ----
+// A source is the provenance record for a document: an uploaded file, a URL, a
+// connector cursor, or manual entry. Checksum is the sha256 of the source bytes
+// so re-imports can be de-duplicated and integrity-checked.
+export const sources = pgTable(
+  'sources',
+  {
+    id: serial('id').primaryKey(),
+    kbId: integer('kb_id')
+      .notNull()
+      .references(() => knowledgeBases.id, { onDelete: 'cascade' }),
+    type: text('type', { enum: ['file', 'url', 'manual', 'connector'] }).notNull(),
+    name: text('name').notNull(),
+    uri: text('uri'),
+    checksum: text('checksum'),
+    metadata: jsonb('metadata').notNull().default({}),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
+  },
+  (table) => [
+    index('sources_kb_idx').on(table.kbId),
+    index('sources_type_idx').on(table.type),
+  ],
+);
+
+// ---- Documents ----
+// A document is a KB-scoped knowledge item with its own visibility and parse
+// state. `entry_id` is an optional link to the legacy `entries` row this
+// document was backfilled from; it is how the old routes stay usable (P1-05).
+export const documents = pgTable(
+  'documents',
+  {
+    id: serial('id').primaryKey(),
+    kbId: integer('kb_id')
+      .notNull()
+      .references(() => knowledgeBases.id, { onDelete: 'cascade' }),
+    sourceId: integer('source_id').references(() => sources.id, { onDelete: 'set null' }),
+    entryId: integer('entry_id').references(() => entries.id, { onDelete: 'set null' }),
+    title: text('title').notNull(),
+    summary: text('summary').notNull().default(''),
+    content: text('content').notNull().default(''),
+    visibility: text('visibility', { enum: ['public', 'internal'] })
+      .notNull()
+      .default('internal'),
+    fileName: text('file_name'),
+    fileSize: integer('file_size').notNull().default(0),
+    fileHash: text('file_hash'),
+    parseStatus: text('parse_status', { enum: ['pending', 'processing', 'completed', 'failed'] })
+      .notNull()
+      .default('pending'),
+    metadata: jsonb('metadata').notNull().default({}),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
+  },
+  (table) => [
+    index('documents_kb_idx').on(table.kbId),
+    index('documents_source_idx').on(table.sourceId),
+    index('documents_entry_idx').on(table.entryId),
+    index('documents_deleted_at_idx').on(table.deletedAt),
+  ],
+);
+
+// ---- Document Revisions ----
+// Each parse/update of a document appends a revision. `checksum` is the sha256
+// of the revision content so history reads are verifiable and rollbacks are
+// hash-consistent (K04).
+export const documentRevisions = pgTable(
+  'document_revisions',
+  {
+    id: serial('id').primaryKey(),
+    documentId: integer('document_id')
+      .notNull()
+      .references(() => documents.id, { onDelete: 'cascade' }),
+    revisionNo: integer('revision_no').notNull(),
+    title: text('title').notNull(),
+    content: text('content').notNull().default(''),
+    checksum: text('checksum').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('document_revisions_doc_rev_idx').on(table.documentId, table.revisionNo),
+    index('document_revisions_doc_idx').on(table.documentId),
+  ],
+);
+
 // ---- Relations ----
 export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
   user: one(users, { fields: [bookmarks.userId], references: [users.id] }),

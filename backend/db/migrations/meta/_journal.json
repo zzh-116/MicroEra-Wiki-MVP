@@ -57,6 +57,13 @@
       "when": 1786610826207,
       "tag": "0007_add_wiki_files_object_storage",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791540149390,
+      "tag": "0008_add_knowledge_domain",
+      "breakpoints": true
     }
   ]
 }
