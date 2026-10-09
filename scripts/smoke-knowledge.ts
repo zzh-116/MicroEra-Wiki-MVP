@@ -118,6 +118,25 @@ async function main() {
   const sv = await v2('GET', '/api/v2/ops/doc/source_view', token, { source_id: sourceId });
   check(sv?.id === sourceId, 'doc.source_view returns the source');
 
+  // 4a. P1-04 — preview / download / artifacts / export / import.
+  const preview = await v2('POST', '/api/v2/ops/doc/preview', token, { doc_id: docId });
+  check(preview?.format === 'markdown' && typeof preview.preview === 'string', 'doc.preview returns a markdown preview');
+
+  const dl = await v2('GET', '/api/v2/ops/doc/download', token, { doc_id: docId });
+  check(dl?.content === 'revision v1' && typeof dl.file_name === 'string', 'doc.download returns content + file name');
+
+  const arts = await v2('GET', '/api/v2/ops/doc/artifacts', token, { doc_id: docId });
+  check(Array.isArray(arts?.items) && arts.items.some((a: any) => a.name === 'content.md'), 'doc.artifacts lists content.md');
+
+  const art = await v2('GET', '/api/v2/ops/doc/artifact_download', token, { doc_id: docId, name: 'content.md' });
+  check(art?.content === 'revision v1', 'doc.artifact_download returns the artifact content');
+
+  const exp = await v2('POST', '/api/v2/ops/kb/export', token, { kb_id: kb.id });
+  check(exp?.format === 'json' && typeof exp.count === 'number' && exp.count >= 1, 'kb.export returns a JSON export with a count');
+
+  const imp = await v2('POST', '/api/v2/ops/kb/import', token, { kb_id: kb.id, documents: [{ title: 'Imported doc', content: 'imported body' }] });
+  check(imp?.imported === 1 && imp.document_ids?.length === 1, 'kb.import imports a document');
+
   // Move document into the remaining folder, then delete + restore + batch-delete.
   const movedDoc = await v2('POST', '/api/v2/ops/doc/move', token, { doc_id: docId, folder_id: f1.id });
   check(movedDoc?.folder_id === f1.id, 'doc.move assigns a folder');

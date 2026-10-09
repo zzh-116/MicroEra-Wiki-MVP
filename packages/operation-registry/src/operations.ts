@@ -494,6 +494,109 @@ export function registerOperations(api: ApiClient): void {
     },
   });
 
+  // ── P1: preview / artifacts / export / import ───────────────────────────
+  operationRegistry.register({
+    id: 'doc.preview',
+    version: '1',
+    title: 'Preview a document',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { doc_id: { type: 'integer' } }, required: ['doc_id'] },
+    outputSchema: { type: 'object', properties: { doc_id: { type: 'integer' }, title: { type: 'string' }, format: { type: 'string' }, preview: { type: 'string' } } },
+    http: { method: 'POST', path: '/api/v2/ops/doc/preview' },
+    cli: { command: 'microera doc preview', examples: ['microera doc preview --doc-id 1'] },
+    mcp: { toolName: 'doc_preview', readOnlyHint: true, scopes: ['doc:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/doc/preview', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'doc.download',
+    version: '1',
+    title: 'Download a document',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { doc_id: { type: 'integer' } }, required: ['doc_id'] },
+    outputSchema: { type: 'object', properties: { doc_id: { type: 'integer' }, file_name: { type: 'string' }, mime: { type: 'string' }, size: { type: 'integer' }, content: { type: 'string' } } },
+    http: { method: 'GET', path: '/api/v2/ops/doc/download' },
+    cli: { command: 'microera doc download', examples: ['microera doc download --doc-id 1'] },
+    mcp: { toolName: 'doc_download', readOnlyHint: true, scopes: ['doc:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/doc/download', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'doc.artifacts',
+    version: '1',
+    title: 'List document artifacts',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { doc_id: { type: 'integer' } }, required: ['doc_id'] },
+    outputSchema: { type: 'object', properties: { doc_id: { type: 'integer' }, items: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, type: { type: 'string' }, size: { type: 'integer' } } } } } },
+    http: { method: 'GET', path: '/api/v2/ops/doc/artifacts' },
+    cli: { command: 'microera doc artifacts', examples: ['microera doc artifacts --doc-id 1'] },
+    mcp: { toolName: 'doc_artifacts', readOnlyHint: true, scopes: ['doc:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/doc/artifacts', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'doc.artifact_download',
+    version: '1',
+    title: 'Download a document artifact',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { doc_id: { type: 'integer' }, name: { type: 'string' } }, required: ['doc_id', 'name'] },
+    outputSchema: { type: 'object', properties: { doc_id: { type: 'integer' }, name: { type: 'string' }, mime: { type: 'string' }, size: { type: 'integer' }, content: { type: 'string' } } },
+    http: { method: 'GET', path: '/api/v2/ops/doc/artifact_download' },
+    cli: { command: 'microera doc artifact-download', examples: ['microera doc artifact-download --doc-id 1 --name content.md'] },
+    mcp: { toolName: 'doc_artifact_download', readOnlyHint: true, scopes: ['doc:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/doc/artifact_download', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'kb.export',
+    version: '1',
+    title: 'Export a knowledge base',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { kb_id: { type: 'integer' }, format: { type: 'string' } }, required: ['kb_id'] },
+    outputSchema: { type: 'object', properties: { kb_id: { type: 'integer' }, format: { type: 'string' }, exported_at: { type: 'string' }, count: { type: 'integer' }, data: { type: 'object' } } },
+    http: { method: 'POST', path: '/api/v2/ops/kb/export' },
+    cli: { command: 'microera kb export', examples: ['microera kb export --kb-id 1'] },
+    mcp: { toolName: 'kb_export', readOnlyHint: true, scopes: ['kb:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/kb/export', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'kb.import',
+    version: '1',
+    title: 'Import documents into a knowledge base',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { kb_id: { type: 'integer' }, documents: { type: 'array', items: { type: 'object' } } }, required: ['kb_id', 'documents'] },
+    outputSchema: { type: 'object', properties: { kb_id: { type: 'integer' }, imported: { type: 'integer' }, document_ids: { type: 'array', items: { type: 'integer' } } } },
+    http: { method: 'POST', path: '/api/v2/ops/kb/import' },
+    cli: { command: 'microera kb import', examples: ['microera kb import --kb-id 1 --file export.json'] },
+    mcp: { toolName: 'kb_import', readOnlyHint: false, scopes: ['kb:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/kb/import', input, ctx);
+    },
+  });
+
   // ── P2: document upload (contract only for now) ─────────────────────────
   operationRegistry.register({
     id: 'doc.upload',

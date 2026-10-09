@@ -22,6 +22,7 @@ const repo = vi.hoisted(() => ({
   listDocuments: vi.fn(),
   findDocumentById: vi.fn(),
   findDocumentByIdIncludingDeleted: vi.fn(),
+  createDocument: vi.fn(),
   updateDocument: vi.fn(),
   softDeleteDocument: vi.fn(),
   restoreDocument: vi.fn(),
@@ -265,5 +266,93 @@ describe('source', () => {
   it('404s a missing source', async () => {
     repo.findSourceById.mockResolvedValue(undefined);
     await expect(knowledgeService.viewSource(999)).rejects.toMatchObject({ kind: 'resource_not_found' });
+  });
+});
+
+describe('preview / download / artifacts (P1-04)', () => {
+  it('previews a document as markdown', async () => {
+    repo.findDocumentById.mockResolvedValue(doc({ content: '# hello' }));
+    const out = await knowledgeService.previewDocument(100);
+    expect(out.format).toBe('markdown');
+    expect(out.preview).toBe('# hello');
+  });
+  it('404s a missing document on preview', async () => {
+    repo.findDocumentById.mockResolvedValue(undefined);
+    await expect(knowledgeService.previewDocument(999)).rejects.toMatchObject({ kind: 'resource_not_found' });
+  });
+  it('downloads document content with a derived file name', async () => {
+    repo.findDocumentById.mockResolvedValue(doc({ title: 'My Paper', content: 'body' }));
+    const out = await knowledgeService.downloadDocument(100);
+    expect(out.file_name).toBe('my-paper.md');
+    expect(out.content).toBe('body');
+    expect(out.size).toBe(Buffer.byteLength('body', 'utf8'));
+  });
+  it('prefers the stored file_name when present', async () => {
+    repo.findDocumentById.mockResolvedValue(doc({ file_name: 'paper.pdf', content: 'body' }));
+    const out = await knowledgeService.downloadDocument(100);
+    expect(out.file_name).toBe('paper.pdf');
+  });
+  it('lists content.md plus any metadata artifacts', async () => {
+    repo.findDocumentById.mockResolvedValue(doc({
+      content: 'abc',
+      metadata: { artifacts: [{ name: 'img1.png', type: 'image/png', size: 42 }] },
+    }));
+    const out = await knowledgeService.listArtifacts(100);
+    expect(out.items).toHaveLength(2);
+    expect(out.items[0]).toMatchObject({ name: 'content.md', type: 'markdown', size: 3 });
+    expect(out.items[1]).toMatchObject({ name: 'img1.png', type: 'image/png', size: 42 });
+  });
+  it('downloads the content.md artifact', async () => {
+    repo.findDocumentById.mockResolvedValue(doc({ content: 'body' }));
+    const out = await knowledgeService.getArtifact(100, 'content.md');
+    expect(out.mime).toBe('text/markdown');
+    expect(out.content).toBe('body');
+  });
+  it('downloads a metadata-stored artifact', async () => {
+    repo.findDocumentById.mockResolvedValue(doc({
+      metadata: { artifacts: [{ name: 't1.csv', mime: 'text/csv', content: 'a,b\n' }] },
+    }));
+    const out = await knowledgeService.getArtifact(100, 't1.csv');
+    expect(out.mime).toBe('text/csv');
+    expect(out.content).toBe('a,b\n');
+  });
+  it('404s an unknown artifact', async () => {
+    repo.findDocumentById.mockResolvedValue(doc());
+    await expect(knowledgeService.getArtifact(100, 'nope.png')).rejects.toMatchObject({ kind: 'resource_not_found' });
+  });
+});
+
+describe('export / import (P1-04)', () => {
+  it('exports a KB with its folders and documents', async () => {
+    repo.findKbById.mockResolvedValue(kb());
+    repo.listFolders.mockResolvedValue([folder()]);
+    repo.listDocuments.mockResolvedValue({ items: [doc()], total: 1 });
+    const out = await knowledgeService.exportKb(1, 'json');
+    expect(out.format).toBe('json');
+    expect(out.count).toBe(1);
+    expect((out.data as any).kb.id).toBe(1);
+    expect((out.data as any).folders).toHaveLength(1);
+  });
+  it('404s exporting a missing KB', async () => {
+    repo.findKbById.mockResolvedValue(undefined);
+    await expect(knowledgeService.exportKb(999, 'json')).rejects.toMatchObject({ kind: 'resource_not_found' });
+  });
+  it('imports documents into a KB', async () => {
+    repo.findKbById.mockResolvedValue(kb());
+    repo.createSource.mockResolvedValue(source());
+    repo.createDocument.mockImplementation(async (i: any) => doc({ id: i.kbId * 100 }));
+    repo.createRevision.mockResolvedValue(rev());
+    const out = await knowledgeService.importKb(1, [{ title: 'A' }, { title: 'B' }]);
+    expect(out.imported).toBe(2);
+    expect(out.document_ids).toHaveLength(2);
+    expect(repo.createRevision).toHaveBeenCalledTimes(2);
+  });
+  it('rejects an empty import batch', async () => {
+    repo.findKbById.mockResolvedValue(kb());
+    await expect(knowledgeService.importKb(1, [])).rejects.toMatchObject({ kind: 'validation_failed' });
+  });
+  it('rejects a document with no title', async () => {
+    repo.findKbById.mockResolvedValue(kb());
+    await expect(knowledgeService.importKb(1, [{ title: '  ' }])).rejects.toMatchObject({ kind: 'validation_failed' });
   });
 });

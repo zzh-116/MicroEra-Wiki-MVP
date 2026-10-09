@@ -297,6 +297,85 @@ export class KnowledgeService {
     return source;
   }
 
+  // ── Preview / artifacts / export / import (P1-04) ──────────────────────
+  // The parser pipeline (P2) is not wired yet, so these operate on the parsed
+  // `content` already stored on each document and on `metadata.artifacts`. They
+  // are honest over today's data model and become richer once binary blobs land.
+
+  async previewDocument(docId: number): Promise<{ doc_id: number; title: string; format: string; preview: string }> {
+    const doc = await this.viewDocument(docId);
+    return { doc_id: doc.id, title: doc.title, format: 'markdown', preview: doc.content ?? '' };
+  }
+
+  async downloadDocument(docId: number): Promise<{ doc_id: number; file_name: string; mime: string; size: number; content: string }> {
+    const doc = await this.viewDocument(docId);
+    const content = doc.content ?? '';
+    const fileName = doc.file_name || `${slugify(doc.title)}.md`;
+    return { doc_id: doc.id, file_name: fileName, mime: 'text/markdown', size: Buffer.byteLength(content, 'utf8'), content };
+  }
+
+  async listArtifacts(docId: number): Promise<{ doc_id: number; items: Array<{ name: string; type: string; size: number }> }> {
+    const doc = await this.viewDocument(docId);
+    const items: Array<{ name: string; type: string; size: number }> = [];
+    // The parsed markdown is always present as an artifact.
+    items.push({ name: 'content.md', type: 'markdown', size: Buffer.byteLength(doc.content ?? '', 'utf8') });
+    const extra = Array.isArray(doc.metadata?.artifacts) ? doc.metadata.artifacts : [];
+    for (const a of extra) {
+      items.push({ name: String(a.name), type: String(a.type ?? 'binary'), size: Number(a.size ?? 0) });
+    }
+    return { doc_id: doc.id, items };
+  }
+
+  async getArtifact(docId: number, name: string): Promise<{ doc_id: number; name: string; mime: string; size: number; content: string }> {
+    const doc = await this.viewDocument(docId);
+    if (name === 'content.md') {
+      const content = doc.content ?? '';
+      return { doc_id: doc.id, name, mime: 'text/markdown', size: Buffer.byteLength(content, 'utf8'), content };
+    }
+    const extra = (Array.isArray(doc.metadata?.artifacts) ? doc.metadata.artifacts : []).find(
+      (a: any) => String(a.name) === name,
+    );
+    if (extra && typeof extra.content === 'string') {
+      return { doc_id: doc.id, name, mime: String(extra.mime ?? 'application/octet-stream'), size: Buffer.byteLength(extra.content, 'utf8'), content: extra.content };
+    }
+    throw new ServiceError('resource_not_found', `artifact "${name}" not found for document ${docId}`);
+  }
+
+  async exportKb(kbId: number, format: string): Promise<{ kb_id: number; format: string; exported_at: string; count: number; data: unknown }> {
+    const kb = await knowledgeRepository.findKbById(kbId);
+    if (!kb) throw new ServiceError('resource_not_found', `kb ${kbId} not found`);
+    const folders = await knowledgeRepository.listFolders(kbId);
+    const { items: documents } = await knowledgeRepository.listDocuments({ kbId, page: 1, pageSize: 1000 });
+    return {
+      kb_id: kbId,
+      format: format === 'zip' ? 'zip' : 'json',
+      exported_at: new Date().toISOString(),
+      count: documents.length,
+      data: { kb, folders, documents },
+    };
+  }
+
+  async importKb(kbId: number, documents: Array<{ title: string; content?: string; summary?: string; visibility?: 'public' | 'internal' }>): Promise<{ kb_id: number; imported: number; document_ids: number[] }> {
+    const kb = await knowledgeRepository.findKbById(kbId);
+    if (!kb) throw new ServiceError('resource_not_found', `kb ${kbId} not found`);
+    if (!Array.isArray(documents) || documents.length === 0) {
+      throw new ServiceError('validation_failed', 'documents must be a non-empty array');
+    }
+    const ids: number[] = [];
+    for (const d of documents) {
+      if (!d.title?.trim()) throw new ServiceError('validation_failed', 'each imported document needs a title');
+      const { document } = await this.createDocumentWithRevision({
+        kbId,
+        title: d.title.trim(),
+        content: d.content ?? '',
+        summary: d.summary,
+        visibility: d.visibility,
+      });
+      ids.push(document.id);
+    }
+    return { kb_id: kbId, imported: ids.length, document_ids: ids };
+  }
+
   // ── Internal (used by backfill execution and P2 upload) ────────────────
   async createDocumentWithRevision(input: {
     kbId: number;

@@ -204,3 +204,47 @@ knowledgeV2Router.get('/doc/source_view', (req, res) =>
     if (!id) throw new ServiceError('validation_failed', 'source_id is required');
     return knowledgeService.viewSource(id);
   }));
+
+// ── Preview / artifacts / export / import (P1-04) ──────────────────────────
+knowledgeV2Router.post('/doc/preview', (req, res) =>
+  handle('doc.preview', req, res, async () => {
+    const id = toInt(inputOf(req).doc_id);
+    if (!id) throw new ServiceError('validation_failed', 'doc_id is required');
+    return knowledgeService.previewDocument(id);
+  }));
+
+knowledgeV2Router.get('/doc/download', (req, res) =>
+  handle('doc.download', req, res, async () => {
+    const id = toInt(req.query.doc_id);
+    if (!id) throw new ServiceError('validation_failed', 'doc_id is required');
+    return knowledgeService.downloadDocument(id);
+  }));
+
+knowledgeV2Router.get('/doc/artifacts', (req, res) =>
+  handle('doc.artifacts', req, res, async () => {
+    const id = toInt(req.query.doc_id);
+    if (!id) throw new ServiceError('validation_failed', 'doc_id is required');
+    return knowledgeService.listArtifacts(id);
+  }));
+
+knowledgeV2Router.get('/doc/artifact_download', (req, res) =>
+  handle('doc.artifact_download', req, res, async () => {
+    const id = toInt(req.query.doc_id);
+    const name = req.query.name as string | undefined;
+    if (!id || !name) throw new ServiceError('validation_failed', 'doc_id and name are required');
+    return knowledgeService.getArtifact(id, name);
+  }));
+
+knowledgeV2Router.post('/kb/export', (req, res) =>
+  handle('kb.export', req, res, async () => {
+    const id = toInt(inputOf(req).kb_id);
+    if (!id) throw new ServiceError('validation_failed', 'kb_id is required');
+    return knowledgeService.exportKb(id, (inputOf(req).format as string) ?? 'json');
+  }));
+
+knowledgeV2Router.post('/kb/import', (req, res) =>
+  handle('kb.import', req, res, async () => {
+    const id = toInt(inputOf(req).kb_id);
+    if (!id) throw new ServiceError('validation_failed', 'kb_id is required');
+    return knowledgeService.importKb(id, req.body?.documents);
+  }));
