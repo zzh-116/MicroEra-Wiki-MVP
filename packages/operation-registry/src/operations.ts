@@ -1000,6 +1000,42 @@ export function registerOperations(api: ApiClient): void {
     },
   });
 
+  // ── P3-01: search.vector (global scored TopK + DB-level ACL) ─────────────
+  operationRegistry.register({
+    id: 'search.vector',
+    version: '1',
+    title: 'Vector search',
+    description: 'Semantic TopK over the knowledge pipeline, ranked globally by cosine similarity with visibility ACL enforced in SQL.',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        kb_id: { type: 'integer' },
+        folder_id: { type: 'integer' },
+        top_k: { type: 'integer' },
+        is_internal: { type: 'boolean' },
+      },
+      required: ['query'],
+    },
+    outputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        items: { type: 'array', items: { type: 'object' } },
+        total: { type: 'integer' },
+      },
+    },
+    http: { method: 'POST', path: '/api/v2/ops/search/vector' },
+    cli: { command: 'microera search vector', examples: ['microera search vector "MOF pore aperture" --kb-id 1 --top-k 5'] },
+    mcp: { toolName: 'search_vector', readOnlyHint: true, scopes: ['search:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/search/vector', input, ctx);
+    },
+  });
+
   // ── P4: chat (wired to existing /api/ai/chat) ───────────────────────────
   operationRegistry.register({
     id: 'chat.ask',
