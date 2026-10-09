@@ -820,6 +820,35 @@ export const datasourceSyncLogs = pgTable(
   ],
 );
 
+// ---- Models (P8 M01/M03) ----
+// A registry of LLM / embedding / rerank models a workspace can bind to. Models
+// are soft-deleted; exactly one model per `kind` is marked default (enforced by
+// model.set_default, not a DB constraint). `config` holds provider-specific
+// overrides (temperature, top_k, …) without storing credentials.
+export const models = pgTable(
+  'models',
+  {
+    id: serial('id').primaryKey(),
+    name: text('name').notNull(),
+    kind: text('kind', { enum: ['llm', 'embedding', 'rerank'] }).notNull(),
+    provider: text('provider').notNull().default('ollama'),
+    modelName: text('model_name').notNull(),
+    baseUrl: text('base_url'),
+    config: jsonb('config').notNull().default({}),
+    isDefault: boolean('is_default').notNull().default(false),
+    status: text('status', { enum: ['active', 'disabled'] }).notNull().default('active'),
+    createdBy: integer('created_by').references(() => users.id, { onDelete: 'set null' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
+  },
+  (table) => [
+    index('models_kind_idx').on(table.kind),
+    index('models_provider_idx').on(table.provider),
+    index('models_deleted_at_idx').on(table.deletedAt),
+  ],
+);
+
 // ---- Relations ----
 export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
   user: one(users, { fields: [bookmarks.userId], references: [users.id] }),

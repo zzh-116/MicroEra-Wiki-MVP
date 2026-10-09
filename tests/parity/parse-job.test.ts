@@ -96,7 +96,7 @@ describe('P2-04 durable queue — worker primitives', () => {
     mocks.update.mockResolvedValue(job({ status: 'running', lease_owner: 'w1' }));
     const result = await parseJobService.heartbeat('parse_x', 'w1');
     expect(result.status).toBe('running');
-    expect(mocks.update).toHaveBeenCalledWith('parse_x', expect.objectContaining({ lease_expires_at: expect.any(Date) }));
+    expect(mocks.update).toHaveBeenCalledWith('parse_x', expect.objectContaining({ leaseExpiresAt: expect.any(Date) }));
   });
 
   it('heartbeat rejects a job not leased by the owner', async () => {

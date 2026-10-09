@@ -2803,6 +2803,291 @@ export function registerOperations(api: ApiClient): void {
     },
   });
 
+  // ── P8: model registry (M01/M03) ───────────────────────────────────────
+  const modelSchema = {
+    type: 'object',
+    properties: {
+      id: { type: 'integer' },
+      name: { type: 'string' },
+      kind: { type: 'string', enum: ['llm', 'embedding', 'rerank'] },
+      provider: { type: 'string' },
+      model_name: { type: 'string' },
+      base_url: { type: 'string' },
+      config: { type: 'object' },
+      is_default: { type: 'boolean' },
+      status: { type: 'string' },
+      created_at: { type: 'string' },
+      updated_at: { type: 'string' },
+    },
+    required: ['id', 'name', 'kind', 'model_name'],
+  };
+
+  operationRegistry.register({
+    id: 'model.list',
+    version: '1',
+    title: 'List models',
+    description: 'List the registered LLM/embedding/rerank models, optionally filtered by kind.',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { kind: { type: 'string', enum: ['llm', 'embedding', 'rerank'] }, page: { type: 'integer' }, page_size: { type: 'integer' } } },
+    outputSchema: { type: 'object', properties: { items: { type: 'array', items: modelSchema }, total: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/model/list' },
+    cli: { command: 'microera model list', examples: ['microera model list', 'microera model list --kind llm'] },
+    mcp: { toolName: 'model_list', readOnlyHint: true, scopes: ['model:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/model/list', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'model.view',
+    version: '1',
+    title: 'View a model',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { model_id: { type: 'integer' } }, required: ['model_id'] },
+    outputSchema: modelSchema,
+    http: { method: 'GET', path: '/api/v2/ops/model/view' },
+    cli: { command: 'microera model view', examples: ['microera model view --model-id 1'] },
+    mcp: { toolName: 'model_view', readOnlyHint: true, scopes: ['model:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/model/view', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'model.create',
+    version: '1',
+    title: 'Create a model',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        kind: { type: 'string', enum: ['llm', 'embedding', 'rerank'] },
+        provider: { type: 'string' },
+        model_name: { type: 'string' },
+        base_url: { type: 'string' },
+        config: { type: 'object' },
+        is_default: { type: 'boolean' },
+      },
+      required: ['name', 'kind', 'model_name'],
+    },
+    outputSchema: modelSchema,
+    http: { method: 'POST', path: '/api/v2/ops/model/create' },
+    cli: { command: 'microera model create', examples: ['microera model create --name "Local LLM" --kind llm --model-name qwen2.5:7b'] },
+    mcp: { toolName: 'model_create', readOnlyHint: false, scopes: ['model:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/model/create', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'model.update',
+    version: '1',
+    title: 'Update a model',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: {
+      type: 'object',
+      properties: { model_id: { type: 'integer' }, name: { type: 'string' }, provider: { type: 'string' }, model_name: { type: 'string' }, base_url: { type: 'string' }, config: { type: 'object' }, status: { type: 'string' } },
+      required: ['model_id'],
+    },
+    outputSchema: modelSchema,
+    http: { method: 'PATCH', path: '/api/v2/ops/model/update' },
+    cli: { command: 'microera model update', examples: ['microera model update --model-id 1 --name "Renamed"'] },
+    mcp: { toolName: 'model_update', readOnlyHint: false, scopes: ['model:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'PATCH', '/api/v2/ops/model/update', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'model.delete',
+    version: '1',
+    title: 'Delete a model',
+    kind: 'mutation',
+    risk: 'destructive',
+    inputSchema: { type: 'object', properties: { model_id: { type: 'integer' } }, required: ['model_id'] },
+    outputSchema: { type: 'object', properties: { deleted: { type: 'boolean' }, id: { type: 'integer' } } },
+    http: { method: 'DELETE', path: '/api/v2/ops/model/delete' },
+    cli: { command: 'microera model delete', examples: ['microera model delete --model-id 1'] },
+    mcp: { toolName: 'model_delete', readOnlyHint: false, scopes: ['model:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'DELETE', '/api/v2/ops/model/delete', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'model.test',
+    version: '1',
+    title: 'Test a model',
+    description: 'Probe a model provider and report reachability without failing the request.',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { model_id: { type: 'integer' } }, required: ['model_id'] },
+    outputSchema: { type: 'object', properties: { model_id: { type: 'integer' }, reachable: { type: 'boolean' }, latency_ms: { type: 'number' }, detail: { type: 'string' } } },
+    http: { method: 'POST', path: '/api/v2/ops/model/test' },
+    cli: { command: 'microera model test', examples: ['microera model test --model-id 1'] },
+    mcp: { toolName: 'model_test', readOnlyHint: true, scopes: ['model:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/model/test', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'model.set_default',
+    version: '1',
+    title: 'Set the default model for a kind',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { model_id: { type: 'integer' } }, required: ['model_id'] },
+    outputSchema: modelSchema,
+    http: { method: 'POST', path: '/api/v2/ops/model/set_default' },
+    cli: { command: 'microera model set-default', examples: ['microera model set-default --model-id 1'] },
+    mcp: { toolName: 'model_set_default', readOnlyHint: false, scopes: ['model:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/model/set_default', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'model.rerank_list',
+    version: '1',
+    title: 'List rerank-capable models',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: {} },
+    outputSchema: { type: 'object', properties: { providers: { type: 'array', items: { type: 'object' } }, models: { type: 'array', items: { type: 'object' } }, total: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/model/rerank_list' },
+    cli: { command: 'microera model rerank-list', examples: ['microera model rerank-list'] },
+    mcp: { toolName: 'model_rerank_list', readOnlyHint: true, scopes: ['model:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/model/rerank_list', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'model.rerank_test',
+    version: '1',
+    title: 'Test reranking',
+    description: 'Score candidate documents against a query with the rerank adapter.',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: {
+      type: 'object',
+      properties: { query: { type: 'string' }, documents: { type: 'array', items: { type: 'object' } }, model_id: { type: 'integer' }, top_k: { type: 'integer' } },
+      required: ['query', 'documents'],
+    },
+    outputSchema: { type: 'object', properties: { query: { type: 'string' }, provider: { type: 'string' }, fallback: { type: 'boolean' }, items: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'POST', path: '/api/v2/ops/model/rerank_test' },
+    cli: { command: 'microera model rerank-test', examples: ['microera model rerank-test --query "q" --documents \'[{"text":"a"}]\''] },
+    mcp: { toolName: 'model_rerank_test', readOnlyHint: true, scopes: ['model:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/model/rerank_test', input, ctx);
+    },
+  });
+
+  // ── P8: generic job dashboard (O01) over the durable queue ─────────────
+  operationRegistry.register({
+    id: 'job.wait',
+    version: '1',
+    title: 'Wait for a job',
+    description: 'Poll a durable job until it reaches a terminal state or times out.',
+    kind: 'job',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { job_id: { type: 'string' }, timeout_ms: { type: 'integer' }, interval_ms: { type: 'integer' } }, required: ['job_id'] },
+    outputSchema: { type: 'object', properties: { job_id: { type: 'string' }, status: { type: 'string' }, finished: { type: 'boolean' }, timed_out: { type: 'boolean' } } },
+    http: { method: 'GET', path: '/api/v2/ops/job/wait' },
+    cli: { command: 'microera job wait', examples: ['microera job wait --job-id parse_x'] },
+    mcp: { toolName: 'job_wait', readOnlyHint: true, scopes: ['job:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/job/wait', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'job.cancel',
+    version: '1',
+    title: 'Cancel a job',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { job_id: { type: 'string' } }, required: ['job_id'] },
+    outputSchema: { type: 'object', properties: { job_id: { type: 'string' }, status: { type: 'string' } } },
+    http: { method: 'POST', path: '/api/v2/ops/job/cancel' },
+    cli: { command: 'microera job cancel', examples: ['microera job cancel --job-id parse_x'] },
+    mcp: { toolName: 'job_cancel', readOnlyHint: false, scopes: ['job:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/job/cancel', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'job.retry',
+    version: '1',
+    title: 'Retry a job',
+    description: 'Requeue a failed or cancelled job back to pending.',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { job_id: { type: 'string' } }, required: ['job_id'] },
+    outputSchema: { type: 'object', properties: { job_id: { type: 'string' }, status: { type: 'string' } } },
+    http: { method: 'POST', path: '/api/v2/ops/job/retry' },
+    cli: { command: 'microera job retry', examples: ['microera job retry --job-id parse_x'] },
+    mcp: { toolName: 'job_retry', readOnlyHint: false, scopes: ['job:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/job/retry', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'job.events',
+    version: '1',
+    title: 'List job events',
+    description: 'Return a job lifecycle timeline (enqueued/started/finished) derived from the job row.',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { job_id: { type: 'string' } }, required: ['job_id'] },
+    outputSchema: { type: 'object', properties: { job_id: { type: 'string' }, items: { type: 'array', items: { type: 'object' } }, total: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/job/events' },
+    cli: { command: 'microera job events', examples: ['microera job events --job-id parse_x'] },
+    mcp: { toolName: 'job_events', readOnlyHint: true, scopes: ['job:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/job/events', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'job.artifacts',
+    version: '1',
+    title: 'List job artifacts',
+    description: 'Return the real outputs a job produced (e.g. its parsed document).',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { job_id: { type: 'string' } }, required: ['job_id'] },
+    outputSchema: { type: 'object', properties: { job_id: { type: 'string' }, items: { type: 'array', items: { type: 'object' } }, total: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/job/artifacts' },
+    cli: { command: 'microera job artifacts', examples: ['microera job artifacts --job-id parse_x'] },
+    mcp: { toolName: 'job_artifacts', readOnlyHint: true, scopes: ['job:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/job/artifacts', input, ctx);
+    },
+  });
+
   // ── P8: jobs (wired to existing /api/pipeline/jobs) ─────────────────────
   operationRegistry.register({
     id: 'job.view',

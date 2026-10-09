@@ -86,7 +86,7 @@ export class ParseJobService {
     const updated = await parseJobRepository.update(jobId, {
       status: 'pending',
       error: null,
-      error_code: null,
+      errorCode: null,
       stage: null,
       progress: 0,
     });
@@ -102,7 +102,7 @@ export class ParseJobService {
     }
     const updated = await parseJobRepository.update(jobId, {
       status: 'cancelled',
-      finished_at: new Date(),
+      finishedAt: new Date(),
     });
     if (updated && job.status === 'running') await parseJobRepository.releaseLease(jobId);
     return toStatusView(updated!);
@@ -128,7 +128,7 @@ export class ParseJobService {
       throw new ServiceError('conflict', `job ${jobId} is not leased by ${owner}`);
     }
     const updated = await parseJobRepository.update(jobId, {
-      lease_expires_at: new Date(Date.now() + leaseSeconds * 1000),
+      leaseExpiresAt: new Date(Date.now() + leaseSeconds * 1000),
     });
     return toStatusView(updated!);
   }
@@ -182,8 +182,8 @@ export class ParseJobService {
         status: 'failed',
         attempt,
         error,
-        error_code: errorCode ?? null,
-        finished_at: new Date(),
+        errorCode: errorCode ?? null,
+        finishedAt: new Date(),
       });
       await parseJobRepository.releaseLease(jobId);
       return { job_id: jobId, status: updated!.status, attempt, deadlettered: true };
@@ -192,7 +192,7 @@ export class ParseJobService {
       status: 'pending',
       attempt,
       error,
-      error_code: errorCode ?? null,
+      errorCode: errorCode ?? null,
     });
     await parseJobRepository.releaseLease(jobId);
     return { job_id: jobId, status: updated!.status, attempt, deadlettered: false };
@@ -220,7 +220,7 @@ export class ParseJobService {
         status: 'pending',
         attempt: 0,
         error: null,
-        error_code: null,
+        errorCode: null,
         stage: null,
         progress: 0,
       });

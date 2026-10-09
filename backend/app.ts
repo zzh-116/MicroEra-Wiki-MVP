@@ -54,6 +54,8 @@ export async function createApp(options: AppOptions = {}) {
   const { wikiV2Router } = await import('../server/routes/wiki-v2.js');
   const { agentV2Router } = await import('../server/routes/agent-v2.js');
   const { datasourceV2Router } = await import('../server/routes/datasource-v2.js');
+  const { modelV2Router } = await import('../server/routes/model-v2.js');
+  const { jobV2Router } = await import('../server/routes/job-v2.js');
 
   app.use('/api/auth', authRouter);
   app.use('/api/categories', categoriesRouter);
@@ -76,6 +78,8 @@ export async function createApp(options: AppOptions = {}) {
   app.use('/api/v2/ops', wikiV2Router);
   app.use('/api/v2/ops', agentV2Router);
   app.use('/api/v2/ops', datasourceV2Router);
+  app.use('/api/v2/ops', modelV2Router);
+  app.use('/api/v2/ops', jobV2Router);
 
   for (const { path: p, router } of extraRoutes) app.use(p, router);
 

@@ -32,6 +32,7 @@
     "smoke:wiki": "tsx scripts/smoke-wiki.ts",
     "smoke:agent": "tsx scripts/smoke-agent.ts",
     "smoke:datasource": "tsx scripts/smoke-datasource.ts",
+    "smoke:model": "tsx scripts/smoke-model.ts",
     "cli": "tsx cli/src/main.ts",
     "mcp:stdio": "tsx cli/src/main.ts mcp serve --transport stdio",
     "mcp:http": "tsx cli/src/main.ts mcp serve --transport http"

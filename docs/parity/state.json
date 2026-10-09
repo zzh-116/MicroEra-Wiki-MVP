@@ -3,12 +3,12 @@
   "reference_sha": "602d0c388bf17d894f467fe0cd65d1d62c73d303",
   "baseline_target_sha": "4bd5bf417df090351b91de205e6b34a457eb47a2",
   "local_repo_sha": "01343a2",
-  "current_phase": "P8",
+  "current_phase": "P9",
   "accepted_points": 0,
   "required_ops_total": 162,
-  "fully_verified_ops": 137,
+  "fully_verified_ops": 151,
   "last_verified_commit": "ddd6bd6",
-  "notes": "P0–P7 complete. P7 datasource (D01/D02/D04, 14 ops) done: built-in 'local' connector (backend/connectors/local/index.ts, deterministic sample docs, self-registering), datasources + datasource_sync_logs tables (0017_add_datasource.sql), datasource.repository.ts + datasource.service.ts (types/list/create/view/connect/preview + sync/changes/cursor/logs + schedule/pause/resume/delete), datasource-v2.ts router (14 routes), 14 datasource.* ops registered (CLI+MCP parity). sync drives the real import pipeline with idempotency + cursor advance. 345 tests green, full-parity 137 (84.6%), missing 25. Live smoke 31+15+26+25+31+18. P8 (model M01/M03 + job O01, 14 ops) next — remaining 25 required ops are model.* (9) + job.* (5) + api.* (3) + mcp.* (4) + cli.* (4).",
+  "notes": "P0–P8 complete. P8 model registry (M01/M03, 9 ops) + generic job dashboard (O01, 5 ops) done: models table (0018_add_model_registry.sql), model.repository.ts + model.service.ts (list/view/create/update/delete/test/set_default + rerank_list/rerank_test, offline-safe test/rerank probes), model-v2.ts router (9 routes), job.service.ts (wait/cancel/retry/events/artifacts over the durable parse_jobs queue) + job-v2.ts router (5 routes). Fixed a latent snake_case/camelCase bug in parse-job.repository JobUpdate + parse-job.service callers so job transitions persist correctly. 369 tests green, full-parity 151 (93.2%), missing 11 (all P9: api.* 3 + mcp.* 4 + cli.* 4). Live smoke model/job 20/20. Remaining 11 required ops are P9 (api.operations/schema/version, mcp.tools/resources/prompts/health, cli.commands/version/doctor/schema).",
   "open_tasks": [
     { "id": "P0-01", "status": "done", "depends_on": [] },
     { "id": "P0-02", "status": "done", "depends_on": ["P0-01"] },
@@ -52,12 +52,12 @@
     { "id": "P7-01", "status": "done", "depends_on": ["P6-06"] },
     { "id": "P7-02", "status": "done", "depends_on": ["P7-01"] },
     { "id": "P7-03", "status": "done", "depends_on": ["P7-01"] },
-    { "id": "P8-01", "status": "in_progress", "depends_on": ["P7-03"] },
-    { "id": "P8-02", "status": "todo", "depends_on": ["P8-01"] },
-    { "id": "P8-03", "status": "todo", "depends_on": ["P8-01"] },
-    { "id": "P8-04", "status": "todo", "depends_on": ["P8-01"] },
-    { "id": "P8-05", "status": "todo", "depends_on": ["P8-01"] },
-    { "id": "P9-01", "status": "todo", "depends_on": ["P8-05"] },
+    { "id": "P8-01", "status": "done", "depends_on": ["P7-03"] },
+    { "id": "P8-02", "status": "done", "depends_on": ["P8-01"] },
+    { "id": "P8-03", "status": "done", "depends_on": ["P8-01"] },
+    { "id": "P8-04", "status": "done", "depends_on": ["P8-01"] },
+    { "id": "P8-05", "status": "done", "depends_on": ["P8-01"] },
+    { "id": "P9-01", "status": "in_progress", "depends_on": ["P8-05"] },
     { "id": "P9-02", "status": "todo", "depends_on": ["P9-01"] },
     { "id": "P9-03", "status": "todo", "depends_on": ["P9-01"] },
     { "id": "P9-04", "status": "todo", "depends_on": ["P9-01"] },
@@ -71,5 +71,5 @@
     { "id": "P10-06", "status": "todo", "depends_on": ["P10-01"] }
   ],
   "blockers": [],
-  "next_action": "P8-01: model registry (M01/M03) — model.list/view/create/update/delete/test/set_default/rerank_list/rerank_test (9 ops) + job O01 (wait/cancel/retry/events/artifacts, 5 ops)."
+  "next_action": "P9-01/P9-02/P9-03/P9-04: the final 11 required ops — api.operations/schema/version (X01), mcp.tools/resources/prompts/health (X02), cli.commands/version/doctor/schema (X03)."
 }

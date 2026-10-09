@@ -54,13 +54,13 @@ export interface JobUpdate {
   attempt?: number;
   stage?: string | null;
   progress?: number;
-  lease_owner?: string | null;
-  lease_expires_at?: Date | null;
+  leaseOwner?: string | null;
+  leaseExpiresAt?: Date | null;
   checkpoint?: Record<string, unknown>;
   error?: string | null;
-  error_code?: string | null;
-  started_at?: Date | null;
-  finished_at?: Date | null;
+  errorCode?: string | null;
+  startedAt?: Date | null;
+  finishedAt?: Date | null;
 }
 
 function jobToRow(r: typeof parseJobs.$inferSelect): ParseJobRow {
