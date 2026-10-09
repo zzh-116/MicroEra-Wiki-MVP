@@ -1,26 +1,16 @@
 {
-  "generatedAt": "2026-10-09T09:59:49.523Z",
+  "generatedAt": "2026-10-09T10:19:39.738Z",
   "planVersion": "2026-10-09-v1",
   "totalRequiredOps": 162,
-  "registeredOps": 9,
-  "withHandler": 5,
-  "withCli": 8,
-  "withMcp": 8,
-  "fullParityOps": 5,
-  "coveragePercent": 3.1,
+  "registeredOps": 29,
+  "withHandler": 27,
+  "withCli": 28,
+  "withMcp": 28,
+  "fullParityOps": 27,
+  "coveragePercent": 16.7,
   "fullParityIds": [
-    "search.hybrid",
-    "chat.ask",
-    "chat.references",
-    "job.list",
-    "job.view"
-  ],
-  "contractOnlyIds": [
     "kb.create",
     "kb.list",
-    "doc.upload"
-  ],
-  "missingIds": [
     "kb.view",
     "kb.update",
     "kb.delete",
@@ -37,12 +27,22 @@
     "doc.restore",
     "doc.move",
     "doc.batch",
-    "kb.export",
-    "kb.import",
     "doc.revisions",
     "doc.revision_view",
     "doc.revision_restore",
     "doc.source_view",
+    "search.hybrid",
+    "chat.ask",
+    "chat.references",
+    "job.list",
+    "job.view"
+  ],
+  "contractOnlyIds": [
+    "doc.upload"
+  ],
+  "missingIds": [
+    "kb.export",
+    "kb.import",
     "doc.preview",
     "doc.download",
     "doc.artifacts",

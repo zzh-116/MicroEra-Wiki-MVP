@@ -47,6 +47,7 @@ export async function createApp(options: AppOptions = {}) {
   const { connectorsRouter } = await import('../server/routes/connectors.js');
   const { adminRouter } = await import('../server/routes/admin.js');
   const { bookmarksRouter } = await import('../server/routes/bookmarks.js');
+  const { knowledgeV2Router } = await import('../server/routes/knowledge-v2.js');
 
   app.use('/api/auth', authRouter);
   app.use('/api/categories', categoriesRouter);
@@ -62,6 +63,7 @@ export async function createApp(options: AppOptions = {}) {
   app.use('/api/connectors', connectorsRouter);
   app.use('/api/admin', adminRouter);
   app.use('/api/bookmarks', bookmarksRouter);
+  app.use('/api/v2/ops', knowledgeV2Router);
 
   for (const { path: p, router } of extraRoutes) app.use(p, router);
 

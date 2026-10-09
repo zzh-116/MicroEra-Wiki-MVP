@@ -5,14 +5,11 @@
 // new records WITHOUT mutating anything: the dry run reads the legacy table and
 // returns a plan, so the migration can be reviewed and its checksums verified
 // before any write (which happens in a later phase).
-import { createHash } from 'node:crypto';
 import { entryRepository } from '../repositories/entry.repository.js';
 import type { Entry } from '../types.js';
+import { sha256 } from '../utils/hash.js';
 
-/** sha256 of text content (utf-8) — the integrity anchor for revisions (K04). */
-export function sha256(text: string): string {
-  return createHash('sha256').update(text, 'utf8').digest('hex');
-}
+export { sha256 };
 
 /** One entry fully mapped to the three new records it would produce. */
 export interface BackfillDocumentPlan {

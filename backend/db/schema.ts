@@ -298,6 +298,28 @@ export const sources = pgTable(
   ],
 );
 
+// ---- Folders ----
+// A KB is organized as a folder tree (K02). Each document belongs to at most
+// one folder; moving a folder re-parents it without touching the documents.
+export const folders = pgTable(
+  'folders',
+  {
+    id: serial('id').primaryKey(),
+    kbId: integer('kb_id')
+      .notNull()
+      .references(() => knowledgeBases.id, { onDelete: 'cascade' }),
+    parentId: integer('parent_id').references(() => folders.id, { onDelete: 'set null' }),
+    name: text('name').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
+  },
+  (table) => [
+    index('folders_kb_idx').on(table.kbId),
+    index('folders_parent_idx').on(table.parentId),
+  ],
+);
+
 // ---- Documents ----
 // A document is a KB-scoped knowledge item with its own visibility and parse
 // state. `entry_id` is an optional link to the legacy `entries` row this
@@ -311,6 +333,7 @@ export const documents = pgTable(
       .references(() => knowledgeBases.id, { onDelete: 'cascade' }),
     sourceId: integer('source_id').references(() => sources.id, { onDelete: 'set null' }),
     entryId: integer('entry_id').references(() => entries.id, { onDelete: 'set null' }),
+    folderId: integer('folder_id').references(() => folders.id, { onDelete: 'set null' }),
     title: text('title').notNull(),
     summary: text('summary').notNull().default(''),
     content: text('content').notNull().default(''),
@@ -332,6 +355,7 @@ export const documents = pgTable(
     index('documents_kb_idx').on(table.kbId),
     index('documents_source_idx').on(table.sourceId),
     index('documents_entry_idx').on(table.entryId),
+    index('documents_folder_idx').on(table.folderId),
     index('documents_deleted_at_idx').on(table.deletedAt),
   ],
 );

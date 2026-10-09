@@ -25,6 +25,7 @@
     "parity:check": "tsx scripts/parity-check.ts",
     "kb:backfill": "tsx scripts/kb-backfill.ts",
     "smoke": "tsx scripts/smoke.ts",
+    "smoke:knowledge": "tsx scripts/smoke-knowledge.ts",
     "cli": "tsx cli/src/main.ts",
     "mcp:stdio": "tsx cli/src/main.ts mcp serve --transport stdio",
     "mcp:http": "tsx cli/src/main.ts mcp serve --transport http"
