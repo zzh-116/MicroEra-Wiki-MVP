@@ -7,7 +7,7 @@
   "accepted_points": 0,
   "required_ops_total": 162,
   "fully_verified_ops": 162,
-  "last_verified_commit": "5af85fb",
+  "last_verified_commit": "2b1d340",
   "notes": "P0–P10 complete — full parity 162/162 (100%). P9 added the 11 api/mcp/cli introspection ops; P10 delivered closeout: migration disaster-recovery drill (unknown-schema check + clean-DB from-zero migration + idempotency, 7/7) with a real fix (runMigrations now runs CREATE EXTENSION IF NOT EXISTS vector before migrating), a pg_dump backup, the final coverage report, a performance baseline, and full live E2E smoke (knowledge 32 + search 31 + chat 26 + wiki 25 + agent 31 + model 20 + meta 13 = 178 checks). 382 unit tests green. Known non-blocking limitations: durable parse_jobs queue has no auto-worker (by design); one benign orphan migration ledger entry (0002_layered_context.sql). No blockers against the 162-op contract. Local-only commits — no push, no production DB changes, no fabricated results.",
   "open_tasks": [
     { "id": "P0-01", "status": "done", "depends_on": [] },
