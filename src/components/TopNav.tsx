@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Sparkles, Search, LogIn, LogOut, User, FolderKanban, Network, Layout, Settings, BookOpen, ScrollText } from 'lucide-react';
+import { Sparkles, Search, LogIn, LogOut, User, FolderKanban, Network, Layout, Settings, BookOpen, ScrollText, Database } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function TopNav() {
@@ -114,6 +114,17 @@ export default function TopNav() {
 
             {isLoggedIn && (
               <>
+                <button
+                  onClick={() => navigate('/knowledge')}
+                  className={`px-2 py-1 rounded transition-all font-bold flex items-center space-x-1 ${
+                    isActive('/knowledge')
+                      ? 'bg-white/10 text-accent'
+                      : 'text-gray-200 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  <Database className="w-3.5 h-3.5" />
+                  <span>知识库</span>
+                </button>
                 <button
                   onClick={() => navigate('/templates')}
                   className={`px-2 py-1 rounded transition-all font-bold ${

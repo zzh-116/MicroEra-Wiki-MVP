@@ -7,8 +7,8 @@
   "accepted_points": 0,
   "required_ops_total": 162,
   "fully_verified_ops": 33,
-  "last_verified_commit": "9ec7a97",
-  "notes": "P0 complete; P1 underway. P1-01 schema + migration 0008; P1-02 read-only backfill adapter; P1-03 KB/folder/document/revision CRUD (repo + service + /api/v2/ops router + 22 ops + unit tests + live smoke); P1-04 preview/download/artifacts/export/import (6 more ops: doc.preview, doc.download, doc.artifacts, doc.artifact_download, kb.export, kb.import). All 28 P1 knowledge operations are now registered with handler+cli+mcp+schema. parity:check reports 33/162 full-parity ops; 185 tests passing; live smoke 32 checks passing. accepted_points stays 0: evaluate_delivery.py is the authority.",
+  "last_verified_commit": "1c16a60",
+  "notes": "P0 complete; P1 underway. P1-01 schema+migration 0008; P1-02 read-only backfill adapter; P1-03 KB/folder/document/revision CRUD; P1-04 preview/download/artifacts/export/import; P1-05 knowledge frontend: /knowledge page (KB tree + folder list + document preview/edit) via src/api/knowledgeApi.ts + KnowledgeManagementPage + TopNav link, with legacy routes verified intact (smoke 4/4, entries/auth/search/health unchanged). All 28 P1 knowledge ops registered (33/162 full-parity incl. search/chat/job). 185 tests passing. accepted_points stays 0: evaluate_delivery.py is the authority.",
   "open_tasks": [
     { "id": "P0-01", "status": "done", "depends_on": [] },
     { "id": "P0-02", "status": "done", "depends_on": ["P0-01"] },
@@ -19,9 +19,9 @@
     { "id": "P1-02", "status": "done", "depends_on": ["P1-01"] },
     { "id": "P1-03", "status": "done", "depends_on": ["P1-01"] },
     { "id": "P1-04", "status": "done", "depends_on": ["P1-03"] },
-    { "id": "P1-05", "status": "in_progress", "depends_on": ["P1-03"] },
-    { "id": "P1-06", "status": "todo", "depends_on": ["P1-03"] }
+    { "id": "P1-05", "status": "done", "depends_on": ["P1-03"] },
+    { "id": "P1-06", "status": "in_progress", "depends_on": ["P1-03"] }
   ],
   "blockers": [],
-  "next_action": "P1-05: knowledge frontend (KB/folder/document UI) + preserve the legacy routes without regressions; then P1-06 CLI/MCP parity + contract tests."
+  "next_action": "P1-06: Knowledge CLI+MCP parity — registry-bound verbs exposed through the CLI and MCP tools, plus contract tests; then advance to P2 (multi-format parser)."
 }

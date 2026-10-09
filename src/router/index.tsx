@@ -17,6 +17,7 @@ import AdminImportPage from '../pages/AdminImportPage';
 import AdminContentManagePage from '../pages/AdminContentManagePage';
 import AdminLogsPage from '../pages/AdminLogsPage';
 import LiteratureSearchPage from '../pages/LiteratureSearchPage';
+import KnowledgeManagementPage from '../pages/KnowledgeManagementPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
 export default function AppRoutes() {
@@ -42,6 +43,7 @@ export default function AppRoutes() {
           <Route path="data-items" element={<DataItemPage />} />
           <Route path="templates" element={<TemplateLibraryPage />} />
           <Route path="business-value" element={<BusinessValuePage />} />
+          <Route path="knowledge" element={<KnowledgeManagementPage />} />
           <Route path="admin/import" element={<AdminImportPage />} />
           <Route path="admin/manage" element={<AdminContentManagePage />} />
           <Route path="admin/logs" element={<AdminLogsPage />} />
