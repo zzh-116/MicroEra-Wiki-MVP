@@ -3,12 +3,12 @@
   "reference_sha": "602d0c388bf17d894f467fe0cd65d1d62c73d303",
   "baseline_target_sha": "4bd5bf417df090351b91de205e6b34a457eb47a2",
   "local_repo_sha": "01343a2",
-  "current_phase": "P3",
+  "current_phase": "P4",
   "accepted_points": 0,
   "required_ops_total": 162,
-  "fully_verified_ops": 60,
+  "fully_verified_ops": 62,
   "last_verified_commit": "ddd6bd6",
-  "notes": "P0/P1/P2 complete. P3 in progress. P3-01 vector TopK done (search.vector, DB-level ACL). P3-02 lexical BM25 done (Postgres FTS search.lexical, websearch_to_tsquery normalization). P3-03 hybrid RRF done (fuseReciprocalRank pure RRF + search.hybrid/search.explain). P3-04 rerank adapter done (search.rerank: RerankProvider interface + LlmRerankProvider + timeout + fallback + scoring trace). P3-05 retrieval eval done (eval.dataset_list/dataset_create/run/report/compare: eval_datasets/eval_dataset_items/eval_runs tables via 0013_add_eval.sql; pure recall@k/MRR/nDCG@k metrics; persisted runs + report/compare deltas). 284 tests green, full-parity 60. Live smoke 15 asserts (eval over real lexical retrieval: dataset create → run → report → compare → list). P3-06 search CLI+MCP parity next (search.filtered + search.metadata + wiring).",
+  "notes": "P0/P1/P2/P3 complete. P4 (chat) in progress. P3-01 vector TopK done (search.vector, DB-level ACL). P3-02 lexical BM25 done (Postgres FTS). P3-03 hybrid RRF done (search.hybrid/search.explain). P3-04 rerank adapter done (search.rerank). P3-05 retrieval eval done (eval.*: recall@k/MRR/nDCG@k, persisted runs). P3-06 search filtered+metadata done (search.filtered SQL metadata filters strategy/visibility/document_ids/title_contains/created range + search.metadata filter schema; search.* CLI+MCP parity). 295 tests green, full-parity 62. Live smoke 31 asserts (search) + 15 (eval). P4-01 chat.ask next (grounded Q&A over retrieval, wired to existing /api/ai/chat or a new /api/v2/ops/chat surface).",
   "open_tasks": [
     { "id": "P0-01", "status": "done", "depends_on": [] },
     { "id": "P0-02", "status": "done", "depends_on": ["P0-01"] },
@@ -32,8 +32,14 @@
     { "id": "P3-03", "status": "done", "depends_on": ["P3-01"] },
     { "id": "P3-04", "status": "done", "depends_on": ["P3-01"] },
     { "id": "P3-05", "status": "done", "depends_on": ["P3-01"] },
-    { "id": "P3-06", "status": "in_progress", "depends_on": ["P3-01"] }
+    { "id": "P3-06", "status": "done", "depends_on": ["P3-01"] },
+    { "id": "P4-01", "status": "in_progress", "depends_on": ["P3-06"] },
+    { "id": "P4-02", "status": "todo", "depends_on": ["P4-01"] },
+    { "id": "P4-03", "status": "todo", "depends_on": ["P4-01"] },
+    { "id": "P4-04", "status": "todo", "depends_on": ["P4-03"] },
+    { "id": "P4-05", "status": "todo", "depends_on": ["P4-03"] },
+    { "id": "P4-06", "status": "todo", "depends_on": ["P4-03"] }
   ],
   "blockers": [],
-  "next_action": "P3-06: search CLI+MCP parity — search.filtered (metadata-filtered retrieval) + search.metadata (filter schema) + final wiring of the search.* CLI/MCP surface."
+  "next_action": "P4-01: chat.ask — grounded Q&A: retrieve top chunks for the question, build a grounded prompt with citations, stream/return the answer + citation list over /api/v2/ops/chat/ask."
 }

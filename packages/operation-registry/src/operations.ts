@@ -1147,6 +1147,69 @@ export function registerOperations(api: ApiClient): void {
     },
   });
 
+  // ── P3-06: search.filtered + search.metadata (metadata-filtered retrieval) ─
+  operationRegistry.register({
+    id: 'search.filtered',
+    version: '1',
+    title: 'Filtered retrieval',
+    description: 'Retrieve with metadata filters (strategy, visibility, document ids, title substring, created range) applied in SQL.',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        method: { type: 'string', enum: ['vector', 'lexical', 'hybrid'] },
+        kb_id: { type: 'integer' },
+        folder_id: { type: 'integer' },
+        top_k: { type: 'integer' },
+        is_internal: { type: 'boolean' },
+        filters: { type: 'object' },
+      },
+      required: ['query'],
+    },
+    outputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        method: { type: 'string' },
+        items: { type: 'array', items: { type: 'object' } },
+        total: { type: 'integer' },
+      },
+    },
+    http: { method: 'POST', path: '/api/v2/ops/search/filtered' },
+    cli: { command: 'microera search filtered', examples: ['microera search filtered "MOF" --method lexical --filters \'{"visibility":"public"}\''] },
+    mcp: { toolName: 'search_filtered', readOnlyHint: true, scopes: ['search:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/search/filtered', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'search.metadata',
+    version: '1',
+    title: 'Search filter metadata',
+    description: 'Describe the filterable metadata fields and available retrieval methods for filtered search.',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: {} },
+    outputSchema: {
+      type: 'object',
+      properties: {
+        methods: { type: 'array', items: { type: 'string' } },
+        filterable_fields: { type: 'array', items: { type: 'object' } },
+      },
+    },
+    http: { method: 'GET', path: '/api/v2/ops/search/metadata' },
+    cli: { command: 'microera search metadata', examples: ['microera search metadata'] },
+    mcp: { toolName: 'search_metadata', readOnlyHint: true, scopes: ['search:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/search/metadata', input, ctx);
+    },
+  });
+
   // ── P3-05: eval.* (retrieval evaluation datasets + runs) ─────────────────
   operationRegistry.register({
     id: 'eval.dataset_list',

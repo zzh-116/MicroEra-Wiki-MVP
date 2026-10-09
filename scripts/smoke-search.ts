@@ -126,13 +126,31 @@ async function main() {
   check(typeof rr?.provider === 'string' && typeof rr?.fallback === 'boolean' && typeof rr?.elapsed_ms === 'number', 'search.rerank returns provider/fallback/elapsed_ms');
   check(rr.items.every((x: any) => typeof x.index === 'number' && typeof x.text === 'string' && typeof x.original_score === 'number' && typeof x.rerank_score === 'number'), 'search.rerank returns a scoring trace per item');
 
+  // ── P3-06: metadata-filtered retrieval + filter schema ─────────────────────
+  const meta = await v2('GET', '/api/v2/ops/search/metadata', token);
+  check(Array.isArray(meta?.methods) && meta.methods.includes('hybrid'), 'search.metadata returns retrieval methods');
+  const fieldNames = (meta?.filterable_fields ?? []).map((f: any) => f.name);
+  check(fieldNames.includes('visibility') && fieldNames.includes('document_ids') && fieldNames.includes('strategy'), 'search.metadata returns filterable fields');
+
+  const byVisibility = await v2('POST', '/api/v2/ops/search/filtered', token, { query: QUERY, kb_id: kb.id, top_k: 20, is_internal: true, filters: { visibility: 'public' } });
+  check(Array.isArray(byVisibility?.items) && byVisibility.items.every((x: any) => x.visibility === 'public'), 'search.filtered (visibility=public) excludes internal documents');
+
+  const byDoc = await v2('POST', '/api/v2/ops/search/filtered', token, { query: QUERY, kb_id: kb.id, top_k: 20, is_internal: true, filters: { document_ids: [internal.document_id] } });
+  check(Array.isArray(byDoc?.items) && byDoc.items.length > 0 && byDoc.items.every((x: any) => x.document_id === internal.document_id), 'search.filtered (document_ids) restricts to the named document');
+
+  const byTitle = await v2('POST', '/api/v2/ops/search/filtered', token, { query: QUERY, kb_id: kb.id, top_k: 20, is_internal: true, filters: { title_contains: 'Internal' } });
+  check(Array.isArray(byTitle?.items) && byTitle.items.length > 0 && byTitle.items.every((x: any) => x.title.includes('Internal')), 'search.filtered (title_contains) matches the title substring');
+
+  const byStrategy = await v2('POST', '/api/v2/ops/search/filtered', token, { query: QUERY, kb_id: kb.id, top_k: 20, is_internal: true, filters: { strategy: 'markdown' } });
+  check(Array.isArray(byStrategy?.items) && byStrategy.items.every((x: any) => x.strategy === 'markdown'), 'search.filtered (strategy) filters by chunking strategy');
+
   // Soft-delete the public document → its chunks vanish from the index.
   await v2('DELETE', '/api/v2/ops/doc/delete', token, { doc_id: publicDoc.document_id });
   const afterDelete = await v2('POST', '/api/v2/ops/search/vector', token, { query: QUERY, kb_id: kb.id, top_k: 20, is_internal: true });
   check(afterDelete.items.every((x: any) => x.document_id !== publicDoc.document_id), 'search.vector excludes soft-deleted documents');
 
   await v2('DELETE', '/api/v2/ops/kb/delete', token, { kb_id: kb.id });
-  console.log(`\nP3-01/P3-02/P3-03 smoke: ${pass} passed, ${fail} failed`);
+  console.log(`\nP3-01/P3-02/P3-03/P3-04/P3-06 smoke: ${pass} passed, ${fail} failed`);
   if (fail) { console.error(failures.map((f) => `  - ${f}`).join('\n')); process.exit(1); }
 }
 

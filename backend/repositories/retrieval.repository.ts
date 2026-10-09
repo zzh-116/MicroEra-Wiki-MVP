@@ -8,7 +8,7 @@
 // cap), unlike the legacy entry-based search which limited chunks per entry.
 import { BaseRepository } from './base.js';
 import { knowledgeVectors, knowledgeChunks, documents, knowledgeBases } from '../db/schema.js';
-import { eq, and, cosineDistance, isNull, sql, desc } from 'drizzle-orm';
+import { eq, and, cosineDistance, isNull, sql, desc, inArray, gte, lte, ilike } from 'drizzle-orm';
 
 export interface VectorHitRow {
   chunk_id: string;
@@ -41,6 +41,7 @@ export interface VectorSearchFilter {
   folderId?: number;
   /** When false, restrict to public documents + public KBs (ACL). */
   isInternal?: boolean;
+  filters?: MetadataFilters;
 }
 
 export interface LexicalSearchFilter {
@@ -50,6 +51,18 @@ export interface LexicalSearchFilter {
   kbId?: number;
   folderId?: number;
   isInternal?: boolean;
+  filters?: MetadataFilters;
+}
+
+/** Metadata filters for search.filtered (P3-06). Each field maps to a SQL
+ *  predicate so filtering happens in the database, never post-hoc in JS. */
+export interface MetadataFilters {
+  strategy?: string;
+  visibility?: 'public' | 'internal';
+  document_ids?: number[];
+  title_contains?: string;
+  created_after?: string;
+  created_before?: string;
 }
 
 export class RetrievalRepository extends BaseRepository {
@@ -69,8 +82,22 @@ export class RetrievalRepository extends BaseRepository {
     return conditions;
   }
 
+  /** Metadata-filter predicates (P3-06): strategy (chunk), and document-scoped
+   *  visibility / id-set / title substring / created range. */
+  private metadataConditions(f?: MetadataFilters): any[] {
+    if (!f) return [];
+    const conds: any[] = [];
+    if (f.strategy !== undefined) conds.push(eq(knowledgeChunks.strategy, f.strategy));
+    if (f.visibility !== undefined) conds.push(eq(documents.visibility, f.visibility));
+    if (f.document_ids !== undefined && f.document_ids.length > 0) conds.push(inArray(documents.id, f.document_ids));
+    if (f.title_contains) conds.push(ilike(documents.title, `%${f.title_contains}%`));
+    if (f.created_after) conds.push(gte(documents.createdAt, new Date(f.created_after)));
+    if (f.created_before) conds.push(lte(documents.createdAt, new Date(f.created_before)));
+    return conds;
+  }
+
   async vectorSearch(f: VectorSearchFilter): Promise<VectorHitRow[]> {
-    const conditions = this.aclConditions(f);
+    const conditions = [...this.aclConditions(f), ...this.metadataConditions(f.filters)];
 
     const rows = await this.db
       .select({
@@ -113,7 +140,7 @@ export class RetrievalRepository extends BaseRepository {
   async lexicalSearch(f: LexicalSearchFilter): Promise<LexicalHitRow[]> {
     const tsvector = sql`to_tsvector('simple', ${knowledgeChunks.text})`;
     const tsquery = sql`websearch_to_tsquery('simple', ${f.query})`;
-    const conditions = [...this.aclConditions(f), sql`${tsvector} @@ ${tsquery}`];
+    const conditions = [...this.aclConditions(f), ...this.metadataConditions(f.filters), sql`${tsvector} @@ ${tsquery}`];
 
     const rows = await this.db
       .select({

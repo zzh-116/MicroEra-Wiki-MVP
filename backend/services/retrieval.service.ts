@@ -4,6 +4,7 @@
 // TopK and DB-level ACL filters.
 import { ollamaEmbedder } from '../embedding/ollama.js';
 import { retrievalRepository } from '../repositories/retrieval.repository.js';
+import type { MetadataFilters } from '../repositories/retrieval.repository.js';
 import { ServiceError } from './knowledge.service.js';
 
 export interface VectorSearchResult {
@@ -26,6 +27,7 @@ export interface VectorSearchInput {
   folder_id?: number;
   top_k?: number;
   is_internal?: boolean;
+  filters?: MetadataFilters;
 }
 
 export interface LexicalSearchResult {
@@ -47,6 +49,7 @@ export interface LexicalSearchInput {
   folder_id?: number;
   top_k?: number;
   is_internal?: boolean;
+  filters?: MetadataFilters;
 }
 
 export interface HybridSearchInput {
@@ -57,6 +60,7 @@ export interface HybridSearchInput {
   is_internal?: boolean;
   /** Reciprocal-rank-fusion smoothing constant (default 60). */
   rrf_k?: number;
+  filters?: MetadataFilters;
 }
 
 export interface HybridHit {
@@ -80,6 +84,17 @@ export interface ExplainHit {
   vector: { rank: number; score: number } | null;
   lexical: { rank: number; score: number } | null;
   rrf_score: number;
+}
+
+/** search.filtered (P3-06): any retrieval method + metadata filters. */
+export interface FilteredSearchInput {
+  query: string;
+  method?: 'vector' | 'lexical' | 'hybrid';
+  kb_id?: number;
+  folder_id?: number;
+  top_k?: number;
+  is_internal?: boolean;
+  filters?: MetadataFilters;
 }
 
 const MAX_TOP_K = 100;
@@ -145,6 +160,7 @@ export class RetrievalService {
       kbId: input.kb_id,
       folderId: input.folder_id,
       isInternal: input.is_internal,
+      filters: input.filters,
     });
 
     return rows.map((r) => ({
@@ -174,6 +190,7 @@ export class RetrievalService {
       kbId: input.kb_id,
       folderId: input.folder_id,
       isInternal: input.is_internal,
+      filters: input.filters,
     });
 
     return rows.map((r) => ({
@@ -194,7 +211,7 @@ export class RetrievalService {
     input: HybridSearchInput,
     topK: number,
   ): Promise<{ vector: VectorSearchResult[]; lexical: LexicalSearchResult[] }> {
-    const scope = { kb_id: input.kb_id, folder_id: input.folder_id, is_internal: input.is_internal };
+    const scope = { kb_id: input.kb_id, folder_id: input.folder_id, is_internal: input.is_internal, filters: input.filters };
     const [vector, lexical] = await Promise.all([
       this.vectorSearch({ query: input.query, ...scope, top_k: topK }),
       this.lexicalSearch({ query: input.query, ...scope, top_k: topK }),
@@ -265,6 +282,43 @@ export class RetrievalService {
         rrf_score: f.rrf_score,
       };
     });
+  }
+
+  /** Metadata-filtered retrieval (P3-06): dispatch on `method` and delegate to
+   *  the corresponding retrieval path with the metadata filters threaded into
+   *  the SQL predicates (never post-hoc in JS). */
+  async filteredSearch(input: FilteredSearchInput): Promise<Array<{ document_id: number } & Record<string, unknown>>> {
+    const query = (input.query ?? '').trim();
+    if (!query) throw new ServiceError('validation_failed', 'query is required');
+    const method = input.method ?? 'vector';
+    const topK = Math.min(Math.max(input.top_k ?? 10, 1), MAX_TOP_K);
+    const scope = {
+      kb_id: input.kb_id,
+      folder_id: input.folder_id,
+      top_k: topK,
+      is_internal: input.is_internal,
+      filters: input.filters,
+    };
+
+    if (method === 'lexical') return this.lexicalSearch({ query, ...scope });
+    if (method === 'hybrid') return this.hybridSearch({ query, ...scope });
+    return this.vectorSearch({ query, ...scope });
+  }
+
+  /** search.metadata (P3-06): the filterable-field schema and available
+   *  retrieval methods, so clients know what a filter can target. */
+  metadata(): unknown {
+    return {
+      methods: ['vector', 'lexical', 'hybrid'],
+      filterable_fields: [
+        { name: 'strategy', type: 'string', description: 'Chunking strategy (fixed/paragraph/sentence/markdown)' },
+        { name: 'visibility', type: 'enum', values: ['public', 'internal'], description: 'Document visibility' },
+        { name: 'document_ids', type: 'integer[]', description: 'Restrict results to these document ids' },
+        { name: 'title_contains', type: 'string', description: 'Case-insensitive substring match on the document title' },
+        { name: 'created_after', type: 'datetime', description: 'Documents created at or after this ISO timestamp' },
+        { name: 'created_before', type: 'datetime', description: 'Documents created at or before this ISO timestamp' },
+      ],
+    };
   }
 }
 

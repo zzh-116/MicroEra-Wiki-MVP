@@ -111,3 +111,29 @@ retrievalV2Router.post('/search/rerank', (req, res) =>
       top_k: toInt(req.body?.top_k),
     });
   }));
+
+// ── Search (P3-06): metadata-filtered retrieval + filter schema ──────────────
+retrievalV2Router.post('/search/filtered', (req, res) =>
+  handle('search.filtered', req, res, async () => {
+    const f = req.body?.filters ?? {};
+    const items = await retrievalService.filteredSearch({
+      query: req.body?.query,
+      method: req.body?.method,
+      kb_id: toInt(req.body?.kb_id),
+      folder_id: toInt(req.body?.folder_id),
+      top_k: toInt(req.body?.top_k),
+      is_internal: req.body?.is_internal,
+      filters: {
+        strategy: f.strategy,
+        visibility: f.visibility,
+        document_ids: Array.isArray(f.document_ids) ? f.document_ids.map((x: any) => toInt(x)) : undefined,
+        title_contains: f.title_contains,
+        created_after: f.created_after,
+        created_before: f.created_before,
+      },
+    });
+    return { query: req.body?.query ?? '', method: req.body?.method ?? 'vector', items, total: items.length };
+  }));
+
+retrievalV2Router.get('/search/metadata', (req, res) =>
+  handle('search.metadata', req, res, () => Promise.resolve(retrievalService.metadata())));
