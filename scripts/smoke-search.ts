@@ -90,13 +90,28 @@ async function main() {
   check(Array.isArray(pub?.items) && pub.items.length > 0, 'search.vector (public) returns hits');
   check(pub.items.every((x: any) => x.visibility === 'public'), 'search.vector (public) excludes internal documents (DB-level ACL)');
 
+  // ── P3-02: lexical (Postgres FTS) over the same corpus ────────────────────
+  const lex = await v2('POST', '/api/v2/ops/search/lexical', token, { query: 'pore aperture', kb_id: kb.id, top_k: 20, is_internal: true });
+  check(Array.isArray(lex?.items) && lex.items.length >= 2, 'search.lexical (internal) returns ≥2 chunks');
+  check(lex.items.every((x: any) => typeof x.score === 'number'), 'search.lexical returns a numeric score per hit');
+  const lexScores = (lex.items as any[]).map((x) => x.score);
+  check(lexScores.every((s, i) => i === 0 || lexScores[i - 1] >= s), 'search.lexical returns globally descending scores');
+
+  const lexPub = await v2('POST', '/api/v2/ops/search/lexical', token, { query: 'pore aperture', kb_id: kb.id, top_k: 20, is_internal: false });
+  check(Array.isArray(lexPub?.items) && lexPub.items.length > 0, 'search.lexical (public) returns hits');
+  check(lexPub.items.every((x: any) => x.visibility === 'public'), 'search.lexical (public) excludes internal documents (DB-level ACL)');
+
+  // Query normalization: extra whitespace + case are collapsed before FTS.
+  const lexNorm = await v2('POST', '/api/v2/ops/search/lexical', token, { query: '  PORE   Aperture ', kb_id: kb.id, top_k: 20, is_internal: true });
+  check(Array.isArray(lexNorm?.items) && lexNorm.items.length >= 2, 'search.lexical normalizes whitespace/case');
+
   // Soft-delete the public document → its chunks vanish from the index.
   await v2('DELETE', '/api/v2/ops/doc/delete', token, { doc_id: publicDoc.document_id });
   const afterDelete = await v2('POST', '/api/v2/ops/search/vector', token, { query: QUERY, kb_id: kb.id, top_k: 20, is_internal: true });
   check(afterDelete.items.every((x: any) => x.document_id !== publicDoc.document_id), 'search.vector excludes soft-deleted documents');
 
   await v2('DELETE', '/api/v2/ops/kb/delete', token, { kb_id: kb.id });
-  console.log(`\nP3-01 smoke: ${pass} passed, ${fail} failed`);
+  console.log(`\nP3-01/P3-02 smoke: ${pass} passed, ${fail} failed`);
   if (fail) { console.error(failures.map((f) => `  - ${f}`).join('\n')); process.exit(1); }
 }
 

@@ -8,12 +8,24 @@
 // cap), unlike the legacy entry-based search which limited chunks per entry.
 import { BaseRepository } from './base.js';
 import { knowledgeVectors, knowledgeChunks, documents, knowledgeBases } from '../db/schema.js';
-import { eq, and, cosineDistance, isNull } from 'drizzle-orm';
+import { eq, and, cosineDistance, isNull, sql, desc } from 'drizzle-orm';
 
 export interface VectorHitRow {
   chunk_id: string;
   document_id: number;
   distance: number;
+  text: string;
+  heading: string | null;
+  strategy: string;
+  title: string;
+  kb_id: number;
+  visibility: string;
+}
+
+export interface LexicalHitRow {
+  chunk_id: string;
+  document_id: number;
+  score: number;
   text: string;
   heading: string | null;
   strategy: string;
@@ -31,9 +43,20 @@ export interface VectorSearchFilter {
   isInternal?: boolean;
 }
 
+export interface LexicalSearchFilter {
+  /** Normalized tsquery text (lowercased, whitespace-collapsed). */
+  query: string;
+  topK: number;
+  kbId?: number;
+  folderId?: number;
+  isInternal?: boolean;
+}
+
 export class RetrievalRepository extends BaseRepository {
-  async vectorSearch(f: VectorSearchFilter): Promise<VectorHitRow[]> {
-    const conditions = [
+  /** Shared ACL conditions: exclude soft-deleted docs/KBs and, for a public
+   *  caller, non-public rows — always in SQL, never post-hoc. */
+  private aclConditions(f: { kbId?: number; folderId?: number; isInternal?: boolean }): any[] {
+    const conditions: any[] = [
       isNull(documents.deletedAt),
       isNull(knowledgeBases.deletedAt),
     ];
@@ -43,6 +66,11 @@ export class RetrievalRepository extends BaseRepository {
       conditions.push(eq(documents.visibility, 'public'));
       conditions.push(eq(knowledgeBases.visibility, 'public'));
     }
+    return conditions;
+  }
+
+  async vectorSearch(f: VectorSearchFilter): Promise<VectorHitRow[]> {
+    const conditions = this.aclConditions(f);
 
     const rows = await this.db
       .select({
@@ -68,6 +96,48 @@ export class RetrievalRepository extends BaseRepository {
       chunk_id: r.chunk_id,
       document_id: r.document_id,
       distance: r.distance as number,
+      text: r.text,
+      heading: r.heading,
+      strategy: r.strategy,
+      title: r.title,
+      kb_id: r.kb_id,
+      visibility: r.visibility,
+    }));
+  }
+
+  /** Lexical search via Postgres FTS (BM25-ish baseline). The `simple` config
+   *  tokenizes on whitespace/punctuation (no stemming) so it behaves sensibly
+   *  on mixed Chinese–English text. `websearch_to_tsquery` gives users Google-
+   *  style OR semantics with quoted phrases and `-` exclusions; ts_rank orders
+   *  matches by term frequency + document-length normalization. */
+  async lexicalSearch(f: LexicalSearchFilter): Promise<LexicalHitRow[]> {
+    const tsvector = sql`to_tsvector('simple', ${knowledgeChunks.text})`;
+    const tsquery = sql`websearch_to_tsquery('simple', ${f.query})`;
+    const conditions = [...this.aclConditions(f), sql`${tsvector} @@ ${tsquery}`];
+
+    const rows = await this.db
+      .select({
+        chunk_id: knowledgeChunks.id,
+        document_id: knowledgeChunks.documentId,
+        score: sql<number>`ts_rank(${tsvector}, ${tsquery})`,
+        text: knowledgeChunks.text,
+        heading: knowledgeChunks.heading,
+        strategy: knowledgeChunks.strategy,
+        title: documents.title,
+        kb_id: documents.kbId,
+        visibility: documents.visibility,
+      })
+      .from(knowledgeChunks)
+      .innerJoin(documents, eq(knowledgeChunks.documentId, documents.id))
+      .innerJoin(knowledgeBases, eq(documents.kbId, knowledgeBases.id))
+      .where(and(...conditions))
+      .orderBy(desc(sql`ts_rank(${tsvector}, ${tsquery})`))
+      .limit(f.topK);
+
+    return rows.map((r) => ({
+      chunk_id: r.chunk_id,
+      document_id: r.document_id,
+      score: r.score,
       text: r.text,
       heading: r.heading,
       strategy: r.strategy,

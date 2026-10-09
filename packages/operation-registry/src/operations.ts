@@ -1036,6 +1036,42 @@ export function registerOperations(api: ApiClient): void {
     },
   });
 
+  // ── P3-02: search.lexical (Postgres FTS BM25 baseline) ───────────────────
+  operationRegistry.register({
+    id: 'search.lexical',
+    version: '1',
+    title: 'Lexical search',
+    description: 'Keyword retrieval via Postgres full-text search (ts_rank baseline) with query normalization and SQL-enforced visibility ACL.',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        kb_id: { type: 'integer' },
+        folder_id: { type: 'integer' },
+        top_k: { type: 'integer' },
+        is_internal: { type: 'boolean' },
+      },
+      required: ['query'],
+    },
+    outputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        items: { type: 'array', items: { type: 'object' } },
+        total: { type: 'integer' },
+      },
+    },
+    http: { method: 'POST', path: '/api/v2/ops/search/lexical' },
+    cli: { command: 'microera search lexical', examples: ['microera search lexical "MOF pore aperture" --kb-id 1'] },
+    mcp: { toolName: 'search_lexical', readOnlyHint: true, scopes: ['search:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/search/lexical', input, ctx);
+    },
+  });
+
   // ── P4: chat (wired to existing /api/ai/chat) ───────────────────────────
   operationRegistry.register({
     id: 'chat.ask',

@@ -57,3 +57,15 @@ retrievalV2Router.post('/search/vector', (req, res) =>
     });
     return { query: req.body?.query ?? '', items, total: items.length };
   }));
+
+retrievalV2Router.post('/search/lexical', (req, res) =>
+  handle('search.lexical', req, res, async () => {
+    const items = await retrievalService.lexicalSearch({
+      query: req.body?.query,
+      kb_id: toInt(req.body?.kb_id),
+      folder_id: toInt(req.body?.folder_id),
+      top_k: toInt(req.body?.top_k),
+      is_internal: req.body?.is_internal,
+    });
+    return { query: req.body?.query ?? '', items, total: items.length };
+  }));
