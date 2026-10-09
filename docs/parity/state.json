@@ -3,12 +3,12 @@
   "reference_sha": "602d0c388bf17d894f467fe0cd65d1d62c73d303",
   "baseline_target_sha": "4bd5bf417df090351b91de205e6b34a457eb47a2",
   "local_repo_sha": "01343a2",
-  "current_phase": "P6",
+  "current_phase": "P7",
   "accepted_points": 0,
   "required_ops_total": 162,
-  "fully_verified_ops": 98,
+  "fully_verified_ops": 123,
   "last_verified_commit": "ddd6bd6",
-  "notes": "P0–P5 complete. P3 retrieval + P4 chat + P5 wiki (W01-W04) done. P5 wiki: wikis/wiki_revisions/wiki_sources/wiki_links tables (0015_add_wiki.sql), wiki.service.ts (synthesis + grounding, CRUD + versioning with LCS diff, link graph), wiki-v2.ts router, 20 wiki.*/graph.* ops registered (CLI+MCP parity). 317 tests green, full-parity 98 (60.5%). Live smoke 31 (search) + 15 (eval) + 26 (chat) + 25 (wiki). P6 (agent A01-A06) next.",
+  "notes": "P0–P6 complete. P6 agent (A01-A06) done: agents/agent_runs/agent_skills/agent_artifacts tables (0016_add_agent.sql), agent.service.ts (deterministic grounded run + built-in tool executor + in-process sandbox + skills), agent-v2.ts router (25 routes), 25 agent.*/skills.*/session.agent_ask ops registered (CLI+MCP parity). 328 tests green, full-parity 123 (75.9%), missing 39. Live smoke 31 (search) + 15 (eval) + 26 (chat) + 25 (wiki) + 31 (agent). P7 (datasource D01/D02/D04, 14 ops) next.",
   "open_tasks": [
     { "id": "P0-01", "status": "done", "depends_on": [] },
     { "id": "P0-02", "status": "done", "depends_on": ["P0-01"] },
@@ -43,13 +43,16 @@
     { "id": "P5-02", "status": "done", "depends_on": ["P5-01"] },
     { "id": "P5-03", "status": "done", "depends_on": ["P5-01"] },
     { "id": "P5-04", "status": "done", "depends_on": ["P5-01"] },
-    { "id": "P6-01", "status": "in_progress", "depends_on": ["P5-04"] },
-    { "id": "P6-02", "status": "todo", "depends_on": ["P6-01"] },
-    { "id": "P6-03", "status": "todo", "depends_on": ["P6-01"] },
-    { "id": "P6-04", "status": "todo", "depends_on": ["P6-01"] },
-    { "id": "P6-05", "status": "todo", "depends_on": ["P6-01"] },
-    { "id": "P6-06", "status": "todo", "depends_on": ["P6-01"] }
+    { "id": "P6-01", "status": "done", "depends_on": ["P5-04"] },
+    { "id": "P6-02", "status": "done", "depends_on": ["P6-01"] },
+    { "id": "P6-03", "status": "done", "depends_on": ["P6-01"] },
+    { "id": "P6-04", "status": "done", "depends_on": ["P6-01"] },
+    { "id": "P6-05", "status": "done", "depends_on": ["P6-01"] },
+    { "id": "P6-06", "status": "done", "depends_on": ["P6-01"] },
+    { "id": "P7-01", "status": "in_progress", "depends_on": ["P6-06"] },
+    { "id": "P7-02", "status": "todo", "depends_on": ["P7-01"] },
+    { "id": "P7-03", "status": "todo", "depends_on": ["P7-01"] }
   ],
   "blockers": [],
-  "next_action": "P6-01: agent.* (A01) — agent CRUD (create/list/view/update/delete) + agent.run (grounded multi-step run over the retrieval + tool pipeline)."
+  "next_action": "P7-01: datasource (D01) — datasource.types/list/create/view/connect/preview (connector registry + connection test + preview over the connectors layer)."
 }

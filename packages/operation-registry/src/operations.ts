@@ -2054,6 +2054,480 @@ export function registerOperations(api: ApiClient): void {
     },
   });
 
+  // ── P6: agent (A01–A06) + skills + sandbox ───────────────────────────────
+  const agentSchema = {
+    type: 'object',
+    properties: {
+      id: { type: 'integer' },
+      name: { type: 'string' },
+      description: { type: 'string' },
+      instructions: { type: 'string' },
+      model: { type: 'string' },
+      tools: { type: 'array', items: { type: 'string' } },
+      mcp_servers: { type: 'array', items: { type: 'object' } },
+      skills: { type: 'array', items: { type: 'string' } },
+      status: { type: 'string' },
+      created_at: { type: 'string' },
+      updated_at: { type: 'string' },
+    },
+  };
+
+  operationRegistry.register({
+    id: 'agent.create',
+    version: '1',
+    title: 'Create an agent',
+    description: 'Create a configurable agent with instructions, optional model, enabled tools, MCP servers and skills.',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        description: { type: 'string' },
+        instructions: { type: 'string' },
+        model: { type: 'string' },
+        tools: { type: 'array', items: { type: 'string' } },
+        mcp_servers: { type: 'array', items: { type: 'object' } },
+        skills: { type: 'array', items: { type: 'string' } },
+      },
+      required: ['name'],
+    },
+    outputSchema: agentSchema,
+    http: { method: 'POST', path: '/api/v2/ops/agent/create' },
+    cli: { command: 'microera agent create', examples: ['microera agent create --name "Research" --instructions "Gather evidence"'] },
+    mcp: { toolName: 'agent_create', readOnlyHint: false, scopes: ['agent:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/agent/create', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'agent.list',
+    version: '1',
+    title: 'List agents',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { page: { type: 'integer' }, page_size: { type: 'integer' } } },
+    outputSchema: { type: 'object', properties: { items: { type: 'array', items: agentSchema }, total: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/agent/list' },
+    cli: { command: 'microera agent list', examples: ['microera agent list'] },
+    mcp: { toolName: 'agent_list', readOnlyHint: true, scopes: ['agent:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/agent/list', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'agent.view',
+    version: '1',
+    title: 'View an agent',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { agent_id: { type: 'integer' } }, required: ['agent_id'] },
+    outputSchema: agentSchema,
+    http: { method: 'GET', path: '/api/v2/ops/agent/view' },
+    cli: { command: 'microera agent view', examples: ['microera agent view --agent-id 1'] },
+    mcp: { toolName: 'agent_view', readOnlyHint: true, scopes: ['agent:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/agent/view', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'agent.update',
+    version: '1',
+    title: 'Update an agent',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        agent_id: { type: 'integer' },
+        name: { type: 'string' },
+        description: { type: 'string' },
+        instructions: { type: 'string' },
+        model: { type: 'string' },
+        tools: { type: 'array', items: { type: 'string' } },
+        mcp_servers: { type: 'array', items: { type: 'object' } },
+        skills: { type: 'array', items: { type: 'string' } },
+      },
+      required: ['agent_id'],
+    },
+    outputSchema: agentSchema,
+    http: { method: 'PATCH', path: '/api/v2/ops/agent/update' },
+    cli: { command: 'microera agent update', examples: ['microera agent update --agent-id 1 --instructions "New prompt"'] },
+    mcp: { toolName: 'agent_update', readOnlyHint: false, scopes: ['agent:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'PATCH', '/api/v2/ops/agent/update', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'agent.delete',
+    version: '1',
+    title: 'Delete an agent',
+    kind: 'mutation',
+    risk: 'destructive',
+    inputSchema: { type: 'object', properties: { agent_id: { type: 'integer' } }, required: ['agent_id'] },
+    outputSchema: { type: 'object', properties: { deleted: { type: 'boolean' }, id: { type: 'integer' } } },
+    http: { method: 'DELETE', path: '/api/v2/ops/agent/delete' },
+    cli: { command: 'microera agent delete', examples: ['microera agent delete --agent-id 1'] },
+    mcp: { toolName: 'agent_delete', readOnlyHint: false, scopes: ['agent:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'DELETE', '/api/v2/ops/agent/delete', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'agent.run',
+    version: '1',
+    title: 'Run an agent',
+    description: 'Run the agent against a goal: retrieve context, execute the tool steps, and produce a grounded answer + trace.',
+    kind: 'job',
+    risk: 'write',
+    inputSchema: {
+      type: 'object',
+      properties: { agent_id: { type: 'integer' }, goal: { type: 'string' }, kb_id: { type: 'integer' }, top_k: { type: 'integer' }, method: { type: 'string', enum: ['vector', 'lexical', 'hybrid'] } },
+      required: ['agent_id', 'goal'],
+    },
+    outputSchema: { type: 'object', properties: { run_id: { type: 'string' }, agent_id: { type: 'integer' }, status: { type: 'string' }, answer: { type: 'string' }, steps: { type: 'array', items: { type: 'object' } }, trace: { type: 'object' } } },
+    http: { method: 'POST', path: '/api/v2/ops/agent/run' },
+    cli: { command: 'microera agent run', examples: ['microera agent run --agent-id 1 --goal "Summarize zeolite catalysis"'] },
+    mcp: { toolName: 'agent_run', readOnlyHint: false, scopes: ['agent:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/agent/run', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'agent.tools',
+    version: '1',
+    title: 'List agent tools',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { agent_id: { type: 'integer' } } },
+    outputSchema: { type: 'object', properties: { tools: { type: 'array', items: { type: 'object' } }, total: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/agent/tools' },
+    cli: { command: 'microera agent tools', examples: ['microera agent tools', 'microera agent tools --agent-id 1'] },
+    mcp: { toolName: 'agent_tools', readOnlyHint: true, scopes: ['agent:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/agent/tools', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'agent.tool_call',
+    version: '1',
+    title: 'Call an agent tool',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { agent_id: { type: 'integer' }, tool: { type: 'string' }, input: { type: 'object' }, run_id: { type: 'string' } }, required: ['agent_id', 'tool'] },
+    outputSchema: { type: 'object', properties: { run_id: { type: 'string' }, tool: { type: 'string' }, result: { type: 'object' } } },
+    http: { method: 'POST', path: '/api/v2/ops/agent/tool_call' },
+    cli: { command: 'microera agent tool-call', examples: ['microera agent tool-call --agent-id 1 --tool retrieve --input \'{"query":"zeolite"}\''] },
+    mcp: { toolName: 'agent_tool_call', readOnlyHint: false, scopes: ['agent:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/agent/tool_call', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'agent.tool_result',
+    version: '1',
+    title: 'Read a tool result',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { run_id: { type: 'string' }, step_index: { type: 'integer' } }, required: ['run_id'] },
+    outputSchema: { type: 'object', properties: { run_id: { type: 'string' }, step_index: { type: 'integer' }, tool: { type: 'string' }, result: { type: 'object' } } },
+    http: { method: 'POST', path: '/api/v2/ops/agent/tool_result' },
+    cli: { command: 'microera agent tool-result', examples: ['microera agent tool-result --run-id run_... --step-index 0'] },
+    mcp: { toolName: 'agent_tool_result', readOnlyHint: true, scopes: ['agent:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/agent/tool_result', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'agent.mcp_list',
+    version: '1',
+    title: 'List MCP servers',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { agent_id: { type: 'integer' } } },
+    outputSchema: { type: 'object', properties: { servers: { type: 'array', items: { type: 'object' } }, total: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/agent/mcp_list' },
+    cli: { command: 'microera agent mcp-list', examples: ['microera agent mcp-list --agent-id 1'] },
+    mcp: { toolName: 'agent_mcp_list', readOnlyHint: true, scopes: ['agent:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/agent/mcp_list', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'agent.mcp_test',
+    version: '1',
+    title: 'Test an MCP server',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { name: { type: 'string' }, url: { type: 'string' } } },
+    outputSchema: { type: 'object', properties: { server: { type: 'string' }, reachable: { type: 'boolean' }, checked_at: { type: 'string' } } },
+    http: { method: 'POST', path: '/api/v2/ops/agent/mcp_test' },
+    cli: { command: 'microera agent mcp-test', examples: ['microera agent mcp-test --name my-mcp --url http://localhost:9000'] },
+    mcp: { toolName: 'agent_mcp_test', readOnlyHint: true, scopes: ['agent:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/agent/mcp_test', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'agent.mcp_call',
+    version: '1',
+    title: 'Call an MCP tool',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { agent_id: { type: 'integer' }, server: { type: 'string' }, tool: { type: 'string' }, arguments: { type: 'object' } }, required: ['agent_id', 'tool'] },
+    outputSchema: { type: 'object', properties: { server: { type: 'string' }, tool: { type: 'string' }, result: { type: 'object' } } },
+    http: { method: 'POST', path: '/api/v2/ops/agent/mcp_call' },
+    cli: { command: 'microera agent mcp-call', examples: ['microera agent mcp-call --agent-id 1 --tool retrieve --arguments \'{"query":"zeolite"}\''] },
+    mcp: { toolName: 'agent_mcp_call', readOnlyHint: false, scopes: ['agent:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/agent/mcp_call', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'skills.list',
+    version: '1',
+    title: 'List skills',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { page: { type: 'integer' }, page_size: { type: 'integer' } } },
+    outputSchema: { type: 'object', properties: { items: { type: 'array', items: { type: 'object' } }, total: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/skills/list' },
+    cli: { command: 'microera skills list', examples: ['microera skills list'] },
+    mcp: { toolName: 'skills_list', readOnlyHint: true, scopes: ['skill:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/skills/list', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'skills.install',
+    version: '1',
+    title: 'Install a skill',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { name: { type: 'string' }, description: { type: 'string' }, manifest: { type: 'object' } }, required: ['name'] },
+    outputSchema: { type: 'object', properties: { id: { type: 'integer' }, name: { type: 'string' }, installed: { type: 'boolean' } } },
+    http: { method: 'POST', path: '/api/v2/ops/skills/install' },
+    cli: { command: 'microera skills install', examples: ['microera skills install --name research --manifest \'{"version":"1.0.0"}\''] },
+    mcp: { toolName: 'skills_install', readOnlyHint: false, scopes: ['skill:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/skills/install', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'skills.validate',
+    version: '1',
+    title: 'Validate a skill manifest',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { name: { type: 'string' }, manifest: { type: 'object' } } },
+    outputSchema: { type: 'object', properties: { valid: { type: 'boolean' }, errors: { type: 'array', items: { type: 'string' } } } },
+    http: { method: 'POST', path: '/api/v2/ops/skills/validate' },
+    cli: { command: 'microera skills validate', examples: ['microera skills validate --name research'] },
+    mcp: { toolName: 'skills_validate', readOnlyHint: true, scopes: ['skill:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/skills/validate', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'skills.read',
+    version: '1',
+    title: 'Read a skill',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] },
+    outputSchema: { type: 'object', properties: { id: { type: 'integer' }, name: { type: 'string' }, description: { type: 'string' }, manifest: { type: 'object' }, installed: { type: 'boolean' } } },
+    http: { method: 'GET', path: '/api/v2/ops/skills/read' },
+    cli: { command: 'microera skills read', examples: ['microera skills read --name research'] },
+    mcp: { toolName: 'skills_read', readOnlyHint: true, scopes: ['skill:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/skills/read', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'agent.sandbox_status',
+    version: '1',
+    title: 'Sandbox status',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: {} },
+    outputSchema: { type: 'object', properties: { available: { type: 'boolean' }, mode: { type: 'string' } } },
+    http: { method: 'GET', path: '/api/v2/ops/agent/sandbox_status' },
+    cli: { command: 'microera agent sandbox-status', examples: ['microera agent sandbox-status'] },
+    mcp: { toolName: 'agent_sandbox_status', readOnlyHint: true, scopes: ['agent:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/agent/sandbox_status', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'agent.sandbox_run',
+    version: '1',
+    title: 'Run a sandbox task',
+    kind: 'job',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { agent_id: { type: 'integer' }, task: { type: 'string' }, payload: { type: 'object' } } },
+    outputSchema: { type: 'object', properties: { run_id: { type: 'string' }, task: { type: 'string' }, artifact_id: { type: 'integer' }, result: { type: 'object' } } },
+    http: { method: 'POST', path: '/api/v2/ops/agent/sandbox_run' },
+    cli: { command: 'microera agent sandbox-run', examples: ['microera agent sandbox-run --task count_tokens --payload \'{"text":"hello world"}\''] },
+    mcp: { toolName: 'agent_sandbox_run', readOnlyHint: false, scopes: ['agent:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/agent/sandbox_run', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'agent.artifact_list',
+    version: '1',
+    title: 'List sandbox artifacts',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { run_id: { type: 'string' }, agent_id: { type: 'integer' } } },
+    outputSchema: { type: 'object', properties: { items: { type: 'array', items: { type: 'object' } }, total: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/agent/artifact_list' },
+    cli: { command: 'microera agent artifact-list', examples: ['microera agent artifact-list --run-id run_...'] },
+    mcp: { toolName: 'agent_artifact_list', readOnlyHint: true, scopes: ['agent:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/agent/artifact_list', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'agent.status',
+    version: '1',
+    title: 'Agent status',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { agent_id: { type: 'integer' } }, required: ['agent_id'] },
+    outputSchema: { type: 'object', properties: { agent_id: { type: 'integer' }, status: { type: 'string' }, latest_run: { type: 'object' } } },
+    http: { method: 'GET', path: '/api/v2/ops/agent/status' },
+    cli: { command: 'microera agent status', examples: ['microera agent status --agent-id 1'] },
+    mcp: { toolName: 'agent_status', readOnlyHint: true, scopes: ['agent:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/agent/status', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'agent.check',
+    version: '1',
+    title: 'Check agent readiness',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { agent_id: { type: 'integer' } }, required: ['agent_id'] },
+    outputSchema: { type: 'object', properties: { agent_id: { type: 'integer' }, ok: { type: 'boolean' }, checks: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'GET', path: '/api/v2/ops/agent/check' },
+    cli: { command: 'microera agent check', examples: ['microera agent check --agent-id 1'] },
+    mcp: { toolName: 'agent_check', readOnlyHint: true, scopes: ['agent:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/agent/check', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'agent.stop',
+    version: '1',
+    title: 'Stop an agent run or agent',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { agent_id: { type: 'integer' }, run_id: { type: 'string' } } },
+    outputSchema: { type: 'object', properties: { status: { type: 'string' }, run_id: { type: 'string' }, agent_id: { type: 'integer' } } },
+    http: { method: 'POST', path: '/api/v2/ops/agent/stop' },
+    cli: { command: 'microera agent stop', examples: ['microera agent stop --agent-id 1'] },
+    mcp: { toolName: 'agent_stop', readOnlyHint: false, scopes: ['agent:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/agent/stop', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'agent.resume',
+    version: '1',
+    title: 'Resume an agent run',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { run_id: { type: 'string' } }, required: ['run_id'] },
+    outputSchema: { type: 'object', properties: { run_id: { type: 'string' }, agent_id: { type: 'integer' }, status: { type: 'string' }, answer: { type: 'string' } } },
+    http: { method: 'POST', path: '/api/v2/ops/agent/resume' },
+    cli: { command: 'microera agent resume', examples: ['microera agent resume --run-id run_...'] },
+    mcp: { toolName: 'agent_resume', readOnlyHint: false, scopes: ['agent:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/agent/resume', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'session.agent_ask',
+    version: '1',
+    title: 'Ask an agent within a session',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { agent_id: { type: 'integer' }, session_id: { type: 'string' }, question: { type: 'string' }, top_k: { type: 'integer' }, method: { type: 'string', enum: ['vector', 'lexical', 'hybrid'] } }, required: ['agent_id', 'question'] },
+    outputSchema: { type: 'object', properties: { run_id: { type: 'string' }, answer: { type: 'string' }, session_id: { type: 'string' }, citations: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'POST', path: '/api/v2/ops/session/agent_ask' },
+    cli: { command: 'microera session agent-ask', examples: ['microera session agent-ask --agent-id 1 --session-id sess_... --question "What is zeolite?"'] },
+    mcp: { toolName: 'session_agent_ask', readOnlyHint: false, scopes: ['agent:write', 'chat:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/session/agent_ask', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'agent.trace',
+    version: '1',
+    title: 'Agent run trace',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { run_id: { type: 'string' } }, required: ['run_id'] },
+    outputSchema: { type: 'object', properties: { run_id: { type: 'string' }, agent_id: { type: 'integer' }, goal: { type: 'string' }, status: { type: 'string' }, steps: { type: 'array', items: { type: 'object' } }, trace: { type: 'object' } } },
+    http: { method: 'GET', path: '/api/v2/ops/agent/trace' },
+    cli: { command: 'microera agent trace', examples: ['microera agent trace --run-id run_...'] },
+    mcp: { toolName: 'agent_trace', readOnlyHint: true, scopes: ['agent:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/agent/trace', input, ctx);
+    },
+  });
+
   // ── P8: jobs (wired to existing /api/pipeline/jobs) ─────────────────────
   operationRegistry.register({
     id: 'job.view',

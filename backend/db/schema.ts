@@ -4,7 +4,7 @@
 import {
   pgTable, serial, text, integer, timestamp,
   primaryKey, index, jsonb, uniqueIndex,
-  vector, doublePrecision,
+  vector, doublePrecision, boolean,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -684,6 +684,89 @@ export const wikiLinks = pgTable(
     uniqueIndex('wiki_links_src_tgt_idx').on(table.sourceWikiId, table.targetWikiId),
     index('wiki_links_target_idx').on(table.targetWikiId),
   ],
+);
+
+// ---- Agents (P6) ----
+// A configurable agent: a named assistant with instructions, an optional model,
+// an enabled tool set, configured MCP servers, and installed skills. Agents run
+// grounded multi-step "runs" over the retrieval + tool pipeline (A01).
+export const agents = pgTable(
+  'agents',
+  {
+    id: serial('id').primaryKey(),
+    name: text('name').notNull(),
+    description: text('description').notNull().default(''),
+    instructions: text('instructions').notNull().default(''),
+    model: text('model').notNull().default(''),
+    tools: jsonb('tools').notNull().default([]),
+    mcpServers: jsonb('mcp_servers').notNull().default([]),
+    skills: jsonb('skills').notNull().default([]),
+    status: text('status', { enum: ['idle', 'running', 'stopped', 'error'] }).notNull().default('idle'),
+    createdBy: integer('created_by').references(() => users.id, { onDelete: 'set null' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
+  },
+  (table) => [
+    index('agents_name_idx').on(table.name),
+    index('agents_deleted_at_idx').on(table.deletedAt),
+  ],
+);
+
+// ---- Agent Runs (P6) ----
+// One execution of an agent against a goal: the ordered tool-call steps, the
+// final grounded answer, and the timing trace (agent.run / agent.trace / A06).
+export const agentRuns = pgTable(
+  'agent_runs',
+  {
+    id: text('id').primaryKey(),
+    agentId: integer('agent_id')
+      .notNull()
+      .references(() => agents.id, { onDelete: 'cascade' }),
+    goal: text('goal').notNull(),
+    status: text('status', { enum: ['running', 'succeeded', 'failed', 'cancelled'] }).notNull().default('running'),
+    steps: jsonb('steps').notNull().default([]),
+    answer: text('answer').notNull().default(''),
+    trace: jsonb('trace').notNull().default({}),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('agent_runs_agent_idx').on(table.agentId),
+    index('agent_runs_status_idx').on(table.status),
+  ],
+);
+
+// ---- Agent Skills (P6) ----
+// An installable skill: a named capability with a manifest. skills.list/install/
+// validate/read operate on this table (A04).
+export const agentSkills = pgTable(
+  'agent_skills',
+  {
+    id: serial('id').primaryKey(),
+    name: text('name').notNull(),
+    description: text('description').notNull().default(''),
+    manifest: jsonb('manifest').notNull().default({}),
+    installed: boolean('installed').notNull().default(false),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex('agent_skills_name_idx').on(table.name)],
+);
+
+// ---- Agent Artifacts (P6) ----
+// Outputs produced by sandbox runs (agent.sandbox_run → agent.artifact_list).
+export const agentArtifacts = pgTable(
+  'agent_artifacts',
+  {
+    id: serial('id').primaryKey(),
+    runId: text('run_id').notNull(),
+    name: text('name').notNull(),
+    contentType: text('content_type').notNull().default('application/json'),
+    data: jsonb('data').notNull().default({}),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index('agent_artifacts_run_idx').on(table.runId)],
 );
 
 // ---- Relations ----
