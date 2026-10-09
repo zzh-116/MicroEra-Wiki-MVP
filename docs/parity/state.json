@@ -8,7 +8,7 @@
   "required_ops_total": 162,
   "fully_verified_ops": 33,
   "last_verified_commit": "ddd6bd6",
-  "notes": "P0 complete; P1 complete. P2 in progress: P2-01 parser adapters done (text fallback + sha256 checksum + format-aware resolver). P2-02 layout-aware parsed elements done (document_elements table + migration 0010, extractElements with heading/table/image/page coordinates + blob refs, DocumentElementRepository, ElementService listImages/listTables/ocr; 12 tests). P2-03 chunk preview/edit done (knowledge_chunks + knowledge_vectors tables + migration 0011 validated, KnowledgeChunkRepository with index invalidation, KnowledgeChunkService preview/rechunk/list/view/update/remove; 10 tests). P2-04 durable queue done (parse_jobs + parse_deadletters tables + migration 0012 validated, ParseJobRepository with lease/claim/checkpoint/DLQ, ParseJobService enqueue/lease/heartbeat/checkpoint/complete/fail + parse_status/retry/cancel/deadletters/replay_deadletter; 18 tests). 240 tests green. P2-05 ingest orchestration next.",
+  "notes": "P0 complete; P1 complete. P2 in progress: P2-01 parser adapters done (text fallback + sha256 checksum + format-aware resolver). P2-02 layout-aware parsed elements done (document_elements table + migration 0010, extractElements with heading/table/image/page coordinates + blob refs, DocumentElementRepository, ElementService listImages/listTables/ocr; 12 tests). P2-03 chunk preview/edit done (knowledge_chunks + knowledge_vectors tables + migration 0011 validated, KnowledgeChunkRepository with index invalidation, KnowledgeChunkService preview/rechunk/list/view/update/remove; 10 tests). P2-04 durable queue done (parse_jobs + parse_deadletters tables + migration 0012 validated, ParseJobRepository with lease/claim/checkpoint/DLQ, ParseJobService enqueue/lease/heartbeat/checkpoint/complete/fail + parse_status/retry/cancel/deadletters/replay_deadletter; 18 tests). P2-05 ingest orchestration done (IngestService parse→extract→chunk→embed→index→publish; publishDocument atomic transaction = revision append + content update + knowledge_vectors replace; 5 tests). 245 tests green. P2-06 ingest CLI+MCP parity wiring next.",
   "open_tasks": [
     { "id": "P0-01", "status": "done", "depends_on": [] },
     { "id": "P0-02", "status": "done", "depends_on": ["P0-01"] },
@@ -25,9 +25,9 @@
     { "id": "P2-02", "status": "done", "depends_on": ["P2-01"] },
     { "id": "P2-03", "status": "done", "depends_on": ["P2-01"] },
     { "id": "P2-04", "status": "done", "depends_on": ["P2-01"] },
-    { "id": "P2-05", "status": "in_progress", "depends_on": ["P2-02", "P2-03", "P2-04"] },
-    { "id": "P2-06", "status": "todo", "depends_on": ["P2-05"] }
+    { "id": "P2-05", "status": "done", "depends_on": ["P2-02", "P2-03", "P2-04"] },
+    { "id": "P2-06", "status": "in_progress", "depends_on": ["P2-05"] }
   ],
   "blockers": [],
-  "next_action": "P2-05: ingest orchestration — parse→extract elements→chunk→embed→index→publish atomicity (revision append + knowledge_vectors upsert)."
+  "next_action": "P2-06: ingest CLI+MCP parity — wire all 18 P2 ops (doc.upload/import_url/parse/reparse/wait, doc.images/tables/ocr, chunk.list/view/preview/update/delete, job.parse_status/parse_retry/parse_cancel/deadletters/replay_deadletter) into routes + registry + CLI + MCP + parity tests + live smoke."
 }

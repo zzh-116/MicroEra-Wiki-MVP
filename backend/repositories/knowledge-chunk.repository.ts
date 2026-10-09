@@ -2,7 +2,7 @@
 // enforces index invalidation: editing or deleting a chunk removes its vector
 // so the retrieval index never serves stale text.
 import { BaseRepository, DbClient } from './base.js';
-import { knowledgeChunks, knowledgeVectors } from '../db/schema.js';
+import { knowledgeChunks, knowledgeVectors, documents, documentRevisions } from '../db/schema.js';
 import { eq, count } from 'drizzle-orm';
 import type { ChunkResult } from '../chunk/service.js';
 
@@ -112,6 +112,44 @@ export class KnowledgeChunkRepository extends BaseRepository {
   async invalidateVectorsByDocument(documentId: number, tx?: DbClient): Promise<void> {
     const client = tx ?? this.db;
     await client.delete(knowledgeVectors).where(eq(knowledgeVectors.documentId, documentId));
+  }
+
+  // ── Publish (P2-05 atomic ingest commit) ────────────────────────────────
+  /** Append a revision, update the document, and replace its vectors in ONE
+   *  transaction — so a reader never sees new content without new vectors, or
+   *  new vectors without the revision that produced them. */
+  async publishDocument(input: {
+    documentId: number;
+    title: string;
+    content: string;
+    checksum: string;
+    revisionNo: number;
+    vectors: Array<{ chunk_id: string; embedding: number[] }>;
+  }): Promise<void> {
+    await this.db.transaction(async (tx) => {
+      await tx.insert(documentRevisions).values({
+        documentId: input.documentId,
+        revisionNo: input.revisionNo,
+        title: input.title,
+        content: input.content,
+        checksum: input.checksum,
+      });
+      await tx
+        .update(documents)
+        .set({ content: input.content, parseStatus: 'completed', updatedAt: new Date() })
+        .where(eq(documents.id, input.documentId));
+      await tx.delete(knowledgeVectors).where(eq(knowledgeVectors.documentId, input.documentId));
+      if (input.vectors.length > 0) {
+        await tx.insert(knowledgeVectors).values(
+          input.vectors.map((v) => ({
+            chunkId: v.chunk_id,
+            documentId: input.documentId,
+            embedding: v.embedding,
+            store: 'pgvector',
+          })),
+        );
+      }
+    });
   }
 }
 
