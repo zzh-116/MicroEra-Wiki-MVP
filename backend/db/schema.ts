@@ -769,6 +769,57 @@ export const agentArtifacts = pgTable(
   (table) => [index('agent_artifacts_run_idx').on(table.runId)],
 );
 
+// ---- Datasources (P7) ----
+// A datasource binds a connector (by name) to a saved configuration, an optional
+// cron schedule, and a sync cursor. Syncs append rows to datasource_sync_logs so
+// datasource.logs can show history without mutating past results (D01/D02/D04).
+export const datasources = pgTable(
+  'datasources',
+  {
+    id: serial('id').primaryKey(),
+    name: text('name').notNull(),
+    connector: text('connector').notNull(),
+    config: jsonb('config').notNull().default({}),
+    schedule: text('schedule').notNull().default(''),
+    status: text('status', { enum: ['active', 'paused', 'error'] }).notNull().default('active'),
+    cursor: text('cursor'),
+    createdBy: integer('created_by').references(() => users.id, { onDelete: 'set null' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
+  },
+  (table) => [
+    index('datasources_connector_idx').on(table.connector),
+    index('datasources_deleted_at_idx').on(table.deletedAt),
+  ],
+);
+
+// ---- Datasource Sync Logs (P7) ----
+// One row per sync run: status, counts (total/created/updated/skipped), and any
+// per-document errors. Never overwritten — datasource.logs reads history.
+export const datasourceSyncLogs = pgTable(
+  'datasource_sync_logs',
+  {
+    id: text('id').primaryKey(),
+    datasourceId: integer('datasource_id')
+      .notNull()
+      .references(() => datasources.id, { onDelete: 'cascade' }),
+    status: text('status', { enum: ['running', 'succeeded', 'failed', 'cancelled'] }).notNull().default('running'),
+    total: integer('total').notNull().default(0),
+    created: integer('created').notNull().default(0),
+    updated: integer('updated').notNull().default(0),
+    skipped: integer('skipped').notNull().default(0),
+    errors: jsonb('errors').notNull().default([]),
+    startedAt: timestamp('started_at', { withTimezone: true }),
+    finishedAt: timestamp('finished_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('datasource_sync_logs_ds_idx').on(table.datasourceId),
+    index('datasource_sync_logs_status_idx').on(table.status),
+  ],
+);
+
 // ---- Relations ----
 export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
   user: one(users, { fields: [bookmarks.userId], references: [users.id] }),

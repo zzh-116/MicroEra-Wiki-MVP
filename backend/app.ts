@@ -53,6 +53,7 @@ export async function createApp(options: AppOptions = {}) {
   const { chatV2Router } = await import('../server/routes/chat-v2.js');
   const { wikiV2Router } = await import('../server/routes/wiki-v2.js');
   const { agentV2Router } = await import('../server/routes/agent-v2.js');
+  const { datasourceV2Router } = await import('../server/routes/datasource-v2.js');
 
   app.use('/api/auth', authRouter);
   app.use('/api/categories', categoriesRouter);
@@ -74,6 +75,7 @@ export async function createApp(options: AppOptions = {}) {
   app.use('/api/v2/ops', chatV2Router);
   app.use('/api/v2/ops', wikiV2Router);
   app.use('/api/v2/ops', agentV2Router);
+  app.use('/api/v2/ops', datasourceV2Router);
 
   for (const { path: p, router } of extraRoutes) app.use(p, router);
 

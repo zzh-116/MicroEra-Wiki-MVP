@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-09T11:49:04.813Z",
+  "generatedAt": "2026-10-09T11:59:01.600Z",
   "planVersion": "2026-10-09-v1",
   "totalRequiredOps": 162,
-  "registeredOps": 124,
-  "withHandler": 123,
-  "withCli": 123,
-  "withMcp": 123,
-  "fullParityOps": 123,
-  "coveragePercent": 75.9,
+  "registeredOps": 138,
+  "withHandler": 137,
+  "withCli": 137,
+  "withMcp": 137,
+  "fullParityOps": 137,
+  "coveragePercent": 84.6,
   "fullParityIds": [
     "kb.create",
     "kb.list",
@@ -128,13 +128,6 @@
     "wiki.diff",
     "wiki.revert",
     "wiki.revisions",
-    "job.list",
-    "job.view",
-    "job.deadletters",
-    "job.replay_deadletter"
-  ],
-  "contractOnlyIds": [],
-  "missingIds": [
     "datasource.types",
     "datasource.list",
     "datasource.create",
@@ -149,6 +142,13 @@
     "datasource.pause",
     "datasource.resume",
     "datasource.delete",
+    "job.list",
+    "job.view",
+    "job.deadletters",
+    "job.replay_deadletter"
+  ],
+  "contractOnlyIds": [],
+  "missingIds": [
     "model.list",
     "model.view",
     "model.create",

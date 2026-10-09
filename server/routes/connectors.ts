@@ -11,6 +11,7 @@ import { config } from '../../backend/config.js';
 import '../../backend/connectors/crossref/index.js';
 import '../../backend/connectors/feishu/index.js';
 import '../../backend/connectors/arxiv/index.js';
+import '../../backend/connectors/local/index.js';
 
 export const connectorsRouter = Router();
 

@@ -2528,6 +2528,281 @@ export function registerOperations(api: ApiClient): void {
     },
   });
 
+  // ── P7: datasource (D01/D02/D04) ──────────────────────────────────────────
+  const datasourceSchema = {
+    type: 'object',
+    properties: {
+      id: { type: 'integer' },
+      name: { type: 'string' },
+      connector: { type: 'string' },
+      config: { type: 'object' },
+      schedule: { type: 'string' },
+      status: { type: 'string' },
+      cursor: { type: 'string' },
+      created_at: { type: 'string' },
+      updated_at: { type: 'string' },
+    },
+    required: ['id', 'name', 'connector'],
+  };
+
+  operationRegistry.register({
+    id: 'datasource.types',
+    version: '1',
+    title: 'List connector types',
+    description: 'Enumerate the registered connectors (name/label/version) that a datasource can bind to.',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: {} },
+    outputSchema: { type: 'object', properties: { connectors: { type: 'array', items: { type: 'object' } }, total: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/datasource/types' },
+    cli: { command: 'microera datasource types', examples: ['microera datasource types'] },
+    mcp: { toolName: 'datasource_types', readOnlyHint: true, scopes: ['datasource:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/datasource/types', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'datasource.list',
+    version: '1',
+    title: 'List datasources',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { page: { type: 'integer' }, page_size: { type: 'integer' } } },
+    outputSchema: { type: 'object', properties: { items: { type: 'array', items: datasourceSchema }, total: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/datasource/list' },
+    cli: { command: 'microera datasource list', examples: ['microera datasource list'] },
+    mcp: { toolName: 'datasource_list', readOnlyHint: true, scopes: ['datasource:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/datasource/list', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'datasource.create',
+    version: '1',
+    title: 'Create a datasource',
+    description: 'Bind a connector to a named, saved configuration.',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        connector: { type: 'string' },
+        config: { type: 'object' },
+        schedule: { type: 'string' },
+      },
+      required: ['name', 'connector'],
+    },
+    outputSchema: datasourceSchema,
+    http: { method: 'POST', path: '/api/v2/ops/datasource/create' },
+    cli: { command: 'microera datasource create', examples: ['microera datasource create --name "Local" --connector local'] },
+    mcp: { toolName: 'datasource_create', readOnlyHint: false, scopes: ['datasource:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/datasource/create', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'datasource.view',
+    version: '1',
+    title: 'View a datasource',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { datasource_id: { type: 'integer' } }, required: ['datasource_id'] },
+    outputSchema: datasourceSchema,
+    http: { method: 'GET', path: '/api/v2/ops/datasource/view' },
+    cli: { command: 'microera datasource view', examples: ['microera datasource view --datasource-id 1'] },
+    mcp: { toolName: 'datasource_view', readOnlyHint: true, scopes: ['datasource:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/datasource/view', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'datasource.connect',
+    version: '1',
+    title: 'Test a datasource connection',
+    description: 'Run the bound connector connect() to verify it is reachable/authenticated.',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { datasource_id: { type: 'integer' } }, required: ['datasource_id'] },
+    outputSchema: { type: 'object', properties: { datasource_id: { type: 'integer' }, connector: { type: 'string' }, connected: { type: 'boolean' } } },
+    http: { method: 'POST', path: '/api/v2/ops/datasource/connect' },
+    cli: { command: 'microera datasource connect', examples: ['microera datasource connect --datasource-id 1'] },
+    mcp: { toolName: 'datasource_connect', readOnlyHint: true, scopes: ['datasource:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/datasource/connect', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'datasource.preview',
+    version: '1',
+    title: 'Preview datasource documents',
+    description: 'List the connector documents without importing them.',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { datasource_id: { type: 'integer' }, projectId: { type: 'string' }, keyword: { type: 'string' } }, required: ['datasource_id'] },
+    outputSchema: { type: 'object', properties: { datasource_id: { type: 'integer' }, connector: { type: 'string' }, total: { type: 'integer' }, documents: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'POST', path: '/api/v2/ops/datasource/preview' },
+    cli: { command: 'microera datasource preview', examples: ['microera datasource preview --datasource-id 1'] },
+    mcp: { toolName: 'datasource_preview', readOnlyHint: true, scopes: ['datasource:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/datasource/preview', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'datasource.sync',
+    version: '1',
+    title: 'Sync a datasource',
+    description: 'Fetch connector documents and run them through the import pipeline (chunk → embed → vector), advancing the cursor.',
+    kind: 'job',
+    risk: 'write',
+    inputSchema: {
+      type: 'object',
+      properties: { datasource_id: { type: 'integer' }, since: { type: 'string' }, dryRun: { type: 'boolean' }, projectId: { type: 'string' }, keyword: { type: 'string' } },
+      required: ['datasource_id'],
+    },
+    outputSchema: { type: 'object', properties: { datasource_id: { type: 'integer' }, log_id: { type: 'string' }, total: { type: 'integer' }, created: { type: 'integer' }, updated: { type: 'integer' }, skipped: { type: 'integer' }, failed: { type: 'integer' }, cursor: { type: 'string' } } },
+    http: { method: 'POST', path: '/api/v2/ops/datasource/sync' },
+    cli: { command: 'microera datasource sync', examples: ['microera datasource sync --datasource-id 1'] },
+    mcp: { toolName: 'datasource_sync', readOnlyHint: false, scopes: ['datasource:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/datasource/sync', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'datasource.changes',
+    version: '1',
+    title: 'List datasource changes since cursor',
+    description: 'List connector documents updated after a given (or the saved) cursor.',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { datasource_id: { type: 'integer' }, since: { type: 'string' } }, required: ['datasource_id'] },
+    outputSchema: { type: 'object', properties: { datasource_id: { type: 'integer' }, since: { type: 'string' }, changed: { type: 'integer' }, documents: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'GET', path: '/api/v2/ops/datasource/changes' },
+    cli: { command: 'microera datasource changes', examples: ['microera datasource changes --datasource-id 1'] },
+    mcp: { toolName: 'datasource_changes', readOnlyHint: true, scopes: ['datasource:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/datasource/changes', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'datasource.cursor',
+    version: '1',
+    title: 'Read a datasource cursor',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { datasource_id: { type: 'integer' } }, required: ['datasource_id'] },
+    outputSchema: { type: 'object', properties: { datasource_id: { type: 'integer' }, cursor: { type: 'string' } } },
+    http: { method: 'GET', path: '/api/v2/ops/datasource/cursor' },
+    cli: { command: 'microera datasource cursor', examples: ['microera datasource cursor --datasource-id 1'] },
+    mcp: { toolName: 'datasource_cursor', readOnlyHint: true, scopes: ['datasource:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/datasource/cursor', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'datasource.logs',
+    version: '1',
+    title: 'List datasource sync logs',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { datasource_id: { type: 'integer' }, page: { type: 'integer' }, page_size: { type: 'integer' } }, required: ['datasource_id'] },
+    outputSchema: { type: 'object', properties: { items: { type: 'array', items: { type: 'object' } }, total: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/datasource/logs' },
+    cli: { command: 'microera datasource logs', examples: ['microera datasource logs --datasource-id 1'] },
+    mcp: { toolName: 'datasource_logs', readOnlyHint: true, scopes: ['datasource:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/datasource/logs', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'datasource.schedule',
+    version: '1',
+    title: 'Set a datasource schedule',
+    description: 'Set the cron schedule string for automatic sync.',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { datasource_id: { type: 'integer' }, schedule: { type: 'string' } }, required: ['datasource_id', 'schedule'] },
+    outputSchema: datasourceSchema,
+    http: { method: 'POST', path: '/api/v2/ops/datasource/schedule' },
+    cli: { command: 'microera datasource schedule', examples: ['microera datasource schedule --datasource-id 1 --schedule "0 3 * * *"'] },
+    mcp: { toolName: 'datasource_schedule', readOnlyHint: false, scopes: ['datasource:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/datasource/schedule', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'datasource.pause',
+    version: '1',
+    title: 'Pause a datasource',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { datasource_id: { type: 'integer' } }, required: ['datasource_id'] },
+    outputSchema: { type: 'object', properties: { datasource_id: { type: 'integer' }, status: { type: 'string' } } },
+    http: { method: 'POST', path: '/api/v2/ops/datasource/pause' },
+    cli: { command: 'microera datasource pause', examples: ['microera datasource pause --datasource-id 1'] },
+    mcp: { toolName: 'datasource_pause', readOnlyHint: false, scopes: ['datasource:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/datasource/pause', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'datasource.resume',
+    version: '1',
+    title: 'Resume a datasource',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { datasource_id: { type: 'integer' } }, required: ['datasource_id'] },
+    outputSchema: { type: 'object', properties: { datasource_id: { type: 'integer' }, status: { type: 'string' } } },
+    http: { method: 'POST', path: '/api/v2/ops/datasource/resume' },
+    cli: { command: 'microera datasource resume', examples: ['microera datasource resume --datasource-id 1'] },
+    mcp: { toolName: 'datasource_resume', readOnlyHint: false, scopes: ['datasource:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/datasource/resume', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'datasource.delete',
+    version: '1',
+    title: 'Delete a datasource',
+    kind: 'mutation',
+    risk: 'destructive',
+    inputSchema: { type: 'object', properties: { datasource_id: { type: 'integer' } }, required: ['datasource_id'] },
+    outputSchema: { type: 'object', properties: { deleted: { type: 'boolean' }, id: { type: 'integer' } } },
+    http: { method: 'DELETE', path: '/api/v2/ops/datasource/delete' },
+    cli: { command: 'microera datasource delete', examples: ['microera datasource delete --datasource-id 1'] },
+    mcp: { toolName: 'datasource_delete', readOnlyHint: false, scopes: ['datasource:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'DELETE', '/api/v2/ops/datasource/delete', input, ctx);
+    },
+  });
+
   // ── P8: jobs (wired to existing /api/pipeline/jobs) ─────────────────────
   operationRegistry.register({
     id: 'job.view',
