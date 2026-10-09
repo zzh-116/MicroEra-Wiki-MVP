@@ -504,6 +504,61 @@ export const parseDeadletters = pgTable(
   ],
 );
 
+// ---- Eval Datasets (P3-05) ----
+// A retrieval evaluation dataset: a named, KB-scoped collection of query
+// relevance judgements. Each item pairs a query with the document ids that
+// SHOULD be retrieved for it, so `eval.run` can score a retrieval method
+// against a ground-truth set (recall/mrr/ndcg).
+export const evalDatasets = pgTable(
+  'eval_datasets',
+  {
+    id: serial('id').primaryKey(),
+    name: text('name').notNull(),
+    kbId: integer('kb_id').references(() => knowledgeBases.id, { onDelete: 'cascade' }),
+    description: text('description').notNull().default(''),
+    method: text('method', { enum: ['vector', 'lexical', 'hybrid'] }).notNull().default('hybrid'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
+  },
+  (table) => [
+    index('eval_datasets_kb_idx').on(table.kbId),
+    index('eval_datasets_deleted_at_idx').on(table.deletedAt),
+  ],
+);
+
+export const evalDatasetItems = pgTable(
+  'eval_dataset_items',
+  {
+    id: serial('id').primaryKey(),
+    datasetId: integer('dataset_id')
+      .notNull()
+      .references(() => evalDatasets.id, { onDelete: 'cascade' }),
+    query: text('query').notNull(),
+    relevantDocumentIds: jsonb('relevant_document_ids').notNull().default([]),
+  },
+  (table) => [index('eval_dataset_items_dataset_idx').on(table.datasetId)],
+);
+
+// ---- Eval Runs (P3-05) ----
+// A persisted evaluation run: which dataset + method was scored, the aggregate
+// metrics, and the per-query breakdown (for eval.report / eval.compare).
+export const evalRuns = pgTable(
+  'eval_runs',
+  {
+    id: text('id').primaryKey(),
+    datasetId: integer('dataset_id')
+      .notNull()
+      .references(() => evalDatasets.id, { onDelete: 'cascade' }),
+    method: text('method', { enum: ['vector', 'lexical', 'hybrid'] }).notNull(),
+    params: jsonb('params').notNull().default({}),
+    status: text('status', { enum: ['running', 'completed', 'failed'] }).notNull().default('running'),
+    metrics: jsonb('metrics').notNull().default({}),
+    perQuery: jsonb('per_query').notNull().default([]),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index('eval_runs_dataset_idx').on(table.datasetId)],
+);
+
 // ---- Relations ----
 export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
   user: one(users, { fields: [bookmarks.userId], references: [users.id] }),

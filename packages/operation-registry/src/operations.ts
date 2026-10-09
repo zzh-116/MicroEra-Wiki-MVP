@@ -1147,6 +1147,136 @@ export function registerOperations(api: ApiClient): void {
     },
   });
 
+  // ── P3-05: eval.* (retrieval evaluation datasets + runs) ─────────────────
+  operationRegistry.register({
+    id: 'eval.dataset_list',
+    version: '1',
+    title: 'List eval datasets',
+    description: 'List retrieval evaluation datasets (name, scope, default method, item count).',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        page: { type: 'integer' },
+        page_size: { type: 'integer' },
+      },
+    },
+    outputSchema: {
+      type: 'object',
+      properties: {
+        items: { type: 'array', items: { type: 'object' } },
+        total: { type: 'integer' },
+      },
+    },
+    http: { method: 'GET', path: '/api/v2/ops/eval/dataset_list' },
+    cli: { command: 'microera eval dataset-list', examples: ['microera eval dataset-list'] },
+    mcp: { toolName: 'eval_dataset_list', readOnlyHint: true, scopes: ['eval:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/eval/dataset_list', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'eval.dataset_create',
+    version: '1',
+    title: 'Create an eval dataset',
+    description: 'Create a retrieval evaluation dataset from a list of query relevance judgements.',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        kb_id: { type: 'integer' },
+        description: { type: 'string' },
+        method: { type: 'string', enum: ['vector', 'lexical', 'hybrid'] },
+        queries: { type: 'array', items: { type: 'object' } },
+      },
+      required: ['name', 'queries'],
+    },
+    outputSchema: { type: 'object', properties: { id: { type: 'integer' }, name: { type: 'string' }, items: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'POST', path: '/api/v2/ops/eval/dataset_create' },
+    cli: { command: 'microera eval dataset-create', examples: ['microera eval dataset-create --name "retrieval set" --queries \'[{"query":"MOF","relevant_document_ids":[1]}]\''] },
+    mcp: { toolName: 'eval_dataset_create', readOnlyHint: false, scopes: ['eval:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/eval/dataset_create', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'eval.run',
+    version: '1',
+    title: 'Run an evaluation',
+    description: 'Score a retrieval method (vector/lexical/hybrid) against a dataset and record recall@k/MRR/nDCG@k.',
+    kind: 'job',
+    risk: 'read',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        dataset_id: { type: 'integer' },
+        method: { type: 'string', enum: ['vector', 'lexical', 'hybrid'] },
+        top_k: { type: 'integer' },
+        is_internal: { type: 'boolean' },
+      },
+      required: ['dataset_id'],
+    },
+    outputSchema: { type: 'object', properties: { run_id: { type: 'string' }, metrics: { type: 'object' }, per_query: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'POST', path: '/api/v2/ops/eval/run' },
+    cli: { command: 'microera eval run', examples: ['microera eval run --dataset-id 1 --method hybrid --top-k 5'] },
+    mcp: { toolName: 'eval_run', readOnlyHint: false, scopes: ['eval:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/eval/run', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'eval.report',
+    version: '1',
+    title: 'Read an eval report',
+    description: 'Return a persisted eval run: aggregate metrics and the per-query breakdown.',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: {
+      type: 'object',
+      properties: { run_id: { type: 'string' } },
+      required: ['run_id'],
+    },
+    outputSchema: { type: 'object', properties: { run_id: { type: 'string' }, metrics: { type: 'object' }, per_query: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'POST', path: '/api/v2/ops/eval/report' },
+    cli: { command: 'microera eval report', examples: ['microera eval report --run-id eval_...'] },
+    mcp: { toolName: 'eval_report', readOnlyHint: true, scopes: ['eval:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/eval/report', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'eval.compare',
+    version: '1',
+    title: 'Compare eval runs',
+    description: 'Compare two or more eval runs side-by-side, with metric deltas relative to the first (baseline) run.',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: {
+      type: 'object',
+      properties: { run_ids: { type: 'array', items: { type: 'string' } } },
+      required: ['run_ids'],
+    },
+    outputSchema: { type: 'object', properties: { baseline_run_id: { type: 'string' }, runs: { type: 'array', items: { type: 'object' } }, deltas: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'POST', path: '/api/v2/ops/eval/compare' },
+    cli: { command: 'microera eval compare', examples: ['microera eval compare --run-ids eval_... eval_...'] },
+    mcp: { toolName: 'eval_compare', readOnlyHint: true, scopes: ['eval:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/eval/compare', input, ctx);
+    },
+  });
+
   // ── P4: chat (wired to existing /api/ai/chat) ───────────────────────────
   operationRegistry.register({
     id: 'chat.ask',
