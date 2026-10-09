@@ -409,6 +409,45 @@ export const documentElements = pgTable(
   ],
 );
 
+// ---- Knowledge Chunks (P2-03) ----
+// A document's embeddable chunks, produced by the four chunking strategies
+// (fixed/paragraph/sentence/markdown). Editing or deleting a chunk invalidates
+// its vector so the index never serves stale text.
+export const knowledgeChunks = pgTable(
+  'knowledge_chunks',
+  {
+    id: text('id').primaryKey(),
+    documentId: integer('document_id')
+      .notNull()
+      .references(() => documents.id, { onDelete: 'cascade' }),
+    index: integer('index').notNull(),
+    text: text('text').notNull(),
+    strategy: text('strategy').notNull().default('markdown'),
+    heading: text('heading'),
+    startChar: integer('start_char').notNull().default(0),
+    endChar: integer('end_char').notNull().default(0),
+    metadata: jsonb('metadata').notNull().default({}),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index('knowledge_chunks_doc_idx').on(table.documentId)],
+);
+
+// ---- Knowledge Vectors (pgvector, P2-03 invalidation / P2-05 embedding) ----
+export const knowledgeVectors = pgTable(
+  'knowledge_vectors',
+  {
+    chunkId: text('chunk_id').primaryKey(),
+    documentId: integer('document_id')
+      .notNull()
+      .references(() => documents.id, { onDelete: 'cascade' }),
+    embedding: vector('embedding', { dimensions: 1024 }),
+    store: text('store').notNull().default('pgvector'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index('knowledge_vectors_doc_idx').on(table.documentId)],
+);
+
 // ---- Relations ----
 export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
   user: one(users, { fields: [bookmarks.userId], references: [users.id] }),
