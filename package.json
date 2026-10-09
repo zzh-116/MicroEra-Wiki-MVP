@@ -21,7 +21,11 @@
     "db:studio": "drizzle-kit studio",
     "graph:rebuild": "tsx scripts/rebuild-graph.mts",
     "storage:upload": "tsx scripts/upload-local-file-to-minio.mts",
-    "storage:migrate": "tsx scripts/migrate-files-to-minio.mts"
+    "storage:migrate": "tsx scripts/migrate-files-to-minio.mts",
+    "parity:check": "tsx scripts/parity-check.ts",
+    "cli": "tsx cli/src/main.ts",
+    "mcp:stdio": "tsx cli/src/main.ts mcp serve --transport stdio",
+    "mcp:http": "tsx cli/src/main.ts mcp serve --transport http"
   },
   "dependencies": {
     "@antv/g6": "^4.8.25",
