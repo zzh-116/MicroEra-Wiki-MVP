@@ -12,6 +12,7 @@ import { entryRepository } from '../../backend/repositories/entry.repository.js'
 import { vectorRepository } from '../../backend/repositories/vector.repository.js';
 import { ollamaEmbedder } from '../../backend/embedding/ollama.js';
 import { config } from '../../backend/config.js';
+import { requireAuth, requireRole, optionalAuth } from '../middleware/auth.js';
 
 export const pipelineRouter = Router();
 
@@ -45,11 +46,18 @@ pipelineRouter.get('/formats', (_req: Request, res: Response) => {
 });
 
 // Parse
-pipelineRouter.post('/parse', async (req: Request, res: Response) => {
+pipelineRouter.post('/parse', requireAuth, async (req: Request, res: Response) => {
   const wallStart = performance.now();
   try {
     const { content, fileName, filePath } = req.body || {};
     const parser = getParser();
+
+    // Reading a server-side path is admin-only; content string parsing is open
+    // to any authenticated user.
+    if ((filePath || fileName) && req.user!.role !== 'admin') {
+      res.status(403).json({ error: 'FORBIDDEN', message: 'Path-based parse requires admin' });
+      return;
+    }
 
     if (!content && !fileName && !filePath) {
       res.status(400).json({
@@ -94,7 +102,7 @@ pipelineRouter.post('/parse', async (req: Request, res: Response) => {
 });
 
 // Chunk
-pipelineRouter.post('/chunk', async (req: Request, res: Response) => {
+pipelineRouter.post('/chunk', requireAuth, async (req: Request, res: Response) => {
   try {
     const { text, strategy, chunkSize, overlap } = req.body || {};
     if (!text) { res.status(400).json({ error: 'MISSING_INPUT' }); return; }
@@ -104,7 +112,7 @@ pipelineRouter.post('/chunk', async (req: Request, res: Response) => {
 });
 
 // Embed
-pipelineRouter.post('/embed', async (req: Request, res: Response) => {
+pipelineRouter.post('/embed', requireAuth, async (req: Request, res: Response) => {
   try {
     const { text, texts, entryId } = req.body || {};
     const inputTexts: string[] = texts || (text ? [text] : []);
@@ -121,7 +129,7 @@ pipelineRouter.post('/embed', async (req: Request, res: Response) => {
 });
 
 // Import (file upload + JSON body)
-pipelineRouter.post('/import', async (req: Request, res: Response) => {
+pipelineRouter.post('/import', requireAuth, async (req: Request, res: Response) => {
   try {
     if (upload && req.headers['content-type']?.includes('multipart/form-data')) {
       upload.single('file')(req, res, async (err: any) => {
@@ -201,6 +209,12 @@ pipelineRouter.post('/import', async (req: Request, res: Response) => {
       });
       return;
     }
+    // Reading a server-side path is admin-only; content import is open to any
+    // authenticated user (editors).
+    if (filePath && req.user!.role !== 'admin') {
+      res.status(403).json({ error: 'FORBIDDEN', message: 'Path-based import requires admin' });
+      return;
+    }
     const result = content
       ? await importService.importFromApi(content, fileName || 'api_import.md', metadata, { skipEmbedding, chunkConfig })
       : await importService.importFromUpload(fs.readFileSync(filePath), path.basename(filePath), metadata, { skipEmbedding, chunkConfig });
@@ -218,7 +232,7 @@ pipelineRouter.post('/import', async (req: Request, res: Response) => {
 });
 
 // Import string
-pipelineRouter.post('/import/string', async (req: Request, res: Response) => {
+pipelineRouter.post('/import/string', requireAuth, async (req: Request, res: Response) => {
   try {
       const { content, fileName, metadata, skipEmbedding, chunkConfig } = req.body || {};
       // 兼容前端传的 entryMetadata（与 metadata 同义）
@@ -235,8 +249,8 @@ pipelineRouter.post('/import/string', async (req: Request, res: Response) => {
   }
 });
 
-// Batch import
-pipelineRouter.post('/import/batch', async (req: Request, res: Response) => {
+// Batch import (reads a server directory — admin only)
+pipelineRouter.post('/import/batch', requireAuth, requireRole('admin'), async (req: Request, res: Response) => {
   try {
     const { dirPath, pattern, skipEmbedding, chunkConfig } = req.body || {};
     if (!dirPath) { res.status(400).json({ error: 'MISSING_INPUT' }); return; }
@@ -244,13 +258,13 @@ pipelineRouter.post('/import/batch', async (req: Request, res: Response) => {
   } catch (err: any) { res.status(500).json({ error: 'BATCH_IMPORT_FAILED', message: err.message }); }
 });
 
-// Semantic search
-pipelineRouter.post('/search', async (req: Request, res: Response) => {
+// Semantic search — visibility comes from the token (optionalAuth), never the body.
+pipelineRouter.post('/search', optionalAuth, async (req: Request, res: Response) => {
   try {
-    const { query, topK, isInternal } = req.body || {};
+    const { query, topK } = req.body || {};
     if (!query?.trim()) { res.json({ results: [], source: 'pgvector', queryTimeMs: 0 }); return; }
     const start = Date.now();
-    const results = await searchService.semanticSearch(query.trim(), isInternal || false, topK || 10);
+    const results = await searchService.semanticSearch(query.trim(), req.isInternal, topK || 10);
     res.json({ query: query.trim(), totalResults: results.length, queryTimeMs: Date.now() - start, source: 'pgvector',
       results: results.map((r) => ({ entryId: r.entry.id, title: r.entry.title, entryType: r.entry.entry_type, summary: r.entry.summary, score: Math.round(r.score * 1000) / 1000, tags: r.entry.tags.slice(0, 5), visibility: r.entry.visibility })) });
   } catch (err: any) { res.status(503).json({ error: 'SEARCH_FAILED', message: err.message }); }
@@ -263,7 +277,7 @@ pipelineRouter.get('/status', async (_req: Request, res: Response) => {
 });
 
 // Import job status — polled by the frontend UploadManager
-pipelineRouter.get('/jobs/:id', (req: Request, res: Response) => {
+pipelineRouter.get('/jobs/:id', requireAuth, (req: Request, res: Response) => {
   const job = importJobService.getJob(req.params.id);
   if (!job) {
     res.status(404).json({ error: 'JOB_NOT_FOUND' });
@@ -277,12 +291,12 @@ pipelineRouter.get('/jobs/:id', (req: Request, res: Response) => {
 });
 
 // List recent import jobs
-pipelineRouter.get('/jobs', (_req: Request, res: Response) => {
+pipelineRouter.get('/jobs', requireAuth, (_req: Request, res: Response) => {
   res.json({ jobs: importJobService.listJobs() });
 });
 
 // Cancel an import job
-pipelineRouter.delete('/jobs/:id', (req: Request, res: Response) => {
+pipelineRouter.delete('/jobs/:id', requireAuth, (req: Request, res: Response) => {
   const job = importJobService.cancelJob(req.params.id);
   if (!job) {
     res.status(404).json({ error: 'JOB_NOT_FOUND' });

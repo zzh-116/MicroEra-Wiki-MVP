@@ -1,0 +1,96 @@
+{
+  "version": "2026-10-09-v1",
+  "phases": [
+    {
+      "id": "P0",
+      "depends_on": [],
+      "goal": "基线、漏洞、Operation Registry/CLI/MCP skeleton"
+    },
+    {
+      "id": "P1",
+      "depends_on": [
+        "P0"
+      ],
+      "goal": "知识库/文档/来源/修订"
+    },
+    {
+      "id": "P2",
+      "depends_on": [
+        "P1"
+      ],
+      "goal": "文件解析、多模态、持久任务"
+    },
+    {
+      "id": "P3",
+      "depends_on": [
+        "P1",
+        "P2"
+      ],
+      "goal": "检索融合、重排、评测"
+    },
+    {
+      "id": "P4",
+      "depends_on": [
+        "P3"
+      ],
+      "goal": "多轮 RAG、引用、流式"
+    },
+    {
+      "id": "P5",
+      "depends_on": [
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "goal": "AutoWiki、知识图谱"
+    },
+    {
+      "id": "P6",
+      "depends_on": [
+        "P3",
+        "P4"
+      ],
+      "goal": "Agent/工具/Skills/MCP client/sandbox"
+    },
+    {
+      "id": "P7",
+      "depends_on": [
+        "P1",
+        "P2"
+      ],
+      "goal": "Connector/delta sync"
+    },
+    {
+      "id": "P8",
+      "depends_on": [
+        "P4",
+        "P5",
+        "P6",
+        "P7"
+      ],
+      "goal": "Model UI/平台补足/可选扩展"
+    },
+    {
+      "id": "P9",
+      "depends_on": [
+        "P0",
+        "P1",
+        "P2",
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "P8"
+      ],
+      "goal": "CLI/MCP 100% parity final gate"
+    },
+    {
+      "id": "P10",
+      "depends_on": [
+        "P9"
+      ],
+      "goal": "E2E/性能/迁移/报告/本地提交"
+    }
+  ]
+}

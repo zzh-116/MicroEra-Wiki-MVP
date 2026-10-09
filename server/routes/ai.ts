@@ -6,17 +6,18 @@ import { chunkRepository } from '../../backend/repositories/chunk.repository.js'
 import { vectorRepository } from '../../backend/repositories/vector.repository.js';
 import { conversationRepository } from '../../backend/repositories/conversation.repository.js';
 import { sseStart, sseStartEvent, sseToken, sseDone, sseError } from '../../backend/llm/sse.js';
+import { requireAuth, requireRole, optionalAuth } from '../middleware/auth.js';
 
 export const aiRouter = Router();
 
 // POST /api/ai/chat — non-streaming RAG Q&A (backward compatible)
-aiRouter.post('/chat', async (req: Request, res: Response) => {
+aiRouter.post('/chat', optionalAuth, async (req: Request, res: Response) => {
   try {
     const { question, history, conversationId, entryId } = req.body || {};
     if (!question?.trim()) { res.json({ answer: '请提出一个问题。', sources: [] }); return; }
     const userId = req.user?.userId;
     const entryIdNum = entryId != null && entryId !== '' && Number.isFinite(Number(entryId)) ? Number(entryId) : undefined;
-    const result = await aiService.chat(question, userId, conversationId, entryIdNum);
+    const result = await aiService.chat(question, userId, conversationId, entryIdNum, req.isInternal);
     res.json({ answer: result.answer, sources: result.sources.map((s) => ({ id: s.id, title: s.title, entry_type: s.entry_type })), conversationId: result.conversationId });
   } catch (err: any) {
     res.status(503).json({ error: 'AI_SERVICE_UNAVAILABLE', message: err.message });
@@ -24,7 +25,7 @@ aiRouter.post('/chat', async (req: Request, res: Response) => {
 });
 
 // POST /api/ai/chat/stream — SSE streaming RAG Q&A
-aiRouter.post('/chat/stream', async (req: Request, res: Response) => {
+aiRouter.post('/chat/stream', optionalAuth, async (req: Request, res: Response) => {
   const tRoute = Date.now();
   console.log('[SSE] POST /chat/stream — request received');
 
@@ -55,7 +56,7 @@ aiRouter.post('/chat/stream', async (req: Request, res: Response) => {
 
     const entryIdNum = entryId != null && entryId !== '' && Number.isFinite(Number(entryId)) ? Number(entryId) : undefined;
     let eventCount = 0;
-    for await (const event of aiService.streamChat(question, userId, conversationId, entryIdNum)) {
+    for await (const event of aiService.streamChat(question, userId, conversationId, entryIdNum, undefined, req.isInternal)) {
       eventCount++;
       if (!streamingStarted) streamingStarted = true;
       switch (event.type) {
@@ -94,29 +95,39 @@ aiRouter.post('/chat/stream', async (req: Request, res: Response) => {
   }
 });
 
-aiRouter.post('/summarize', async (req: Request, res: Response) => {
+aiRouter.post('/summarize', optionalAuth, async (req: Request, res: Response) => {
   try {
     const { entryId } = req.body || {};
     if (!entryId) { res.status(400).json({ error: 'MISSING_ENTRY_ID', message: '请提供 entryId' }); return; }
-    res.json({ summary: await aiService.summarize(Number(entryId)) });
+    res.json({ summary: await aiService.summarize(Number(entryId), req.isInternal) });
   } catch (err: any) {
+    if (err.message === 'ENTRY_NOT_FOUND') {
+      res.status(404).json({ error: 'ENTRY_NOT_FOUND', message: 'Entry not found or not visible' });
+      return;
+    }
     res.status(503).json({ error: 'AI_SERVICE_UNAVAILABLE', message: err.message });
   }
 });
 
-// GET /api/ai/conversations — list user conversations
-aiRouter.get('/conversations', async (req: Request, res: Response) => {
-  if (!req.user?.userId) { res.json([]); return; }
-  res.json(await conversationRepository.findByUserId(req.user.userId));
+// GET /api/ai/conversations — list user conversations (auth required)
+aiRouter.get('/conversations', requireAuth, async (req: Request, res: Response) => {
+  res.json(await conversationRepository.findByUserId(req.user!.userId));
 });
 
-// GET /api/ai/conversations/:id — get messages
-aiRouter.get('/conversations/:id', async (req: Request, res: Response) => {
-  res.json(await conversationRepository.getMessages(Number(req.params.id)));
+// GET /api/ai/conversations/:id — get messages (owner or admin only)
+aiRouter.get('/conversations/:id', requireAuth, async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+  const owned = await conversationRepository.findByUserId(req.user!.userId);
+  const isOwner = owned.some((c) => c.id === id);
+  if (!isOwner && req.user!.role !== 'admin') {
+    res.status(403).json({ error: 'FORBIDDEN', message: 'Conversation not owned by this user' });
+    return;
+  }
+  res.json(await conversationRepository.getMessages(id));
 });
 
-// POST /api/ai/import — trigger import
-aiRouter.post('/import', async (req: Request, res: Response) => {
+// POST /api/ai/import — trigger import (admin only: reads server paths / mutates KB)
+aiRouter.post('/import', requireAuth, requireRole('admin'), async (req: Request, res: Response) => {
   try {
     const { filePath, content } = req.body || {};
     let result;
@@ -129,8 +140,8 @@ aiRouter.post('/import', async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/ai/reset — wipe and reimport
-aiRouter.post('/reset', async (req: Request, res: Response) => {
+// POST /api/ai/reset — wipe and reimport (admin only, destructive)
+aiRouter.post('/reset', requireAuth, requireRole('admin'), async (req: Request, res: Response) => {
   try {
     const fp = req.body?.filePath || 'backend/data/materials-metadata.md';
 

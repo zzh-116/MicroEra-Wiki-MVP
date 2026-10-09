@@ -8,6 +8,7 @@ import {
 import { sql, eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { users } from './schema.js';
+import { config } from '../config.js';
 
 const SEED_CATEGORIES = [
   { id: 1, name: '展示素材', description: '展示素材与图解', sortOrder: 1 },
@@ -96,13 +97,14 @@ export async function seedDatabase(force = false): Promise<void> {
     await db.delete(tags); await db.delete(categories);
   }
 
-  // 0. Admin user
-  const pwdHash = await bcrypt.hash('admin123', 10);
+  // 0. Admin user — password comes from ADMIN_PASSWORD (dev default only).
+  //    Do not log the credential value.
+  const pwdHash = await bcrypt.hash(config.adminPassword, 10);
   await db.insert(users).values({
     username: 'admin', passwordHash: pwdHash,
     displayName: '管理员', role: 'admin',
   }).onConflictDoNothing();
-  console.log('[Seed] Admin user: admin / admin123');
+  console.log('[Seed] Admin user ensured');
 
   // 1. Categories
   for (const cat of SEED_CATEGORIES) await db.insert(categories).values(cat).onConflictDoNothing();

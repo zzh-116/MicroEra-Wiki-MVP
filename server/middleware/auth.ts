@@ -1,8 +1,12 @@
 import crypto from 'node:crypto';
 import { Request, Response, NextFunction } from 'express';
 import { authService } from '../../backend/services/auth.service.js';
+import { config } from '../../backend/config.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'microera-wiki-mvp-secret-2026';
+// Single source of truth for the signing secret. The built-in default is only
+// ever acceptable in a local dev checkout — `validateProductionSecrets()` hard
+// fails boot in production when it is still in use.
+const JWT_SECRET = config.jwtSecret;
 
 export interface JwtPayload {
   userId: number;
@@ -73,4 +77,23 @@ export function optionalAuth(req: Request, _res: Response, next: NextFunction): 
     if (payload) { req.user = payload; req.isInternal = true; }
   }
   next();
+}
+
+/**
+ * Role-gated authorization. Must run AFTER `requireAuth` (it reads `req.user`).
+ * Admin-only operations (index rebuild, log purge, destructive resets) must
+ * not be reachable by a viewer/editor simply holding a valid token.
+ */
+export function requireRole(...roles: string[]) {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    if (!req.user) {
+      res.status(401).json({ error: 'UNAUTHORIZED', message: 'Authentication required' });
+      return;
+    }
+    if (!roles.includes(req.user.role)) {
+      res.status(403).json({ error: 'FORBIDDEN', message: `Requires role: ${roles.join(' or ')}` });
+      return;
+    }
+    next();
+  };
 }

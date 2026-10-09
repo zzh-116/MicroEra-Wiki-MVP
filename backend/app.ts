@@ -2,10 +2,9 @@
 import express from 'express';
 import path from 'node:path';
 import fs from 'node:fs';
-import { config } from './config.js';
+import { config, validateProductionSecrets } from './config.js';
 import { pool, db } from './db/connection.js';
-import { seedDatabase } from './db/seed.js';
-import { userRepository } from './repositories/user.repository.js';
+import { seedDatabase } from './db/seed.js';import { userRepository } from './repositories/user.repository.js';
 import { ollamaEmbedder } from './embedding/ollama.js';
 import type { Router } from 'express';
 
@@ -104,6 +103,9 @@ export async function createApp(options: AppOptions = {}) {
 
 /** Run migrations, seed, and initialize services */
 export async function runBootstrap() {
+  // 0. Refuse to boot in production on built-in default secrets.
+  validateProductionSecrets();
+
   // 1. Run migrations
   await runMigrations();
 

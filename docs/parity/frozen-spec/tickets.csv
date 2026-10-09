@@ -1,0 +1,65 @@
+﻿ticket_id,phase,title,details,owner,depends_on,done_when,status
+P0-01,P0,Inventory & source-map,"Baseline repo snapshot, existing routes, data model and UI",ArchitectureWorker,,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P0-02,P0,P0 risk fixes,"Fix visibility, ownership, anonymous destructive routes, default credentials",QAWorker,P0-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P0-03,P0,Operation contract skeleton,Registry + SDK + API schema/type generation,ArchitectureWorker,P0-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P0-04,P0,CLI/MCP skeleton,"stdio/HTTP boilerplate, CLI JSON error modes, example tool",CLIWorker,P0-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P0-05,P0,Legacy regression harness,Smoke existing routes/login/search/entry pages without wiping database,QAWorker,P0-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P1-01,P1,Knowledge domain migration,"Add KB Source Document Revision records, forward migrations",ArchitectureWorker,P0-05,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P1-02,P1,Legacy entry backfill,"Read-only dry run + mapped source, checksum, compatibility adapter",ArchitectureWorker,P1-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P1-03,P1,Knowledge CRUD and folder,"CoreService for KB/document/folders, API and tests",ArchitectureWorker,P1-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P1-04,P1,Artifacts and preview,"Store/retrieve original file, attachment metadata, integrity checks",IngestWorker,P1-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P1-05,P1,Knowledge front end,KB tree/docs list/preview/edit and old route preservation,UIWorker,P1-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P1-06,P1,Knowledge CLI+MCP parity,Registry bound verbs and contract tests,CLIWorker,P1-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P2-01,P2,Parser adapters,Docling and text fallback with content integrity,IngestWorker,P1-06,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P2-02,P2,Layout-aware parsed elements,Heading/table/page/image coordinates and blob refs,IngestWorker,P2-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P2-03,P2,Chunk preview/edit,"Four existing chunkers + preview/metadata, index invalidation",RetrievalWorker,P2-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P2-04,P2,Durable queue,"Jobs, leases, retry, cancel, checkpoints, DLQ",ArchitectureWorker,P2-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P2-05,P2,Ingest orchestration,revision parse chunk embed index publish atomicity,IngestWorker,P2-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P2-06,P2,Ingest CLI+MCP parity,Upload/reparse/wait/progress/cancel and tests,CLIWorker,P2-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P3-01,P3,Vector TopK bugfix,Implement global scored TopK with DB-level ACL filters,RetrievalWorker,P1-06;P2-06,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P3-02,P3,Lexical BM25 baseline,Implement Postgres FTS and query normalization,RetrievalWorker,P3-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P3-03,P3,Hybrid RRF,Fusion and deterministic ranking test cases,RetrievalWorker,P3-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P3-04,P3,Rerank adapter,"Provider interface, fallbacks, timeout, scoring trace",RetrievalWorker,P3-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P3-05,P3,Retrieval eval datasets,Gold set + Recall MRR nDCG and baseline report,QAWorker,P3-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P3-06,P3,Search CLI+MCP parity,Filters/chunks/debug/evaluation actions and tests,CLIWorker,P3-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P4-01,P4,Grounded citations,"Anchor immutable document revision/page/chunk, validate IDs",RetrievalWorker,P3-06,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P4-02,P4,Chat and session service,"History and scope, roles, source evidence, resumable persistence",AgentWorker,P4-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P4-03,P4,SSE protocol,"Token/refs/done/error, cancel and mid-stream failure",AgentWorker,P4-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P4-04,P4,Chat UI,"Chat sources/trace, explicit mode switching and warnings",UIWorker,P4-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P4-05,P4,Chat CLI+MCP parity,JSON NDJSON streaming session commands and parity tests,CLIWorker,P4-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P5-01,P5,Wiki schema and CRUD,Wiki pages/slug/links/revisions/permissions,WikiWorker,P2-06;P3-06;P4-05,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P5-02,P5,Wiki map extraction,Entity/claim candidate extraction with existing citation IDs,WikiWorker,P5-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P5-03,P5,Wiki resolve/reduce,"Identity resolve, duplicate handling, transactional merge",WikiWorker,P5-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P5-04,P5,Wiki link and graph,linkify/backlinks/graph query UI,WikiWorker,P5-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P5-05,P5,Wiki version and cite verification,diff/revert/manual edit conflict / unsupported claims,WikiWorker,P5-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P5-06,P5,AutoWiki UI and jobs,Generation progress browser editor graph,UIWorker,P5-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P5-07,P5,Wiki CLI+MCP parity,generate/read/edit/diff/revert/tool tests,MCPWorker,P5-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P6-01,P6,Agent persistence & registry,Agent config/run step/tool schema/retries,AgentWorker,P3-06;P4-05,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P6-02,P6,ReAct engine,Reason/tool/observe bounded loop and final evidence,AgentWorker,P6-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P6-03,P6,Tools and MCP client,"Built-ins search/read/wiki/web, MCP connections",MCPWorker,P6-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P6-04,P6,Skills progressive disclosure,SKILL.md detection/load/validation and tool contract,AgentWorker,P6-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P6-05,P6,Docker restricted sandbox,"Optional isolated execution, no host fallback",AgentWorker,P6-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P6-06,P6,Agent UI and lifecycle,create/run/stop/resume/checkpoint dashboard,UIWorker,P6-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P6-07,P6,Agent CLI+MCP parity,Tool execution/agent session parity and tests,CLIWorker,P6-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P7-01,P7,Existing connector audit,Sandbox arXiv CrossRef Feishu real vs stub behavior,ConnectorWorker,P1-06;P2-06,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P7-02,P7,Incremental cursor sync,Source IDs fingerprints upsert/tombstone idempotency,ConnectorWorker,P7-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P7-03,P7,Scheduled sync jobs,"Cron pause/resume, error progress+retry, logs",ConnectorWorker,P7-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P7-04,P7,Public source E2E,True arXiv CrossRef network DOI evidence,QAWorker,P7-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P7-05,P7,Datasource CLI+MCP parity,connect/preview/sync/logs and test cases,MCPWorker,P7-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P8-01,P8,Model registry and config,LLM/embedding/rerank test and default model switching,AgentWorker,P4-05;P5-07;P6-07;P7-05,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P8-02,P8,Web integration,KB/Doc/Wiki/Agent/Job/Model UI integration,UIWorker,P8-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P8-03,P8,Task and trace dashboard,Unify job progress/diagnostics in UI/CLI/MCP,UIWorker,P8-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P8-04,P8,Optional stretch features,Evaluate missing points without changing frozen weights,ArchitectureWorker,P8-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P8-05,P8,Release docs and admin help,Ensure no production default secrets and migration docs,QAWorker,P8-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P9-01,P9,Upstream CLI inventory,Freeze upstream command catalog delta vs current,CLIWorker,P0-05;P1-06;P2-06;P3-06;P4-05;P5-07;P6-07;P7-05;P8-05,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P9-02,P9,CLI JSON wire contract,schema/profile/config/api/doctor/exit code/streaming/yes,CLIWorker,P9-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P9-03,P9,MCP stdio transport,"Tools/resources/prompts, JSON-RPC and stdout purity",MCPWorker,P9-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P9-04,P9,MCP HTTP transport,"Streamable HTTP, sessions/schemas/progress/cancel",MCPWorker,P9-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P9-05,P9,Generated parity suite,For every required op compare handler CLI MCP contracts,QAWorker,P9-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P9-06,P9,Claude Code client smoke,Connect MCP and use real KB/document/read/write with confirmation,QAWorker,P9-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P10-01,P10,Clean deployment smoke,Docker compose clean DB and actual model/docreader probes,QAWorker,P9-06,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P10-02,P10,Migrations disaster recovery,"Backups, rollback drill, unknown schema check",ArchitectureWorker,P10-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P10-03,P10,Full E2E science workflow,Public literature ingest→RAG→AutoWiki→Agent→MCP,QAWorker,P10-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P10-04,P10,Performance and quality baseline,Recall + latency + memory + token/cost report,QAWorker,P10-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P10-05,P10,Final coverage report,">=80 points all required ops parity true, blockers clear",ArchitectureWorker,P10-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo
+P10-06,P10,Local git closeout,"Supervisor commits docs, source, tests; no push",Supervisor,P10-01,Source + tests + CLI/MCP parity where applicable + evidence + Supervisor review,todo

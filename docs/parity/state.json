@@ -1,0 +1,20 @@
+{
+  "plan_version": "2026-10-09-v1",
+  "reference_sha": "602d0c388bf17d894f467fe0cd65d1d62c73d303",
+  "baseline_target_sha": "4bd5bf417df090351b91de205e6b34a457eb47a2",
+  "local_repo_sha": "01343a2",
+  "current_phase": "P0",
+  "accepted_points": 0,
+  "required_ops_total": 162,
+  "fully_verified_ops": 0,
+  "open_tasks": [
+    { "id": "P0-01", "status": "done", "depends_on": [] },
+    { "id": "P0-02", "status": "done", "depends_on": ["P0-01"] },
+    { "id": "P0-03", "status": "todo", "depends_on": ["P0-01"] },
+    { "id": "P0-04", "status": "todo", "depends_on": ["P0-01"] },
+    { "id": "P0-05", "status": "todo", "depends_on": ["P0-01"] }
+  ],
+  "blockers": [],
+  "last_verified_commit": null,
+  "next_action": "commit P0-02 security fixes, then registry/CLI/MCP skeleton (P0-03/P0-04) and parity:check (P0-05)"
+}

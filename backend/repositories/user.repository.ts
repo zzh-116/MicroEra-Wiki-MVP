@@ -2,6 +2,7 @@ import { BaseRepository } from './base.js';
 import { users } from '../db/schema.js';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
+import { config, DEFAULT_ADMIN_PASSWORD } from '../config.js';
 
 export interface UserRow {
   id: number;
@@ -58,18 +59,34 @@ export class UserRepository extends BaseRepository {
       .where(eq(users.id, id));
   }
 
-  /** Seed the default admin user if no users exist */
+  /** Seed the default admin user if no users exist. Password comes from
+   *  ADMIN_PASSWORD (dev default only); never log the credential value. */
   async seedAdmin(): Promise<void> {
     const existing = await this.db.select({ id: users.id }).from(users).limit(1);
-    if (existing.length > 0) return;
+    if (existing.length > 0) {
+      await this.warnDefaultAdminPassword();
+      return;
+    }
 
     await this.create({
       username: 'admin',
-      password: 'admin123',
+      password: config.adminPassword,
       displayName: '管理员',
       role: 'admin',
     });
-    console.log('[Seed] Admin user created (admin / admin123)');
+    console.log('[Seed] Admin user created');
+  }
+
+  /** Non-destructive detection: warn (not fail) if the admin still uses a
+   *  built-in default password, so operators can rotate it. */
+  private async warnDefaultAdminPassword(): Promise<void> {
+    try {
+      const admin = await this.findByUsername('admin');
+      if (!admin) return;
+      if (await bcrypt.compare(DEFAULT_ADMIN_PASSWORD, admin.passwordHash)) {
+        console.warn('[Security] Admin account is still using the built-in default password — set ADMIN_PASSWORD and rotate it.');
+      }
+    } catch { /* non-fatal */ }
   }
 }
 

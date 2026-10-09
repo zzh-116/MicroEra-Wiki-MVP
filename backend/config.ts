@@ -1,9 +1,37 @@
 // Centralized configuration — all env vars read once here
 import 'dotenv/config';
 
+/** Known-insecure built-in defaults. These exist only so a developer checkout
+ *  boots without configuration; production MUST override them (see
+ *  `validateProductionSecrets`). Never reference these literals anywhere else. */
+export const DEFAULT_JWT_SECRET = 'microera-wiki-mvp-secret-2026';
+export const DEFAULT_ADMIN_PASSWORD = 'admin123';
+
+export const isProduction = process.env.NODE_ENV === 'production';
+
+/**
+ * Hard-fail on known-insecure defaults when running in production. Call from
+ * bootstrap BEFORE the server starts accepting traffic. Does nothing in dev so
+ * a fresh checkout still boots.
+ */
+export function validateProductionSecrets(): void {
+  if (!isProduction) return;
+  const missing: string[] = [];
+  if (!process.env.JWT_SECRET || process.env.JWT_SECRET === DEFAULT_JWT_SECRET) {
+    missing.push('JWT_SECRET (must be set and not the built-in default)');
+  }
+  if (!process.env.ADMIN_PASSWORD || process.env.ADMIN_PASSWORD === DEFAULT_ADMIN_PASSWORD) {
+    missing.push('ADMIN_PASSWORD (must be set and not the built-in default)');
+  }
+  if (missing.length > 0) {
+    throw new Error(`Refusing to start in production with insecure secrets: ${missing.join('; ')}`);
+  }
+}
+
 export const config = {
   port: parseInt(process.env.PORT || '3001', 10),
-  jwtSecret: process.env.JWT_SECRET || 'microera-wiki-mvp-secret-2026',
+  jwtSecret: process.env.JWT_SECRET || DEFAULT_JWT_SECRET,
+  adminPassword: process.env.ADMIN_PASSWORD || DEFAULT_ADMIN_PASSWORD,
 
   /** LLM provider selection: 'ollama' (local) or 'deepseek' (cloud) */
   llmProvider: (process.env.LLM_PROVIDER || 'ollama') as 'ollama' | 'deepseek',

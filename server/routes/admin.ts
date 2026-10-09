@@ -1,6 +1,6 @@
 // Admin Routes — 管理运维操作（重建索引、批量操作等）
 import { Router, Request, Response } from 'express';
-import { requireAuth } from '../middleware/auth.js';
+import { requireAuth, requireRole } from '../middleware/auth.js';
 import { entryRepository } from '../../backend/repositories/entry.repository.js';
 import { chunkRepository } from '../../backend/repositories/chunk.repository.js';
 import { vectorRepository } from '../../backend/repositories/vector.repository.js';
@@ -14,8 +14,9 @@ const logger = createLogger('Admin');
 
 export const adminRouter = Router();
 
-// All admin routes require authentication
-adminRouter.use(requireAuth);
+// All admin routes require authentication AND the admin role. A viewer/editor
+// holding a valid token must not reach index rebuilds or log purges.
+adminRouter.use(requireAuth, requireRole('admin'));
 
 /**
  * POST /api/admin/graph-rebuild

@@ -43,7 +43,7 @@ export class SearchService {
     console.log(`[Search] embed query: ${Date.now() - tEmbed}ms`);
 
     const tSearch = Date.now();
-    const vectorResults = await vectorStore.search(queryVector, topK, entryId);
+    const vectorResults = await vectorStore.search(queryVector, topK, entryId, isInternal);
     console.log(`[Search] vector search: ${Date.now() - tSearch}ms (${vectorResults.length} hits)`);
 
     // 全局检索时每篇文档最多取 3 个 chunk，防止单文档垄断 Top-K；

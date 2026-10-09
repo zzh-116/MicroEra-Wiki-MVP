@@ -44,6 +44,7 @@ class AiService {
     question: string,
     conversationId?: number,
     entryId?: number,
+    isInternal = false,
   ): Promise<{
     messages: ChatMessage[];
     sources: Entry[];
@@ -56,7 +57,7 @@ class AiService {
       conversationId
         ? conversationRepository.getHistory(conversationId)
         : Promise.resolve([] as ChatMessage[]),
-      searchService.semanticSearch(question, true, 10, entryId),
+      searchService.semanticSearch(question, isInternal, 10, entryId),
     ]);
     console.log(`[AI] buildRag: getHistory+semanticSearch = ${Date.now() - t0}ms`);
 
@@ -129,6 +130,7 @@ class AiService {
     userId?: number,
     conversationId?: number,
     entryId?: number,
+    isInternal = false,
   ): Promise<{
     answer: string;
     sources: Entry[];
@@ -142,7 +144,7 @@ class AiService {
       await conversationRepository.addMessage({ conversationId, role: 'user', content: question });
     }
 
-    const { messages, sources, emptyDocument } = await this.buildRagMessages(question, conversationId, entryId);
+    const { messages, sources, emptyDocument } = await this.buildRagMessages(question, conversationId, entryId, isInternal);
 
     if (emptyDocument) {
       if (conversationId) {
@@ -186,6 +188,7 @@ class AiService {
     conversationId?: number,
     entryId?: number,
     signal?: AbortSignal,
+    isInternal = false,
   ): AsyncGenerator<StreamChatEvent> {
     const t0 = Date.now();
 
@@ -207,7 +210,7 @@ class AiService {
       cid
         ? conversationRepository.addMessage({ conversationId: cid, role: 'user', content: question })
         : Promise.resolve(null),
-      this.buildRagMessages(question, cid, entryId),
+      this.buildRagMessages(question, cid, entryId, isInternal),
     ]);
     console.log(`[AI] buildRag+addMsg: ${Date.now() - t1}ms (total: ${Date.now() - t0}ms)`);
 
@@ -281,9 +284,11 @@ class AiService {
   }
 
   /** Summarize an entry */
-  async summarize(entryId: number): Promise<string> {
+  async summarize(entryId: number, isInternal = false): Promise<string> {
     const entry = await entryRepository.findById(entryId);
     if (!entry) throw new Error('ENTRY_NOT_FOUND');
+    // Internal entries are invisible to anonymous callers — treat as missing.
+    if (!isInternal && entry.visibility === 'internal') throw new Error('ENTRY_NOT_FOUND');
     const messages = buildSummarizeMessages(entry);
     return this.provider.chat(messages, { temperature: 0.3 });
   }

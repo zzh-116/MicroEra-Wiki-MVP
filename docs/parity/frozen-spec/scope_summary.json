@@ -1,0 +1,24 @@
+{
+  "version": "2026-10-09-v1",
+  "target_repo": "lichman0405/MicroEra-Wiki-MVP",
+  "upstream_repo": "Tencent/WeKnora",
+  "target_commit": "4bd5bf417df090351b91de205e6b34a457eb47a2",
+  "upstream_commit": "602d0c388bf17d894f467fe0cd65d1d62c73d303",
+  "capability_points": 100,
+  "planned_must_points": 86,
+  "acceptance_points": 80,
+  "required_operation_count": 162,
+  "optional_operation_count": 26,
+  "group_weights": {
+    "K": 16,
+    "P": 10,
+    "R": 17,
+    "C": 13,
+    "A": 14,
+    "W": 12,
+    "D": 8,
+    "M": 4,
+    "O": 3,
+    "X": 3
+  }
+}
