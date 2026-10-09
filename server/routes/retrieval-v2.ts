@@ -4,6 +4,7 @@
 import { Router, Request, Response } from 'express';
 import { requireAuth } from '../middleware/auth.js';
 import { retrievalService } from '../../backend/services/retrieval.service.js';
+import { rerankService } from '../../backend/services/rerank.service.js';
 import { ServiceError } from '../../backend/services/knowledge.service.js';
 import { ok, fail, newTraceId } from '../../packages/contracts/src/wire.js';
 import type { ErrorKindKey } from '../../packages/contracts/src/wire.js';
@@ -94,4 +95,19 @@ retrievalV2Router.post('/search/explain', (req, res) =>
       rrf_k: toInt(req.body?.rrf_k),
     });
     return { query: req.body?.query ?? '', items, total: items.length };
+  }));
+
+retrievalV2Router.post('/search/rerank', (req, res) =>
+  handle('search.rerank', req, res, async () => {
+    const rawDocs = Array.isArray(req.body?.documents) ? req.body.documents : [];
+    const documents = rawDocs.map((d: any) =>
+      typeof d === 'string'
+        ? { text: d }
+        : { text: d?.text ?? '', score: typeof d?.score === 'number' ? d.score : undefined },
+    );
+    return rerankService.rerank({
+      query: req.body?.query,
+      documents,
+      top_k: toInt(req.body?.top_k),
+    });
   }));

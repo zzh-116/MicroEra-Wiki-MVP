@@ -1039,6 +1039,42 @@ export function registerOperations(api: ApiClient): void {
     },
   });
 
+  // ── P3-04: search.rerank (adapter + fallback + timeout + scoring trace) ──
+  operationRegistry.register({
+    id: 'search.rerank',
+    version: '1',
+    title: 'Rerank candidates',
+    description: 'Rerank a candidate list against a query via a pluggable provider, with a timeout and fallback to original ordering; returns a scoring trace.',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        documents: { type: 'array', items: { type: 'object' } },
+        top_k: { type: 'integer' },
+      },
+      required: ['query', 'documents'],
+    },
+    outputSchema: {
+      type: 'object',
+      properties: {
+        items: { type: 'array', items: { type: 'object' } },
+        provider: { type: 'string' },
+        fallback: { type: 'boolean' },
+        timed_out: { type: 'boolean' },
+        elapsed_ms: { type: 'integer' },
+      },
+    },
+    http: { method: 'POST', path: '/api/v2/ops/search/rerank' },
+    cli: { command: 'microera search rerank', examples: ['microera search rerank --query "MOF pore aperture" --documents \'[{"text":"a"}]\''] },
+    mcp: { toolName: 'search_rerank', readOnlyHint: true, scopes: ['search:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/search/rerank', input, ctx);
+    },
+  });
+
   // ── P3-01: search.vector (global scored TopK + DB-level ACL) ─────────────
   operationRegistry.register({
     id: 'search.vector',

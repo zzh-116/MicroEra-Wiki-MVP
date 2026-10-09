@@ -119,6 +119,13 @@ async function main() {
   check(Array.isArray(expl?.items) && expl.items.length >= 2, 'search.explain returns a score trace');
   check(expl.items.every((x: any) => typeof x.rrf_score === 'number' && (x.vector !== null || x.lexical !== null)), 'search.explain exposes per-source ranks + rrf_score');
 
+  // ── P3-04: rerank adapter over the hybrid hits (provider may fall back) ───
+  const rerankDocs = (hyb.items as any[]).slice(0, 3).map((x) => ({ text: x.text, score: x.score }));
+  const rr = await v2('POST', '/api/v2/ops/search/rerank', token, { query: QUERY, documents: rerankDocs, top_k: 3 });
+  check(Array.isArray(rr?.items) && rr.items.length >= 1 && rr.items.length <= 3, 'search.rerank returns ≤top_k items');
+  check(typeof rr?.provider === 'string' && typeof rr?.fallback === 'boolean' && typeof rr?.elapsed_ms === 'number', 'search.rerank returns provider/fallback/elapsed_ms');
+  check(rr.items.every((x: any) => typeof x.index === 'number' && typeof x.text === 'string' && typeof x.original_score === 'number' && typeof x.rerank_score === 'number'), 'search.rerank returns a scoring trace per item');
+
   // Soft-delete the public document → its chunks vanish from the index.
   await v2('DELETE', '/api/v2/ops/doc/delete', token, { doc_id: publicDoc.document_id });
   const afterDelete = await v2('POST', '/api/v2/ops/search/vector', token, { query: QUERY, kb_id: kb.id, top_k: 20, is_internal: true });
