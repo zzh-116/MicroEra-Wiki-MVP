@@ -1340,39 +1340,41 @@ export function registerOperations(api: ApiClient): void {
     },
   });
 
-  // ── P4: chat (wired to existing /api/ai/chat) ───────────────────────────
+  // ── P4: chat (grounded Q&A over the v2 retrieval pipeline) ──────────────
   operationRegistry.register({
     id: 'chat.ask',
     version: '1',
     title: 'Ask a grounded question',
-    kind: 'query',
+    description: 'Retrieve the top chunks for the question, build a citation-grounded prompt, and return the answer + citation list.',
+    kind: 'mutation',
     risk: 'read',
     inputSchema: {
       type: 'object',
-      properties: { question: { type: 'string' }, kb_ids: { type: 'array', items: { type: 'string' } }, conversation_id: { type: 'string' } },
+      properties: {
+        question: { type: 'string' },
+        kb_ids: { type: 'array', items: { type: 'integer' } },
+        session_id: { type: 'string' },
+        top_k: { type: 'integer' },
+        method: { type: 'string', enum: ['vector', 'lexical', 'hybrid'] },
+        is_internal: { type: 'boolean' },
+      },
       required: ['question'],
     },
-    outputSchema: { type: 'object', properties: { answer: { type: 'string' }, citations: { type: 'array', items: { type: 'object' } }, conversation_id: { type: 'string' } } },
-    http: { method: 'POST', path: '/api/ai/chat' },
-    cli: { command: 'microera chat ask', examples: ['microera chat ask "Which papers discuss pore size?"'] },
+    outputSchema: {
+      type: 'object',
+      properties: {
+        answer: { type: 'string' },
+        citations: { type: 'array', items: { type: 'object' } },
+        session_id: { type: 'string' },
+        trace: { type: 'object' },
+      },
+    },
+    http: { method: 'POST', path: '/api/v2/ops/chat/ask' },
+    cli: { command: 'microera chat ask', examples: ['microera chat ask "Which papers discuss pore size?" --kb-ids 1 --method hybrid'] },
     mcp: { toolName: 'chat_ask', readOnlyHint: true, scopes: ['chat:read'] },
     transport: 'remote',
     async handler(input: any, ctx: OperationContext) {
-      const body = await api.request<any>('POST', '/api/ai/chat', {
-        question: input.question,
-        conversationId: input.conversation_id,
-      }, ctx);
-      return {
-        answer: body?.answer ?? '',
-        citations: (body?.sources ?? []).map((s: any) => ({
-          source_uri: `entry:${s.id}`,
-          document_id: String(s.id),
-          revision_id: 'legacy',
-          chunk_id: `entry_${s.id}`,
-          title: s.title,
-        })),
-        conversation_id: body?.conversationId != null ? String(body.conversationId) : undefined,
-      };
+      return callV2(api, 'POST', '/api/v2/ops/chat/ask', input, ctx);
     },
   });
 
@@ -1380,23 +1382,308 @@ export function registerOperations(api: ApiClient): void {
     id: 'chat.references',
     version: '1',
     title: 'List chat references',
-    description: 'Return the source anchors backing a chat answer.',
-    kind: 'query',
+    description: 'Return the source citations backing an assistant message.',
+    kind: 'mutation',
     risk: 'read',
-    inputSchema: {
-      type: 'object',
-      properties: { conversation_id: { type: 'string' } },
-    },
-    outputSchema: { type: 'object', properties: { citations: { type: 'array', items: { type: 'object' } } } },
-    http: { method: 'POST', path: '/api/ai/chat' },
-    cli: { command: 'microera chat references', examples: ['microera chat references --conversation-id 12'] },
+    inputSchema: { type: 'object', properties: { message_id: { type: 'string' } }, required: ['message_id'] },
+    outputSchema: { type: 'object', properties: { message_id: { type: 'string' }, citations: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'POST', path: '/api/v2/ops/chat/references' },
+    cli: { command: 'microera chat references', examples: ['microera chat references --message-id msg_...'] },
     mcp: { toolName: 'chat_references', readOnlyHint: true, scopes: ['chat:read'] },
     transport: 'remote',
     async handler(input: any, ctx: OperationContext) {
-      const body = await api.request<any>('GET', `/api/ai/conversations/${input.conversation_id}`, undefined, ctx);
-      const messages: any[] = Array.isArray(body) ? body : [];
-      const sources = messages.flatMap((m: any) => (m.sources ?? []));
-      return { citations: sources.map((s: any) => ({ document_id: String(s.id), title: s.title, revision_id: 'legacy' })) };
+      return callV2(api, 'POST', '/api/v2/ops/chat/references', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'chat.citation_read',
+    version: '1',
+    title: 'Read a citation chunk',
+    description: 'Fetch the full chunk text + document title behind a citation.',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { chunk_id: { type: 'string' } }, required: ['chunk_id'] },
+    outputSchema: { type: 'object', properties: { chunk_id: { type: 'string' }, document_id: { type: 'integer' }, title: { type: 'string' }, text: { type: 'string' } } },
+    http: { method: 'GET', path: '/api/v2/ops/chat/citation_read' },
+    cli: { command: 'microera chat citation-read', examples: ['microera chat citation-read --chunk-id chunk_...'] },
+    mcp: { toolName: 'chat_citation_read', readOnlyHint: true, scopes: ['chat:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/chat/citation_read', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'chat.verify_citations',
+    version: '1',
+    title: 'Verify message citations',
+    description: 'Re-check each citation against the live chunk/document store and flag unresolved anchors.',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { message_id: { type: 'string' } }, required: ['message_id'] },
+    outputSchema: { type: 'object', properties: { message_id: { type: 'string' }, citations: { type: 'array', items: { type: 'object' } }, resolved: { type: 'integer' }, total: { type: 'integer' } } },
+    http: { method: 'POST', path: '/api/v2/ops/chat/verify_citations' },
+    cli: { command: 'microera chat verify-citations', examples: ['microera chat verify-citations --message-id msg_...'] },
+    mcp: { toolName: 'chat_verify_citations', readOnlyHint: true, scopes: ['chat:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/chat/verify_citations', input, ctx);
+    },
+  });
+
+  // ── P4-03: sessions + messages ────────────────────────────────────────────
+  operationRegistry.register({
+    id: 'session.create',
+    version: '1',
+    title: 'Create a chat session',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { title: { type: 'string' }, kb_ids: { type: 'array', items: { type: 'integer' } }, scope: { type: 'object' } } },
+    outputSchema: { type: 'object', properties: { id: { type: 'string' }, title: { type: 'string' }, kb_ids: { type: 'array', items: { type: 'integer' } }, scope: { type: 'object' }, created_at: { type: 'string' } } },
+    http: { method: 'POST', path: '/api/v2/ops/session/create' },
+    cli: { command: 'microera session create', examples: ['microera session create --title "Q3 review" --kb-ids 1 2'] },
+    mcp: { toolName: 'session_create', readOnlyHint: false, scopes: ['chat:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/session/create', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'session.list',
+    version: '1',
+    title: 'List chat sessions',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { page: { type: 'integer' }, page_size: { type: 'integer' } } },
+    outputSchema: { type: 'object', properties: { items: { type: 'array', items: { type: 'object' } }, total: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/session/list' },
+    cli: { command: 'microera session list', examples: ['microera session list'] },
+    mcp: { toolName: 'session_list', readOnlyHint: true, scopes: ['chat:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/session/list', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'session.view',
+    version: '1',
+    title: 'View a chat session',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { session_id: { type: 'string' } }, required: ['session_id'] },
+    outputSchema: { type: 'object', properties: { id: { type: 'string' }, title: { type: 'string' }, kb_ids: { type: 'array', items: { type: 'integer' } }, scope: { type: 'object' } } },
+    http: { method: 'GET', path: '/api/v2/ops/session/view' },
+    cli: { command: 'microera session view', examples: ['microera session view --session-id sess_...'] },
+    mcp: { toolName: 'session_view', readOnlyHint: true, scopes: ['chat:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/session/view', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'session.delete',
+    version: '1',
+    title: 'Delete a chat session',
+    kind: 'mutation',
+    risk: 'destructive',
+    inputSchema: { type: 'object', properties: { session_id: { type: 'string' } }, required: ['session_id'] },
+    outputSchema: { type: 'object', properties: { deleted: { type: 'boolean' }, id: { type: 'string' } } },
+    http: { method: 'DELETE', path: '/api/v2/ops/session/delete' },
+    cli: { command: 'microera session delete', examples: ['microera session delete --session-id sess_...'] },
+    mcp: { toolName: 'session_delete', readOnlyHint: false, scopes: ['chat:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'DELETE', '/api/v2/ops/session/delete', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'message.list',
+    version: '1',
+    title: 'List session messages',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { session_id: { type: 'string' } }, required: ['session_id'] },
+    outputSchema: { type: 'object', properties: { session_id: { type: 'string' }, items: { type: 'array', items: { type: 'object' } }, total: { type: 'integer' } } },
+    http: { method: 'GET', path: '/api/v2/ops/message/list' },
+    cli: { command: 'microera message list', examples: ['microera message list --session-id sess_...'] },
+    mcp: { toolName: 'message_list', readOnlyHint: true, scopes: ['chat:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/message/list', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'message.view',
+    version: '1',
+    title: 'View a message',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { message_id: { type: 'string' } }, required: ['message_id'] },
+    outputSchema: { type: 'object', properties: { id: { type: 'string' }, session_id: { type: 'string' }, role: { type: 'string' }, content: { type: 'string' }, citations: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'GET', path: '/api/v2/ops/message/view' },
+    cli: { command: 'microera message view', examples: ['microera message view --message-id msg_...'] },
+    mcp: { toolName: 'message_view', readOnlyHint: true, scopes: ['chat:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/message/view', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'message.search',
+    version: '1',
+    title: 'Search messages',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { q: { type: 'string' }, session_id: { type: 'string' } }, required: ['q'] },
+    outputSchema: { type: 'object', properties: { items: { type: 'array', items: { type: 'object' } }, total: { type: 'integer' } } },
+    http: { method: 'POST', path: '/api/v2/ops/message/search' },
+    cli: { command: 'microera message search', examples: ['microera message search "MOF"'] },
+    mcp: { toolName: 'message_search', readOnlyHint: true, scopes: ['chat:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/message/search', input, ctx);
+    },
+  });
+
+  // ── P4-04: streaming + cancellation ────────────────────────────────────────
+  operationRegistry.register({
+    id: 'chat.stream',
+    version: '1',
+    title: 'Stream a grounded answer',
+    description: 'Stream tokens via SSE; the remote transport collects the full answer into a single result.',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        question: { type: 'string' },
+        kb_ids: { type: 'array', items: { type: 'integer' } },
+        session_id: { type: 'string' },
+        top_k: { type: 'integer' },
+        method: { type: 'string', enum: ['vector', 'lexical', 'hybrid'] },
+        is_internal: { type: 'boolean' },
+      },
+      required: ['question'],
+    },
+    outputSchema: { type: 'object', properties: { answer: { type: 'string' }, citations: { type: 'array', items: { type: 'object' } }, session_id: { type: 'string' } } },
+    http: { method: 'POST', path: '/api/v2/ops/chat/stream' },
+    cli: { command: 'microera chat stream', examples: ['microera chat stream "summarize pore size" --method hybrid'] },
+    mcp: { toolName: 'chat_stream', readOnlyHint: true, scopes: ['chat:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/chat/stream', { ...input, stream: false }, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'chat.cancel',
+    version: '1',
+    title: 'Cancel a stream',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { session_id: { type: 'string' } }, required: ['session_id'] },
+    outputSchema: { type: 'object', properties: { cancelled: { type: 'boolean' } } },
+    http: { method: 'POST', path: '/api/v2/ops/chat/cancel' },
+    cli: { command: 'microera chat cancel', examples: ['microera chat cancel --session-id sess_...'] },
+    mcp: { toolName: 'chat_cancel', readOnlyHint: false, scopes: ['chat:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/chat/cancel', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'session.stop',
+    version: '1',
+    title: 'Stop a session stream',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { session_id: { type: 'string' } }, required: ['session_id'] },
+    outputSchema: { type: 'object', properties: { cancelled: { type: 'boolean' } } },
+    http: { method: 'POST', path: '/api/v2/ops/session/stop' },
+    cli: { command: 'microera session stop', examples: ['microera session stop --session-id sess_...'] },
+    mcp: { toolName: 'session_stop', readOnlyHint: false, scopes: ['chat:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/session/stop', input, ctx);
+    },
+  });
+
+  // ── P4-05: session-scoped ask + scope editing ──────────────────────────────
+  operationRegistry.register({
+    id: 'session.ask',
+    version: '1',
+    title: 'Ask within a session',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { question: { type: 'string' }, session_id: { type: 'string' }, top_k: { type: 'integer' }, method: { type: 'string', enum: ['vector', 'lexical', 'hybrid'] } }, required: ['question', 'session_id'] },
+    outputSchema: { type: 'object', properties: { answer: { type: 'string' }, citations: { type: 'array', items: { type: 'object' } }, session_id: { type: 'string' }, trace: { type: 'object' } } },
+    http: { method: 'POST', path: '/api/v2/ops/session/ask' },
+    cli: { command: 'microera session ask', examples: ['microera session ask "what did we cover?" --session-id sess_...'] },
+    mcp: { toolName: 'session_ask', readOnlyHint: true, scopes: ['chat:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/session/ask', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'chat.scope',
+    version: '1',
+    title: 'Set chat scope',
+    description: 'Update a session scoped KBs and retrieval defaults (top_k / method).',
+    kind: 'mutation',
+    risk: 'write',
+    inputSchema: { type: 'object', properties: { session_id: { type: 'string' }, kb_ids: { type: 'array', items: { type: 'integer' } }, top_k: { type: 'integer' }, method: { type: 'string', enum: ['vector', 'lexical', 'hybrid'] } }, required: ['session_id'] },
+    outputSchema: { type: 'object', properties: { id: { type: 'string' }, kb_ids: { type: 'array', items: { type: 'integer' } }, scope: { type: 'object' } } },
+    http: { method: 'POST', path: '/api/v2/ops/chat/scope' },
+    cli: { command: 'microera chat scope', examples: ['microera chat scope --session-id sess_... --kb-ids 1 --method hybrid'] },
+    mcp: { toolName: 'chat_scope', readOnlyHint: false, scopes: ['chat:write'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/chat/scope', input, ctx);
+    },
+  });
+
+  // ── P4-06: trace + export ─────────────────────────────────────────────────
+  operationRegistry.register({
+    id: 'chat.trace',
+    version: '1',
+    title: 'View message grounding trace',
+    kind: 'query',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { message_id: { type: 'string' } }, required: ['message_id'] },
+    outputSchema: { type: 'object', properties: { message_id: { type: 'string' }, session_id: { type: 'string' }, role: { type: 'string' }, trace: { type: 'object' }, citations: { type: 'array', items: { type: 'object' } } } },
+    http: { method: 'GET', path: '/api/v2/ops/chat/trace' },
+    cli: { command: 'microera chat trace', examples: ['microera chat trace --message-id msg_...'] },
+    mcp: { toolName: 'chat_trace', readOnlyHint: true, scopes: ['chat:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'GET', '/api/v2/ops/chat/trace', input, ctx);
+    },
+  });
+
+  operationRegistry.register({
+    id: 'session.export',
+    version: '1',
+    title: 'Export a session',
+    kind: 'mutation',
+    risk: 'read',
+    inputSchema: { type: 'object', properties: { session_id: { type: 'string' } }, required: ['session_id'] },
+    outputSchema: { type: 'object', properties: { session: { type: 'object' }, messages: { type: 'array', items: { type: 'object' } }, exported_at: { type: 'string' } } },
+    http: { method: 'POST', path: '/api/v2/ops/session/export' },
+    cli: { command: 'microera session export', examples: ['microera session export --session-id sess_...'] },
+    mcp: { toolName: 'session_export', readOnlyHint: true, scopes: ['chat:read'] },
+    transport: 'remote',
+    async handler(input: any, ctx: OperationContext) {
+      return callV2(api, 'POST', '/api/v2/ops/session/export', input, ctx);
     },
   });
 

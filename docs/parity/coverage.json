@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-09T11:22:54.770Z",
+  "generatedAt": "2026-10-09T11:31:12.814Z",
   "planVersion": "2026-10-09-v1",
   "totalRequiredOps": 162,
-  "registeredOps": 63,
-  "withHandler": 62,
-  "withCli": 62,
-  "withMcp": 62,
-  "fullParityOps": 62,
-  "coveragePercent": 38.3,
+  "registeredOps": 79,
+  "withHandler": 78,
+  "withCli": 78,
+  "withMcp": 78,
+  "fullParityOps": 78,
+  "coveragePercent": 48.1,
   "fullParityIds": [
     "kb.create",
     "kb.list",
@@ -67,13 +67,6 @@
     "eval.compare",
     "chat.ask",
     "chat.references",
-    "job.list",
-    "job.view",
-    "job.deadletters",
-    "job.replay_deadletter"
-  ],
-  "contractOnlyIds": [],
-  "missingIds": [
     "chat.citation_read",
     "chat.verify_citations",
     "session.create",
@@ -90,6 +83,13 @@
     "chat.scope",
     "chat.trace",
     "session.export",
+    "job.list",
+    "job.view",
+    "job.deadletters",
+    "job.replay_deadletter"
+  ],
+  "contractOnlyIds": [],
+  "missingIds": [
     "agent.create",
     "agent.list",
     "agent.view",

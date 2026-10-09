@@ -559,6 +559,50 @@ export const evalRuns = pgTable(
   (table) => [index('eval_runs_dataset_idx').on(table.datasetId)],
 );
 
+// ---- Chat Sessions (P4) ----
+// A chat session is the v2 conversation container: a title, the scoped
+// knowledge bases it draws from, and the retrieval scope (top_k/method). Legacy
+// `conversations` (entry-based) remain untouched; this is the P4 slice.
+export const sessions = pgTable(
+  'sessions',
+  {
+    id: text('id').primaryKey(),
+    userId: integer('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    title: text('title').notNull().default('New Chat'),
+    kbIds: jsonb('kb_ids').notNull().default([]),
+    scope: jsonb('scope').notNull().default({}),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
+  },
+  (table) => [
+    index('sessions_user_idx').on(table.userId),
+    index('sessions_deleted_at_idx').on(table.deletedAt),
+  ],
+);
+
+// ---- Chat Messages (P4) ----
+// A message in a session. Citations record the grounding chunks (index,
+// chunk_id, document_id, title, text, score); `trace` records the retrieval
+// + generation timing for chat.trace.
+export const messages = pgTable(
+  'messages',
+  {
+    id: text('id').primaryKey(),
+    sessionId: text('session_id')
+      .notNull()
+      .references(() => sessions.id, { onDelete: 'cascade' }),
+    role: text('role', { enum: ['user', 'assistant', 'system'] }).notNull(),
+    content: text('content').notNull(),
+    citations: jsonb('citations').notNull().default([]),
+    trace: jsonb('trace').notNull().default({}),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index('messages_session_idx').on(table.sessionId)],
+);
+
 // ---- Relations ----
 export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
   user: one(users, { fields: [bookmarks.userId], references: [users.id] }),
