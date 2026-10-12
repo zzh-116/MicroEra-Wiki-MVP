@@ -20,6 +20,8 @@
 
 **批 D（低优先缺陷 + Agent/Harness 分析）已于 2026-10-12 完成并回归通过**：安全独立修复——E6（`wiki.revert` 回写 `summary`，由 content 派生，最小兼容、不迁移）、D7（`eval.run` `risk:'read'`→`'write'`）、D8（补 `buildInput` 级 `--format xlsx` 断言，与既有 parseArgs 断言共同闭合）、F8（checkpoint 字段级断言）、F12（model/datasource/meta 四处弱断言补字段级断言）；Agent 三项 E1/E4/E5 按用户要求**只做设计与风险分析，未实施**（见 §5）。回归：`npm test` 45 文件 461 用例、`npm run test:e2e` 19 用例、`tsc --noEmit`（前端+全量）与 `typecheck:backend` 全部通过。批 D 独立本地提交（未 push）。
 
+**批 E（Agent/Harness 剩余关键项 E1/E4/E5 最小兼容修复）已于 2026-10-12 完成并回归通过**：E1（`agent.run` 开始尊重 `agent.tools` 白名单——空数组=全部内置工具、非空=仅白名单、未知工具名报 `validation_failed` 不静默过滤；`agent.model`/`agent.instructions` 如实记录 `capability_limits`，instructions 作为上下文注入但明确声明确定性合成器无法保证真正遵循，不宣称指定模型已执行；`run`/`toolCall`/`mcpCall` 本地内置路径统一白名单校验；不泄露 API Key/Token）、E4 Option A（`agent.resume` 对 `succeeded` 幂等返回既有结果且**不新建 run/不重跑 retrieve/synthesize**，对 `failed`/`cancelled`/`running`/状态不明确返回 `conflict` 类型化错误；不新增 DB 字段、不实施 checkpoint 状态机）、E5（`sandboxStatus` 增补 `isolated:false`/`isolation:'none'`/`capabilities` 白名单，明确 in-process 无 OS/容器隔离）。同步更新 operation registry（`agent.run` outputSchema +`capability_limits`；`agent.sandbox_status` outputSchema +隔离字段；`agent.resume` 描述注明「只读已完成结果、不支持 checkpoint 续跑」，并将 `kind`/`risk`/`readOnlyHint`/`scopes` 由 write/mutation 改为 read/query 以如实反映只读语义）。回归：`npm test` 45 文件 474 用例、`npm run test:e2e` 19 用例、`tsc --noEmit` + `typecheck:backend` 全部通过。批 E 独立本地提交（未 push）。
+
 **批 D Phase 1 历史证据核对结论**：162 个必需操作（`docs/parity/operations/*.json`）与 51 项能力（41 接受 / 10 blocked）在批 A/B/C 改动后**数量与覆盖不变**——批 A/B/C 未新增/删除/重命名任何操作或能力。但历史验收证据（`operation-parity.json`、`capability-report.json`、`report.json`、`operations/*.json`、`evidence/`、`testlogs/`）**快照于 `commitSha 67d76a6`（批 A/B/C 之前的收尾 HEAD）**，其 `commitSha` 字段、`npm-test.log` 哈希（旧 382 测试）与个别 `testFile` 指向（如 `job.list`/`job.view` 仍指向修复前的 `tests/parity/model.test.ts`，即 F1 修复前状态）均已滞后于当前 HEAD。故**旧 86/100 不作为当前最终验收结论**；需在批 D 收尾后重新生成验收证据并重跑权威校验器（`evaluate_delivery.py`）方可恢复「已完全验证」终态。
 
 在批 D 修复并回归后，需重新生成验收证据并重跑权威校验器，方能恢复「已完全验证」的终态判定。
@@ -307,7 +309,7 @@
 | 批 B（新发现） | worker 完成时间戳 | F13 | ✅ 已修复 `verified`（`finished_at`→`finishedAt`） |
 | 批 C | MCP 真实性 + 降级/错误可见性 | E2, E3, F3, F9, F10, F11 | ✅ 已完成（全部 `verified`；另增 MCP SSRF 防护） |
 | 批 D | 低优先 | D7, D8, E6, F8, F12 | ✅ 已完成（全部 `verified`，最小兼容修复） |
-| 批 D（分析） | Agent/Harness | E1, E4, E5 | 📋 已做设计与风险分析，未实施（见 §5） |
+| 批 D（分析→实施） | Agent/Harness | E1, E4, E5 | ✅ 已完成（最小兼容修复，见 §5） |
 
 ---
 
@@ -323,9 +325,9 @@
 
 ---
 
-## 5. Agent / Harness 设计与风险分析（批 D，仅分析未实施）
+## 5. Agent / Harness 设计与风险分析（E1/E4/E5 已于 2026-10-12 实施最小兼容修复）
 
-按用户要求，E1/E4/E5 三项 Agent 相关缺陷本轮只做设计与风险分析，不实施大规模重构。
+按用户要求，E1/E4/E5 三项 Agent 相关缺陷先做设计与风险分析（下文），2026-10-12 已获授权实施最小兼容修复（无数据库迁移、无新 Agent 框架、不接入真实 LLM 合成 / Docker 沙箱）。实施内容见本节末尾「实施记录」。
 
 ### E1 — `agent.run` 完全忽略 agent 配置（tools/model/instructions）— MEDIUM
 
@@ -346,4 +348,29 @@
 - **现状（已核查）**：`sandboxStatus()`（:356-358）硬编码 `{available:true, mode:'in-process', description, checked_at}`；`sandboxRun()`（:360-378）执行 `runSandboxTask()`（:91）固定 4 个确定性任务白名单，**无 spawn/无任意代码执行**。
 - **风险**：无任意命令执行风险（白名单 + 无 spawn）；`mode:'in-process'` 命名诚实。唯一落差：`available:true` 与「真实沙箱隔离」语义不符，调用方可能误判隔离等级。
 - **最小兼容修复（待确认后实施，加字段非破坏性）**：`sandboxStatus` 增补 `isolation:'none'` 与 `capabilities:['deterministic-tasks']`（或对 `available` 保持 `true` 但明确 `isolated:false`），让调用方无法把 in-process 白名单误读为容器/进程隔离。接真实 Docker 沙箱属较大架构改动，不在本批范围。
+
+### 实施记录（2026-10-12，最小兼容修复，未迁移 / 未 push）
+
+落地文件：`backend/services/agent.service.ts`、`packages/operation-registry/src/operations.ts`、`tests/parity/agent.test.ts`。
+
+**E1 — agent 配置生效**
+- `resolveAllowedTools(agent)`：`agent.tools` 空数组 → 全部内置工具（兼容默认）；非空 → 仅白名单；未知工具名抛 `validation_failed`（不静默过滤）。仅约束**本地内置工具**，不扩展到远程 MCP（远程由 `mcp_servers` 单独治理）。
+- `run()` / `toolCall()` / `mcpCall()`（本地分支）统一走 `resolveAllowedTools` 白名单校验；`run()` 若白名单不含 `retrieve` 则 `validation_failed`。
+- `agent.model` 非空 → 返回 `capability_limits`，声明「模型已配置但未实现模型驱动合成，实际用确定性检索合成」，不宣称指定模型已执行。
+- `agent.instructions` 注入 `synthesize` 作为上下文前缀，并记录 `capability_limits`「确定性合成器无法保证指令被真正遵循（无 LLM 推理）」。
+- 未在日志/trace/错误中输出 API Key/Token（`resolveServerRef` 返回 `ref`，不落日志）。
+
+**E4 — resume Option A（只读已完成结果，不 checkpoint 续跑）**
+- `status==='succeeded'` → 直接返回既有 `run_id` + `answer`/`steps`/`trace`，**不新建 run、不重跑 retrieve/synthesize**。
+- `failed`/`cancelled`/`running`/状态不明确 → 抛 `conflict` 类型化错误并说明原因。
+- 未新增数据库字段、未实施 checkpoint 状态机。registry 描述明确「只读已完成结果、不支持 checkpoint 续跑」。
+- `agent.resume` 元数据由 `kind:mutation / risk:write / readOnlyHint:false / scopes:agent:write` 改为 `kind:query / risk:read / readOnlyHint:true / scopes:agent:read`（如实反映只读语义）。
+
+**E5 — sandbox 能力真实性**
+- `sandboxStatus()` 增补 `isolated:false`、`isolation:'none'`、`capabilities:['echo','count_tokens','checksum','sum']`，保留 `available/mode/description/checked_at` 兼容旧调用方。
+- `sandboxRun()` 仍仅执行 `runSandboxTask` 四个确定性白名单任务，无 spawn、无任意命令执行。
+
+**回归测试（`tests/parity/agent.test.ts` 新增 13 用例）**：工具白名单允许/拒绝/未知工具三类；`model`/`instructions` 能力限制声明；`succeeded` resume 不产生新 DB 记录（`createRun`/`updateRun` 未调用）；`failed`/`cancelled`/`running` 拒绝续跑（`conflict`）；`sandboxStatus` 状态真实。
+
+**验证结果**：`npm test` 45 文件 474 用例、`npm run test:e2e` 19 用例、`npm run lint`（tsc --noEmit）、`npm run typecheck:backend` 全部通过。162 个必需 CLI/MCP 操作数量与绑定不变（live registry 163 注册，其中 162 为必需；本批未新增/删除/重命名操作）。历史验收证据仍快照于 `67d76a6`，最终 G5 验收（重生成证据 + 重跑 `evaluate_delivery.py`）已按用户要求暂停，本批不执行。
 

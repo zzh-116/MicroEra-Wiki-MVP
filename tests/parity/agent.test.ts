@@ -146,3 +146,108 @@ describe('P6 agent service — session-bound ask', () => {
     expect(touch).toHaveBeenCalledWith('sess_1');
   });
 });
+
+describe('P6 agent service — E1/E4/E5 config honesty + resume semantics', () => {
+  beforeEach(() => vi.restoreAllMocks());
+  afterEach(() => vi.restoreAllMocks());
+
+  function runMocks() {
+    const createRun = vi.spyOn(agentRepository, 'createRun').mockImplementation(async (r: any) => ({
+      id: r.id, agent_id: r.agentId, goal: r.goal, status: r.status, steps: r.steps ?? [], answer: r.answer ?? '', trace: r.trace ?? {}, created_at: '', updated_at: '',
+    }));
+    const updateRun = vi.spyOn(agentRepository, 'updateRun').mockResolvedValue(undefined);
+    vi.spyOn(retrievalService, 'filteredSearch').mockResolvedValue([hit(2)]);
+    return { createRun, updateRun };
+  }
+
+  // E1 — tools whitelist is honored and unknown names are rejected.
+  it('run rejects when retrieve is not in the agent tool whitelist', async () => {
+    vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent(1, { tools: ['wiki_search'] }));
+    await expect(agentService.run({ agent_id: 1, goal: 'zeolite' })).rejects.toMatchObject({ kind: 'validation_failed' });
+  });
+
+  it('run rejects an unknown tool name in the agent config', async () => {
+    vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent(1, { tools: ['retrieve', 'bogus'] }));
+    await expect(agentService.run({ agent_id: 1, goal: 'zeolite' })).rejects.toMatchObject({ kind: 'validation_failed' });
+  });
+
+  it('toolCall rejects a builtin tool that is not whitelisted', async () => {
+    vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent(1, { tools: ['retrieve'] }));
+    await expect(agentService.toolCall({ agent_id: 1, tool: 'wiki_search' })).rejects.toMatchObject({ kind: 'validation_failed' });
+  });
+
+  it('mcpCall (local builtin) rejects a tool that is not whitelisted', async () => {
+    vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent(1, { tools: ['echo'] }));
+    await expect(agentService.mcpCall({ agent_id: 1, tool: 'retrieve', arguments: { query: 'x' } })).rejects.toMatchObject({ kind: 'validation_failed' });
+  });
+
+  it('mcpCall (local builtin) allows a whitelisted tool', async () => {
+    vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent(1, { tools: ['echo'] }));
+    const r: any = await agentService.mcpCall({ agent_id: 1, tool: 'echo', arguments: { value: 'hi' } });
+    expect(r.remote).toBe(false);
+    expect(r.result.value).toBe('hi');
+  });
+
+  // E1 — model + instructions capability honesty.
+  it('run surfaces a capability limit when agent.model is configured', async () => {
+    vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent(1, { model: 'gpt-4', instructions: '' }));
+    runMocks();
+    const r: any = await agentService.run({ agent_id: 1, goal: 'zeolite' });
+    expect(r.capability_limits).toEqual(expect.arrayContaining([expect.stringContaining('model-driven synthesis')]));
+  });
+
+  it('run passes instructions as context and records the limitation', async () => {
+    vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent(1, { instructions: 'Answer in bullet points' }));
+    runMocks();
+    const r: any = await agentService.run({ agent_id: 1, goal: 'zeolite' });
+    expect(r.answer).toContain('Answer in bullet points');
+    expect(r.capability_limits).toEqual(expect.arrayContaining([expect.stringContaining('cannot guarantee')]));
+  });
+
+  it('run reports no capability limits when model and instructions are empty', async () => {
+    vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent(1, { model: '', instructions: '' }));
+    runMocks();
+    const r: any = await agentService.run({ agent_id: 1, goal: 'zeolite' });
+    expect(r.capability_limits).toBeUndefined();
+  });
+
+  // E4 — resume (Option A) reads a completed result; never re-runs.
+  it('resume returns the saved result of a succeeded run without re-running', async () => {
+    vi.spyOn(agentRepository, 'findRunById').mockResolvedValue({ id: 'run_1', agent_id: 1, goal: 'zeolite', status: 'succeeded', steps: [{ step: 1, tool: 'retrieve' }], answer: 'saved answer', trace: {}, created_at: '', updated_at: '' });
+    const createRun = vi.spyOn(agentRepository, 'createRun');
+    const updateRun = vi.spyOn(agentRepository, 'updateRun');
+    const r: any = await agentService.resume({ run_id: 'run_1' });
+    expect(r.run_id).toBe('run_1');
+    expect(r.status).toBe('succeeded');
+    expect(r.answer).toBe('saved answer');
+    expect(createRun).not.toHaveBeenCalled();
+    expect(updateRun).not.toHaveBeenCalled();
+  });
+
+  it('resume rejects a failed run without re-running', async () => {
+    vi.spyOn(agentRepository, 'findRunById').mockResolvedValue({ id: 'run_1', agent_id: 1, goal: 'zeolite', status: 'failed', steps: [], answer: '', trace: {}, created_at: '', updated_at: '' });
+    const createRun = vi.spyOn(agentRepository, 'createRun');
+    await expect(agentService.resume({ run_id: 'run_1' })).rejects.toMatchObject({ kind: 'conflict' });
+    expect(createRun).not.toHaveBeenCalled();
+  });
+
+  it('resume rejects a cancelled run', async () => {
+    vi.spyOn(agentRepository, 'findRunById').mockResolvedValue({ id: 'run_1', agent_id: 1, goal: 'zeolite', status: 'cancelled', steps: [], answer: '', trace: {}, created_at: '', updated_at: '' });
+    await expect(agentService.resume({ run_id: 'run_1' })).rejects.toMatchObject({ kind: 'conflict' });
+  });
+
+  it('resume rejects a running run', async () => {
+    vi.spyOn(agentRepository, 'findRunById').mockResolvedValue({ id: 'run_1', agent_id: 1, goal: 'zeolite', status: 'running', steps: [], answer: '', trace: {}, created_at: '', updated_at: '' });
+    await expect(agentService.resume({ run_id: 'run_1' })).rejects.toMatchObject({ kind: 'conflict' });
+  });
+
+  // E5 — sandbox status honesty.
+  it('sandboxStatus honestly reports no isolation and lists capabilities', async () => {
+    const s: any = await agentService.sandboxStatus();
+    expect(s.available).toBe(true);
+    expect(s.mode).toBe('in-process');
+    expect(s.isolated).toBe(false);
+    expect(s.isolation).toBe('none');
+    expect(s.capabilities).toEqual(['echo', 'count_tokens', 'checksum', 'sum']);
+  });
+});

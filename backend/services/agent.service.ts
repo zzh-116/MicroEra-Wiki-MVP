@@ -21,6 +21,17 @@ export interface AgentTool {
   input_schema: Record<string, unknown>;
 }
 
+/** Result shape returned by agent.run (and echoed by agent.resume on success). */
+interface AgentRunResult {
+  run_id: string;
+  agent_id: number;
+  status: string;
+  answer: string;
+  steps: unknown[];
+  trace: Record<string, unknown>;
+  capability_limits?: string[];
+}
+
 /** Built-in agent tools — the same capabilities our MCP surface exposes. */
 export const BUILTIN_TOOLS: AgentTool[] = [
   { name: 'retrieve', description: 'Retrieve the most relevant chunks for a query.', input_schema: { query: 'string', kb_id: 'integer', top_k: 'integer', method: 'vector|lexical|hybrid' } },
@@ -49,10 +60,11 @@ function compactHit(h: any): Record<string, unknown> {
 export class AgentService {
   constructor(private readonly mcpClient: McpHttpClient = new McpHttpClient()) {}
 
-  private synthesize(goal: string, hits: any[]): string {
-    if (hits.length === 0) return `No supporting passages were found for: ${goal}`;
+  private synthesize(goal: string, hits: any[], instructions = ''): string {
+    const prefix = instructions.trim() ? `Instructions: ${instructions.trim()}\n\n` : '';
+    if (hits.length === 0) return `${prefix}No supporting passages were found for: ${goal}`;
     const lines = hits.slice(0, 3).map((h, i) => `[${i + 1}] ${h.title}: ${String(h.text ?? '').trim()}`);
-    return `Findings for "${goal}":\n\n${lines.join('\n\n')}`;
+    return `${prefix}Findings for "${goal}":\n\n${lines.join('\n\n')}`;
   }
 
   private async executeTool(name: string, input: Record<string, unknown>): Promise<unknown> {
@@ -86,6 +98,21 @@ export class AgentService {
       default:
         throw new ServiceError('validation_failed', `unknown tool: ${name}`);
     }
+  }
+
+  /** Resolve the built-in tools an agent is permitted to execute. Empty
+   * `agent.tools` means "all built-in tools" (compatibility default); a non-empty
+   * list is an explicit whitelist, and any configured name that is not a built-in
+   * tool is rejected (never silently dropped). This gate applies to LOCAL built-in
+   * tools only — remote MCP tools are governed separately by `mcp_servers`. */
+  private resolveAllowedTools(agent: { tools: unknown[] }): Set<string> {
+    const cfg = Array.isArray(agent.tools) ? agent.tools : [];
+    if (cfg.length === 0) return new Set(BUILTIN_TOOLS.map((t) => t.name));
+    const unknown = cfg.filter((n) => typeof n !== 'string' || !BUILTIN_TOOLS.some((t) => t.name === n));
+    if (unknown.length > 0) {
+      throw new ServiceError('validation_failed', `unknown tool in agent.tools: ${unknown.map((u) => String(u)).join(', ')}`);
+    }
+    return new Set(cfg as string[]);
   }
 
   private async runSandboxTask(task: string, payload: Record<string, unknown>): Promise<Record<string, unknown>> {
@@ -149,10 +176,27 @@ export class AgentService {
     return { deleted: true, id: agentId };
   }
 
-  async run(input: { agent_id: number; goal?: string; kb_id?: number; top_k?: number; method?: 'vector' | 'lexical' | 'hybrid' }) {
+  async run(input: { agent_id: number; goal?: string; kb_id?: number; top_k?: number; method?: 'vector' | 'lexical' | 'hybrid' }): Promise<AgentRunResult> {
     const agent = await this.view(input.agent_id);
     const goal = (input.goal ?? '').trim();
     if (!goal) throw new ServiceError('validation_failed', 'goal is required');
+
+    // E1 — honor agent config instead of silently ignoring it. Empty `tools`
+    // means "all built-in tools" (compatibility default); a non-empty list is an
+    // explicit whitelist, and unknown names are rejected rather than dropped.
+    const allowed = this.resolveAllowedTools(agent);
+    if (!allowed.has('retrieve')) {
+      throw new ServiceError('validation_failed', "agent's tool whitelist does not include 'retrieve', which is required to run");
+    }
+    const instructions = String(agent.instructions ?? '');
+    const modelName = String(agent.model ?? '').trim();
+    const capabilityLimits: string[] = [];
+    if (modelName) {
+      capabilityLimits.push(`agent.model ('${modelName}') is configured but model-driven synthesis is not implemented; deterministic retrieval synthesis was used`);
+    }
+    if (instructions) {
+      capabilityLimits.push('agent.instructions is passed as context but the deterministic synthesizer cannot guarantee the instructions were followed (no LLM reasoning)');
+    }
 
     const runId = `run_${randomUUID()}`;
     await agentRepository.createRun({ id: runId, agentId: agent.id, goal, status: 'running' });
@@ -164,12 +208,15 @@ export class AgentService {
       const hits = await retrievalService.filteredSearch({ query: goal, method, kb_id: input.kb_id, top_k: topK });
       steps.push({ step: 1, tool: 'retrieve', status: 'ok', result: { num_hits: hits.length, hits: hits.map(compactHit) } });
 
-      const answer = this.synthesize(goal, hits);
+      const answer = this.synthesize(goal, hits, instructions);
       steps.push({ step: 2, tool: 'answer', status: 'ok', result: { answer } });
 
-      const trace = { method, top_k: topK, num_chunks: hits.length, total_ms: Date.now() - t0 };
+      const trace: Record<string, unknown> = { method, top_k: topK, num_chunks: hits.length, total_ms: Date.now() - t0 };
+      if (capabilityLimits.length > 0) trace.capability_limits = capabilityLimits;
       await agentRepository.updateRun(runId, { status: 'succeeded', steps, answer, trace });
-      return { run_id: runId, agent_id: agent.id, status: 'succeeded', answer, steps, trace };
+      const result: AgentRunResult = { run_id: runId, agent_id: agent.id, status: 'succeeded', answer, steps, trace };
+      if (capabilityLimits.length > 0) result.capability_limits = capabilityLimits;
+      return result;
     } catch (err: any) {
       await agentRepository.updateRun(runId, { status: 'failed', steps, trace: { error: err?.message ?? 'run failed' } });
       throw err;
@@ -193,6 +240,7 @@ export class AgentService {
     const tool = String(input.tool ?? '');
     if (!tool) throw new ServiceError('validation_failed', 'tool is required');
     if (!BUILTIN_TOOLS.some((t) => t.name === tool)) throw new ServiceError('validation_failed', `unknown tool: ${tool}`);
+    if (!this.resolveAllowedTools(agent).has(tool)) throw new ServiceError('validation_failed', `tool '${tool}' is not allowed for this agent`);
 
     const result = await this.executeTool(tool, input.input ?? {});
 
@@ -274,6 +322,7 @@ export class AgentService {
     // never presented as a remote call.
     if (!serverName) {
       if (!BUILTIN_TOOLS.some((t) => t.name === tool)) throw new ServiceError('validation_failed', `unknown tool: ${tool}`);
+      if (!this.resolveAllowedTools(agent).has(tool)) throw new ServiceError('validation_failed', `tool '${tool}' is not allowed for this agent`);
       const result = await this.executeTool(tool, input.arguments ?? {});
       return { server: 'builtin', tool, result, remote: false };
     }
@@ -354,7 +403,18 @@ export class AgentService {
 
   // ── A05: sandbox + artifacts ───────────────────────────────────────────────
   async sandboxStatus() {
-    return { available: true, mode: 'in-process', description: 'deterministic in-process sandbox runner', checked_at: new Date().toISOString() };
+    // E5 — honest capability report: the sandbox is a deterministic in-process
+    // whitelist runner with NO OS/container isolation. `available` stays true (the
+    // deterministic tasks are runnable) but isolation is explicitly `none`.
+    return {
+      available: true,
+      mode: 'in-process',
+      isolated: false,
+      isolation: 'none',
+      capabilities: ['echo', 'count_tokens', 'checksum', 'sum'],
+      description: 'deterministic in-process runner — no OS/container isolation',
+      checked_at: new Date().toISOString(),
+    };
   }
 
   async sandboxRun(input: { agent_id?: number; task?: string; payload?: Record<string, unknown> }) {
@@ -429,7 +489,22 @@ export class AgentService {
   async resume(input: { run_id: string }) {
     const run = await agentRepository.findRunById(input.run_id);
     if (!run) throw new ServiceError('resource_not_found', 'run not found');
-    return this.run({ agent_id: run.agent_id, goal: run.goal });
+
+    // E4 (Option A) — single-shot runs have no checkpoint. Resume only reads the
+    // saved result of a completed run; it never re-creates a run or re-runs
+    // retrieve/synthesize (no duplicated side effects). Non-terminal runs cannot
+    // be safely resumed and are rejected with a typed error.
+    if (run.status === 'succeeded') {
+      return {
+        run_id: run.id,
+        agent_id: run.agent_id,
+        status: run.status,
+        answer: run.answer,
+        steps: run.steps,
+        trace: run.trace,
+      };
+    }
+    throw new ServiceError('conflict', `run '${run.id}' is '${run.status}'; single-shot runs cannot be resumed — start a new run instead`);
   }
 
   async agentAsk(input: { agent_id: number; session_id?: string; question?: string; top_k?: number; method?: 'vector' | 'lexical' | 'hybrid'; user_id?: number }) {
