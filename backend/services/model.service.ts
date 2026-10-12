@@ -92,6 +92,7 @@ export class ModelService {
     const started = Date.now();
     let reachable = false;
     let detail = '';
+    let error: string | undefined;
 
     try {
       if (model.kind === 'llm') {
@@ -107,9 +108,12 @@ export class ModelService {
         const r = await rerankService.rerank({ query: 'ping', documents: [{ text: 'ping' }] });
         reachable = !r.fallback;
         detail = r.fallback ? 'rerank provider unavailable (fallback ordering used)' : 'rerank provider responded';
+        if (r.fallback && r.reason) error = r.reason;
       }
     } catch (err: any) {
-      detail = err?.message ?? 'probe failed';
+      error = err?.message ?? 'probe failed';
+      detail = error;
+      console.warn(`[Model] model.test probe failed for '${model.name}' (${model.kind}/${model.provider}): ${error}`);
     }
 
     return {
@@ -121,6 +125,7 @@ export class ModelService {
       reachable,
       latency_ms: Date.now() - started,
       detail,
+      ...(error ? { error } : {}),
       checked_at: new Date().toISOString(),
     };
   }
@@ -153,6 +158,7 @@ export class ModelService {
       fallback: result.fallback,
       timed_out: result.timed_out,
       elapsed_ms: result.elapsed_ms,
+      ...(result.reason ? { reason: result.reason } : {}),
       items: result.items,
     };
   }

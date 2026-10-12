@@ -248,6 +248,7 @@ class AiService {
       console.log(`[AI] streamTokens: ${Date.now() - t2}ms, ${tokenCount} tokens (total: ${Date.now() - t0}ms)`);
     } catch (err: any) {
       // Yield error, but don't throw — save partial answer if we have one
+      console.warn(`[AI] streamChat interrupted: ${err?.message ?? 'Generation failed'}`);
       yield { type: 'error', message: err.message || 'Generation failed' };
 
       if (conversationId && fullAnswer) {

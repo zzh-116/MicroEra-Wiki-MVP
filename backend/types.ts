@@ -121,6 +121,10 @@ export interface RetrievalResult {
   /** Nearest markdown heading from chunk metadata (e.g. "## Training Data") */
   chunkHeading?: string;
   chunks?: DocumentChunk[];
+  /** Present when vector retrieval failed and the result was produced by a
+   * fallback (keyword/entry-chunks). Lets callers surface the degradation
+   * instead of presenting keyword hits as full vector results. */
+  degraded?: { reason: string; fallback: string };
 }
 
 // ---- AI ----

@@ -16,6 +16,8 @@
 
 **批 B（job 语义 + 真实集成测试 + 测试入口）已于 2026-10-12 完成并回归通过**：B1（smoke-datasource 幂等断言）、C1（`npm run test:e2e` 入口）、F1（job.list/job.view 真实 API+CLI+MCP 集成测试）、F6（Provider Probe 成功/失败正负两路 + M01 view 正例）已 `verified`；F4/F5 部分补齐（新增真实 DB 的 parse-job worker 生命周期测试 `tests/parity/parse-job-db.test.ts`，复用既有的 chunk/elements 纯函数真实测试；ingest 全链路 DB+embed 测试延后记录）；F7 已记录（smoke-eval/smoke-knowledge 造数走进程内 service，原因与现状见 §2 F7）；F2 按用户要求**暂停**并提交设计与风险说明（见 §4）。批 B 还发现并修复一个新缺陷 F13（`ParseJobService.complete()` 把 `finished_at` 写成 snake_case，Drizzle 静默丢弃该字段 → 改为 `finishedAt`，由真实 DB 测试暴露）。全套测试 40 文件 424 用例通过。
 
+**批 C（MCP 真实性 + 检索/错误可见性）已于 2026-10-12 完成并回归通过**：E2（`agent.mcpTest` 真实握手，去掉恒 `reachable:true`）、E3（`agent.mcpCall` 按 `server` 参数路由到真实 MCP 客户端，本地内置工具标注 `remote:false`）、F3（向量检索降级显式标记 + 日志，不再冒充完整向量结果）、F9（`PUT /entries/:id` 区分 not-found 404 与 DB 错误 500）、F10（rerank fallback 携带 `reason` + 告警日志）、F11（provider probe/流式失败可观测）已全部 `verified`；新增 MCP SSRF 防护（`backend/services/mcp-url-guard.ts`，阻断私有/保留/元数据地址，无 stdio/spawn 故无任意命令执行）与手写 Streamable HTTP MCP 客户端（`backend/services/mcp-client.ts`）。回归：`tests/parity/mcp-client.test.ts`、`agent-mcp.test.ts`、`search-degradation.test.ts`、`entries-route.test.ts`、`error-visibility.test.ts` 5 个新文件（35 用例）。全套测试 45 文件 459 用例、`npm run test:e2e` 19 用例、`tsc --noEmit` 全部通过。
+
 在批 C/D 修复并回归后，需重新生成验收证据并重跑权威校验器，方能恢复「已完全验证」的终态判定。
 
 ## 1. 概览
@@ -145,20 +147,20 @@
 - **状态**：`open`（批 C/D）
 
 #### E2 `agent.mcpTest` 恒返回 `reachable:true` — MEDIUM
-- **文件位置**：`backend/services/agent.service.ts:226-237`。
+- **文件位置**：`backend/services/agent.service.ts:229-264`（`mcpTest`）。
 - **复现条件**：对不可达 MCP server 调用 mcpTest 仍返回 reachable:true（假阳性）。
 - **影响范围**：连通性检测无意义。
 - **修复建议**：真实探测（超时握手）后返回。
 - **验证标准**：不可达 server → reachable:false。
-- **状态**：`open`（批 C）
+- **状态**：`verified`（批 C）— 重写 `mcpTest`：经 `McpHttpClient.initialize` 做真实连接 + 协议握手（可选 `tools/list` 枚举），成功返回 `protocol_version/server_info/tools_count`，失败返回 `reachable:false` + 类型化 `error.kind`；无 `url` 抛 `validation_failed`。回归 `tests/parity/agent-mcp.test.ts`（真实 loopback JSON-RPC stub + 失败/缺参路径）。
 
 #### E3 `agent.mcpCall` 忽略 `server` 参数，本地执行内置工具 — MEDIUM
-- **文件位置**：`backend/services/agent.service.ts:239-246`。
+- **文件位置**：`backend/services/agent.service.ts:266-320`（`mcpCall`/`resolveServerRef`/`toServiceError`）。
 - **复现条件**：mcpCall(server='remote', tool='x') 实际执行 BUILTIN_TOOLS 本地工具。
 - **影响范围**：与契约不符，无法调用外部 MCP server。
 - **修复建议**：按 server 参数路由到真实 MCP 客户端。
 - **验证标准**：指定 server 时调用该 server。
-- **状态**：`open`（批 C）
+- **状态**：`verified`（批 C）— `mcpCall` 区分本地 Builtin（无 `server`，返回 `remote:false`、`server:'builtin'`，仅允许内置工具）与远程 MCP（`server` 存在时经 `resolveServerRef` 取配置 → `McpHttpClient.callTool` 走真实 HTTP，返回 `remote:true`）；错误映射 `tool_not_found`→`resource_not_found`、`remote_error`→`internal`、非法 URL/SSRF→`validation_failed`；未配置的 server → `resource_not_found`。回归 `tests/parity/agent-mcp.test.ts`（真实 loopback stub 证明请求到达目标并返回目标结果 + dispatch/错误映射）。
 
 #### E4 `agent.resume` 从零重跑 — LOW
 - **文件位置**：`backend/services/agent.service.ts:355-359`。
@@ -203,12 +205,12 @@
 - **状态**：`paused`（批 B，待确认）— 统一 Job 后端需数据库迁移/改变接口契约，按用户要求暂停改动并提交设计与风险说明（见 §4）。
 
 #### F3 向量检索失败被吞并静默降级 — HIGH
-- **文件位置**：`backend/services/search.service.ts:25-27`、`:149-152`（`console.warn` 后降级关键词/entry-chunk，不上抛）。
+- **文件位置**：`backend/services/search.service.ts:9-46`（`semanticSearch`）、`:147-182`（`contentSearch`）、`server/routes/pipeline.ts:262-271`（`/search`）。
 - **复现条件**：pgvector 异常/embedding 空向量时，语义检索静默退化，关键词有命中仍绿。
 - **影响范围**：向量库坏掉不报错，静默质量退化，测试误绿。
 - **修复建议**：降级时在结果上显式标记 fallback/reason，或上抛。
 - **验证标准**：向量失败时结果携带降级标记。
-- **状态**：`open`（批 C）
+- **状态**：`verified`（批 C）— `semanticSearch` 区分「向量抛错/库不可用」与「向量空结果」：前者对每条结果打 `degraded:{reason,fallback}` 并 `console.warn`，后者（正常混合兜底）不标记；`contentSearch` 降级日志显式标注 `falling back to content keyword`；`pipeline /search` 路由把降级结果如实标注 `source=fallback` + `degraded:true` + `degradedReason`，不再冒充 `pgvector`。回归 `tests/parity/search-degradation.test.ts`（4 用例：embedding 失败/库不可用/空结果不误标/日志可观测）。
 
 #### F4 单测大量 mock 仓库/LLM/检索，真实路径未被 `npm test` 覆盖 — MEDIUM
 - **文件位置**：`tests/parity/knowledge-crud.test.ts:34-37`（99 处 mock）、`chat.test.ts:35`、`model/wiki/datasource/parse-job/agent` 等。
@@ -251,28 +253,28 @@
 - **状态**：`open`（批 D）
 
 #### F9 `PUT /entries/:id` 把任何错误都报 404 — LOW
-- **文件位置**：`server/routes/entries.ts:60`（`catch { res.status(404).json('ENTRY_NOT_FOUND') }`）。
+- **文件位置**：`server/routes/entries.ts:57-71`。
 - **复现条件**：DB 异常/校验错误被误报为资源不存在。
 - **影响范围**：错误语义失真。
 - **修复建议**：区分 not-found 与内部错误。
 - **验证标准**：DB 异常 → 5xx。
-- **状态**：`open`（批 C/D）
+- **状态**：`verified`（批 C）— `update` 返回 `undefined`（无匹配行）→ 404 `ENTRY_NOT_FOUND`；抛错（DB/校验）→ 500 `UPDATE_FAILED`，不再被误报 404。回归 `tests/parity/entries-route.test.ts`（真实 `createApp`+JWT，404/200/500/401 四路）。
 
 #### F10 rerank 失败静默 fallback — LOW
-- **文件位置**：`backend/services/rerank.service.ts:115-116`（`catch { fallback = true }`）。
+- **文件位置**：`backend/services/rerank.service.ts:22-31`（`RerankResult.reason?`）、`:108-143`。
 - **复现条件**：rerank provider 失败静默回退原始排序，结果携带 `fallback:true` 但日志弱。
 - **影响范围**：重排失效不可见（结果已带 fallback 标记，影响较小）。
 - **修复建议**：保留标记，补充告警日志。
 - **验证标准**：fallback 可观测。
-- **状态**：`open`（批 C）
+- **状态**：`verified`（批 C）— `RerankResult` 增加 `reason?`，fallback 时写入 provider 失败原因并 `console.warn`（区分超时），成功路径省略；`model.rerank_test` 透传 `reason`。回归 `tests/parity/error-visibility.test.ts`。
 
 #### F11 provider probe / 流式 catch 吞错 — LOW
-- **文件位置**：`backend/services/model.service.ts:111`、`backend/services/ai.service.ts:249`。
+- **文件位置**：`backend/services/model.service.ts:90-127`（`test`）、`backend/services/ai.service.ts:249-262`（`streamChat`）。
 - **复现条件**：探测/流式错误被 catch 吞掉。
 - **影响范围**：结构化结果已含 reachable:false，影响较小。
 - **修复建议**：保留结构化结果，补充日志。
 - **验证标准**：失败可观测。
-- **状态**：`open`（批 C）
+- **状态**：`verified`（批 C）— `model.test` 失败时返回可观测 `error` 字段（成功省略）并 `console.warn`；`ai.streamChat` 中断时 `console.warn`（原有 error 事件保留）；`model.rerank_test` 透传 `reason`。回归 `tests/parity/error-visibility.test.ts`。
 
 #### F12 若干 pass-through/cursor 弱断言 — LOW
 - **文件位置**：`tests/parity/model.test.ts:80-82`、`datasource.test.ts:104`、`meta.test.ts:14,29-30`。
@@ -299,7 +301,7 @@
 | 批 A | CLI/MCP 参数处理 | A1, D1, D2, D3, D4, D5, D6, D8 | ✅ 已完成（A1/D1–D6 `verified`，D8 部分） |
 | 批 B | job 语义 + 测试入口 | B1, C1, F1, F2, F4, F5, F6, F7 | ✅ 已完成（B1/C1/F1/F6 `verified`；F4/F5 `partial`；F7 `documented`；F2 `paused` 待确认 §4） |
 | 批 B（新发现） | worker 完成时间戳 | F13 | ✅ 已修复 `verified`（`finished_at`→`finishedAt`） |
-| 批 C | 诚实化/降级可见性 | E2, E3, F3, F9, F10, F11 | 待执行 |
+| 批 C | MCP 真实性 + 降级/错误可见性 | E2, E3, F3, F9, F10, F11 | ✅ 已完成（全部 `verified`；另增 MCP SSRF 防护） |
 | 批 D | 低优先 | D7, D8, E1, E4, E5, E6, F8, F12 | 待执行 |
 
 ---

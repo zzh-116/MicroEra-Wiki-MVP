@@ -56,9 +56,16 @@ entriesRouter.post('/', requireAuth, async (req: Request, res: Response) => {
 
 entriesRouter.put('/:id', requireAuth, async (req: Request, res: Response) => {
   try {
-    res.json(await entryRepository.update(Number(req.params.id), req.body));
-  } catch {
-    res.status(404).json({ error: 'ENTRY_NOT_FOUND', message: '条目不存在' });
+    const updated = await entryRepository.update(Number(req.params.id), req.body);
+    // `update` returns undefined when no row matched → genuine 404. Any thrown
+    // error (DB/validation) is a 500, not a not-found.
+    if (!updated) {
+      res.status(404).json({ error: 'ENTRY_NOT_FOUND', message: '条目不存在' });
+      return;
+    }
+    res.json(updated);
+  } catch (err: any) {
+    res.status(500).json({ error: 'UPDATE_FAILED', message: err?.message ?? '更新失败' });
   }
 });
 

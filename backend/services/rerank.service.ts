@@ -26,6 +26,8 @@ export interface RerankResult {
   fallback: boolean;
   timed_out: boolean;
   elapsed_ms: number;
+  /** Present when fallback is true — why the provider path was abandoned. */
+  reason?: string;
 }
 
 export interface RerankInput {
@@ -109,6 +111,7 @@ export class RerankService {
     let fallback = false;
     let timedOut = false;
     let providerName = this.provider.name;
+    let reason: string | undefined;
     try {
       scores = await this.provider.rerank(query, texts);
       if (!scores || scores.length !== texts.length) throw new Error('provider returned wrong score count');
@@ -116,6 +119,8 @@ export class RerankService {
       fallback = true;
       timedOut = /abort|timeout/i.test(`${err?.name ?? ''} ${err?.message ?? ''}`);
       providerName = FALLBACK_PROVIDER;
+      reason = err?.message ?? 'rerank provider failed';
+      console.warn(`[Rerank] provider '${this.provider.name}' failed${timedOut ? ' (timeout)' : ''}, falling back to original order: ${reason}`);
     }
 
     const items: RerankItem[] = docs.map((d, i) => {
@@ -140,6 +145,7 @@ export class RerankService {
       fallback,
       timed_out: timedOut,
       elapsed_ms: Date.now() - started,
+      reason,
     };
   }
 }

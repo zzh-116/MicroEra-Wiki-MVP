@@ -265,7 +265,10 @@ pipelineRouter.post('/search', optionalAuth, async (req: Request, res: Response)
     if (!query?.trim()) { res.json({ results: [], source: 'pgvector', queryTimeMs: 0 }); return; }
     const start = Date.now();
     const results = await searchService.semanticSearch(query.trim(), req.isInternal, topK || 10);
-    res.json({ query: query.trim(), totalResults: results.length, queryTimeMs: Date.now() - start, source: 'pgvector',
+    const degraded = results.find((r) => r.degraded)?.degraded;
+    res.json({ query: query.trim(), totalResults: results.length, queryTimeMs: Date.now() - start,
+      source: degraded ? degraded.fallback : 'pgvector',
+      ...(degraded ? { degraded: true, degradedReason: degraded.reason } : {}),
       results: results.map((r) => ({ entryId: r.entry.id, title: r.entry.title, entryType: r.entry.entry_type, summary: r.entry.summary, score: Math.round(r.score * 1000) / 1000, tags: r.entry.tags.slice(0, 5), visibility: r.entry.visibility })) });
   } catch (err: any) { res.status(503).json({ error: 'SEARCH_FAILED', message: err.message }); }
 });

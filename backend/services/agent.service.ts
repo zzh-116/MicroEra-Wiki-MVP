@@ -13,6 +13,7 @@ import { knowledgeChunkRepository } from '../repositories/knowledge-chunk.reposi
 import { knowledgeRepository } from '../repositories/knowledge.repository.js';
 import { sha256 } from '../utils/hash.js';
 import { ServiceError } from './knowledge.service.js';
+import { McpHttpClient, McpClientError, type McpServerRef } from './mcp-client.js';
 
 export interface AgentTool {
   name: string;
@@ -46,6 +47,8 @@ function compactHit(h: any): Record<string, unknown> {
 }
 
 export class AgentService {
+  constructor(private readonly mcpClient: McpHttpClient = new McpHttpClient()) {}
+
   private synthesize(goal: string, hits: any[]): string {
     if (hits.length === 0) return `No supporting passages were found for: ${goal}`;
     const lines = hits.slice(0, 3).map((h, i) => `[${i + 1}] ${h.title}: ${String(h.text ?? '').trim()}`);
@@ -224,25 +227,96 @@ export class AgentService {
   }
 
   async mcpTest(input: { name?: string; url?: string }) {
-    const name = (input.name ?? '').trim();
-    if (!name && !input.url) throw new ServiceError('validation_failed', 'name or url is required');
-    // Config-level validation only: this slice has no live MCP transport; our own
-    // MCP surface (mcp:serve) exposes these same operations over stdio/http.
-    return {
-      server: name || String(input.url),
-      reachable: true,
-      checked_at: new Date().toISOString(),
-      note: 'configuration validated (live MCP transport is the operation registry itself)',
-    };
+    const url = (input.url ?? '').trim();
+    if (!url) throw new ServiceError('validation_failed', 'url is required to test an MCP server');
+    const label = (input.name ?? '').trim() || url;
+    const ref: McpServerRef = { url, name: label };
+    const started = Date.now();
+    try {
+      // Real connection + protocol handshake, then optionally enumerate tools to
+      // prove the server is a live MCP endpoint (not just any HTTP host).
+      const info = await this.mcpClient.initialize(ref);
+      let toolsCount: number | null = null;
+      try {
+        toolsCount = (await this.mcpClient.listTools(ref)).length;
+      } catch {
+        /* tools/list is optional for a reachable server */
+      }
+      return {
+        server: label,
+        reachable: true,
+        protocol_version: info.protocolVersion,
+        server_info: info.serverInfo,
+        tools_count: toolsCount,
+        latency_ms: Date.now() - started,
+        checked_at: new Date().toISOString(),
+      };
+    } catch (err: any) {
+      const e = err instanceof McpClientError ? err : new McpClientError('connection_failed', err?.message ?? String(err));
+      return {
+        server: label,
+        reachable: false,
+        error: { kind: e.kind, message: e.message },
+        latency_ms: Date.now() - started,
+        checked_at: new Date().toISOString(),
+      };
+    }
   }
 
   async mcpCall(input: { agent_id: number; server?: string; tool?: string; arguments?: Record<string, unknown> }) {
-    await this.view(input.agent_id);
-    const tool = String(input.tool ?? '');
+    const agent = await this.view(input.agent_id);
+    const tool = String(input.tool ?? '').trim();
     if (!tool) throw new ServiceError('validation_failed', 'tool is required');
-    if (!BUILTIN_TOOLS.some((t) => t.name === tool)) throw new ServiceError('validation_failed', `unknown tool: ${tool}`);
-    const result = await this.executeTool(tool, input.arguments ?? {});
-    return { server: input.server ?? null, tool, result };
+    const serverName = (input.server ?? '').trim();
+
+    // Local builtin dispatch — only when no remote server is named, and only for
+    // the built-in tool catalog. Local execution is always labeled `builtin` and
+    // never presented as a remote call.
+    if (!serverName) {
+      if (!BUILTIN_TOOLS.some((t) => t.name === tool)) throw new ServiceError('validation_failed', `unknown tool: ${tool}`);
+      const result = await this.executeTool(tool, input.arguments ?? {});
+      return { server: 'builtin', tool, result, remote: false };
+    }
+
+    // Remote MCP dispatch — the named server must be configured on the agent, and
+    // the call goes over the wire to that server (no local fallback).
+    const ref = this.resolveServerRef(agent, serverName);
+    try {
+      const result = await this.mcpClient.callTool(ref, tool, input.arguments ?? {});
+      return { server: serverName, tool, result, remote: true };
+    } catch (err: any) {
+      throw this.toServiceError(err);
+    }
+  }
+
+  private resolveServerRef(agent: { mcp_servers?: unknown }, serverName: string): McpServerRef {
+    const servers = Array.isArray(agent.mcp_servers) ? (agent.mcp_servers as Array<Record<string, unknown>>) : [];
+    const found = servers.find((s) => (s?.name ?? s?.url) === serverName);
+    if (!found) throw new ServiceError('resource_not_found', `MCP server '${serverName}' is not configured on this agent`);
+    const url = String(found.url ?? '').trim();
+    if (!url) throw new ServiceError('validation_failed', `MCP server '${serverName}' has no url`);
+    return {
+      name: serverName,
+      url,
+      token: typeof found.token === 'string' ? found.token : undefined,
+      headers: found.headers && typeof found.headers === 'object' ? (found.headers as Record<string, string>) : undefined,
+    };
+  }
+
+  private toServiceError(err: any): ServiceError {
+    if (err instanceof ServiceError) return err;
+    const e = err instanceof McpClientError ? err : new McpClientError('connection_failed', err?.message ?? String(err));
+    switch (e.kind) {
+      case 'tool_not_found':
+        return new ServiceError('resource_not_found', e.message);
+      case 'unsupported_scheme':
+      case 'invalid_url':
+      case 'ssrf_blocked':
+      case 'invalid_response':
+        return new ServiceError('validation_failed', e.message);
+      default: // connection_failed, timeout, unauthorized, http_error, remote_error
+        return new ServiceError('internal', e.message);
+    }
   }
 
   // ── A04: skills ────────────────────────────────────────────────────────────

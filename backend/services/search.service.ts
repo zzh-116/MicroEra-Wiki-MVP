@@ -7,29 +7,42 @@ import type { Entry, RetrievalResult, VectorSearchResult } from '../types.js';
 
 export class SearchService {
   async semanticSearch(query: string, isInternal = false, topK = 10, entryId?: number): Promise<RetrievalResult[]> {
+    let vectorError: string | null = null;
+    let mapped: RetrievalResult[] | null = null;
     try {
-      const mapped = await this.vectorOnly(query, isInternal, topK, entryId);
-      if (mapped !== null && mapped.length > 0) {
-        // 全局检索才做关键词补充；文档内检索（entryId 指定）不应混入其它文档。
-        let freshKeyword: RetrievalResult[] = [];
-        if (entryId === undefined) {
-          const vectorEntryIds = new Set(mapped.map((r) => r.entry.id));
-          const keywordResults = await this.keywordSearch(query, isInternal, topK);
-          freshKeyword = keywordResults.filter((r) => !vectorEntryIds.has(r.entry.id));
-          if (freshKeyword.length > 0) {
-            console.log(`[Search] keyword supplement: ${freshKeyword.length} additional entries not in vector results`);
-          }
-        }
-        return this.mergeResults(mapped, freshKeyword, topK);
-      }
+      mapped = await this.vectorOnly(query, isInternal, topK, entryId);
     } catch (err: any) {
-      console.warn(`[Search] Vector search failed: ${err.message}`);
+      vectorError = err?.message ?? 'vector search failed';
     }
 
-    if (entryId !== undefined) {
-      return this.getEntryChunks(entryId);
+    if (vectorError === null && mapped !== null && mapped.length > 0) {
+      // 全局检索才做关键词补充；文档内检索（entryId 指定）不应混入其它文档。
+      let freshKeyword: RetrievalResult[] = [];
+      if (entryId === undefined) {
+        const vectorEntryIds = new Set(mapped.map((r) => r.entry.id));
+        const keywordResults = await this.keywordSearch(query, isInternal, topK);
+        freshKeyword = keywordResults.filter((r) => !vectorEntryIds.has(r.entry.id));
+        if (freshKeyword.length > 0) {
+          console.log(`[Search] keyword supplement: ${freshKeyword.length} additional entries not in vector results`);
+        }
+      }
+      return this.mergeResults(mapped, freshKeyword, topK);
     }
-    return this.keywordSearch(query, isInternal, topK);
+
+    // Vector retrieval degraded (threw / unavailable) or returned no hits. A
+    // genuine failure is surfaced observably and tagged on each result; an empty
+    // vector result is a normal hybrid fallback and is left unmarked.
+    const fallback = entryId !== undefined ? 'entry_chunks' : 'keyword';
+    const degraded = vectorError ?? (mapped === null ? 'vector store unavailable' : null);
+    const fallbackResults = entryId !== undefined
+      ? await this.getEntryChunks(entryId)
+      : await this.keywordSearch(query, isInternal, topK);
+
+    if (degraded) {
+      console.warn(`[Search] semantic search degraded to ${fallback}: ${degraded}`);
+      return fallbackResults.map((r) => ({ ...r, degraded: { reason: degraded, fallback } }));
+    }
+    return fallbackResults;
   }
 
   /** 纯向量检索（块级）。返回 null 表示向量库不可用；返回 [] 表示无命中。
@@ -147,7 +160,7 @@ export class SearchService {
       const vector = (await this.vectorOnly(q, isInternal, topK)) ?? [];
       for (const r of vector) push(r.entry);
     } catch (err: any) {
-      console.warn(`[Search] content vector search failed: ${err.message}`);
+      console.warn(`[Search] content vector search failed, falling back to content keyword: ${err.message}`);
     }
 
     // 2) summary/content 关键词兜底（不查 title/file）
