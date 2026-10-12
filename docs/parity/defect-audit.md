@@ -18,7 +18,11 @@
 
 **批 C（MCP 真实性 + 检索/错误可见性）已于 2026-10-12 完成并回归通过**：E2（`agent.mcpTest` 真实握手，去掉恒 `reachable:true`）、E3（`agent.mcpCall` 按 `server` 参数路由到真实 MCP 客户端，本地内置工具标注 `remote:false`）、F3（向量检索降级显式标记 + 日志，不再冒充完整向量结果）、F9（`PUT /entries/:id` 区分 not-found 404 与 DB 错误 500）、F10（rerank fallback 携带 `reason` + 告警日志）、F11（provider probe/流式失败可观测）已全部 `verified`；新增 MCP SSRF 防护（`backend/services/mcp-url-guard.ts`，阻断私有/保留/元数据地址，无 stdio/spawn 故无任意命令执行）与手写 Streamable HTTP MCP 客户端（`backend/services/mcp-client.ts`）。回归：`tests/parity/mcp-client.test.ts`、`agent-mcp.test.ts`、`search-degradation.test.ts`、`entries-route.test.ts`、`error-visibility.test.ts` 5 个新文件（35 用例）。全套测试 45 文件 459 用例、`npm run test:e2e` 19 用例、`tsc --noEmit` 全部通过。
 
-在批 C/D 修复并回归后，需重新生成验收证据并重跑权威校验器，方能恢复「已完全验证」的终态判定。
+**批 D（低优先缺陷 + Agent/Harness 分析）已于 2026-10-12 完成并回归通过**：安全独立修复——E6（`wiki.revert` 回写 `summary`，由 content 派生，最小兼容、不迁移）、D7（`eval.run` `risk:'read'`→`'write'`）、D8（补 `buildInput` 级 `--format xlsx` 断言，与既有 parseArgs 断言共同闭合）、F8（checkpoint 字段级断言）、F12（model/datasource/meta 四处弱断言补字段级断言）；Agent 三项 E1/E4/E5 按用户要求**只做设计与风险分析，未实施**（见 §5）。回归：`npm test` 45 文件 461 用例、`npm run test:e2e` 19 用例、`tsc --noEmit`（前端+全量）与 `typecheck:backend` 全部通过。批 D 独立本地提交（未 push）。
+
+**批 D Phase 1 历史证据核对结论**：162 个必需操作（`docs/parity/operations/*.json`）与 51 项能力（41 接受 / 10 blocked）在批 A/B/C 改动后**数量与覆盖不变**——批 A/B/C 未新增/删除/重命名任何操作或能力。但历史验收证据（`operation-parity.json`、`capability-report.json`、`report.json`、`operations/*.json`、`evidence/`、`testlogs/`）**快照于 `commitSha 67d76a6`（批 A/B/C 之前的收尾 HEAD）**，其 `commitSha` 字段、`npm-test.log` 哈希（旧 382 测试）与个别 `testFile` 指向（如 `job.list`/`job.view` 仍指向修复前的 `tests/parity/model.test.ts`，即 F1 修复前状态）均已滞后于当前 HEAD。故**旧 86/100 不作为当前最终验收结论**；需在批 D 收尾后重新生成验收证据并重跑权威校验器（`evaluate_delivery.py`）方可恢复「已完全验证」终态。
+
+在批 D 修复并回归后，需重新生成验收证据并重跑权威校验器，方能恢复「已完全验证」的终态判定。
 
 ## 1. 概览
 
@@ -126,7 +130,7 @@
 - **影响范围**：元数据自相矛盾，审计/权限脚本可能误判。
 - **修复建议**：`risk` 改为 `write`。
 - **验证标准**：`eval.run` 的 `risk` 与 `mcp.readOnlyHint` 一致。
-- **状态**：`open`（批 D）
+- **状态**：`verified`（批 D）— `operations.ts:1278` `eval.run` 的 `risk` 由 `read` 改为 `write`，与 `mcp.readOnlyHint:false` 一致；回归 `tests/parity/meta.test.ts` 新增 `api.schema exposes eval.run risk=write consistent with mcp.readOnlyHint=false`。
 
 #### D8 全局 flag 与 op 输入字段命名冲突 — LOW
 - **文件位置**：`cli/src/main.ts:37-39`（全局 `--format`/`--timeout`/`--dry-run`）、`operations.ts:572`（`kb.export.format`）、`operations.ts:2672`（`datasource.sync.dryRun`）。
@@ -134,7 +138,7 @@
 - **影响范围**：`kb.export.format`（可选字段）经 CLI 不可达。
 - **修复建议**：全局 `--format` 仅在取值为 `json|ndjson|text` 时视为全局，其余透传给 op；并记录其余冲突。
 - **验证标准**：`kb.export --format xlsx` 时 body 含 `format:'xlsx'`。
-- **状态**：`verified`（部分）
+- **状态**：`verified`（批 D）— 补 `tests/parity/cli-args.test.ts` 的 `buildInput` 级断言：`kb.export --format xlsx` → `{kb_id:1, format:'xlsx'}`，与既有 `parseArgs` 透传断言共同闭合 D8。
 
 ### ⑤ AutoWiki / Agent / Harness
 
@@ -144,7 +148,7 @@
 - **影响范围**：A01 配置无实际作用，agent 能力表面化。
 - **修复建议**：读取 agent 配置驱动工具选择与模型。
 - **验证标准**：不同配置产生不同执行路径。
-- **状态**：`open`（批 C/D）
+- **状态**：`open`（批 D 分析，未实施）— 详见 §5「Agent/Harness 设计与风险分析」：`run()` 仅用 `agent.id`，`agent.tools/model/instructions` 均未驱动执行；`synthesize` 为确定性文本拼接（非 LLM），`agent.model` 自然失效。最小兼容修复方案已给出，未获确认不实施。
 
 #### E2 `agent.mcpTest` 恒返回 `reachable:true` — MEDIUM
 - **文件位置**：`backend/services/agent.service.ts:229-264`（`mcpTest`）。
@@ -168,7 +172,7 @@
 - **影响范围**：续跑语义缺失。
 - **修复建议**：基于持久化 run 状态续跑。
 - **验证标准**：resume 不重复已完成的副作用。
-- **状态**：`open`（批 C/D）
+- **状态**：`open`（批 D 分析，未实施）— 详见 §5：`resume()` 实为「同 goal 重跑」：新建 `run_${uuid}` 并重放 retrieve→synthesize 与新建 run 行；不读取既有 `steps/answer/trace`。最小兼容修复（对 `succeeded` 幂等返回、仅 `failed/running` 重跑）会改变该 op 现有契约，未获确认不实施。
 
 #### E5 `sandboxStatus` 恒 `{available:true, mode:'in-process'}`，无隔离 — LOW
 - **文件位置**：`backend/services/agent.service.ts:282-303`。
@@ -176,7 +180,7 @@
 - **影响范围**：沙箱安全性未实现（已在 P6 记录为简化）。
 - **修复建议**：接真实沙箱或明确降级文档。
 - **验证标准**：隔离级别与文档一致。
-- **状态**：`open`（批 D）
+- **状态**：`open`（批 D 分析，未实施）— 详见 §5：`sandboxStatus` 硬编码 `{available:true, mode:'in-process'}`；`sandboxRun` 仅 4 个确定性任务（`runSandboxTask` 白名单，无 spawn/无任意代码执行）。`mode:'in-process'` 命名诚实，但 `available:true` 与真实隔离语义有落差。最小兼容修复（补 `isolation:'none'` + `capabilities:['deterministic-tasks']` 明示无隔离）为加字段的非破坏性改动，未获确认不实施。
 
 #### E6 `wiki.revert` 不恢复 `summary` — LOW
 - **文件位置**：`backend/services/wiki.service.ts:320`。
@@ -184,7 +188,7 @@
 - **影响范围**：回滚后摘要与内容失配。
 - **修复建议**：revert 同时恢复对应 revision 的 summary。
 - **验证标准**：revert 后 summary 与 revision 一致。
-- **状态**：`open`（批 D）
+- **状态**：`verified`（批 D，最小兼容）— `wiki_revisions` 表无 `summary` 列（仅 title/content/checksum），精确恢复原摘要需数据库迁移（按约束暂停）。最小兼容修复：`revert` 现用 `summaryOf(target.content)`（取 content 前 200 字，与 `synthMarkdown` 摘要约定一致）回写 `summary`，使回滚后 summary 与 content 一致，不再保留陈旧摘要。回归 `tests/parity/wiki.test.ts` revert 用例新增 `summary:'old content'` 断言。局限诚实记录：原摘要未被持久化，回滚摘要为「由 content 派生」，非「历史原值」。
 
 ### ⑥ 测试质量 / 证据
 
@@ -250,7 +254,7 @@
 - **影响范围**：弱断言。
 - **修复建议**：断言具体字段。
 - **验证标准**：字段级断言。
-- **状态**：`open`（批 D）
+- **状态**：`verified`（批 D）— `tests/parity/parse-job.test.ts:111` 由 `toBeTruthy()` 改为 `toEqual(expect.objectContaining({ job_id:'parse_x', status:'running' }))`（对应 `toStatusView` 的 `job_id`/`status` 字段）。
 
 #### F9 `PUT /entries/:id` 把任何错误都报 404 — LOW
 - **文件位置**：`server/routes/entries.ts:57-71`。
@@ -282,7 +286,7 @@
 - **影响范围**：弱断言。
 - **修复建议**：补充字段级断言。
 - **验证标准**：字段级断言。
-- **状态**：`open`（批 D）
+- **状态**：`verified`（批 D）— `model.test.ts` list 断言补 `items` 长度 + `toMatchObject({id,name,kind})`；`datasource.test.ts:104` cursor 由 `toBeTruthy()` 改为断言 string 非空 + 与 `updateDatasource` 持久化值一致；`meta.test.ts:14` 补 `http` 绑定断言、`:29-30` 由 `toBeDefined()` 改为断言 `inputSchema/outputSchema.type==='object'` + properties 非空。
 
 #### F13 `ParseJobService.complete()` 用 snake_case `finished_at`，Drizzle 静默丢弃 — MEDIUM（批 B 新发现并已修复）
 - **文件位置**：`backend/services/parse-job.service.ts:158`（`finished_at: new Date()`，应为 `finishedAt`）。
@@ -302,7 +306,8 @@
 | 批 B | job 语义 + 测试入口 | B1, C1, F1, F2, F4, F5, F6, F7 | ✅ 已完成（B1/C1/F1/F6 `verified`；F4/F5 `partial`；F7 `documented`；F2 `paused` 待确认 §4） |
 | 批 B（新发现） | worker 完成时间戳 | F13 | ✅ 已修复 `verified`（`finished_at`→`finishedAt`） |
 | 批 C | MCP 真实性 + 降级/错误可见性 | E2, E3, F3, F9, F10, F11 | ✅ 已完成（全部 `verified`；另增 MCP SSRF 防护） |
-| 批 D | 低优先 | D7, D8, E1, E4, E5, E6, F8, F12 | 待执行 |
+| 批 D | 低优先 | D7, D8, E6, F8, F12 | ✅ 已完成（全部 `verified`，最小兼容修复） |
+| 批 D（分析） | Agent/Harness | E1, E4, E5 | 📋 已做设计与风险分析，未实施（见 §5） |
 
 ---
 
@@ -315,3 +320,30 @@
 - **数据/API 兼容风险**：`parse_jobs` 为 `0012_add_parse_jobs.sql` 新增的附加表（无既有业务数据，无破坏性迁移）；但「统一」意味着把 `job.list/view` 改挂到持久队列并统一 status/字段，会**改变现有接口契约**（`/api/pipeline/jobs` 的返回形状与 `job.list/view` 的 outputSchema），并涉及前端 `UploadManager` 轮询 `/jobs/:id` 的兼容。
 - **暂停原因**：按用户要求「如果统一 Job 后端需要数据库迁移、改变现有接口契约或可能影响已有业务数据，先提交设计与风险说明，暂停相关改动，等待确认」。
 - **建议方案（待确认后实施）**：引入「读时适配层」将两种 job 视图归一到一个稳定 DTO（不改 `parse_jobs` 表结构、不迁移既有数据），或分阶段：先加持久 import-job 存储（新增表，不动旧表）再切换读路径。**未获确认前不实施任何改动。**
+
+---
+
+## 5. Agent / Harness 设计与风险分析（批 D，仅分析未实施）
+
+按用户要求，E1/E4/E5 三项 Agent 相关缺陷本轮只做设计与风险分析，不实施大规模重构。
+
+### E1 — `agent.run` 完全忽略 agent 配置（tools/model/instructions）— MEDIUM
+
+- **现状（已核查 `backend/services/agent.service.ts`）**：`run()`（:152-177）调用 `this.view(agent_id)` 校验 agent 存在后，仅使用 `agent.id`；`agent.tools`、`agent.model`、`agent.instructions` 均未驱动执行。执行路径固定两步：`retrieve`（`retrievalService.filteredSearch`，`method`/`top_k` 取自 input 而非 agent 配置）→ `synthesize`（`synthesize()` :52，确定性文本拼接，非 LLM 调用）。
+- **风险**：A01 能力表面化——不同 agent 配置产出相同执行路径；`agent.model` 因无 LLM 调用而天然失效。**不伪造结果**：answer 源自真实检索命中；不影响 162 op / 51 能力验收计数。
+- **最小兼容修复（待确认后实施，无破坏性）**：① 将 `agent.instructions` 注入 `synthesize` 作为前缀/上下文（廉价、不改签名）；② 以 `agent.tools` 作为 retrieve 方法可用集的门控（若未含 `retrieve` 则拒绝或回退）。③ `agent.model` 驱动的真实 LLM 合成**属于较大改动**——会使 `agent.run` 依赖 Ollama 可用性、改变输出确定性、破坏既有 mock 测试，本轮不纳入，记为文档化差距。
+- **风险说明**：接入真实 LLM 合成需新增 LLM 依赖注入 + 失败降级（避免 `agent.run` 因模型不可用而整体失败），并同步更新 `tests/parity/agent.test.ts`。未获确认前不实施。
+
+### E4 — `agent.resume` 从零重跑 — LOW
+
+- **现状（已核查）**：`resume()`（:429-433）取到 run 后调用 `this.run({agent_id, goal})`，**新建** `run_${uuid}` 并重放 retrieve→synthesize，不读取既有 run 的 `steps/answer/trace`。
+- **风险**：语义上是「同 goal 重跑」而非「续跑」；副作用被重复（新 run 行 + 重新检索）。**无数据损坏**（仅新增 run 行，幂等性尚可），但语义误导、浪费工作。
+- **最小兼容修复（待确认后实施，改变 op 契约）**：`resume` 对 `status==='succeeded'` 的 run 幂等返回既有结果；仅对 `failed`/`running` 重跑。**注意**：此改动改变 `resume` 对已成功 run 的现有契约（当前会新建 run），属公开行为变化，需确认。
+- **风险说明**：若引入「基于持久化 run 状态续跑」，需在 `agent_runs` 表加断点/步骤索引字段（数据库迁移）或复用现有 `steps` 数组推算，前者触发迁移暂停条件。本轮不实施。
+
+### E5 — `sandboxStatus` 恒 `{available:true, mode:'in-process'}`，无隔离 — LOW
+
+- **现状（已核查）**：`sandboxStatus()`（:356-358）硬编码 `{available:true, mode:'in-process', description, checked_at}`；`sandboxRun()`（:360-378）执行 `runSandboxTask()`（:91）固定 4 个确定性任务白名单，**无 spawn/无任意代码执行**。
+- **风险**：无任意命令执行风险（白名单 + 无 spawn）；`mode:'in-process'` 命名诚实。唯一落差：`available:true` 与「真实沙箱隔离」语义不符，调用方可能误判隔离等级。
+- **最小兼容修复（待确认后实施，加字段非破坏性）**：`sandboxStatus` 增补 `isolation:'none'` 与 `capabilities:['deterministic-tasks']`（或对 `available` 保持 `true` 但明确 `isolated:false`），让调用方无法把 in-process 白名单误读为容器/进程隔离。接真实 Docker 沙箱属较大架构改动，不在本批范围。
+

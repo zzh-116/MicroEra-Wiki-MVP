@@ -14,6 +14,7 @@ describe('P9 X01 — api.* introspection', () => {
     expect(own).toBeDefined();
     expect(own!.cli).toBe('microera api operations');
     expect(own!.mcp_tool).toBe('api_operations');
+    expect(own!.http).toMatchObject({ method: expect.any(String), path: expect.any(String) });
   });
 
   it('api.schema (no arg) returns the full manifest', () => {
@@ -26,8 +27,15 @@ describe('P9 X01 — api.* introspection', () => {
   it('api.schema (operation_id) returns a single contract', () => {
     const r: any = metaService.schema('kb.create');
     expect(r.id).toBe('kb.create');
-    expect(r.inputSchema).toBeDefined();
-    expect(r.outputSchema).toBeDefined();
+    expect(r.inputSchema.type).toBe('object');
+    expect(r.outputSchema.type).toBe('object');
+    expect(Object.keys(r.inputSchema.properties).length).toBeGreaterThan(0);
+  });
+
+  it('api.schema exposes eval.run risk=write consistent with mcp.readOnlyHint=false (D7)', () => {
+    const r: any = metaService.schema('eval.run');
+    expect(r.risk).toBe('write');
+    expect(r.mcp.readOnlyHint).toBe(false);
   });
 
   it('api.schema throws resource_not_found for an unknown operation', () => {

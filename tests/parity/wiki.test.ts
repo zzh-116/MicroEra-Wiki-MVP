@@ -99,14 +99,16 @@ describe('P5 wiki service — CRUD + versioning', () => {
   });
 
   it('revert restores content from a revision as a new revision', async () => {
-    vi.spyOn(wikiRepository, 'findWikiById').mockResolvedValue(wiki(1, { revision_no: 3, content: 'latest' }));
+    vi.spyOn(wikiRepository, 'findWikiById').mockResolvedValue(wiki(1, { revision_no: 3, content: 'latest', summary: 'stale summary' }));
     vi.spyOn(wikiRepository, 'findRevision').mockResolvedValue({ id: 1, wiki_id: 1, revision_no: 1, title: 'old title', content: 'old content', checksum: '', created_at: '' });
     const upd = vi.spyOn(wikiRepository, 'updateWiki').mockImplementation(async (id, patch) => ({ ...wiki(1), ...patch, revision_no: 4 }));
     const rev = vi.spyOn(wikiRepository, 'createRevision').mockImplementation(async (r: any) => ({ id: 4, wiki_id: r.wikiId, ...r, created_at: '' }));
 
     const r: any = await wikiService.revert(1, 1);
     expect(r.new_revision_no).toBe(4);
-    expect(upd).toHaveBeenCalledWith(1, expect.objectContaining({ content: 'old content', revisionNo: 4 }));
+    // E6: summary must be restored to match the reverted content (derived from the
+    // revision content since wiki_revisions does not persist the original summary).
+    expect(upd).toHaveBeenCalledWith(1, expect.objectContaining({ content: 'old content', summary: 'old content', revisionNo: 4 }));
     expect(rev).toHaveBeenCalledWith(expect.objectContaining({ revisionNo: 4, content: 'old content' }));
   });
 });

@@ -101,8 +101,10 @@ describe('P7 datasource service — D02 (sync/changes/cursor/logs)', () => {
 
     expect(r.created).toBe(3);
     expect(r.skipped).toBe(0);
-    expect(r.cursor).toBeTruthy();
+    expect(typeof r.cursor).toBe('string');
+    expect(r.cursor.length).toBeGreaterThan(0);
     expect(updateDs).toHaveBeenCalledWith(1, expect.objectContaining({ cursor: expect.any(String) }));
+    expect(updateDs.mock.calls[0][1]).toMatchObject({ cursor: r.cursor });
     expect(updateLog).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ status: 'succeeded', total: 3 }));
   });
 

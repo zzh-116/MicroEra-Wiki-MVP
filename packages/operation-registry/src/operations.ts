@@ -1275,7 +1275,7 @@ export function registerOperations(api: ApiClient): void {
     title: 'Run an evaluation',
     description: 'Score a retrieval method (vector/lexical/hybrid) against a dataset and record recall@k/MRR/nDCG@k.',
     kind: 'job',
-    risk: 'read',
+    risk: 'write',
     inputSchema: {
       type: 'object',
       properties: {

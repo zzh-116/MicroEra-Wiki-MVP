@@ -29,6 +29,11 @@ describe('parseArgs', () => {
     expect(p.tokens).toEqual(['kb', 'export', '--kb-id', '1', '--format', 'xlsx']);
   });
 
+  it('maps --format xlsx through to the kb.export input body (D8)', () => {
+    const input = buildInput(def('kb.export'), ['--kb-id', '1', '--format', 'xlsx'], false);
+    expect(input).toEqual({ kb_id: 1, format: 'xlsx' });
+  });
+
   it('captures --idempotency-key as a global', () => {
     const p = parseArgs(['--idempotency-key', 'abc123', 'kb', 'list']);
     expect(p.idempotencyKey).toBe('abc123');

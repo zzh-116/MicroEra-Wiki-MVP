@@ -108,7 +108,7 @@ describe('P2-04 durable queue — worker primitives', () => {
     mocks.findById.mockResolvedValue(job({ status: 'running', lease_owner: 'w1' }));
     mocks.update.mockResolvedValue(job({ status: 'running', lease_owner: 'w1', checkpoint: { parsed: 12 } }));
     const result = await parseJobService.checkpoint('parse_x', 'w1', { parsed: 12 });
-    expect(result).toBeTruthy();
+    expect(result).toEqual(expect.objectContaining({ job_id: 'parse_x', status: 'running' }));
     expect(mocks.update).toHaveBeenCalledWith('parse_x', { checkpoint: { parsed: 12 } });
   });
 

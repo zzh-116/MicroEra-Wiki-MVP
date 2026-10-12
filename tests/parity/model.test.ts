@@ -81,7 +81,8 @@ describe('P8 model registry — M01 (list/view/create/update/delete/test/set_def
     vi.spyOn(modelRepository, 'listModels').mockResolvedValue({ items: [model()], total: 1 });
     const r: any = await modelService.list({});
     expect(r.total).toBe(1);
-    expect(r.items[0].name).toBe('Local LLM');
+    expect(r.items).toHaveLength(1);
+    expect(r.items[0]).toMatchObject({ id: 1, name: 'Local LLM', kind: 'llm' });
   });
 
   it('view returns the stored model', async () => {

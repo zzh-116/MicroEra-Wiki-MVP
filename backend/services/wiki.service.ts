@@ -29,6 +29,15 @@ function synthMarkdown(title: string, hits: WikiHit[]): { summary: string; conte
   return { summary, content, sources };
 }
 
+/** Derive a wiki summary from content (first 200 chars), matching the summary
+ * convention used by synthMarkdown. `wiki_revisions` does not persist the
+ * original summary (only title/content/checksum), so revert re-derives the
+ * summary from the reverted content instead of restoring a stored value —
+ * keeping summary consistent with the reverted content without a migration. */
+function summaryOf(content: string): string {
+  return (content ?? '').slice(0, 200);
+}
+
 /** Minimal line-level LCS diff → an ordered edit script (add/remove/keep). */
 function diffLines(a: string, b: string): Array<{ type: 'add' | 'remove' | 'keep'; text: string }> {
   const A = a.split('\n');
@@ -317,7 +326,7 @@ export class WikiService {
     const target = await wikiRepository.findRevision(wikiId, revisionNo);
     if (!target) throw new ServiceError('resource_not_found', 'revision not found');
     const nextRev = w.revision_no + 1;
-    await wikiRepository.updateWiki(wikiId, { title: target.title, content: target.content, revisionNo: nextRev });
+    await wikiRepository.updateWiki(wikiId, { title: target.title, content: target.content, summary: summaryOf(target.content), revisionNo: nextRev });
     await wikiRepository.createRevision({ wikiId, revisionNo: nextRev, title: target.title, content: target.content, checksum: sha256(target.content) });
     return { wiki_id: wikiId, reverted_from_revision_no: revisionNo, new_revision_no: nextRev };
   }
