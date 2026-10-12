@@ -12,7 +12,9 @@
 
 **自本轮缺陷排查起，上述结论标注为「待重新验证」**，不再作为已完全验证的最终交付结论使用。原因是本轮确认存在以下尚未修复、且会影响验收证据可信度的缺陷（详见 §2 的 HIGH 项）：`job.list`/`job.view` 无任何真实测试却被标 passed（F1）、`job.*` 命名空间指向两个后端（F2）、向量检索失败被静默降级（F3）、CLI 多个操作参数映射错误导致按文档用法无法执行（A1/D1/D2/D3）。
 
-在批 A（及后续批 B/C/D）修复并回归后，需重新生成验收证据并重跑权威校验器，方能恢复「已完全验证」的终态判定。
+**批 A（CLI/MCP 参数处理）已于 2026-10-12 修复并回归通过**：A1/D1/D2/D3/D4/D5/D6 已 `verified`，D8 部分修复；对应回归测试 `tests/parity/cli-args.test.ts`（19 用例）与 `tests/parity/cli-e2e.test.ts`（7 用例，真实 CLI 进程）全部通过，全套测试 37 文件 408 用例无回归。§0 中依赖 A1/D1/D2/D3 的「按文档用法无法执行」问题已消除。
+
+在批 B/C/D 修复并回归后，需重新生成验收证据并重跑权威校验器，方能恢复「已完全验证」的终态判定。
 
 ## 1. 概览
 
@@ -42,7 +44,7 @@
 - **影响范围**：HTTP MCP transport 无法经 CLI 选中；`cli/src/main.ts:154` 却宣称 `supportedTransports:['stdio','http']`。REST/直接调 `runHttpServer(8765)` 正常（162 tools），纯 CLI 接线缺陷。
 - **修复建议**：CLI 将 `--transport`/`--port` 原样转发给 `runMcpServe`；`runMcpServe` 同时支持 `--transport http` 与 `--transport=http` 两种写法。
 - **验证标准**：`tsx cli/src/main.ts mcp serve --transport http --port <随机端口>` 后向 `/mcp` 发 JSON-RPC `tools/list`，返回 ≥150 tools 且含 `search_hybrid`。
-- **状态**：`open`
+- **状态**：`verified`
 
 ### ② datasource.sync 幂等断言
 
@@ -72,7 +74,7 @@
 - **影响范围**：该 CLI 操作完全不可用（REST/MCP 正常）。
 - **修复建议**：`--message-id` → `message_id`，删掉手写特判，交给通用 schema 映射。
 - **验证标准**：真实 CLI 调用经 mock server 捕获 body 含 `message_id`。
-- **状态**：`open`（批 A）
+- **状态**：`verified`
 
 #### D2 9 个读/搜操作位置参数被静默丢弃 — HIGH
 - **文件位置**：`cli/src/main.ts:118-133`（通用分支只映射 flags，不消费位置参数）。
@@ -80,7 +82,7 @@
 - **影响范围**：9 个文档化 CLI 命令按示例用法失败。
 - **修复建议**：通用分支把首个位置参数映射到「首个 required 字符串字段」（query/question/q）。
 - **验证标准**：真实 CLI 调用经 mock server 捕获 body 含 `query`/`question`/`q`。
-- **状态**：`open`（批 A）
+- **状态**：`verified`
 
 #### D3 `chat.ask` 丢 `kb_ids/session_id/top_k/method/is_internal`，且 `session_id` 错映射为 `conversation_id` — HIGH
 - **文件位置**：`cli/src/main.ts:97` vs schema `operations.ts:1351-1361`、`server/routes/chat-v2.ts:62-68`。
@@ -88,7 +90,7 @@
 - **影响范围**：检索范围/会话上下文被静默丢弃，返回错误结果而非报错。
 - **修复建议**：删掉手写特判，交给通用 schema 映射（含 `kb_ids` 数组解析）。
 - **验证标准**：mock server 捕获 body 含 `kb_ids:[1]`、`method:'hybrid'`、`session_id`。
-- **状态**：`open`（批 A）
+- **状态**：`verified`
 
 #### D4 `search.hybrid` 丢 `kb_id/folder_id/is_internal/rrf_k` — MEDIUM
 - **文件位置**：`cli/src/main.ts:96`（只保留 `{query, top_k}`）；schema `operations.ts:977-987`。
@@ -96,7 +98,7 @@
 - **影响范围**：过滤静默失效。
 - **修复建议**：删掉手写特判，交给通用 schema 映射。
 - **验证标准**：mock server 捕获 body 含 `kb_id`、`rrf_k`。
-- **状态**：`open`（批 A）
+- **状态**：`verified`
 
 #### D5 数组 flag 强制 `Number` 转换破坏 JSON/空格/非数值数组 — MEDIUM
 - **文件位置**：`cli/src/main.ts:128`（`split(',').map(Number).filter(Number.isFinite)`）。
@@ -104,7 +106,7 @@
 - **影响范围**：对象数组、空格分隔数组、字符串数组全部被破坏。
 - **修复建议**：按 `items.type` 分派：object/array → JSON.parse；integer/number → 逗号+空白拆分后 Number；string → 保留字符串；boolean → 布尔。
 - **验证标准**：单测覆盖 JSON 数组/数字数组/字符串数组/含空格参数四类。
-- **状态**：`open`（批 A）
+- **状态**：`verified`
 
 #### D6 datasource `projectId/dryRun` 用 camelCase 且 `--dry-run` 被全局吞 — LOW
 - **文件位置**：`cli/src/main.ts:39`（全局 `--dry-run`）、`operations.ts:2652,2672`（`projectId`/`dryRun`）、`backend/services/datasource.service.ts:16,83`。
@@ -112,7 +114,7 @@
 - **影响范围**：datasource 预览/同步的过滤与 dry-run 语义在 CLI 不可达。
 - **修复建议**：通用映射支持 kebab→camelCase；`--dry-run` 在 schema 含 `dryRun` 字段时同步写入 input。
 - **验证标准**：mock server 捕获 body 含 `projectId`/`dryRun`。
-- **状态**：`open`（批 A）
+- **状态**：`verified`
 
 #### D7 `eval.run` 元数据 `risk:'read'` 但实际写库 — LOW
 - **文件位置**：`operations.ts:1278` vs `backend/services/eval.service.ts:159`（`createRun`）。
@@ -128,7 +130,7 @@
 - **影响范围**：`kb.export.format`（可选字段）经 CLI 不可达。
 - **修复建议**：全局 `--format` 仅在取值为 `json|ndjson|text` 时视为全局，其余透传给 op；并记录其余冲突。
 - **验证标准**：`kb.export --format xlsx` 时 body 含 `format:'xlsx'`。
-- **状态**：`open`（批 A 部分处理，其余记录）
+- **状态**：`verified`（部分）
 
 ### ⑤ AutoWiki / Agent / Harness
 
@@ -284,7 +286,7 @@
 
 | 批次 | 范围 | 缺陷 | 状态 |
 |---|---|---|---|
-| 批 A | CLI/MCP 参数处理 | A1, D1, D2, D3, D4, D5, D6, D8 | 待执行 |
+| 批 A | CLI/MCP 参数处理 | A1, D1, D2, D3, D4, D5, D6, D8 | ✅ 已完成（A1/D1–D6 `verified`，D8 部分） |
 | 批 B | job 语义 + 测试入口 | B1, C1, F1, F2, F4, F5, F6, F7 | 待执行 |
 | 批 C | 诚实化/降级可见性 | E2, E3, F3, F9, F10, F11 | 待执行 |
 | 批 D | 低优先 | D7, D8, E1, E4, E5, E6, F8, F12 | 待执行 |

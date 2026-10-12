@@ -5,11 +5,28 @@ import { runHttpServer } from './http.js';
 export { listTools, listResources, listPrompts, readResource, callTool, MCP_PROTOCOL_VERSION, serverInfo } from './mcp-core.js';
 
 export async function runMcpServe(argv: string[]): Promise<number> {
-  const transport = argv.includes('--transport') && argv[argv.indexOf('--transport') + 1] === 'http'
-    ? 'http'
-    : 'stdio';
-  const portFlag = argv.indexOf('--port');
-  const port = portFlag >= 0 ? Number(argv[portFlag + 1]) || 8765 : 8765;
+  let transport: 'stdio' | 'http' = 'stdio';
+  let port = 8765;
+
+  // Accept both `--transport http` and `--transport=http`, likewise `--port N`.
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    let name = a;
+    let inline: string | undefined;
+    const eq = a.indexOf('=');
+    if (eq >= 0) { name = a.slice(0, eq); inline = a.slice(eq + 1); }
+
+    if (name === '--transport') {
+      let v = inline;
+      if (v === undefined && i + 1 < argv.length) v = argv[++i];
+      if (v === 'http') transport = 'http';
+    } else if (name === '--port') {
+      let v = inline;
+      if (v === undefined && i + 1 < argv.length) v = argv[++i];
+      const n = Number(v);
+      if (Number.isFinite(n) && n > 0) port = n;
+    }
+  }
 
   if (transport === 'http') {
     await runHttpServer(port);
