@@ -1,0 +1,36 @@
+{
+  "id": "wiki.link",
+  "version": "1",
+  "title": "Link two wiki pages",
+  "kind": "mutation",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "source_wiki_id": {
+        "type": "integer"
+      },
+      "target_wiki_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "source_wiki_id",
+      "target_wiki_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "source_wiki_id": {
+        "type": "integer"
+      },
+      "target_wiki_id": {
+        "type": "integer"
+      },
+      "created_at": {
+        "type": "string"
+      }
+    }
+  }
+}

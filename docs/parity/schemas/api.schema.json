@@ -1,0 +1,29 @@
+{
+  "id": "api.schema",
+  "version": "1",
+  "title": "Show the operation schema",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "operation_id": {
+        "type": "string"
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "operationRegistryVersion": {
+        "type": "string"
+      },
+      "operations": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

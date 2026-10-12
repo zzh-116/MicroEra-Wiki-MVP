@@ -1,0 +1,35 @@
+{
+  "id": "agent.check",
+  "version": "1",
+  "title": "Check agent readiness",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "agent_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "agent_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "agent_id": {
+        "type": "integer"
+      },
+      "ok": {
+        "type": "boolean"
+      },
+      "checks": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

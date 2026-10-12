@@ -1,0 +1,55 @@
+{
+  "id": "datasource.view",
+  "version": "1",
+  "title": "View a datasource",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "datasource_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "datasource_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "name": {
+        "type": "string"
+      },
+      "connector": {
+        "type": "string"
+      },
+      "config": {
+        "type": "object"
+      },
+      "schedule": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string"
+      },
+      "cursor": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string"
+      },
+      "updated_at": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "name",
+      "connector"
+    ]
+  }
+}

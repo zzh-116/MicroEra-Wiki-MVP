@@ -1,0 +1,35 @@
+{
+  "id": "wiki.sources",
+  "version": "1",
+  "title": "List wiki sources",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "wiki_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "wiki_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "wiki_id": {
+        "type": "integer"
+      },
+      "sources": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "total": {
+        "type": "integer"
+      }
+    }
+  }
+}

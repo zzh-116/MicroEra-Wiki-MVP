@@ -1,0 +1,32 @@
+{
+  "id": "wiki.status",
+  "version": "1",
+  "title": "Wiki generation status",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "wiki_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "wiki_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "wiki_id": {
+        "type": "integer"
+      },
+      "status": {
+        "type": "string"
+      },
+      "revision_no": {
+        "type": "integer"
+      }
+    }
+  }
+}

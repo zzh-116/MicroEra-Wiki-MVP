@@ -1,0 +1,53 @@
+{
+  "id": "chunk.preview",
+  "version": "1",
+  "title": "Preview chunking of a document",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "doc_id": {
+        "type": "integer"
+      },
+      "strategy": {
+        "type": "string"
+      },
+      "chunk_size": {
+        "type": "integer"
+      },
+      "overlap": {
+        "type": "integer"
+      },
+      "min_chunk_size": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "doc_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "doc_id": {
+        "type": "integer"
+      },
+      "strategy": {
+        "type": "string"
+      },
+      "chunk_size": {
+        "type": "integer"
+      },
+      "overlap": {
+        "type": "integer"
+      },
+      "chunks": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

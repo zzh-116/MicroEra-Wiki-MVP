@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-10-12T08:33:04.277Z",
+  "environment": {
+    "node": "v22.14.0",
+    "os": "win32",
+    "backend": "http://localhost:3001",
+    "database": "postgresql://postgres:***@localhost:5433/microera_wiki",
+    "vectorStore": "pgvector",
+    "embeddingModel": "bge-m3",
+    "chatModel": "qwen2.5:7b"
+  },
+  "method": "curl time_total over 5 warm samples per endpoint; read-only, no writes",
+  "endpoints": {
+    "GET /api/pipeline/health": {
+      "samples_ms": [
+        2.019,
+        1.422,
+        1.44,
+        1.287,
+        1.063
+      ],
+      "p50_ms": 1.422,
+      "p95_ms": 2.019,
+      "note": "health check"
+    },
+    "GET /api/entries?page=1&pageSize=20": {
+      "samples_ms": [
+        5.475,
+        5.162,
+        6.509,
+        5.557,
+        5.571
+      ],
+      "p50_ms": 5.557,
+      "p95_ms": 6.509,
+      "note": "paged entry list (DB read)"
+    },
+    "POST /api/search (title)": {
+      "samples_ms": [
+        5.431,
+        5.567,
+        5.376,
+        5.248,
+        5.693
+      ],
+      "p50_ms": 5.431,
+      "p95_ms": 5.693,
+      "note": "title-mode search, no embedding call"
+    }
+  },
+  "notes": [
+    "These are honest, live read-only measurements on the running dev backend.",
+    "Baseline was not captured in a prior phase (no baseline-performance.json existed), so this run establishes the first recorded baseline.",
+    "P95 vs baseline comparison is not applicable until a second sample is taken in a later phase."
+  ]
+}

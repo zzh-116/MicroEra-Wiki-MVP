@@ -1,0 +1,38 @@
+{
+  "id": "graph.neighbors",
+  "version": "1",
+  "title": "Wiki graph neighbors",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "wiki_id": {
+        "type": "integer"
+      },
+      "depth": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "wiki_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "wiki_id": {
+        "type": "integer"
+      },
+      "depth": {
+        "type": "integer"
+      },
+      "neighbors": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "id": "kb.view",
+  "version": "1",
+  "title": "View a knowledge base",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "kb_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "kb_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "name": {
+        "type": "string"
+      },
+      "slug": {
+        "type": "string"
+      },
+      "description": {
+        "type": "string"
+      },
+      "visibility": {
+        "type": "string",
+        "enum": [
+          "public",
+          "internal"
+        ]
+      },
+      "created_at": {
+        "type": "string"
+      },
+      "updated_at": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "name",
+      "slug"
+    ]
+  }
+}

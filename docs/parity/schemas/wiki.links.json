@@ -1,0 +1,38 @@
+{
+  "id": "wiki.links",
+  "version": "1",
+  "title": "List wiki links",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "wiki_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "wiki_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "wiki_id": {
+        "type": "integer"
+      },
+      "outgoing": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "incoming": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

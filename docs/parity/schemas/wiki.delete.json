@@ -1,0 +1,29 @@
+{
+  "id": "wiki.delete",
+  "version": "1",
+  "title": "Delete a wiki page",
+  "kind": "mutation",
+  "risk": "destructive",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "wiki_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "wiki_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "deleted": {
+        "type": "boolean"
+      },
+      "id": {
+        "type": "integer"
+      }
+    }
+  }
+}

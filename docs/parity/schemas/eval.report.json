@@ -1,0 +1,35 @@
+{
+  "id": "eval.report",
+  "version": "1",
+  "title": "Read an eval report",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "run_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "run_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "run_id": {
+        "type": "string"
+      },
+      "metrics": {
+        "type": "object"
+      },
+      "per_query": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

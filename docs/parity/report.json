@@ -1,0 +1,120 @@
+{
+  "ok": true,
+  "accepted_points": 86,
+  "possible_points": 100,
+  "required_operations": 162,
+  "verified_operations": 162,
+  "operation_parity": true,
+  "groups": {
+    "R": {
+      "accepted": 14,
+      "total": 17,
+      "fraction": 0.824
+    },
+    "C": {
+      "accepted": 12,
+      "total": 13,
+      "fraction": 0.923
+    },
+    "A": {
+      "accepted": 13,
+      "total": 14,
+      "fraction": 0.929
+    },
+    "P": {
+      "accepted": 9,
+      "total": 10,
+      "fraction": 0.9
+    },
+    "O": {
+      "accepted": 2,
+      "total": 3,
+      "fraction": 0.667
+    },
+    "M": {
+      "accepted": 3,
+      "total": 4,
+      "fraction": 0.75
+    },
+    "X": {
+      "accepted": 3,
+      "total": 3,
+      "fraction": 1
+    },
+    "W": {
+      "accepted": 10,
+      "total": 12,
+      "fraction": 0.833
+    },
+    "K": {
+      "accepted": 14,
+      "total": 16,
+      "fraction": 0.875
+    },
+    "D": {
+      "accepted": 6,
+      "total": 8,
+      "fraction": 0.75
+    }
+  },
+  "accepted_capabilities": [
+    "K01",
+    "K02",
+    "K03",
+    "K04",
+    "K06",
+    "P01",
+    "P02",
+    "P03",
+    "P04",
+    "R01",
+    "R02",
+    "R03",
+    "R04",
+    "R06",
+    "R08",
+    "C01",
+    "C02",
+    "C03",
+    "C04",
+    "C05",
+    "C07",
+    "A01",
+    "A02",
+    "A03",
+    "A04",
+    "A05",
+    "A06",
+    "W01",
+    "W02",
+    "W03",
+    "W04",
+    "D01",
+    "D02",
+    "D04",
+    "M01",
+    "M03",
+    "O01",
+    "O03",
+    "X01",
+    "X02",
+    "X03"
+  ],
+  "issues_count": 10,
+  "issues_sample": [
+    "CAP K05: status not accepted/passed",
+    "CAP P05: status not accepted/passed",
+    "CAP R05: status not accepted/passed",
+    "CAP R07: status not accepted/passed",
+    "CAP C06: status not accepted/passed",
+    "CAP A07: status not accepted/passed",
+    "CAP W05: status not accepted/passed",
+    "CAP D03: status not accepted/passed",
+    "CAP M02: status not accepted/passed",
+    "CAP O02: status not accepted/passed"
+  ],
+  "notes": "Evidence verifier only: inspect test content, provenance and failure scenarios before any release.",
+  "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d",
+  "generatedAt": "2026-10-12T08:34:56.446Z",
+  "verifierSha256": "688abc96bb8601dd8c3c09c54c19206b332c21c624fc70362a06b2baa02e934b"
+}

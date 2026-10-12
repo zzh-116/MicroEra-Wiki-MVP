@@ -1,0 +1,66 @@
+{
+  "id": "datasource.list",
+  "version": "1",
+  "title": "List datasources",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "page": {
+        "type": "integer"
+      },
+      "page_size": {
+        "type": "integer"
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "connector": {
+              "type": "string"
+            },
+            "config": {
+              "type": "object"
+            },
+            "schedule": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "cursor": {
+              "type": "string"
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "updated_at": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "connector"
+          ]
+        }
+      },
+      "total": {
+        "type": "integer"
+      }
+    }
+  }
+}

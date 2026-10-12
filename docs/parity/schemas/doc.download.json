@@ -1,0 +1,38 @@
+{
+  "id": "doc.download",
+  "version": "1",
+  "title": "Download a document",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "doc_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "doc_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "doc_id": {
+        "type": "integer"
+      },
+      "file_name": {
+        "type": "string"
+      },
+      "mime": {
+        "type": "string"
+      },
+      "size": {
+        "type": "integer"
+      },
+      "content": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "id": "agent.delete",
+  "version": "1",
+  "title": "Delete an agent",
+  "kind": "mutation",
+  "risk": "destructive",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "agent_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "agent_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "deleted": {
+        "type": "boolean"
+      },
+      "id": {
+        "type": "integer"
+      }
+    }
+  }
+}

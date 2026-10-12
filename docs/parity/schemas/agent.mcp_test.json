@@ -1,0 +1,32 @@
+{
+  "id": "agent.mcp_test",
+  "version": "1",
+  "title": "Test an MCP server",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "url": {
+        "type": "string"
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "server": {
+        "type": "string"
+      },
+      "reachable": {
+        "type": "boolean"
+      },
+      "checked_at": {
+        "type": "string"
+      }
+    }
+  }
+}

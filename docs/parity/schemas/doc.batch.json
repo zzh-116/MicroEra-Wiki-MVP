@@ -1,0 +1,41 @@
+{
+  "id": "doc.batch",
+  "version": "1",
+  "title": "Batch delete documents",
+  "kind": "mutation",
+  "risk": "destructive",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "doc_ids": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        }
+      }
+    },
+    "required": [
+      "doc_ids"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "deleted": {
+        "type": "integer"
+      },
+      "ids": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        }
+      },
+      "missing": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        }
+      }
+    }
+  }
+}

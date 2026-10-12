@@ -1,0 +1,63 @@
+{
+  "id": "job.parse_cancel",
+  "version": "1",
+  "title": "Cancel a parse job",
+  "kind": "job",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "job_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "job_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "job_id": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string"
+      },
+      "type": {
+        "type": "string"
+      },
+      "document_id": {
+        "type": "integer"
+      },
+      "attempt": {
+        "type": "integer"
+      },
+      "max_attempts": {
+        "type": "integer"
+      },
+      "stage": {
+        "type": "string"
+      },
+      "progress": {
+        "type": "integer"
+      },
+      "error": {
+        "type": "string"
+      },
+      "error_code": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string"
+      },
+      "updated_at": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "job_id",
+      "status"
+    ]
+  }
+}

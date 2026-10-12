@@ -1,0 +1,51 @@
+{
+  "id": "kb.folder_list",
+  "version": "1",
+  "title": "List folders",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "kb_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "kb_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "kb_id": {
+              "type": "integer"
+            },
+            "parent_id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "kb_id",
+            "name"
+          ]
+        }
+      },
+      "kb_id": {
+        "type": "integer"
+      }
+    }
+  }
+}

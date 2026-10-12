@@ -1,0 +1,59 @@
+{
+  "id": "datasource.sync",
+  "version": "1",
+  "title": "Sync a datasource",
+  "kind": "job",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "datasource_id": {
+        "type": "integer"
+      },
+      "since": {
+        "type": "string"
+      },
+      "dryRun": {
+        "type": "boolean"
+      },
+      "projectId": {
+        "type": "string"
+      },
+      "keyword": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "datasource_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "datasource_id": {
+        "type": "integer"
+      },
+      "log_id": {
+        "type": "string"
+      },
+      "total": {
+        "type": "integer"
+      },
+      "created": {
+        "type": "integer"
+      },
+      "updated": {
+        "type": "integer"
+      },
+      "skipped": {
+        "type": "integer"
+      },
+      "failed": {
+        "type": "integer"
+      },
+      "cursor": {
+        "type": "string"
+      }
+    }
+  }
+}

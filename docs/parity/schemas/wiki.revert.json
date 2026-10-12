@@ -1,0 +1,36 @@
+{
+  "id": "wiki.revert",
+  "version": "1",
+  "title": "Revert a wiki revision",
+  "kind": "mutation",
+  "risk": "destructive",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "wiki_id": {
+        "type": "integer"
+      },
+      "revision_no": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "wiki_id",
+      "revision_no"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "wiki_id": {
+        "type": "integer"
+      },
+      "reverted_from_revision_no": {
+        "type": "integer"
+      },
+      "new_revision_no": {
+        "type": "integer"
+      }
+    }
+  }
+}

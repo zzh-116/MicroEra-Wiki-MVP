@@ -1,0 +1,32 @@
+{
+  "id": "eval.dataset_list",
+  "version": "1",
+  "title": "List eval datasets",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "page": {
+        "type": "integer"
+      },
+      "page_size": {
+        "type": "integer"
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "total": {
+        "type": "integer"
+      }
+    }
+  }
+}

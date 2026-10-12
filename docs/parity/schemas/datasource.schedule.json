@@ -1,0 +1,59 @@
+{
+  "id": "datasource.schedule",
+  "version": "1",
+  "title": "Set a datasource schedule",
+  "kind": "mutation",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "datasource_id": {
+        "type": "integer"
+      },
+      "schedule": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "datasource_id",
+      "schedule"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "name": {
+        "type": "string"
+      },
+      "connector": {
+        "type": "string"
+      },
+      "config": {
+        "type": "object"
+      },
+      "schedule": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string"
+      },
+      "cursor": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string"
+      },
+      "updated_at": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "name",
+      "connector"
+    ]
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "id": "eval.dataset_create",
+  "version": "1",
+  "title": "Create an eval dataset",
+  "kind": "mutation",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "kb_id": {
+        "type": "integer"
+      },
+      "description": {
+        "type": "string"
+      },
+      "method": {
+        "type": "string",
+        "enum": [
+          "vector",
+          "lexical",
+          "hybrid"
+        ]
+      },
+      "queries": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    },
+    "required": [
+      "name",
+      "queries"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "name": {
+        "type": "string"
+      },
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

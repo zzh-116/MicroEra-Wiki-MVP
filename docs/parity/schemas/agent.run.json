@@ -1,0 +1,68 @@
+{
+  "id": "agent.run",
+  "version": "1",
+  "title": "Run an agent",
+  "kind": "job",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "agent_id": {
+        "type": "integer"
+      },
+      "goal": {
+        "type": "string"
+      },
+      "kb_id": {
+        "type": "integer"
+      },
+      "top_k": {
+        "type": "integer"
+      },
+      "method": {
+        "type": "string",
+        "enum": [
+          "vector",
+          "lexical",
+          "hybrid"
+        ]
+      }
+    },
+    "required": [
+      "agent_id",
+      "goal"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "run_id": {
+        "type": "string"
+      },
+      "agent_id": {
+        "type": "integer"
+      },
+      "status": {
+        "type": "string"
+      },
+      "answer": {
+        "type": "string"
+      },
+      "steps": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "trace": {
+        "type": "object"
+      },
+      "capability_limits": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

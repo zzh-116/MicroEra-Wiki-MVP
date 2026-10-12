@@ -1,0 +1,35 @@
+{
+  "id": "kb.status",
+  "version": "1",
+  "title": "Knowledge base status",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "kb_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "kb_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "document_count": {
+        "type": "integer"
+      },
+      "embedding_model": {
+        "type": "string"
+      },
+      "ready": {
+        "type": "boolean"
+      }
+    }
+  }
+}

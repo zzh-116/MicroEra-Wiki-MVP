@@ -1,0 +1,59 @@
+{
+  "id": "wiki.create",
+  "version": "1",
+  "title": "Create a wiki page",
+  "kind": "mutation",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string"
+      },
+      "content": {
+        "type": "string"
+      },
+      "summary": {
+        "type": "string"
+      },
+      "kb_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "title"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "title": {
+        "type": "string"
+      },
+      "summary": {
+        "type": "string"
+      },
+      "content": {
+        "type": "string"
+      },
+      "kb_id": {
+        "type": "integer"
+      },
+      "status": {
+        "type": "string"
+      },
+      "revision_no": {
+        "type": "integer"
+      },
+      "created_at": {
+        "type": "string"
+      },
+      "updated_at": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "id": "wiki.list",
+  "version": "1",
+  "title": "List wiki pages",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "page": {
+        "type": "integer"
+      },
+      "page_size": {
+        "type": "integer"
+      },
+      "kb_id": {
+        "type": "integer"
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "title": {
+              "type": "string"
+            },
+            "summary": {
+              "type": "string"
+            },
+            "content": {
+              "type": "string"
+            },
+            "kb_id": {
+              "type": "integer"
+            },
+            "status": {
+              "type": "string"
+            },
+            "revision_no": {
+              "type": "integer"
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "updated_at": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "total": {
+        "type": "integer"
+      }
+    }
+  }
+}

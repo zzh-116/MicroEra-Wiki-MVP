@@ -1,0 +1,52 @@
+{
+  "id": "chat.scope",
+  "version": "1",
+  "title": "Set chat scope",
+  "kind": "mutation",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "session_id": {
+        "type": "string"
+      },
+      "kb_ids": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        }
+      },
+      "top_k": {
+        "type": "integer"
+      },
+      "method": {
+        "type": "string",
+        "enum": [
+          "vector",
+          "lexical",
+          "hybrid"
+        ]
+      }
+    },
+    "required": [
+      "session_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "kb_ids": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        }
+      },
+      "scope": {
+        "type": "object"
+      }
+    }
+  }
+}

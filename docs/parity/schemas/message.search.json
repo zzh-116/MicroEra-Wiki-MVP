@@ -1,0 +1,35 @@
+{
+  "id": "message.search",
+  "version": "1",
+  "title": "Search messages",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "q": {
+        "type": "string"
+      },
+      "session_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "q"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "total": {
+        "type": "integer"
+      }
+    }
+  }
+}

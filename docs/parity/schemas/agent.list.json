@@ -1,0 +1,76 @@
+{
+  "id": "agent.list",
+  "version": "1",
+  "title": "List agents",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "page": {
+        "type": "integer"
+      },
+      "page_size": {
+        "type": "integer"
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "instructions": {
+              "type": "string"
+            },
+            "model": {
+              "type": "string"
+            },
+            "tools": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "mcp_servers": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "skills": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "status": {
+              "type": "string"
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "updated_at": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "total": {
+        "type": "integer"
+      }
+    }
+  }
+}

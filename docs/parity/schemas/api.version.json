@@ -1,0 +1,25 @@
+{
+  "id": "api.version",
+  "version": "1",
+  "title": "Show API versions",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {}
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "api_version": {
+        "type": "string"
+      },
+      "cli_version": {
+        "type": "string"
+      },
+      "mcp_protocol_version": {
+        "type": "string"
+      }
+    }
+  }
+}

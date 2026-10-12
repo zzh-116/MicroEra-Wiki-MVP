@@ -1,0 +1,33 @@
+{
+  "id": "doc.parse",
+  "version": "1",
+  "title": "Parse a document",
+  "kind": "job",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "doc_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "doc_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "document_id": {
+        "type": "integer"
+      },
+      "job_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "document_id",
+      "job_id"
+    ]
+  }
+}

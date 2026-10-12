@@ -1,0 +1,44 @@
+{
+  "id": "agent.trace",
+  "version": "1",
+  "title": "Agent run trace",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "run_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "run_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "run_id": {
+        "type": "string"
+      },
+      "agent_id": {
+        "type": "integer"
+      },
+      "goal": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string"
+      },
+      "steps": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "trace": {
+        "type": "object"
+      }
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "id": "session.agent_ask",
+  "version": "1",
+  "title": "Ask an agent within a session",
+  "kind": "mutation",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "agent_id": {
+        "type": "integer"
+      },
+      "session_id": {
+        "type": "string"
+      },
+      "question": {
+        "type": "string"
+      },
+      "top_k": {
+        "type": "integer"
+      },
+      "method": {
+        "type": "string",
+        "enum": [
+          "vector",
+          "lexical",
+          "hybrid"
+        ]
+      }
+    },
+    "required": [
+      "agent_id",
+      "question"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "run_id": {
+        "type": "string"
+      },
+      "answer": {
+        "type": "string"
+      },
+      "session_id": {
+        "type": "string"
+      },
+      "citations": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

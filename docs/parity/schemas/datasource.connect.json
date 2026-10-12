@@ -1,0 +1,32 @@
+{
+  "id": "datasource.connect",
+  "version": "1",
+  "title": "Test a datasource connection",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "datasource_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "datasource_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "datasource_id": {
+        "type": "integer"
+      },
+      "connector": {
+        "type": "string"
+      },
+      "connected": {
+        "type": "boolean"
+      }
+    }
+  }
+}

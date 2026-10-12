@@ -1,0 +1,32 @@
+{
+  "id": "kb.check",
+  "version": "1",
+  "title": "Check knowledge base existence",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "kb_id": {
+        "type": "integer"
+      },
+      "slug": {
+        "type": "string"
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "exists": {
+        "type": "boolean"
+      },
+      "id": {
+        "type": "integer"
+      },
+      "slug": {
+        "type": "string"
+      }
+    }
+  }
+}

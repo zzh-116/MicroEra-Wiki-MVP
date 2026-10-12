@@ -1,0 +1,42 @@
+{
+  "capability_id": "K01",
+  "status": "accepted",
+  "result": "passed",
+  "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d",
+  "runTimestamp": "2026-10-12T08:32:35.399Z",
+  "testCommand": "npm test",
+  "environment": {
+    "node": "v22.14.0",
+    "os": "win32",
+    "db": "unit tests are mocked; no live DB write",
+    "server": "http://localhost:3001"
+  },
+  "logFile": "docs/parity/testlogs/npm-test.log",
+  "outputLogHash": "f5b42f7689ec83c34caab218a6a72e1871d4efd32b69d6f8e0a47be9bcb05bb1",
+  "implementedFiles": [
+    "server/routes/knowledge-v2.ts"
+  ],
+  "testFiles": [
+    "tests/parity/knowledge-crud.test.ts"
+  ],
+  "cliOperationIds": [
+    "kb.create",
+    "kb.list",
+    "kb.view",
+    "kb.update",
+    "kb.delete",
+    "kb.status",
+    "kb.check"
+  ],
+  "mcpToolIds": [
+    "kb_create",
+    "kb_list",
+    "kb_view",
+    "kb_update",
+    "kb_delete",
+    "kb_status",
+    "kb_check"
+  ],
+  "group": "K",
+  "weight": 3
+}

@@ -1,0 +1,38 @@
+{
+  "id": "wiki.verify",
+  "version": "1",
+  "title": "Verify wiki citations",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "wiki_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "wiki_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "wiki_id": {
+        "type": "integer"
+      },
+      "citations": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "resolved": {
+        "type": "integer"
+      },
+      "total": {
+        "type": "integer"
+      }
+    }
+  }
+}

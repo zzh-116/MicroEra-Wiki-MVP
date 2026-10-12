@@ -1,0 +1,85 @@
+{
+  "id": "doc.list",
+  "version": "1",
+  "title": "List documents",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "kb_id": {
+        "type": "integer"
+      },
+      "folder_id": {
+        "type": "integer"
+      },
+      "page": {
+        "type": "integer"
+      },
+      "page_size": {
+        "type": "integer"
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "kb_id": {
+              "type": "integer"
+            },
+            "source_id": {
+              "type": "integer"
+            },
+            "entry_id": {
+              "type": "integer"
+            },
+            "folder_id": {
+              "type": "integer"
+            },
+            "title": {
+              "type": "string"
+            },
+            "summary": {
+              "type": "string"
+            },
+            "content": {
+              "type": "string"
+            },
+            "visibility": {
+              "type": "string",
+              "enum": [
+                "public",
+                "internal"
+              ]
+            },
+            "parse_status": {
+              "type": "string"
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "updated_at": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "kb_id",
+            "title"
+          ]
+        }
+      },
+      "total": {
+        "type": "integer"
+      }
+    }
+  }
+}

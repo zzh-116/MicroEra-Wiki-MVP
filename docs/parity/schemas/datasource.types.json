@@ -1,0 +1,25 @@
+{
+  "id": "datasource.types",
+  "version": "1",
+  "title": "List connector types",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {}
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "connectors": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "total": {
+        "type": "integer"
+      }
+    }
+  }
+}

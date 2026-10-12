@@ -1,0 +1,86 @@
+{
+  "id": "model.list",
+  "version": "1",
+  "title": "List models",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "kind": {
+        "type": "string",
+        "enum": [
+          "llm",
+          "embedding",
+          "rerank"
+        ]
+      },
+      "page": {
+        "type": "integer"
+      },
+      "page_size": {
+        "type": "integer"
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "kind": {
+              "type": "string",
+              "enum": [
+                "llm",
+                "embedding",
+                "rerank"
+              ]
+            },
+            "provider": {
+              "type": "string"
+            },
+            "model_name": {
+              "type": "string"
+            },
+            "base_url": {
+              "type": "string"
+            },
+            "config": {
+              "type": "object"
+            },
+            "is_default": {
+              "type": "boolean"
+            },
+            "status": {
+              "type": "string"
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "updated_at": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "kind",
+            "model_name"
+          ]
+        }
+      },
+      "total": {
+        "type": "integer"
+      }
+    }
+  }
+}

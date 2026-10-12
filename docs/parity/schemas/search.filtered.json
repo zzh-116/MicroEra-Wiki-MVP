@@ -1,0 +1,61 @@
+{
+  "id": "search.filtered",
+  "version": "1",
+  "title": "Filtered retrieval",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string"
+      },
+      "method": {
+        "type": "string",
+        "enum": [
+          "vector",
+          "lexical",
+          "hybrid"
+        ]
+      },
+      "kb_id": {
+        "type": "integer"
+      },
+      "folder_id": {
+        "type": "integer"
+      },
+      "top_k": {
+        "type": "integer"
+      },
+      "is_internal": {
+        "type": "boolean"
+      },
+      "filters": {
+        "type": "object"
+      }
+    },
+    "required": [
+      "query"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string"
+      },
+      "method": {
+        "type": "string"
+      },
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "total": {
+        "type": "integer"
+      }
+    }
+  }
+}

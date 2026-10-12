@@ -1,0 +1,25 @@
+{
+  "id": "cli.version",
+  "version": "1",
+  "title": "Show CLI version",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {}
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "version": {
+        "type": "string"
+      },
+      "api_version": {
+        "type": "string"
+      },
+      "mcp_protocol_version": {
+        "type": "string"
+      }
+    }
+  }
+}

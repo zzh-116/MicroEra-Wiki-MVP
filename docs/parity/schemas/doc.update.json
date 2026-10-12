@@ -1,0 +1,87 @@
+{
+  "id": "doc.update",
+  "version": "1",
+  "title": "Update a document",
+  "kind": "mutation",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "doc_id": {
+        "type": "integer"
+      },
+      "title": {
+        "type": "string"
+      },
+      "summary": {
+        "type": "string"
+      },
+      "content": {
+        "type": "string"
+      },
+      "visibility": {
+        "type": "string",
+        "enum": [
+          "public",
+          "internal"
+        ]
+      },
+      "folder_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "doc_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "kb_id": {
+        "type": "integer"
+      },
+      "source_id": {
+        "type": "integer"
+      },
+      "entry_id": {
+        "type": "integer"
+      },
+      "folder_id": {
+        "type": "integer"
+      },
+      "title": {
+        "type": "string"
+      },
+      "summary": {
+        "type": "string"
+      },
+      "content": {
+        "type": "string"
+      },
+      "visibility": {
+        "type": "string",
+        "enum": [
+          "public",
+          "internal"
+        ]
+      },
+      "parse_status": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string"
+      },
+      "updated_at": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "kb_id",
+      "title"
+    ]
+  }
+}

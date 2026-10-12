@@ -1,0 +1,41 @@
+{
+  "id": "datasource.changes",
+  "version": "1",
+  "title": "List datasource changes since cursor",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "datasource_id": {
+        "type": "integer"
+      },
+      "since": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "datasource_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "datasource_id": {
+        "type": "integer"
+      },
+      "since": {
+        "type": "string"
+      },
+      "changed": {
+        "type": "integer"
+      },
+      "documents": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

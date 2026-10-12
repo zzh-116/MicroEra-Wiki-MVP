@@ -1,0 +1,38 @@
+{
+  "id": "chat.verify_citations",
+  "version": "1",
+  "title": "Verify message citations",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "message_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "message_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "message_id": {
+        "type": "string"
+      },
+      "citations": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "resolved": {
+        "type": "integer"
+      },
+      "total": {
+        "type": "integer"
+      }
+    }
+  }
+}

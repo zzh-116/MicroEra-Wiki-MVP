@@ -1,0 +1,29 @@
+{
+  "id": "datasource.cursor",
+  "version": "1",
+  "title": "Read a datasource cursor",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "datasource_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "datasource_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "datasource_id": {
+        "type": "integer"
+      },
+      "cursor": {
+        "type": "string"
+      }
+    }
+  }
+}

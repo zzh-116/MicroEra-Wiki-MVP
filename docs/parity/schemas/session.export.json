@@ -1,0 +1,35 @@
+{
+  "id": "session.export",
+  "version": "1",
+  "title": "Export a session",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "session_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "session_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "session": {
+        "type": "object"
+      },
+      "messages": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "exported_at": {
+        "type": "string"
+      }
+    }
+  }
+}

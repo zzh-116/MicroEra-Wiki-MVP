@@ -1,0 +1,44 @@
+{
+  "id": "agent.resume",
+  "version": "1",
+  "title": "Resume an agent run",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "run_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "run_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "run_id": {
+        "type": "string"
+      },
+      "agent_id": {
+        "type": "integer"
+      },
+      "status": {
+        "type": "string"
+      },
+      "answer": {
+        "type": "string"
+      },
+      "steps": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "trace": {
+        "type": "object"
+      }
+    }
+  }
+}

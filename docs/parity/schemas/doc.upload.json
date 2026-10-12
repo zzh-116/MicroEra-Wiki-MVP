@@ -1,0 +1,52 @@
+{
+  "id": "doc.upload",
+  "version": "1",
+  "title": "Upload a document",
+  "kind": "job",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "kb_id": {
+        "type": "integer"
+      },
+      "title": {
+        "type": "string"
+      },
+      "content": {
+        "type": "string"
+      },
+      "file_name": {
+        "type": "string"
+      },
+      "file_path": {
+        "type": "string"
+      },
+      "visibility": {
+        "type": "string",
+        "enum": [
+          "public",
+          "internal"
+        ]
+      }
+    },
+    "required": [
+      "kb_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "document_id": {
+        "type": "integer"
+      },
+      "job_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "document_id",
+      "job_id"
+    ]
+  }
+}

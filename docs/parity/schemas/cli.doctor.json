@@ -1,0 +1,25 @@
+{
+  "id": "cli.doctor",
+  "version": "1",
+  "title": "Run CLI diagnostics",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {}
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "server": {
+        "type": "string"
+      },
+      "database": {
+        "type": "string"
+      },
+      "registry_valid": {
+        "type": "boolean"
+      }
+    }
+  }
+}

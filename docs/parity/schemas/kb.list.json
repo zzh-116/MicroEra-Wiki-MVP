@@ -1,0 +1,64 @@
+{
+  "id": "kb.list",
+  "version": "1",
+  "title": "List knowledge bases",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "page": {
+        "type": "integer"
+      },
+      "page_size": {
+        "type": "integer"
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "slug": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "visibility": {
+              "type": "string",
+              "enum": [
+                "public",
+                "internal"
+              ]
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "updated_at": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "slug"
+          ]
+        }
+      },
+      "total": {
+        "type": "integer"
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "id": "agent.tool_result",
+  "version": "1",
+  "title": "Read a tool result",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "run_id": {
+        "type": "string"
+      },
+      "step_index": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "run_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "run_id": {
+        "type": "string"
+      },
+      "step_index": {
+        "type": "integer"
+      },
+      "tool": {
+        "type": "string"
+      },
+      "result": {
+        "type": "object"
+      }
+    }
+  }
+}

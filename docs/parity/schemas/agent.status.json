@@ -1,0 +1,32 @@
+{
+  "id": "agent.status",
+  "version": "1",
+  "title": "Agent status",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "agent_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "agent_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "agent_id": {
+        "type": "integer"
+      },
+      "status": {
+        "type": "string"
+      },
+      "latest_run": {
+        "type": "object"
+      }
+    }
+  }
+}

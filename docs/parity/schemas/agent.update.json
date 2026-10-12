@@ -1,0 +1,95 @@
+{
+  "id": "agent.update",
+  "version": "1",
+  "title": "Update an agent",
+  "kind": "mutation",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "agent_id": {
+        "type": "integer"
+      },
+      "name": {
+        "type": "string"
+      },
+      "description": {
+        "type": "string"
+      },
+      "instructions": {
+        "type": "string"
+      },
+      "model": {
+        "type": "string"
+      },
+      "tools": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "mcp_servers": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "skills": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "required": [
+      "agent_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "name": {
+        "type": "string"
+      },
+      "description": {
+        "type": "string"
+      },
+      "instructions": {
+        "type": "string"
+      },
+      "model": {
+        "type": "string"
+      },
+      "tools": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "mcp_servers": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "skills": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "status": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string"
+      },
+      "updated_at": {
+        "type": "string"
+      }
+    }
+  }
+}

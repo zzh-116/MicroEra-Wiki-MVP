@@ -1,0 +1,47 @@
+{
+  "id": "search.lexical",
+  "version": "1",
+  "title": "Lexical search",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string"
+      },
+      "kb_id": {
+        "type": "integer"
+      },
+      "folder_id": {
+        "type": "integer"
+      },
+      "top_k": {
+        "type": "integer"
+      },
+      "is_internal": {
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "query"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string"
+      },
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "total": {
+        "type": "integer"
+      }
+    }
+  }
+}

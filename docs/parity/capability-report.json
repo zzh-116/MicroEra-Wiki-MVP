@@ -1,0 +1,1083 @@
+{
+  "generatedAt": "2026-10-12T08:33:04.139Z",
+  "capabilities": [
+    {
+      "capability_id": "K01",
+      "group": "K",
+      "group_name": "知识库与文档",
+      "name": "KB CRUD",
+      "weight": 3,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "kb.create",
+        "kb.list",
+        "kb.view",
+        "kb.update",
+        "kb.delete",
+        "kb.status",
+        "kb.check"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/knowledge-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/knowledge-crud.test.ts"
+      ]
+    },
+    {
+      "capability_id": "K02",
+      "group": "K",
+      "group_name": "知识库与文档",
+      "name": "Folder tree",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "kb.folder_create",
+        "kb.folder_list",
+        "kb.folder_move",
+        "kb.folder_delete"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/knowledge-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/knowledge-crud.test.ts"
+      ]
+    },
+    {
+      "capability_id": "K03",
+      "group": "K",
+      "group_name": "知识库与文档",
+      "name": "Document CRUD",
+      "weight": 3,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "doc.list",
+        "doc.view",
+        "doc.update",
+        "doc.delete",
+        "doc.restore",
+        "doc.move",
+        "doc.batch",
+        "kb.export",
+        "kb.import"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/knowledge-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/knowledge-crud.test.ts"
+      ]
+    },
+    {
+      "capability_id": "K04",
+      "group": "K",
+      "group_name": "知识库与文档",
+      "name": "Document revisions",
+      "weight": 3,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "doc.revisions",
+        "doc.revision_view",
+        "doc.revision_restore",
+        "doc.source_view"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/knowledge-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/knowledge-crud.test.ts"
+      ]
+    },
+    {
+      "capability_id": "K05",
+      "group": "K",
+      "group_name": "知识库与文档",
+      "name": "Tags and bulk actions",
+      "weight": 2,
+      "target": "stretch",
+      "status": "blocked",
+      "required_ops": [],
+      "optional_ops": [
+        "kb.tag_list",
+        "kb.tag_create",
+        "kb.tag_update",
+        "kb.tag_delete",
+        "doc.retag"
+      ],
+      "implementedFiles": [],
+      "testFiles": [],
+      "note": "Optional stretch capability (target=stretch). Its operations are declared in the plan (required=false) but are NOT registered in the codebase — no handler/cli/mcp/test exists, so it is honestly recorded as blocked rather than passed."
+    },
+    {
+      "capability_id": "K06",
+      "group": "K",
+      "group_name": "知识库与文档",
+      "name": "Preview and artifacts",
+      "weight": 3,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "doc.preview",
+        "doc.download",
+        "doc.artifacts",
+        "doc.artifact_download"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/knowledge-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/knowledge-crud.test.ts"
+      ]
+    },
+    {
+      "capability_id": "P01",
+      "group": "P",
+      "group_name": "解析与多模态",
+      "name": "Multi-format parser",
+      "weight": 3,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "doc.upload",
+        "doc.import_url",
+        "doc.parse",
+        "doc.reparse",
+        "doc.wait"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/knowledge-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/ingest.test.ts"
+      ]
+    },
+    {
+      "capability_id": "P02",
+      "group": "P",
+      "group_name": "解析与多模态",
+      "name": "Image OCR and tables",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "doc.images",
+        "doc.tables",
+        "doc.ocr"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/knowledge-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/elements.test.ts"
+      ]
+    },
+    {
+      "capability_id": "P03",
+      "group": "P",
+      "group_name": "解析与多模态",
+      "name": "Chunk preview/edit",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "chunk.list",
+        "chunk.view",
+        "chunk.preview",
+        "chunk.update",
+        "chunk.delete"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/knowledge-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/chunk-preview-edit.test.ts"
+      ]
+    },
+    {
+      "capability_id": "P04",
+      "group": "P",
+      "group_name": "解析与多模态",
+      "name": "Durable parsing jobs",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "job.parse_status",
+        "job.parse_retry",
+        "job.parse_cancel"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/knowledge-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/parse-job.test.ts"
+      ]
+    },
+    {
+      "capability_id": "P05",
+      "group": "P",
+      "group_name": "解析与多模态",
+      "name": "Parser plugin swap",
+      "weight": 1,
+      "target": "stretch",
+      "status": "blocked",
+      "required_ops": [],
+      "optional_ops": [
+        "parser.list",
+        "parser.select",
+        "parser.probe"
+      ],
+      "implementedFiles": [],
+      "testFiles": [],
+      "note": "Optional stretch capability (target=stretch). Its operations are declared in the plan (required=false) but are NOT registered in the codebase — no handler/cli/mcp/test exists, so it is honestly recorded as blocked rather than passed."
+    },
+    {
+      "capability_id": "R01",
+      "group": "R",
+      "group_name": "检索与评估",
+      "name": "Correct vector TopK",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "search.vector"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/retrieval-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/search-vector.test.ts"
+      ]
+    },
+    {
+      "capability_id": "R02",
+      "group": "R",
+      "group_name": "检索与评估",
+      "name": "Lexical BM25/FTS",
+      "weight": 3,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "search.lexical"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/retrieval-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/search-lexical.test.ts"
+      ]
+    },
+    {
+      "capability_id": "R03",
+      "group": "R",
+      "group_name": "检索与评估",
+      "name": "Hybrid RRF fusion",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "search.hybrid",
+        "search.explain"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/retrieval-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/search-hybrid.test.ts"
+      ]
+    },
+    {
+      "capability_id": "R04",
+      "group": "R",
+      "group_name": "检索与评估",
+      "name": "Reranker",
+      "weight": 3,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "search.rerank"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/retrieval-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/search-rerank.test.ts"
+      ]
+    },
+    {
+      "capability_id": "R05",
+      "group": "R",
+      "group_name": "检索与评估",
+      "name": "Parent-child chunk",
+      "weight": 2,
+      "target": "stretch",
+      "status": "blocked",
+      "required_ops": [],
+      "optional_ops": [
+        "chunk.parent",
+        "chunk.children"
+      ],
+      "implementedFiles": [],
+      "testFiles": [],
+      "note": "Optional stretch capability (target=stretch). Its operations are declared in the plan (required=false) but are NOT registered in the codebase — no handler/cli/mcp/test exists, so it is honestly recorded as blocked rather than passed."
+    },
+    {
+      "capability_id": "R06",
+      "group": "R",
+      "group_name": "检索与评估",
+      "name": "Retrieval filters",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "search.filtered",
+        "search.metadata"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/retrieval-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/search-filtered.test.ts"
+      ]
+    },
+    {
+      "capability_id": "R07",
+      "group": "R",
+      "group_name": "检索与评估",
+      "name": "Multi KB fanout",
+      "weight": 1,
+      "target": "stretch",
+      "status": "blocked",
+      "required_ops": [],
+      "optional_ops": [
+        "search.multi_kb"
+      ],
+      "implementedFiles": [],
+      "testFiles": [],
+      "note": "Optional stretch capability (target=stretch). Its operations are declared in the plan (required=false) but are NOT registered in the codebase — no handler/cli/mcp/test exists, so it is honestly recorded as blocked rather than passed."
+    },
+    {
+      "capability_id": "R08",
+      "group": "R",
+      "group_name": "检索与评估",
+      "name": "Retrieval evaluation",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "eval.dataset_list",
+        "eval.dataset_create",
+        "eval.run",
+        "eval.report",
+        "eval.compare"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/eval-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/eval.test.ts"
+      ]
+    },
+    {
+      "capability_id": "C01",
+      "group": "C",
+      "group_name": "RAG对话",
+      "name": "Quick RAG Q&A",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "chat.ask"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/chat-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/chat.test.ts"
+      ]
+    },
+    {
+      "capability_id": "C02",
+      "group": "C",
+      "group_name": "RAG对话",
+      "name": "Grounded citations",
+      "weight": 3,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "chat.references",
+        "chat.citation_read",
+        "chat.verify_citations"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/chat-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/chat.test.ts"
+      ]
+    },
+    {
+      "capability_id": "C03",
+      "group": "C",
+      "group_name": "RAG对话",
+      "name": "Sessions and history",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "session.create",
+        "session.list",
+        "session.view",
+        "session.delete",
+        "message.list",
+        "message.view",
+        "message.search"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/chat-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/chat.test.ts"
+      ]
+    },
+    {
+      "capability_id": "C04",
+      "group": "C",
+      "group_name": "RAG对话",
+      "name": "Streaming and cancel",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "chat.stream",
+        "chat.cancel",
+        "session.stop"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/chat-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/chat.test.ts"
+      ]
+    },
+    {
+      "capability_id": "C05",
+      "group": "C",
+      "group_name": "RAG对话",
+      "name": "Multi KB chat",
+      "weight": 1,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "session.ask",
+        "chat.scope"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/chat-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/chat.test.ts"
+      ]
+    },
+    {
+      "capability_id": "C06",
+      "group": "C",
+      "group_name": "RAG对话",
+      "name": "Fork and rewind",
+      "weight": 1,
+      "target": "stretch",
+      "status": "blocked",
+      "required_ops": [],
+      "optional_ops": [
+        "session.fork",
+        "session.rewind"
+      ],
+      "implementedFiles": [],
+      "testFiles": [],
+      "note": "Optional stretch capability (target=stretch). Its operations are declared in the plan (required=false) but are NOT registered in the codebase — no handler/cli/mcp/test exists, so it is honestly recorded as blocked rather than passed."
+    },
+    {
+      "capability_id": "C07",
+      "group": "C",
+      "group_name": "RAG对话",
+      "name": "Chat evidence trace",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "chat.trace",
+        "session.export"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/chat-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/chat.test.ts"
+      ]
+    },
+    {
+      "capability_id": "A01",
+      "group": "A",
+      "group_name": "Agent与工具",
+      "name": "ReAct agent runtime",
+      "weight": 3,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "agent.create",
+        "agent.list",
+        "agent.view",
+        "agent.update",
+        "agent.delete",
+        "agent.run"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/agent-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/agent.test.ts"
+      ]
+    },
+    {
+      "capability_id": "A02",
+      "group": "A",
+      "group_name": "Agent与工具",
+      "name": "Tool registry and calls",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "agent.tools",
+        "agent.tool_call",
+        "agent.tool_result"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/agent-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/agent.test.ts"
+      ]
+    },
+    {
+      "capability_id": "A03",
+      "group": "A",
+      "group_name": "Agent与工具",
+      "name": "Agent as MCP client",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "agent.mcp_list",
+        "agent.mcp_test",
+        "agent.mcp_call"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/agent-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/agent.test.ts"
+      ]
+    },
+    {
+      "capability_id": "A04",
+      "group": "A",
+      "group_name": "Agent与工具",
+      "name": "Agent Skills",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "skills.list",
+        "skills.install",
+        "skills.validate",
+        "skills.read"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/agent-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/agent.test.ts"
+      ]
+    },
+    {
+      "capability_id": "A05",
+      "group": "A",
+      "group_name": "Agent与工具",
+      "name": "Sandbox runner",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "agent.sandbox_status",
+        "agent.sandbox_run",
+        "agent.artifact_list"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/agent-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/agent.test.ts"
+      ]
+    },
+    {
+      "capability_id": "A06",
+      "group": "A",
+      "group_name": "Agent与工具",
+      "name": "Agent run lifecycle",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "agent.status",
+        "agent.check",
+        "agent.stop",
+        "agent.resume",
+        "session.agent_ask",
+        "agent.trace"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/agent-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/agent.test.ts"
+      ]
+    },
+    {
+      "capability_id": "A07",
+      "group": "A",
+      "group_name": "Agent与工具",
+      "name": "Long-term memory",
+      "weight": 1,
+      "target": "stretch",
+      "status": "blocked",
+      "required_ops": [],
+      "optional_ops": [
+        "agent.memory_list",
+        "agent.memory_search",
+        "agent.memory_clear"
+      ],
+      "implementedFiles": [],
+      "testFiles": [],
+      "note": "Optional stretch capability (target=stretch). Its operations are declared in the plan (required=false) but are NOT registered in the codebase — no handler/cli/mcp/test exists, so it is honestly recorded as blocked rather than passed."
+    },
+    {
+      "capability_id": "W01",
+      "group": "W",
+      "group_name": "AutoWiki",
+      "name": "AutoWiki ingestion",
+      "weight": 3,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "wiki.generate",
+        "wiki.status",
+        "wiki.list",
+        "wiki.read",
+        "wiki.search"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/wiki-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/wiki.test.ts"
+      ]
+    },
+    {
+      "capability_id": "W02",
+      "group": "W",
+      "group_name": "AutoWiki",
+      "name": "Source-grounded claims",
+      "weight": 3,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "wiki.sources",
+        "wiki.citation_read",
+        "wiki.verify"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/wiki-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/wiki.test.ts"
+      ]
+    },
+    {
+      "capability_id": "W03",
+      "group": "W",
+      "group_name": "AutoWiki",
+      "name": "Links and graph",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "wiki.links",
+        "wiki.link",
+        "wiki.unlink",
+        "wiki.graph",
+        "graph.neighbors",
+        "graph.search"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/wiki-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/wiki.test.ts"
+      ]
+    },
+    {
+      "capability_id": "W04",
+      "group": "W",
+      "group_name": "AutoWiki",
+      "name": "Page revision diff revert",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "wiki.create",
+        "wiki.edit",
+        "wiki.delete",
+        "wiki.diff",
+        "wiki.revert",
+        "wiki.revisions"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/wiki-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/wiki.test.ts"
+      ]
+    },
+    {
+      "capability_id": "W05",
+      "group": "W",
+      "group_name": "AutoWiki",
+      "name": "Incremental wiki update",
+      "weight": 2,
+      "target": "stretch",
+      "status": "blocked",
+      "required_ops": [],
+      "optional_ops": [
+        "wiki.refresh",
+        "wiki.stale",
+        "wiki.rebuild"
+      ],
+      "implementedFiles": [],
+      "testFiles": [],
+      "note": "Optional stretch capability (target=stretch). Its operations are declared in the plan (required=false) but are NOT registered in the codebase — no handler/cli/mcp/test exists, so it is honestly recorded as blocked rather than passed."
+    },
+    {
+      "capability_id": "D01",
+      "group": "D",
+      "group_name": "连接器与同步",
+      "name": "Existing 4 connectors",
+      "weight": 3,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "datasource.types",
+        "datasource.list",
+        "datasource.create",
+        "datasource.view",
+        "datasource.connect",
+        "datasource.preview"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/datasource-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/datasource.test.ts"
+      ]
+    },
+    {
+      "capability_id": "D02",
+      "group": "D",
+      "group_name": "连接器与同步",
+      "name": "Cursor incremental sync",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "datasource.sync",
+        "datasource.changes",
+        "datasource.cursor",
+        "datasource.logs"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/datasource-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/datasource.test.ts"
+      ]
+    },
+    {
+      "capability_id": "D03",
+      "group": "D",
+      "group_name": "连接器与同步",
+      "name": "Additional connectors",
+      "weight": 2,
+      "target": "stretch",
+      "status": "blocked",
+      "required_ops": [],
+      "optional_ops": [
+        "datasource.extend",
+        "datasource.schema"
+      ],
+      "implementedFiles": [],
+      "testFiles": [],
+      "note": "Optional stretch capability (target=stretch). Its operations are declared in the plan (required=false) but are NOT registered in the codebase — no handler/cli/mcp/test exists, so it is honestly recorded as blocked rather than passed."
+    },
+    {
+      "capability_id": "D04",
+      "group": "D",
+      "group_name": "连接器与同步",
+      "name": "Sync schedule and logs",
+      "weight": 1,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "datasource.schedule",
+        "datasource.pause",
+        "datasource.resume",
+        "datasource.delete"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/datasource-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/datasource.test.ts"
+      ]
+    },
+    {
+      "capability_id": "M01",
+      "group": "M",
+      "group_name": "模型配置",
+      "name": "Model provider registry",
+      "weight": 2,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "model.list",
+        "model.view",
+        "model.create",
+        "model.update",
+        "model.delete",
+        "model.test",
+        "model.set_default"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/model-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/model.test.ts"
+      ]
+    },
+    {
+      "capability_id": "M02",
+      "group": "M",
+      "group_name": "模型配置",
+      "name": "Embedding profiles",
+      "weight": 1,
+      "target": "stretch",
+      "status": "blocked",
+      "required_ops": [],
+      "optional_ops": [
+        "model.embedding_profiles",
+        "model.embedding_migrate"
+      ],
+      "implementedFiles": [],
+      "testFiles": [],
+      "note": "Optional stretch capability (target=stretch). Its operations are declared in the plan (required=false) but are NOT registered in the codebase — no handler/cli/mcp/test exists, so it is honestly recorded as blocked rather than passed."
+    },
+    {
+      "capability_id": "M03",
+      "group": "M",
+      "group_name": "模型配置",
+      "name": "Rerank model provider",
+      "weight": 1,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "model.rerank_list",
+        "model.rerank_test"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/model-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/model.test.ts"
+      ]
+    },
+    {
+      "capability_id": "O01",
+      "group": "O",
+      "group_name": "运行监控",
+      "name": "Task dashboard",
+      "weight": 1,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "job.list",
+        "job.view",
+        "job.wait",
+        "job.cancel",
+        "job.retry",
+        "job.events",
+        "job.artifacts"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/pipeline.ts",
+        "server/routes/job-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/job-e2e.test.ts",
+        "tests/parity/model.test.ts"
+      ]
+    },
+    {
+      "capability_id": "O02",
+      "group": "O",
+      "group_name": "运行监控",
+      "name": "Distributed traces",
+      "weight": 1,
+      "target": "stretch",
+      "status": "blocked",
+      "required_ops": [],
+      "optional_ops": [
+        "trace.list",
+        "trace.view",
+        "trace.export"
+      ],
+      "implementedFiles": [],
+      "testFiles": [],
+      "note": "Optional stretch capability (target=stretch). Its operations are declared in the plan (required=false) but are NOT registered in the codebase — no handler/cli/mcp/test exists, so it is honestly recorded as blocked rather than passed."
+    },
+    {
+      "capability_id": "O03",
+      "group": "O",
+      "group_name": "运行监控",
+      "name": "Retries and DLQ",
+      "weight": 1,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "job.deadletters",
+        "job.replay_deadletter"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/knowledge-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/parse-job.test.ts"
+      ]
+    },
+    {
+      "capability_id": "X01",
+      "group": "X",
+      "group_name": "扩展接口",
+      "name": "Consistent API SDK",
+      "weight": 1,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "api.operations",
+        "api.schema",
+        "api.version"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/meta-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/meta.test.ts"
+      ]
+    },
+    {
+      "capability_id": "X02",
+      "group": "X",
+      "group_name": "扩展接口",
+      "name": "Full business MCP",
+      "weight": 1,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "mcp.tools",
+        "mcp.resources",
+        "mcp.prompts",
+        "mcp.health"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/meta-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/meta.test.ts"
+      ]
+    },
+    {
+      "capability_id": "X03",
+      "group": "X",
+      "group_name": "扩展接口",
+      "name": "Full business CLI",
+      "weight": 1,
+      "target": "must",
+      "status": "accepted",
+      "required_ops": [
+        "cli.commands",
+        "cli.version",
+        "cli.doctor",
+        "cli.schema"
+      ],
+      "optional_ops": [],
+      "implementedFiles": [
+        "server/routes/meta-v2.ts"
+      ],
+      "testFiles": [
+        "tests/parity/meta.test.ts"
+      ]
+    }
+  ]
+}

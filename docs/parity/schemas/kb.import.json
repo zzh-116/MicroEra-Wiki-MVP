@@ -1,0 +1,42 @@
+{
+  "id": "kb.import",
+  "version": "1",
+  "title": "Import documents into a knowledge base",
+  "kind": "mutation",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "kb_id": {
+        "type": "integer"
+      },
+      "documents": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    },
+    "required": [
+      "kb_id",
+      "documents"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "kb_id": {
+        "type": "integer"
+      },
+      "imported": {
+        "type": "integer"
+      },
+      "document_ids": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        }
+      }
+    }
+  }
+}

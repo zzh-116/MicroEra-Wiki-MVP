@@ -1,0 +1,41 @@
+{
+  "id": "chat.trace",
+  "version": "1",
+  "title": "View message grounding trace",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "message_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "message_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "message_id": {
+        "type": "string"
+      },
+      "session_id": {
+        "type": "string"
+      },
+      "role": {
+        "type": "string"
+      },
+      "trace": {
+        "type": "object"
+      },
+      "citations": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

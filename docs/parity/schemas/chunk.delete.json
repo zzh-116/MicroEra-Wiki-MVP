@@ -1,0 +1,33 @@
+{
+  "id": "chunk.delete",
+  "version": "1",
+  "title": "Delete a chunk",
+  "kind": "mutation",
+  "risk": "destructive",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "doc_id": {
+        "type": "integer"
+      },
+      "chunk_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "doc_id",
+      "chunk_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "deleted": {
+        "type": "boolean"
+      },
+      "id": {
+        "type": "string"
+      }
+    }
+  }
+}

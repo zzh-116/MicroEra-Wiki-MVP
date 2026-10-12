@@ -1,0 +1,65 @@
+{
+  "id": "datasource.create",
+  "version": "1",
+  "title": "Create a datasource",
+  "kind": "mutation",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "connector": {
+        "type": "string"
+      },
+      "config": {
+        "type": "object"
+      },
+      "schedule": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "name",
+      "connector"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "name": {
+        "type": "string"
+      },
+      "connector": {
+        "type": "string"
+      },
+      "config": {
+        "type": "object"
+      },
+      "schedule": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string"
+      },
+      "cursor": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string"
+      },
+      "updated_at": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "name",
+      "connector"
+    ]
+  }
+}

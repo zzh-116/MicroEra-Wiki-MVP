@@ -1,0 +1,35 @@
+{
+  "id": "job.events",
+  "version": "1",
+  "title": "List job events",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "job_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "job_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "job_id": {
+        "type": "string"
+      },
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "total": {
+        "type": "integer"
+      }
+    }
+  }
+}

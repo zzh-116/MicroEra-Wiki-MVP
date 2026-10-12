@@ -1,0 +1,38 @@
+{
+  "id": "skills.read",
+  "version": "1",
+  "title": "Read a skill",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "name"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "name": {
+        "type": "string"
+      },
+      "description": {
+        "type": "string"
+      },
+      "manifest": {
+        "type": "object"
+      },
+      "installed": {
+        "type": "boolean"
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "id": "agent.sandbox_run",
+  "version": "1",
+  "title": "Run a sandbox task",
+  "kind": "job",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "agent_id": {
+        "type": "integer"
+      },
+      "task": {
+        "type": "string"
+      },
+      "payload": {
+        "type": "object"
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "run_id": {
+        "type": "string"
+      },
+      "task": {
+        "type": "string"
+      },
+      "artifact_id": {
+        "type": "integer"
+      },
+      "result": {
+        "type": "object"
+      }
+    }
+  }
+}

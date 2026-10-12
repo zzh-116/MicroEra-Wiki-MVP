@@ -1,0 +1,25 @@
+{
+  "id": "mcp.health",
+  "version": "1",
+  "title": "MCP health",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {}
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "ok": {
+        "type": "boolean"
+      },
+      "name": {
+        "type": "string"
+      },
+      "tools": {
+        "type": "integer"
+      }
+    }
+  }
+}

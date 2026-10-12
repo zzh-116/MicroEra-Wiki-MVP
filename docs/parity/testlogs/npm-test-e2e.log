@@ -1,0 +1,13 @@
+
+> react-example@0.0.0 test:e2e
+> vitest run tests/parity/cli-e2e.test.ts tests/parity/job-e2e.test.ts tests/parity/model-probe.test.ts
+
+
+ RUN  v4.1.10 C:/Users/CAIHUI/MicroEra-Wiki-MVP-new
+
+
+ Test Files  3 passed (3)
+      Tests  19 passed (19)
+   Start at  16:29:05
+   Duration  2.47s (transform 940ms, setup 0ms, import 1.01s, tests 3.73s, environment 0ms)
+

@@ -1,0 +1,61 @@
+{
+  "id": "doc.revisions",
+  "version": "1",
+  "title": "List document revisions",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "doc_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "doc_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "document_id": {
+              "type": "integer"
+            },
+            "revision_no": {
+              "type": "integer"
+            },
+            "title": {
+              "type": "string"
+            },
+            "content": {
+              "type": "string"
+            },
+            "checksum": {
+              "type": "string"
+            },
+            "created_at": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "document_id",
+            "revision_no",
+            "checksum"
+          ]
+        }
+      },
+      "document_id": {
+        "type": "integer"
+      }
+    }
+  }
+}

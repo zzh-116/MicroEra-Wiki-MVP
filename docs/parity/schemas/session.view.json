@@ -1,0 +1,38 @@
+{
+  "id": "session.view",
+  "version": "1",
+  "title": "View a chat session",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "session_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "session_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "kb_ids": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        }
+      },
+      "scope": {
+        "type": "object"
+      }
+    }
+  }
+}

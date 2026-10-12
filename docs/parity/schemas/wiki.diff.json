@@ -1,0 +1,47 @@
+{
+  "id": "wiki.diff",
+  "version": "1",
+  "title": "Diff wiki revisions",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "wiki_id": {
+        "type": "integer"
+      },
+      "from_revision_no": {
+        "type": "integer"
+      },
+      "to_revision_no": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "wiki_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "wiki_id": {
+        "type": "integer"
+      },
+      "from_revision_no": {
+        "type": "integer"
+      },
+      "to_revision_no": {
+        "type": "integer"
+      },
+      "added_lines": {
+        "type": "integer"
+      },
+      "removed_lines": {
+        "type": "integer"
+      },
+      "changed": {
+        "type": "boolean"
+      }
+    }
+  }
+}

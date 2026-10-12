@@ -1,0 +1,28 @@
+{
+  "id": "search.metadata",
+  "version": "1",
+  "title": "Search filter metadata",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {}
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "methods": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "filterable_fields": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

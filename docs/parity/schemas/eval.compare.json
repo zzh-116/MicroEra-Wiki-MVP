@@ -1,0 +1,41 @@
+{
+  "id": "eval.compare",
+  "version": "1",
+  "title": "Compare eval runs",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "run_ids": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "required": [
+      "run_ids"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "baseline_run_id": {
+        "type": "string"
+      },
+      "runs": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "deltas": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

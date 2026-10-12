@@ -1,0 +1,35 @@
+{
+  "id": "model.test",
+  "version": "1",
+  "title": "Test a model",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "model_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "model_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "model_id": {
+        "type": "integer"
+      },
+      "reachable": {
+        "type": "boolean"
+      },
+      "latency_ms": {
+        "type": "number"
+      },
+      "detail": {
+        "type": "string"
+      }
+    }
+  }
+}

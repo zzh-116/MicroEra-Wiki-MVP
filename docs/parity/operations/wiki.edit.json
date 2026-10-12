@@ -1,0 +1,33 @@
+{
+  "operation_id": "wiki.edit",
+  "version": "1",
+  "title": "Edit a wiki page",
+  "status": "passed",
+  "result": "passed",
+  "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d",
+  "handlerFile": "server/routes/wiki-v2.ts",
+  "cliFile": "cli/src/main.ts",
+  "mcpFile": "packages/mcp/src/mcp-core.ts",
+  "schemaFile": "docs/parity/schemas/wiki.edit.json",
+  "positiveTestFile": "tests/parity/wiki.test.ts",
+  "negativeTestFile": "tests/parity/wiki.test.ts",
+  "logFile": "docs/parity/testlogs/npm-test.log",
+  "outputLogHash": "f5b42f7689ec83c34caab218a6a72e1871d4efd32b69d6f8e0a47be9bcb05bb1",
+  "mcpTransports": [
+    "stdio",
+    "http"
+  ],
+  "testCommand": "npm test",
+  "runTimestamp": "2026-10-12T08:32:35.399Z",
+  "environment": {
+    "node": "v22.14.0",
+    "os": "win32",
+    "db": "unit tests are mocked; no live DB write",
+    "server": "http://localhost:3001"
+  },
+  "transportEvidence": {
+    "stdio": "docs/parity/testlogs/mcp-stdio.log",
+    "http": "docs/parity/testlogs/mcp-http-tools.log"
+  },
+  "coverage": "handler=server/routes/wiki-v2.ts; cli+cli command; mcp tool 'wiki_edit'; unit test tests/parity/wiki.test.ts"
+}

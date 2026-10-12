@@ -1,0 +1,35 @@
+{
+  "id": "job.view",
+  "version": "1",
+  "title": "View a job",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "job_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "job_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "job_id": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string"
+      },
+      "stage": {
+        "type": "string"
+      },
+      "progress": {
+        "type": "number"
+      }
+    }
+  }
+}

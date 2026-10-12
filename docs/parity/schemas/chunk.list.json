@@ -1,0 +1,67 @@
+{
+  "id": "chunk.list",
+  "version": "1",
+  "title": "List document chunks",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "doc_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "doc_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "doc_id": {
+        "type": "integer"
+      },
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "document_id": {
+              "type": "integer"
+            },
+            "index": {
+              "type": "integer"
+            },
+            "text": {
+              "type": "string"
+            },
+            "strategy": {
+              "type": "string"
+            },
+            "heading": {
+              "type": "string"
+            },
+            "start_char": {
+              "type": "integer"
+            },
+            "end_char": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "id",
+            "document_id",
+            "index",
+            "text"
+          ]
+        }
+      },
+      "total": {
+        "type": "integer"
+      }
+    }
+  }
+}

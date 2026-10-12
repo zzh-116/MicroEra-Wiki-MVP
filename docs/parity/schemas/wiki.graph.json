@@ -1,0 +1,32 @@
+{
+  "id": "wiki.graph",
+  "version": "1",
+  "title": "Wiki graph view",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "wiki_id": {
+        "type": "integer"
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "nodes": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "edges": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

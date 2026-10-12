@@ -1,0 +1,30 @@
+{
+  "capability_id": "C01",
+  "status": "accepted",
+  "result": "passed",
+  "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d",
+  "runTimestamp": "2026-10-12T08:32:35.399Z",
+  "testCommand": "npm test",
+  "environment": {
+    "node": "v22.14.0",
+    "os": "win32",
+    "db": "unit tests are mocked; no live DB write",
+    "server": "http://localhost:3001"
+  },
+  "logFile": "docs/parity/testlogs/npm-test.log",
+  "outputLogHash": "f5b42f7689ec83c34caab218a6a72e1871d4efd32b69d6f8e0a47be9bcb05bb1",
+  "implementedFiles": [
+    "server/routes/chat-v2.ts"
+  ],
+  "testFiles": [
+    "tests/parity/chat.test.ts"
+  ],
+  "cliOperationIds": [
+    "chat.ask"
+  ],
+  "mcpToolIds": [
+    "chat_ask"
+  ],
+  "group": "C",
+  "weight": 2
+}

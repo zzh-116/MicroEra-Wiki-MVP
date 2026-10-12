@@ -1,0 +1,47 @@
+{
+  "id": "session.create",
+  "version": "1",
+  "title": "Create a chat session",
+  "kind": "mutation",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string"
+      },
+      "kb_ids": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        }
+      },
+      "scope": {
+        "type": "object"
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "kb_ids": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        }
+      },
+      "scope": {
+        "type": "object"
+      },
+      "created_at": {
+        "type": "string"
+      }
+    }
+  }
+}

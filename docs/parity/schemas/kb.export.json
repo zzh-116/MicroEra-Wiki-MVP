@@ -1,0 +1,41 @@
+{
+  "id": "kb.export",
+  "version": "1",
+  "title": "Export a knowledge base",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "kb_id": {
+        "type": "integer"
+      },
+      "format": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "kb_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "kb_id": {
+        "type": "integer"
+      },
+      "format": {
+        "type": "string"
+      },
+      "exported_at": {
+        "type": "string"
+      },
+      "count": {
+        "type": "integer"
+      },
+      "data": {
+        "type": "object"
+      }
+    }
+  }
+}

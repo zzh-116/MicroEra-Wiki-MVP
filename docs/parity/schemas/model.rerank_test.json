@@ -1,0 +1,51 @@
+{
+  "id": "model.rerank_test",
+  "version": "1",
+  "title": "Test reranking",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string"
+      },
+      "documents": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "model_id": {
+        "type": "integer"
+      },
+      "top_k": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "query",
+      "documents"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string"
+      },
+      "provider": {
+        "type": "string"
+      },
+      "fallback": {
+        "type": "boolean"
+      },
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "id": "datasource.resume",
+  "version": "1",
+  "title": "Resume a datasource",
+  "kind": "mutation",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "datasource_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "datasource_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "datasource_id": {
+        "type": "integer"
+      },
+      "status": {
+        "type": "string"
+      }
+    }
+  }
+}

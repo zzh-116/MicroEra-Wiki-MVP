@@ -1,0 +1,85 @@
+{
+  "id": "model.update",
+  "version": "1",
+  "title": "Update a model",
+  "kind": "mutation",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "model_id": {
+        "type": "integer"
+      },
+      "name": {
+        "type": "string"
+      },
+      "provider": {
+        "type": "string"
+      },
+      "model_name": {
+        "type": "string"
+      },
+      "base_url": {
+        "type": "string"
+      },
+      "config": {
+        "type": "object"
+      },
+      "status": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "model_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "name": {
+        "type": "string"
+      },
+      "kind": {
+        "type": "string",
+        "enum": [
+          "llm",
+          "embedding",
+          "rerank"
+        ]
+      },
+      "provider": {
+        "type": "string"
+      },
+      "model_name": {
+        "type": "string"
+      },
+      "base_url": {
+        "type": "string"
+      },
+      "config": {
+        "type": "object"
+      },
+      "is_default": {
+        "type": "boolean"
+      },
+      "status": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string"
+      },
+      "updated_at": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "name",
+      "kind",
+      "model_name"
+    ]
+  }
+}

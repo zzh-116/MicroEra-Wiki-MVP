@@ -1,0 +1,42 @@
+{
+  "id": "doc.artifact_download",
+  "version": "1",
+  "title": "Download a document artifact",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "doc_id": {
+        "type": "integer"
+      },
+      "name": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "doc_id",
+      "name"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "doc_id": {
+        "type": "integer"
+      },
+      "name": {
+        "type": "string"
+      },
+      "mime": {
+        "type": "string"
+      },
+      "size": {
+        "type": "integer"
+      },
+      "content": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "id": "session.delete",
+  "version": "1",
+  "title": "Delete a chat session",
+  "kind": "mutation",
+  "risk": "destructive",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "session_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "session_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "deleted": {
+        "type": "boolean"
+      },
+      "id": {
+        "type": "string"
+      }
+    }
+  }
+}

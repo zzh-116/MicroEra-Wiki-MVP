@@ -1,0 +1,38 @@
+{
+  "id": "skills.install",
+  "version": "1",
+  "title": "Install a skill",
+  "kind": "mutation",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "description": {
+        "type": "string"
+      },
+      "manifest": {
+        "type": "object"
+      }
+    },
+    "required": [
+      "name"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "name": {
+        "type": "string"
+      },
+      "installed": {
+        "type": "boolean"
+      }
+    }
+  }
+}

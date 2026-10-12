@@ -1,0 +1,29 @@
+{
+  "id": "datasource.delete",
+  "version": "1",
+  "title": "Delete a datasource",
+  "kind": "mutation",
+  "risk": "destructive",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "datasource_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "datasource_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "deleted": {
+        "type": "boolean"
+      },
+      "id": {
+        "type": "integer"
+      }
+    }
+  }
+}

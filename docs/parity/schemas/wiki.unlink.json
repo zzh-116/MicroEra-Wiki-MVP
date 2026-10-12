@@ -1,0 +1,30 @@
+{
+  "id": "wiki.unlink",
+  "version": "1",
+  "title": "Remove a wiki link",
+  "kind": "mutation",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "source_wiki_id": {
+        "type": "integer"
+      },
+      "target_wiki_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "source_wiki_id",
+      "target_wiki_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "removed": {
+        "type": "boolean"
+      }
+    }
+  }
+}

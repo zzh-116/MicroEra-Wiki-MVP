@@ -1,0 +1,41 @@
+{
+  "id": "job.wait",
+  "version": "1",
+  "title": "Wait for a job",
+  "kind": "job",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "job_id": {
+        "type": "string"
+      },
+      "timeout_ms": {
+        "type": "integer"
+      },
+      "interval_ms": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "job_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "job_id": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string"
+      },
+      "finished": {
+        "type": "boolean"
+      },
+      "timed_out": {
+        "type": "boolean"
+      }
+    }
+  }
+}

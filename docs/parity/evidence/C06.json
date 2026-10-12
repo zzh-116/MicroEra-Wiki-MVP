@@ -1,0 +1,21 @@
+{
+  "capability_id": "C06",
+  "status": "blocked",
+  "result": "blocked",
+  "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d",
+  "runTimestamp": "2026-10-12T08:32:35.399Z",
+  "testCommand": "npm test",
+  "environment": {
+    "node": "v22.14.0",
+    "os": "win32",
+    "db": "unit tests are mocked; no live DB write",
+    "server": "http://localhost:3001"
+  },
+  "logFile": "docs/parity/testlogs/npm-test.log",
+  "outputLogHash": "f5b42f7689ec83c34caab218a6a72e1871d4efd32b69d6f8e0a47be9bcb05bb1",
+  "implementedFiles": [],
+  "testFiles": [],
+  "cliOperationIds": [],
+  "mcpToolIds": [],
+  "note": "Optional stretch capability (target=stretch). Its operations are declared in the plan (required=false) but are NOT registered in the codebase — no handler/cli/mcp/test exists, so it is honestly recorded as blocked rather than passed."
+}

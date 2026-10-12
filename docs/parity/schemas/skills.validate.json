@@ -1,0 +1,32 @@
+{
+  "id": "skills.validate",
+  "version": "1",
+  "title": "Validate a skill manifest",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "manifest": {
+        "type": "object"
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "valid": {
+        "type": "boolean"
+      },
+      "errors": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

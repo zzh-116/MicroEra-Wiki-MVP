@@ -1,0 +1,35 @@
+{
+  "id": "doc.preview",
+  "version": "1",
+  "title": "Preview a document",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "doc_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "doc_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "doc_id": {
+        "type": "integer"
+      },
+      "title": {
+        "type": "string"
+      },
+      "format": {
+        "type": "string"
+      },
+      "preview": {
+        "type": "string"
+      }
+    }
+  }
+}

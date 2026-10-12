@@ -1,0 +1,44 @@
+{
+  "id": "datasource.preview",
+  "version": "1",
+  "title": "Preview datasource documents",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "datasource_id": {
+        "type": "integer"
+      },
+      "projectId": {
+        "type": "string"
+      },
+      "keyword": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "datasource_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "datasource_id": {
+        "type": "integer"
+      },
+      "connector": {
+        "type": "string"
+      },
+      "total": {
+        "type": "integer"
+      },
+      "documents": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

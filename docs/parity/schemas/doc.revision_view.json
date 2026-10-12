@@ -1,0 +1,54 @@
+{
+  "id": "doc.revision_view",
+  "version": "1",
+  "title": "View a document revision",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "doc_id": {
+        "type": "integer"
+      },
+      "revision_no": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "doc_id",
+      "revision_no"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "document_id": {
+        "type": "integer"
+      },
+      "revision_no": {
+        "type": "integer"
+      },
+      "title": {
+        "type": "string"
+      },
+      "content": {
+        "type": "string"
+      },
+      "checksum": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "document_id",
+      "revision_no",
+      "checksum"
+    ]
+  }
+}

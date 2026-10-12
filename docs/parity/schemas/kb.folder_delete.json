@@ -1,0 +1,29 @@
+{
+  "id": "kb.folder_delete",
+  "version": "1",
+  "title": "Delete a folder",
+  "kind": "mutation",
+  "risk": "destructive",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "folder_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "folder_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "deleted": {
+        "type": "boolean"
+      },
+      "id": {
+        "type": "integer"
+      }
+    }
+  }
+}

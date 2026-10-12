@@ -1,0 +1,32 @@
+{
+  "id": "agent.stop",
+  "version": "1",
+  "title": "Stop an agent run or agent",
+  "kind": "mutation",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "agent_id": {
+        "type": "integer"
+      },
+      "run_id": {
+        "type": "string"
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string"
+      },
+      "run_id": {
+        "type": "string"
+      },
+      "agent_id": {
+        "type": "integer"
+      }
+    }
+  }
+}

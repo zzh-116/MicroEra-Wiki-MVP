@@ -1,0 +1,2112 @@
+{
+  "generatedAt": "2026-10-12T08:33:04.201Z",
+  "total_required": 162,
+  "operations": [
+    {
+      "operation_id": "kb.create",
+      "capability_id": "K01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "kb.list",
+      "capability_id": "K01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "kb.view",
+      "capability_id": "K01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "kb.update",
+      "capability_id": "K01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "kb.delete",
+      "capability_id": "K01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "kb.status",
+      "capability_id": "K01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "kb.check",
+      "capability_id": "K01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "kb.folder_create",
+      "capability_id": "K02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "kb.folder_list",
+      "capability_id": "K02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "kb.folder_move",
+      "capability_id": "K02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "kb.folder_delete",
+      "capability_id": "K02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.list",
+      "capability_id": "K03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.view",
+      "capability_id": "K03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.update",
+      "capability_id": "K03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.delete",
+      "capability_id": "K03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.restore",
+      "capability_id": "K03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.move",
+      "capability_id": "K03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.batch",
+      "capability_id": "K03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "kb.export",
+      "capability_id": "K03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "kb.import",
+      "capability_id": "K03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.revisions",
+      "capability_id": "K04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.revision_view",
+      "capability_id": "K04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.revision_restore",
+      "capability_id": "K04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.source_view",
+      "capability_id": "K04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.preview",
+      "capability_id": "K06",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.download",
+      "capability_id": "K06",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.artifacts",
+      "capability_id": "K06",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.artifact_download",
+      "capability_id": "K06",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/knowledge-crud.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.upload",
+      "capability_id": "P01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/ingest.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.import_url",
+      "capability_id": "P01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/ingest.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.parse",
+      "capability_id": "P01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/ingest.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.reparse",
+      "capability_id": "P01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/ingest.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.wait",
+      "capability_id": "P01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/ingest.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.images",
+      "capability_id": "P02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/elements.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.tables",
+      "capability_id": "P02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/elements.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "doc.ocr",
+      "capability_id": "P02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/elements.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "chunk.list",
+      "capability_id": "P03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/chunk-preview-edit.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "chunk.view",
+      "capability_id": "P03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/chunk-preview-edit.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "chunk.preview",
+      "capability_id": "P03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/chunk-preview-edit.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "chunk.update",
+      "capability_id": "P03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/chunk-preview-edit.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "chunk.delete",
+      "capability_id": "P03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/chunk-preview-edit.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "job.parse_status",
+      "capability_id": "P04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/parse-job.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "job.parse_retry",
+      "capability_id": "P04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/parse-job.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "job.parse_cancel",
+      "capability_id": "P04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/parse-job.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "search.vector",
+      "capability_id": "R01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/retrieval-v2.ts",
+      "testFile": "tests/parity/search-vector.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "search.lexical",
+      "capability_id": "R02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/retrieval-v2.ts",
+      "testFile": "tests/parity/search-lexical.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "search.hybrid",
+      "capability_id": "R03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/retrieval-v2.ts",
+      "testFile": "tests/parity/search-hybrid.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "search.explain",
+      "capability_id": "R03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/retrieval-v2.ts",
+      "testFile": "tests/parity/search-hybrid.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "search.rerank",
+      "capability_id": "R04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/retrieval-v2.ts",
+      "testFile": "tests/parity/search-rerank.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "search.filtered",
+      "capability_id": "R06",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/retrieval-v2.ts",
+      "testFile": "tests/parity/search-filtered.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "search.metadata",
+      "capability_id": "R06",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/retrieval-v2.ts",
+      "testFile": "tests/parity/search-filtered.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "eval.dataset_list",
+      "capability_id": "R08",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/eval-v2.ts",
+      "testFile": "tests/parity/eval.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "eval.dataset_create",
+      "capability_id": "R08",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/eval-v2.ts",
+      "testFile": "tests/parity/eval.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "eval.run",
+      "capability_id": "R08",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/eval-v2.ts",
+      "testFile": "tests/parity/eval.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "eval.report",
+      "capability_id": "R08",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/eval-v2.ts",
+      "testFile": "tests/parity/eval.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "eval.compare",
+      "capability_id": "R08",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/eval-v2.ts",
+      "testFile": "tests/parity/eval.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "chat.ask",
+      "capability_id": "C01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/chat-v2.ts",
+      "testFile": "tests/parity/chat.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "chat.references",
+      "capability_id": "C02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/chat-v2.ts",
+      "testFile": "tests/parity/chat.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "chat.citation_read",
+      "capability_id": "C02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/chat-v2.ts",
+      "testFile": "tests/parity/chat.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "chat.verify_citations",
+      "capability_id": "C02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/chat-v2.ts",
+      "testFile": "tests/parity/chat.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "session.create",
+      "capability_id": "C03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/chat-v2.ts",
+      "testFile": "tests/parity/chat.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "session.list",
+      "capability_id": "C03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/chat-v2.ts",
+      "testFile": "tests/parity/chat.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "session.view",
+      "capability_id": "C03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/chat-v2.ts",
+      "testFile": "tests/parity/chat.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "session.delete",
+      "capability_id": "C03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/chat-v2.ts",
+      "testFile": "tests/parity/chat.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "message.list",
+      "capability_id": "C03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/chat-v2.ts",
+      "testFile": "tests/parity/chat.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "message.view",
+      "capability_id": "C03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/chat-v2.ts",
+      "testFile": "tests/parity/chat.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "message.search",
+      "capability_id": "C03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/chat-v2.ts",
+      "testFile": "tests/parity/chat.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "chat.stream",
+      "capability_id": "C04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/chat-v2.ts",
+      "testFile": "tests/parity/chat.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "chat.cancel",
+      "capability_id": "C04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/chat-v2.ts",
+      "testFile": "tests/parity/chat.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "session.stop",
+      "capability_id": "C04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/chat-v2.ts",
+      "testFile": "tests/parity/chat.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "session.ask",
+      "capability_id": "C05",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/chat-v2.ts",
+      "testFile": "tests/parity/chat.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "chat.scope",
+      "capability_id": "C05",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/chat-v2.ts",
+      "testFile": "tests/parity/chat.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "chat.trace",
+      "capability_id": "C07",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/chat-v2.ts",
+      "testFile": "tests/parity/chat.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "session.export",
+      "capability_id": "C07",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/chat-v2.ts",
+      "testFile": "tests/parity/chat.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "agent.create",
+      "capability_id": "A01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "agent.list",
+      "capability_id": "A01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "agent.view",
+      "capability_id": "A01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "agent.update",
+      "capability_id": "A01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "agent.delete",
+      "capability_id": "A01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "agent.run",
+      "capability_id": "A01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "agent.tools",
+      "capability_id": "A02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "agent.tool_call",
+      "capability_id": "A02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "agent.tool_result",
+      "capability_id": "A02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "agent.mcp_list",
+      "capability_id": "A03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "agent.mcp_test",
+      "capability_id": "A03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "agent.mcp_call",
+      "capability_id": "A03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "skills.list",
+      "capability_id": "A04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "skills.install",
+      "capability_id": "A04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "skills.validate",
+      "capability_id": "A04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "skills.read",
+      "capability_id": "A04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "agent.sandbox_status",
+      "capability_id": "A05",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "agent.sandbox_run",
+      "capability_id": "A05",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "agent.artifact_list",
+      "capability_id": "A05",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "agent.status",
+      "capability_id": "A06",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "agent.check",
+      "capability_id": "A06",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "agent.stop",
+      "capability_id": "A06",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "agent.resume",
+      "capability_id": "A06",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "session.agent_ask",
+      "capability_id": "A06",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "agent.trace",
+      "capability_id": "A06",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/agent-v2.ts",
+      "testFile": "tests/parity/agent.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "wiki.generate",
+      "capability_id": "W01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/wiki-v2.ts",
+      "testFile": "tests/parity/wiki.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "wiki.status",
+      "capability_id": "W01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/wiki-v2.ts",
+      "testFile": "tests/parity/wiki.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "wiki.list",
+      "capability_id": "W01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/wiki-v2.ts",
+      "testFile": "tests/parity/wiki.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "wiki.read",
+      "capability_id": "W01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/wiki-v2.ts",
+      "testFile": "tests/parity/wiki.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "wiki.search",
+      "capability_id": "W01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/wiki-v2.ts",
+      "testFile": "tests/parity/wiki.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "wiki.sources",
+      "capability_id": "W02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/wiki-v2.ts",
+      "testFile": "tests/parity/wiki.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "wiki.citation_read",
+      "capability_id": "W02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/wiki-v2.ts",
+      "testFile": "tests/parity/wiki.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "wiki.verify",
+      "capability_id": "W02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/wiki-v2.ts",
+      "testFile": "tests/parity/wiki.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "wiki.links",
+      "capability_id": "W03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/wiki-v2.ts",
+      "testFile": "tests/parity/wiki.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "wiki.link",
+      "capability_id": "W03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/wiki-v2.ts",
+      "testFile": "tests/parity/wiki.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "wiki.unlink",
+      "capability_id": "W03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/wiki-v2.ts",
+      "testFile": "tests/parity/wiki.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "wiki.graph",
+      "capability_id": "W03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/wiki-v2.ts",
+      "testFile": "tests/parity/wiki.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "graph.neighbors",
+      "capability_id": "W03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/wiki-v2.ts",
+      "testFile": "tests/parity/wiki.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "graph.search",
+      "capability_id": "W03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/wiki-v2.ts",
+      "testFile": "tests/parity/wiki.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "wiki.create",
+      "capability_id": "W04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/wiki-v2.ts",
+      "testFile": "tests/parity/wiki.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "wiki.edit",
+      "capability_id": "W04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/wiki-v2.ts",
+      "testFile": "tests/parity/wiki.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "wiki.delete",
+      "capability_id": "W04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/wiki-v2.ts",
+      "testFile": "tests/parity/wiki.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "wiki.diff",
+      "capability_id": "W04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/wiki-v2.ts",
+      "testFile": "tests/parity/wiki.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "wiki.revert",
+      "capability_id": "W04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/wiki-v2.ts",
+      "testFile": "tests/parity/wiki.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "wiki.revisions",
+      "capability_id": "W04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/wiki-v2.ts",
+      "testFile": "tests/parity/wiki.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "datasource.types",
+      "capability_id": "D01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/datasource-v2.ts",
+      "testFile": "tests/parity/datasource.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "datasource.list",
+      "capability_id": "D01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/datasource-v2.ts",
+      "testFile": "tests/parity/datasource.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "datasource.create",
+      "capability_id": "D01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/datasource-v2.ts",
+      "testFile": "tests/parity/datasource.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "datasource.view",
+      "capability_id": "D01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/datasource-v2.ts",
+      "testFile": "tests/parity/datasource.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "datasource.connect",
+      "capability_id": "D01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/datasource-v2.ts",
+      "testFile": "tests/parity/datasource.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "datasource.preview",
+      "capability_id": "D01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/datasource-v2.ts",
+      "testFile": "tests/parity/datasource.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "datasource.sync",
+      "capability_id": "D02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/datasource-v2.ts",
+      "testFile": "tests/parity/datasource.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "datasource.changes",
+      "capability_id": "D02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/datasource-v2.ts",
+      "testFile": "tests/parity/datasource.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "datasource.cursor",
+      "capability_id": "D02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/datasource-v2.ts",
+      "testFile": "tests/parity/datasource.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "datasource.logs",
+      "capability_id": "D02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/datasource-v2.ts",
+      "testFile": "tests/parity/datasource.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "datasource.schedule",
+      "capability_id": "D04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/datasource-v2.ts",
+      "testFile": "tests/parity/datasource.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "datasource.pause",
+      "capability_id": "D04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/datasource-v2.ts",
+      "testFile": "tests/parity/datasource.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "datasource.resume",
+      "capability_id": "D04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/datasource-v2.ts",
+      "testFile": "tests/parity/datasource.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "datasource.delete",
+      "capability_id": "D04",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/datasource-v2.ts",
+      "testFile": "tests/parity/datasource.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "model.list",
+      "capability_id": "M01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/model-v2.ts",
+      "testFile": "tests/parity/model.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "model.view",
+      "capability_id": "M01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/model-v2.ts",
+      "testFile": "tests/parity/model.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "model.create",
+      "capability_id": "M01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/model-v2.ts",
+      "testFile": "tests/parity/model.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "model.update",
+      "capability_id": "M01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/model-v2.ts",
+      "testFile": "tests/parity/model.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "model.delete",
+      "capability_id": "M01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/model-v2.ts",
+      "testFile": "tests/parity/model.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "model.test",
+      "capability_id": "M01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/model-v2.ts",
+      "testFile": "tests/parity/model.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "model.set_default",
+      "capability_id": "M01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/model-v2.ts",
+      "testFile": "tests/parity/model.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "model.rerank_list",
+      "capability_id": "M03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/model-v2.ts",
+      "testFile": "tests/parity/model.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "model.rerank_test",
+      "capability_id": "M03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/model-v2.ts",
+      "testFile": "tests/parity/model.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "job.list",
+      "capability_id": "O01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/pipeline.ts",
+      "testFile": "tests/parity/job-e2e.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "job.view",
+      "capability_id": "O01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/pipeline.ts",
+      "testFile": "tests/parity/job-e2e.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "job.wait",
+      "capability_id": "O01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/job-v2.ts",
+      "testFile": "tests/parity/model.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "job.cancel",
+      "capability_id": "O01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/job-v2.ts",
+      "testFile": "tests/parity/model.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "job.retry",
+      "capability_id": "O01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/job-v2.ts",
+      "testFile": "tests/parity/model.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "job.events",
+      "capability_id": "O01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/job-v2.ts",
+      "testFile": "tests/parity/model.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "job.artifacts",
+      "capability_id": "O01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/job-v2.ts",
+      "testFile": "tests/parity/model.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "job.deadletters",
+      "capability_id": "O03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/parse-job.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "job.replay_deadletter",
+      "capability_id": "O03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/knowledge-v2.ts",
+      "testFile": "tests/parity/parse-job.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "api.operations",
+      "capability_id": "X01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/meta-v2.ts",
+      "testFile": "tests/parity/meta.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "api.schema",
+      "capability_id": "X01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/meta-v2.ts",
+      "testFile": "tests/parity/meta.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "api.version",
+      "capability_id": "X01",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/meta-v2.ts",
+      "testFile": "tests/parity/meta.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "mcp.tools",
+      "capability_id": "X02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/meta-v2.ts",
+      "testFile": "tests/parity/meta.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "mcp.resources",
+      "capability_id": "X02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/meta-v2.ts",
+      "testFile": "tests/parity/meta.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "mcp.prompts",
+      "capability_id": "X02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/meta-v2.ts",
+      "testFile": "tests/parity/meta.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "mcp.health",
+      "capability_id": "X02",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/meta-v2.ts",
+      "testFile": "tests/parity/meta.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "cli.commands",
+      "capability_id": "X03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/meta-v2.ts",
+      "testFile": "tests/parity/meta.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "cli.version",
+      "capability_id": "X03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/meta-v2.ts",
+      "testFile": "tests/parity/meta.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "cli.doctor",
+      "capability_id": "X03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/meta-v2.ts",
+      "testFile": "tests/parity/meta.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    },
+    {
+      "operation_id": "cli.schema",
+      "capability_id": "X03",
+      "status": "passed",
+      "result": "passed",
+      "handlerFile": "server/routes/meta-v2.ts",
+      "testFile": "tests/parity/meta.test.ts",
+      "mcpTransports": [
+        "stdio",
+        "http"
+      ],
+      "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d"
+    }
+  ]
+}

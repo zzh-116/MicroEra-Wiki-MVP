@@ -1,0 +1,35 @@
+{
+  "id": "message.list",
+  "version": "1",
+  "title": "List session messages",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "session_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "session_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "session_id": {
+        "type": "string"
+      },
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "total": {
+        "type": "integer"
+      }
+    }
+  }
+}

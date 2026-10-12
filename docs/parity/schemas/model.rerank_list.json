@@ -1,0 +1,31 @@
+{
+  "id": "model.rerank_list",
+  "version": "1",
+  "title": "List rerank-capable models",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {}
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "providers": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "models": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "total": {
+        "type": "integer"
+      }
+    }
+  }
+}

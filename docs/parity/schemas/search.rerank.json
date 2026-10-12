@@ -1,0 +1,51 @@
+{
+  "id": "search.rerank",
+  "version": "1",
+  "title": "Rerank candidates",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string"
+      },
+      "documents": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "top_k": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "query",
+      "documents"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "provider": {
+        "type": "string"
+      },
+      "fallback": {
+        "type": "boolean"
+      },
+      "timed_out": {
+        "type": "boolean"
+      },
+      "elapsed_ms": {
+        "type": "integer"
+      }
+    }
+  }
+}

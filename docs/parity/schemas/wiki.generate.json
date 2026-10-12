@@ -1,0 +1,58 @@
+{
+  "id": "wiki.generate",
+  "version": "1",
+  "title": "Generate a wiki page",
+  "kind": "job",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string"
+      },
+      "question": {
+        "type": "string"
+      },
+      "kb_id": {
+        "type": "integer"
+      },
+      "document_ids": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        }
+      },
+      "top_k": {
+        "type": "integer"
+      },
+      "method": {
+        "type": "string",
+        "enum": [
+          "vector",
+          "lexical",
+          "hybrid"
+        ]
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "wiki_id": {
+        "type": "integer"
+      },
+      "title": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string"
+      },
+      "revision_no": {
+        "type": "integer"
+      },
+      "source_count": {
+        "type": "integer"
+      }
+    }
+  }
+}

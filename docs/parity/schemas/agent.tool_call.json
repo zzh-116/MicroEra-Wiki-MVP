@@ -1,0 +1,42 @@
+{
+  "id": "agent.tool_call",
+  "version": "1",
+  "title": "Call an agent tool",
+  "kind": "mutation",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "agent_id": {
+        "type": "integer"
+      },
+      "tool": {
+        "type": "string"
+      },
+      "input": {
+        "type": "object"
+      },
+      "run_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "agent_id",
+      "tool"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "run_id": {
+        "type": "string"
+      },
+      "tool": {
+        "type": "string"
+      },
+      "result": {
+        "type": "object"
+      }
+    }
+  }
+}

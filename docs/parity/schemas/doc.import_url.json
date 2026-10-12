@@ -1,0 +1,47 @@
+{
+  "id": "doc.import_url",
+  "version": "1",
+  "title": "Import a document from a URL",
+  "kind": "job",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "kb_id": {
+        "type": "integer"
+      },
+      "url": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "visibility": {
+        "type": "string",
+        "enum": [
+          "public",
+          "internal"
+        ]
+      }
+    },
+    "required": [
+      "kb_id",
+      "url"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "document_id": {
+        "type": "integer"
+      },
+      "job_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "document_id",
+      "job_id"
+    ]
+  }
+}

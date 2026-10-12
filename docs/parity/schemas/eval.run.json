@@ -1,0 +1,49 @@
+{
+  "id": "eval.run",
+  "version": "1",
+  "title": "Run an evaluation",
+  "kind": "job",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "dataset_id": {
+        "type": "integer"
+      },
+      "method": {
+        "type": "string",
+        "enum": [
+          "vector",
+          "lexical",
+          "hybrid"
+        ]
+      },
+      "top_k": {
+        "type": "integer"
+      },
+      "is_internal": {
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "dataset_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "run_id": {
+        "type": "string"
+      },
+      "metrics": {
+        "type": "object"
+      },
+      "per_query": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "id": "agent.mcp_call",
+  "version": "1",
+  "title": "Call an MCP tool",
+  "kind": "mutation",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "agent_id": {
+        "type": "integer"
+      },
+      "server": {
+        "type": "string"
+      },
+      "tool": {
+        "type": "string"
+      },
+      "arguments": {
+        "type": "object"
+      }
+    },
+    "required": [
+      "agent_id",
+      "tool"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "server": {
+        "type": "string"
+      },
+      "tool": {
+        "type": "string"
+      },
+      "result": {
+        "type": "object"
+      }
+    }
+  }
+}

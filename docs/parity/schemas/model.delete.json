@@ -1,0 +1,29 @@
+{
+  "id": "model.delete",
+  "version": "1",
+  "title": "Delete a model",
+  "kind": "mutation",
+  "risk": "destructive",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "model_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "model_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "deleted": {
+        "type": "boolean"
+      },
+      "id": {
+        "type": "integer"
+      }
+    }
+  }
+}

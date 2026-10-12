@@ -1,0 +1,41 @@
+{
+  "id": "doc.source_view",
+  "version": "1",
+  "title": "View a document source",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "source_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "source_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "kb_id": {
+        "type": "integer"
+      },
+      "type": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "uri": {
+        "type": "string"
+      },
+      "checksum": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "capability_id": "D01",
+  "status": "accepted",
+  "result": "passed",
+  "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d",
+  "runTimestamp": "2026-10-12T08:32:35.399Z",
+  "testCommand": "npm test",
+  "environment": {
+    "node": "v22.14.0",
+    "os": "win32",
+    "db": "unit tests are mocked; no live DB write",
+    "server": "http://localhost:3001"
+  },
+  "logFile": "docs/parity/testlogs/npm-test.log",
+  "outputLogHash": "f5b42f7689ec83c34caab218a6a72e1871d4efd32b69d6f8e0a47be9bcb05bb1",
+  "implementedFiles": [
+    "server/routes/datasource-v2.ts"
+  ],
+  "testFiles": [
+    "tests/parity/datasource.test.ts"
+  ],
+  "cliOperationIds": [
+    "datasource.types",
+    "datasource.list",
+    "datasource.create",
+    "datasource.view",
+    "datasource.connect",
+    "datasource.preview"
+  ],
+  "mcpToolIds": [
+    "datasource_types",
+    "datasource_list",
+    "datasource_create",
+    "datasource_view",
+    "datasource_connect",
+    "datasource_preview"
+  ],
+  "group": "D",
+  "weight": 3,
+  "sourceProof": [
+    {
+      "source": "crossref",
+      "kind": "DOI lookup",
+      "query": "10.1038/nature12373",
+      "result": "real record returned — title \"Nanometre-scale thermometry in a living cell\", publisher \"Springer Science and Business Media LLC\", DOI 10.1038/nature12373",
+      "timestamp": "2026-10-12T08:32:35.399Z",
+      "auth": "none (public API)"
+    },
+    {
+      "source": "arxiv",
+      "kind": "search_query",
+      "query": "all:electron",
+      "result": "real record returned over HTTPS — title \"The electronic structure of cuprates from high energy spectroscopy\", id http://arxiv.org/abs/cond-mat/0011267v1, published 2000-11-15T16:19:15Z",
+      "timestamp": "2026-10-12T08:32:35.399Z",
+      "auth": "none (public API)"
+    }
+  ],
+  "sourceProofLog": "docs/parity/testlogs/d01-source-proof.log"
+}

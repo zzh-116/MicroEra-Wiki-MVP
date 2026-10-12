@@ -1,0 +1,53 @@
+{
+  "id": "session.ask",
+  "version": "1",
+  "title": "Ask within a session",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "question": {
+        "type": "string"
+      },
+      "session_id": {
+        "type": "string"
+      },
+      "top_k": {
+        "type": "integer"
+      },
+      "method": {
+        "type": "string",
+        "enum": [
+          "vector",
+          "lexical",
+          "hybrid"
+        ]
+      }
+    },
+    "required": [
+      "question",
+      "session_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "answer": {
+        "type": "string"
+      },
+      "citations": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "session_id": {
+        "type": "string"
+      },
+      "trace": {
+        "type": "object"
+      }
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "id": "kb.folder_move",
+  "version": "1",
+  "title": "Move a folder",
+  "kind": "mutation",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "folder_id": {
+        "type": "integer"
+      },
+      "parent_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "folder_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "kb_id": {
+        "type": "integer"
+      },
+      "parent_id": {
+        "type": "integer"
+      },
+      "name": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "kb_id",
+      "name"
+    ]
+  }
+}

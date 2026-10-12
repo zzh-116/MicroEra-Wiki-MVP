@@ -1,0 +1,61 @@
+{
+  "id": "chat.ask",
+  "version": "1",
+  "title": "Ask a grounded question",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "question": {
+        "type": "string"
+      },
+      "kb_ids": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        }
+      },
+      "session_id": {
+        "type": "string"
+      },
+      "top_k": {
+        "type": "integer"
+      },
+      "method": {
+        "type": "string",
+        "enum": [
+          "vector",
+          "lexical",
+          "hybrid"
+        ]
+      },
+      "is_internal": {
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "question"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "answer": {
+        "type": "string"
+      },
+      "citations": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "session_id": {
+        "type": "string"
+      },
+      "trace": {
+        "type": "object"
+      }
+    }
+  }
+}

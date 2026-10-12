@@ -1,0 +1,57 @@
+{
+  "id": "chunk.view",
+  "version": "1",
+  "title": "View a document chunk",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "doc_id": {
+        "type": "integer"
+      },
+      "chunk_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "doc_id",
+      "chunk_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "document_id": {
+        "type": "integer"
+      },
+      "index": {
+        "type": "integer"
+      },
+      "text": {
+        "type": "string"
+      },
+      "strategy": {
+        "type": "string"
+      },
+      "heading": {
+        "type": "string"
+      },
+      "start_char": {
+        "type": "integer"
+      },
+      "end_char": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "id",
+      "document_id",
+      "index",
+      "text"
+    ]
+  }
+}

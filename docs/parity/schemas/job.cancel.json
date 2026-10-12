@@ -1,0 +1,29 @@
+{
+  "id": "job.cancel",
+  "version": "1",
+  "title": "Cancel a job",
+  "kind": "mutation",
+  "risk": "write",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "job_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "job_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "job_id": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string"
+      }
+    }
+  }
+}

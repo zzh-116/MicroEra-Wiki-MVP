@@ -1,0 +1,35 @@
+{
+  "id": "chat.citation_read",
+  "version": "1",
+  "title": "Read a citation chunk",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "chunk_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "chunk_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "chunk_id": {
+        "type": "string"
+      },
+      "document_id": {
+        "type": "integer"
+      },
+      "title": {
+        "type": "string"
+      },
+      "text": {
+        "type": "string"
+      }
+    }
+  }
+}

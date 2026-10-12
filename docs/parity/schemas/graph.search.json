@@ -1,0 +1,29 @@
+{
+  "id": "graph.search",
+  "version": "1",
+  "title": "Search wiki graph nodes",
+  "kind": "mutation",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "q": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "q"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "nodes": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "id": "message.view",
+  "version": "1",
+  "title": "View a message",
+  "kind": "query",
+  "risk": "read",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "message_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "message_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "session_id": {
+        "type": "string"
+      },
+      "role": {
+        "type": "string"
+      },
+      "content": {
+        "type": "string"
+      },
+      "citations": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}
