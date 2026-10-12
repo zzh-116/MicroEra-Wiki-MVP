@@ -155,7 +155,7 @@ export class ParseJobService {
       status: 'succeeded',
       progress: 100,
       stage: 'done',
-      finished_at: new Date(),
+      finishedAt: new Date(),
     });
     return toStatusView(updated!);
   }

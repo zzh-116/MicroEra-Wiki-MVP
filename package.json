@@ -13,6 +13,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:e2e": "vitest run tests/parity/cli-e2e.test.ts tests/parity/job-e2e.test.ts tests/parity/model-probe.test.ts",
     "lint": "tsc --noEmit",
     "typecheck:backend": "tsc --noEmit -p tsconfig.backend.json",
     "db:generate": "drizzle-kit generate",

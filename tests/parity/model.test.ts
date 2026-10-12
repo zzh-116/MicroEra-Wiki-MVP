@@ -84,6 +84,14 @@ describe('P8 model registry — M01 (list/view/create/update/delete/test/set_def
     expect(r.items[0].name).toBe('Local LLM');
   });
 
+  it('view returns the stored model', async () => {
+    vi.spyOn(modelRepository, 'findModelById').mockResolvedValue(model());
+    const m: any = await modelService.view(1);
+    expect(m.id).toBe(1);
+    expect(m.name).toBe('Local LLM');
+    expect(m.kind).toBe('llm');
+  });
+
   it('view throws resource_not_found when missing', async () => {
     vi.spyOn(modelRepository, 'findModelById').mockResolvedValue(undefined);
     await expect(modelService.view(99)).rejects.toMatchObject({ kind: 'resource_not_found' });

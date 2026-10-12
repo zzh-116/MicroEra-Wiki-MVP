@@ -72,7 +72,11 @@ async function main() {
 
   // ── D02: sync / changes / cursor / logs ───────────────────────────────────
   const sync1 = await v2('POST', '/api/v2/ops/datasource/sync', token, { datasource_id: did });
-  check(sync1?.created === 3 && sync1.total === 3, 'datasource.sync imports 3 docs');
+  // Idempotent: on a shared dev DB the 3 sample docs may already be imported by a
+  // prior run (deduped by source), so accept `created + skipped === 3` rather than
+  // requiring `created === 3` (B1).
+  const imported1 = (sync1?.created ?? 0) + (sync1?.skipped ?? 0);
+  check(sync1?.total === 3 && imported1 === 3, 'datasource.sync imports 3 docs (idempotent: created + skipped)');
   check(!!sync1?.cursor, 'datasource.sync advances the cursor');
 
   const sync2 = await v2('POST', '/api/v2/ops/datasource/sync', token, { datasource_id: did });

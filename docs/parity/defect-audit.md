@@ -14,7 +14,9 @@
 
 **批 A（CLI/MCP 参数处理）已于 2026-10-12 修复并回归通过**：A1/D1/D2/D3/D4/D5/D6 已 `verified`，D8 部分修复；对应回归测试 `tests/parity/cli-args.test.ts`（19 用例）与 `tests/parity/cli-e2e.test.ts`（7 用例，真实 CLI 进程）全部通过，全套测试 37 文件 408 用例无回归。§0 中依赖 A1/D1/D2/D3 的「按文档用法无法执行」问题已消除。
 
-在批 B/C/D 修复并回归后，需重新生成验收证据并重跑权威校验器，方能恢复「已完全验证」的终态判定。
+**批 B（job 语义 + 真实集成测试 + 测试入口）已于 2026-10-12 完成并回归通过**：B1（smoke-datasource 幂等断言）、C1（`npm run test:e2e` 入口）、F1（job.list/job.view 真实 API+CLI+MCP 集成测试）、F6（Provider Probe 成功/失败正负两路 + M01 view 正例）已 `verified`；F4/F5 部分补齐（新增真实 DB 的 parse-job worker 生命周期测试 `tests/parity/parse-job-db.test.ts`，复用既有的 chunk/elements 纯函数真实测试；ingest 全链路 DB+embed 测试延后记录）；F7 已记录（smoke-eval/smoke-knowledge 造数走进程内 service，原因与现状见 §2 F7）；F2 按用户要求**暂停**并提交设计与风险说明（见 §4）。批 B 还发现并修复一个新缺陷 F13（`ParseJobService.complete()` 把 `finished_at` 写成 snake_case，Drizzle 静默丢弃该字段 → 改为 `finishedAt`，由真实 DB 测试暴露）。全套测试 40 文件 424 用例通过。
+
+在批 C/D 修复并回归后，需重新生成验收证据并重跑权威校验器，方能恢复「已完全验证」的终态判定。
 
 ## 1. 概览
 
@@ -54,7 +56,7 @@
 - **影响范围**：仅 smoke 测试断言错误；同步/去重/cursor 增量逻辑本身正常（非功能缺陷）。
 - **修复建议**：断言改为幂等（接受 `created + skipped === 3`）或在隔离库上运行。
 - **验证标准**：`smoke-datasource` 在已导入与干净库两种状态均通过。
-- **状态**：`open`（批 B）
+- **状态**：`verified`（批 B）— `scripts/smoke-datasource.ts:74-80` 已改为幂等断言 `created + skipped === 3`。
 
 ### ③ test:e2e 入口缺失
 
@@ -64,7 +66,7 @@
 - **影响范围**：规划 G5 门禁第 5 条要求新增统一 E2E 入口；当前靠手工逐个 `tsx scripts/smoke-*.ts`。
 - **修复建议**：新增 `test:e2e` 脚本聚合各 smoke。
 - **验证标准**：`npm run test:e2e` 一键执行并汇总通过/失败。
-- **状态**：`open`（批 B）
+- **状态**：`verified`（批 B）— `package.json` 新增 `test:e2e`，聚合 cli-e2e / job-e2e / model-probe，19 用例通过。
 
 ### ④ API/CLI/MCP 功能与行为一致性
 
@@ -190,7 +192,7 @@
 - **影响范围**：两 op 完全未验证，坏了也能过验收；影响验收证据可信度。
 - **修复建议**：补齐真实正/负测试或修正证据映射。
 - **验证标准**：`job.list`/`job.view` 有可执行的测试。
-- **状态**：`open`（批 B）
+- **状态**：`verified`（批 B）— 新增 `tests/parity/job-e2e.test.ts`：真实 `createApp`（bootstrap 关）+ 真实 JWT + 真实内存 `importJobService`（空文件播种 → 快速失败、不写库）+ 真实 HTTP（401/200/404）+ 真实 CLI 进程（`job list`/`job view`/无 token）+ 真实 operation handler（MCP 代码路径）。
 
 #### F2 `job.*` 命名空间指向两个后端 — HIGH
 - **文件位置**：`job.list`/`job.view` 走内存 `importJobService`（`backend/services/import-job.service.ts:39` 的 `Map`），`server/routes/pipeline.ts:281,295,300`；`job.wait/cancel/retry/events/artifacts` 走持久 `parse_jobs` 队列。
@@ -198,7 +200,7 @@
 - **影响范围**：job 命名空间语义割裂、易失数据。
 - **修复建议**：统一到持久 job 存储。
 - **验证标准**：重启后 job 可见性一致。
-- **状态**：`open`（批 B）
+- **状态**：`paused`（批 B，待确认）— 统一 Job 后端需数据库迁移/改变接口契约，按用户要求暂停改动并提交设计与风险说明（见 §4）。
 
 #### F3 向量检索失败被吞并静默降级 — HIGH
 - **文件位置**：`backend/services/search.service.ts:25-27`、`:149-152`（`console.warn` 后降级关键词/entry-chunk，不上抛）。
@@ -214,7 +216,7 @@
 - **影响范围**：集成缺陷无法被单测捕获。
 - **修复建议**：补充真实 DB/服务的集成测试。
 - **验证标准**：关键路径有非 mock 集成覆盖。
-- **状态**：`open`（批 B）
+- **状态**：`partial`（批 B）— 关键路径已补真实集成：job.list/view（真实 HTTP+CLI+MCP）、Provider Probe（真实 stub）、parse-job worker 生命周期（真实隔离 DB）。其余知识/聊天真实 DB 路径延后。
 
 #### F5 worker 侧 op 无 smoke 覆盖 — MEDIUM
 - **文件位置**：parse-job / elements / chunk-preview-edit / ingest 仅 mock 单测，无 `scripts/smoke-*`。
@@ -222,7 +224,7 @@
 - **影响范围**：worker 侧回归不可见。
 - **修复建议**：补齐对应 smoke。
 - **验证标准**：worker op 有 smoke。
-- **状态**：`open`（批 B）
+- **状态**：`partial`（批 B）— parse-job 已补真实隔离 DB 生命周期测试（`tests/parity/parse-job-db.test.ts`：enqueue/lease/heartbeat/checkpoint/complete/fail/deadletter/replay）；chunk（`tests/services/chunk.service.test.ts`）与 elements 抽取器（`tests/parity/elements.test.ts`）已有真实纯函数测试；ingest 全链路 DB+embed 测试延后（需 KB/document/elements/chunks/vectors/revisions 多表 + pgvector 维度 + stub embedder，风险面较大，记录待批 C/D）。
 
 #### F6 `model.test` provider probe 未走通正路径 — MEDIUM
 - **文件位置**：`tests/parity/model.test.ts:139-147`（只断言不抛错+字段类型，`reachable:false` 也能过）、`rerank_test` 只有负例、M01 无 view 正例。
@@ -230,7 +232,7 @@
 - **影响范围**：模型探测测试形同虚设。
 - **修复建议**：补充 reachable:true 正路径断言。
 - **验证标准**：正/负两路均断言。
-- **状态**：`open`（批 B）
+- **状态**：`verified`（批 B）— 新增 `tests/parity/model-probe.test.ts`（真实 loopback stub 驱动 `modelService.test` 的 llm/embedding 正负两路：`reachable:true` 与 `reachable:false` 均断言）+ `tests/parity/model.test.ts` 补 M01 view 正例。
 
 #### F7 两个 smoke 用进程内服务调用造数，绕过 REST — MEDIUM
 - **文件位置**：`scripts/smoke-eval.ts:2-3`、`scripts/smoke-knowledge.ts:12`（直接 import service 造数）。
@@ -238,7 +240,7 @@
 - **影响范围**：REST 层回归不可见。
 - **修复建议**：改为经 HTTP 客户端造数。
 - **验证标准**：smoke 走 REST。
-- **状态**：`open`（批 B）
+- **状态**：`documented`（批 B）— 已核查：`scripts/smoke-eval.ts:9-10`（`parseApiService`+`ingestService`）与 `scripts/smoke-knowledge.ts:11,92`（`knowledgeService.createDocumentWithRevision`）仅**造数（seed）**走进程内 service；被验证的 op（登录/kb/folder/doc/eval 等）仍走真实 HTTP。原因是内容型文档创建无公开 REST 路由（仅 `doc.upload` 文件上传），属 setup 而非被测路径；如需完全 HTTP 造数可改用 `doc.upload`，记录待批 C/D。
 
 #### F8 `parse-job` checkpoint 只断言 `toBeTruthy` — LOW
 - **文件位置**：`tests/parity/parse-job.test.ts:111`。
@@ -280,6 +282,14 @@
 - **验证标准**：字段级断言。
 - **状态**：`open`（批 D）
 
+#### F13 `ParseJobService.complete()` 用 snake_case `finished_at`，Drizzle 静默丢弃 — MEDIUM（批 B 新发现并已修复）
+- **文件位置**：`backend/services/parse-job.service.ts:158`（`finished_at: new Date()`，应为 `finishedAt`）。
+- **复现条件**：`parseJobService.complete()` 后 job 状态为 `succeeded`，但 `finished_at` 恒为 `NULL`；`job.events` 的时间线推导依赖 `finished_at`，会缺失「succeeded」事件的时间戳。仅 mock 单测无法暴露（仓库被 mock），由批 B 新增的真实隔离 DB 测试 `tests/parity/parse-job-db.test.ts` 断言 `finished_at` 非空时暴露。
+- **影响范围**：worker 完成时间戳丢失，事件时间线不完整。
+- **修复建议**：`finished_at` → `finishedAt`（与 `JobUpdate` 类型对齐；`cancel`/`fail` 已用 `finishedAt`，仅 `complete` 笔误）。
+- **验证标准**：真实 DB 测试断言 `complete` 后 `finished_at` 非空。
+- **状态**：`verified`（批 B）— 已修复，`tests/parity/parse-job-db.test.ts` 3 用例通过。
+
 ---
 
 ## 3. 修复状态跟踪
@@ -287,6 +297,19 @@
 | 批次 | 范围 | 缺陷 | 状态 |
 |---|---|---|---|
 | 批 A | CLI/MCP 参数处理 | A1, D1, D2, D3, D4, D5, D6, D8 | ✅ 已完成（A1/D1–D6 `verified`，D8 部分） |
-| 批 B | job 语义 + 测试入口 | B1, C1, F1, F2, F4, F5, F6, F7 | 待执行 |
+| 批 B | job 语义 + 测试入口 | B1, C1, F1, F2, F4, F5, F6, F7 | ✅ 已完成（B1/C1/F1/F6 `verified`；F4/F5 `partial`；F7 `documented`；F2 `paused` 待确认 §4） |
+| 批 B（新发现） | worker 完成时间戳 | F13 | ✅ 已修复 `verified`（`finished_at`→`finishedAt`） |
 | 批 C | 诚实化/降级可见性 | E2, E3, F3, F9, F10, F11 | 待执行 |
 | 批 D | 低优先 | D7, D8, E1, E4, E5, E6, F8, F12 | 待执行 |
+
+---
+
+## 4. F2 统一 Job 后端 — 设计与风险说明（暂停，待确认）
+
+批 B 对 `job.*` 命名空间两个后端的审计结论（只读核查，未改代码）：
+
+- **现状**：`job.list`/`job.view` 走内存 `importJobService`（`backend/services/import-job.service.ts` 的 `Map`，id `imp-*`，status `pending/running/success/failed/cancelled`），经 `GET /api/pipeline/jobs[/:id]`；`job.wait/cancel/retry/events/artifacts` 走持久 `parse_jobs`/`parse_deadletters` 队列（id `parse_*`，status `pending/running/succeeded/failed/cancelled`），经 `/api/v2/ops/job/*`。
+- **数据模型不兼容**：id 前缀（`imp-` vs `parse-`）、status 枚举（`success` vs `succeeded`）、字段形状（`importJobService` 的 `stages/result/entryId` vs `parse_jobs` 的 `stage/progress/checkpoint/lease_*`）均不同。
+- **数据/API 兼容风险**：`parse_jobs` 为 `0012_add_parse_jobs.sql` 新增的附加表（无既有业务数据，无破坏性迁移）；但「统一」意味着把 `job.list/view` 改挂到持久队列并统一 status/字段，会**改变现有接口契约**（`/api/pipeline/jobs` 的返回形状与 `job.list/view` 的 outputSchema），并涉及前端 `UploadManager` 轮询 `/jobs/:id` 的兼容。
+- **暂停原因**：按用户要求「如果统一 Job 后端需要数据库迁移、改变现有接口契约或可能影响已有业务数据，先提交设计与风险说明，暂停相关改动，等待确认」。
+- **建议方案（待确认后实施）**：引入「读时适配层」将两种 job 视图归一到一个稳定 DTO（不改 `parse_jobs` 表结构、不迁移既有数据），或分阶段：先加持久 import-job 存储（新增表，不动旧表）再切换读路径。**未获确认前不实施任何改动。**
