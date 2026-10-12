@@ -18,7 +18,7 @@ import { McpHttpClient, McpClientError } from '../../backend/services/mcp-client
 function agent(id = 1, overrides: Record<string, unknown> = {}): any {
   return {
     id, name: 'R', description: '', instructions: '', model: '', tools: [],
-    mcp_servers: [], skills: [], status: 'idle', created_by: null,
+    mcp_servers: [], skills: [], status: 'idle', created_by: 7,
     created_at: '', updated_at: '', deleted_at: null, ...overrides,
   };
 }
@@ -68,7 +68,7 @@ describe('agent.mcp — real remote MCP (loopback stub)', () => {
   it('mcpCall reaches the remote server and returns the target result', async () => {
     vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent(1, { mcp_servers: [{ name: 'stub', url }] }));
     const svc = new AgentService(new McpHttpClient({ timeoutMs: 2000 }));
-    const r: any = await svc.mcpCall({ agent_id: 1, server: 'stub', tool: 'echo', arguments: { value: 'hi' } });
+    const r: any = await svc.mcpCall(7, { agent_id: 1, server: 'stub', tool: 'echo', arguments: { value: 'hi' } });
     expect(r.remote).toBe(true);
     expect(r.server).toBe('stub');
     expect(r.result.content[0].text).toBe('echo:hi');
@@ -94,7 +94,7 @@ describe('agent.mcp — dispatch + error mapping (stubbed client)', () => {
   it('mcpCall executes a builtin tool locally and labels it remote:false', async () => {
     vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent());
     vi.spyOn(retrievalService, 'filteredSearch').mockResolvedValue([{ chunk_id: 'c1', document_id: 1, title: 'D', text: 't', score: 0.9 }] as any);
-    const r: any = await agentService.mcpCall({ agent_id: 1, tool: 'retrieve', arguments: { query: 'x' } });
+    const r: any = await agentService.mcpCall(7, { agent_id: 1, tool: 'retrieve', arguments: { query: 'x' } });
     expect(r.remote).toBe(false);
     expect(r.server).toBe('builtin');
     expect(r.result.num_hits).toBe(1);
@@ -102,23 +102,23 @@ describe('agent.mcp — dispatch + error mapping (stubbed client)', () => {
 
   it('mcpCall rejects an unknown local tool', async () => {
     vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent());
-    await expect(agentService.mcpCall({ agent_id: 1, tool: 'nope' })).rejects.toMatchObject({ kind: 'validation_failed' });
+    await expect(agentService.mcpCall(7, { agent_id: 1, tool: 'nope' })).rejects.toMatchObject({ kind: 'validation_failed' });
   });
 
   it('mcpCall maps remote tool_not_found to resource_not_found', async () => {
     vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent(1, { mcp_servers: [{ name: 'ext', url: 'http://127.0.0.1:1' }] }));
     vi.spyOn((agentService as any).mcpClient, 'callTool').mockRejectedValue(new McpClientError('tool_not_found', 'missing', -32601));
-    await expect(agentService.mcpCall({ agent_id: 1, server: 'ext', tool: 'missing' })).rejects.toMatchObject({ kind: 'resource_not_found' });
+    await expect(agentService.mcpCall(7, { agent_id: 1, server: 'ext', tool: 'missing' })).rejects.toMatchObject({ kind: 'resource_not_found' });
   });
 
   it('mcpCall maps remote_error to internal', async () => {
     vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent(1, { mcp_servers: [{ name: 'ext', url: 'http://127.0.0.1:1' }] }));
     vi.spyOn((agentService as any).mcpClient, 'callTool').mockRejectedValue(new McpClientError('remote_error', 'boom', -32000));
-    await expect(agentService.mcpCall({ agent_id: 1, server: 'ext', tool: 'x' })).rejects.toMatchObject({ kind: 'internal' });
+    await expect(agentService.mcpCall(7, { agent_id: 1, server: 'ext', tool: 'x' })).rejects.toMatchObject({ kind: 'internal' });
   });
 
   it('mcpCall rejects a server not configured on the agent', async () => {
     vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent());
-    await expect(agentService.mcpCall({ agent_id: 1, server: 'ghost', tool: 'echo' })).rejects.toMatchObject({ kind: 'resource_not_found' });
+    await expect(agentService.mcpCall(7, { agent_id: 1, server: 'ghost', tool: 'echo' })).rejects.toMatchObject({ kind: 'resource_not_found' });
   });
 });

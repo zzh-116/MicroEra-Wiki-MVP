@@ -145,10 +145,10 @@ export class AgentRepository extends BaseRepository {
     return rows[0] ? agentToRow(rows[0]) : undefined;
   }
 
-  async listAgents(params?: { page?: number; pageSize?: number }): Promise<{ items: AgentRow[]; total: number }> {
+  async listAgents(userId: number, params?: { page?: number; pageSize?: number }): Promise<{ items: AgentRow[]; total: number }> {
     const pg = params?.page ?? 1;
     const ps = params?.pageSize ?? 50;
-    const where = isNull(agents.deletedAt);
+    const where = and(eq(agents.createdBy, userId), isNull(agents.deletedAt));
     const [{ value: total }] = await this.db.select({ value: count() }).from(agents).where(where);
     const rows = await this.db
       .select()
@@ -206,6 +206,34 @@ export class AgentRepository extends BaseRepository {
   async findRunById(id: string): Promise<AgentRunRow | undefined> {
     const rows = await this.db.select().from(agentRuns).where(eq(agentRuns.id, id)).limit(1);
     return rows[0] ? runToRow(rows[0]) : undefined;
+  }
+
+  /** Resolve a run together with its owning user (`agents.created_by`) via a
+   *  join, so object-level authorization can be enforced for run_id-addressed
+   *  operations (resume/trace/stop/tool_result/artifact_list) that carry no
+   *  agent_id. Returns `undefined` when the run does not exist; a NULL owner
+   *  (user deleted → created_by set null) is returned as `created_by: null` and
+   *  must be default-denied by the caller. */
+  async findRunWithOwnerById(id: string): Promise<(AgentRunRow & { created_by: number | null }) | undefined> {
+    const rows = await this.db
+      .select({
+        id: agentRuns.id,
+        agentId: agentRuns.agentId,
+        goal: agentRuns.goal,
+        status: agentRuns.status,
+        steps: agentRuns.steps,
+        answer: agentRuns.answer,
+        trace: agentRuns.trace,
+        createdAt: agentRuns.createdAt,
+        updatedAt: agentRuns.updatedAt,
+        createdBy: agents.createdBy,
+      })
+      .from(agentRuns)
+      .innerJoin(agents, eq(agentRuns.agentId, agents.id))
+      .where(eq(agentRuns.id, id))
+      .limit(1);
+    if (!rows[0]) return undefined;
+    return { ...runToRow(rows[0]), created_by: rows[0].createdBy };
   }
 
   async listRunsByAgent(agentId: number, params?: { limit?: number }): Promise<AgentRunRow[]> {

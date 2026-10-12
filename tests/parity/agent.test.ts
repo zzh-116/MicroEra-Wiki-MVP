@@ -1,11 +1,15 @@
 // P6 — agent service: agent CRUD + grounded run, tool execution, skills, the
 // in-process sandbox, and session-bound agent ask, with the repository and
-// retrieval mocked out for determinism.
+// retrieval mocked out for determinism. All object-scoped operations pass the
+// authenticated user id (7) as the first argument; ownership enforcement is
+// covered separately in agent-auth.test.ts.
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { agentService } from '../../backend/services/agent.service.js';
 import { agentRepository } from '../../backend/repositories/agent.repository.js';
 import { chatRepository } from '../../backend/repositories/chat.repository.js';
 import { retrievalService } from '../../backend/services/retrieval.service.js';
+
+const UID = 7;
 
 function agent(id = 1, overrides: Record<string, unknown> = {}): any {
   return {
@@ -18,7 +22,7 @@ function agent(id = 1, overrides: Record<string, unknown> = {}): any {
     mcp_servers: [],
     skills: [],
     status: 'idle',
-    created_by: null,
+    created_by: UID,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     deleted_at: null,
@@ -52,7 +56,7 @@ describe('P6 agent service — CRUD + run', () => {
     const updateRun = vi.spyOn(agentRepository, 'updateRun').mockResolvedValue(undefined);
     vi.spyOn(retrievalService, 'filteredSearch').mockResolvedValue([hit(2), hit(3)]);
 
-    const r: any = await agentService.run({ agent_id: 1, goal: 'zeolite', method: 'hybrid', top_k: 4 });
+    const r: any = await agentService.run(UID, { agent_id: 1, goal: 'zeolite', method: 'hybrid', top_k: 4 });
 
     expect(r.status).toBe('succeeded');
     expect(r.answer).toContain('Doc 2');
@@ -62,7 +66,7 @@ describe('P6 agent service — CRUD + run', () => {
 
   it('run rejects an empty goal', async () => {
     vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent());
-    await expect(agentService.run({ agent_id: 1, goal: '  ' })).rejects.toMatchObject({ kind: 'validation_failed' });
+    await expect(agentService.run(UID, { agent_id: 1, goal: '  ' })).rejects.toMatchObject({ kind: 'validation_failed' });
   });
 });
 
@@ -72,7 +76,7 @@ describe('P6 agent service — tools + MCP', () => {
 
   it('toolCall rejects an unknown tool', async () => {
     vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent());
-    await expect(agentService.toolCall({ agent_id: 1, tool: 'nope' })).rejects.toMatchObject({ kind: 'validation_failed' });
+    await expect(agentService.toolCall(UID, { agent_id: 1, tool: 'nope' })).rejects.toMatchObject({ kind: 'validation_failed' });
   });
 
   it('toolCall executes the retrieve tool and records a step', async () => {
@@ -84,7 +88,7 @@ describe('P6 agent service — tools + MCP', () => {
     }));
     const updateRun = vi.spyOn(agentRepository, 'updateRun').mockResolvedValue(undefined);
 
-    const r: any = await agentService.toolCall({ agent_id: 1, tool: 'retrieve', input: { query: 'zeolite' } });
+    const r: any = await agentService.toolCall(UID, { agent_id: 1, tool: 'retrieve', input: { query: 'zeolite' } });
 
     expect(r.tool).toBe('retrieve');
     expect(r.result.num_hits).toBe(1);
@@ -94,7 +98,7 @@ describe('P6 agent service — tools + MCP', () => {
   it('mcpCall routes a known tool through the executor', async () => {
     vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent());
     vi.spyOn(retrievalService, 'filteredSearch').mockResolvedValue([hit(1)]);
-    const r: any = await agentService.mcpCall({ agent_id: 1, tool: 'retrieve', arguments: { query: 'x' } });
+    const r: any = await agentService.mcpCall(UID, { agent_id: 1, tool: 'retrieve', arguments: { query: 'x' } });
     expect(r.result.num_hits).toBe(1);
   });
 });
@@ -118,7 +122,7 @@ describe('P6 agent service — skills + sandbox', () => {
 
   it('sandboxRun executes a safe task and stores an artifact', async () => {
     const createArtifact = vi.spyOn(agentRepository, 'createArtifact').mockResolvedValue({ id: 9, run_id: 'run_x', name: 'count_tokens', content_type: 'application/json', data: { tokens: 2 }, created_at: '' });
-    const r: any = await agentService.sandboxRun({ task: 'count_tokens', payload: { text: 'hello world' } });
+    const r: any = await agentService.sandboxRun(UID, { task: 'count_tokens', payload: { text: 'hello world' } });
     expect(r.result.tokens).toBe(2);
     expect(createArtifact).toHaveBeenCalledWith(expect.objectContaining({ name: 'count_tokens', data: { tokens: 2 } }));
   });
@@ -135,11 +139,11 @@ describe('P6 agent service — session-bound ask', () => {
     }));
     vi.spyOn(agentRepository, 'updateRun').mockResolvedValue(undefined);
     vi.spyOn(retrievalService, 'filteredSearch').mockResolvedValue([hit(2)]);
-    vi.spyOn(chatRepository, 'findSessionById').mockResolvedValue({ id: 'sess_1', user_id: 7, title: 't', kb_ids: [], scope: {}, created_at: '', updated_at: '', deleted_at: null } as any);
+    vi.spyOn(chatRepository, 'findSessionById').mockResolvedValue({ id: 'sess_1', user_id: UID, title: 't', kb_ids: [], scope: {}, created_at: '', updated_at: '', deleted_at: null } as any);
     const createMessage = vi.spyOn(chatRepository, 'createMessage').mockResolvedValue(undefined);
     const touch = vi.spyOn(chatRepository, 'touchSession').mockResolvedValue(undefined);
 
-    const r: any = await agentService.agentAsk({ agent_id: 1, session_id: 'sess_1', question: 'zeolite', user_id: 7 });
+    const r: any = await agentService.agentAsk(UID, { agent_id: 1, session_id: 'sess_1', question: 'zeolite' });
 
     expect(r.session_id).toBe('sess_1');
     expect(createMessage).toHaveBeenCalledTimes(2);
@@ -163,27 +167,27 @@ describe('P6 agent service — E1/E4/E5 config honesty + resume semantics', () =
   // E1 — tools whitelist is honored and unknown names are rejected.
   it('run rejects when retrieve is not in the agent tool whitelist', async () => {
     vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent(1, { tools: ['wiki_search'] }));
-    await expect(agentService.run({ agent_id: 1, goal: 'zeolite' })).rejects.toMatchObject({ kind: 'validation_failed' });
+    await expect(agentService.run(UID, { agent_id: 1, goal: 'zeolite' })).rejects.toMatchObject({ kind: 'validation_failed' });
   });
 
   it('run rejects an unknown tool name in the agent config', async () => {
     vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent(1, { tools: ['retrieve', 'bogus'] }));
-    await expect(agentService.run({ agent_id: 1, goal: 'zeolite' })).rejects.toMatchObject({ kind: 'validation_failed' });
+    await expect(agentService.run(UID, { agent_id: 1, goal: 'zeolite' })).rejects.toMatchObject({ kind: 'validation_failed' });
   });
 
   it('toolCall rejects a builtin tool that is not whitelisted', async () => {
     vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent(1, { tools: ['retrieve'] }));
-    await expect(agentService.toolCall({ agent_id: 1, tool: 'wiki_search' })).rejects.toMatchObject({ kind: 'validation_failed' });
+    await expect(agentService.toolCall(UID, { agent_id: 1, tool: 'wiki_search' })).rejects.toMatchObject({ kind: 'validation_failed' });
   });
 
   it('mcpCall (local builtin) rejects a tool that is not whitelisted', async () => {
     vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent(1, { tools: ['echo'] }));
-    await expect(agentService.mcpCall({ agent_id: 1, tool: 'retrieve', arguments: { query: 'x' } })).rejects.toMatchObject({ kind: 'validation_failed' });
+    await expect(agentService.mcpCall(UID, { agent_id: 1, tool: 'retrieve', arguments: { query: 'x' } })).rejects.toMatchObject({ kind: 'validation_failed' });
   });
 
   it('mcpCall (local builtin) allows a whitelisted tool', async () => {
     vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent(1, { tools: ['echo'] }));
-    const r: any = await agentService.mcpCall({ agent_id: 1, tool: 'echo', arguments: { value: 'hi' } });
+    const r: any = await agentService.mcpCall(UID, { agent_id: 1, tool: 'echo', arguments: { value: 'hi' } });
     expect(r.remote).toBe(false);
     expect(r.result.value).toBe('hi');
   });
@@ -192,14 +196,14 @@ describe('P6 agent service — E1/E4/E5 config honesty + resume semantics', () =
   it('run surfaces a capability limit when agent.model is configured', async () => {
     vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent(1, { model: 'gpt-4', instructions: '' }));
     runMocks();
-    const r: any = await agentService.run({ agent_id: 1, goal: 'zeolite' });
+    const r: any = await agentService.run(UID, { agent_id: 1, goal: 'zeolite' });
     expect(r.capability_limits).toEqual(expect.arrayContaining([expect.stringContaining('model-driven synthesis')]));
   });
 
   it('run passes instructions as context and records the limitation', async () => {
     vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent(1, { instructions: 'Answer in bullet points' }));
     runMocks();
-    const r: any = await agentService.run({ agent_id: 1, goal: 'zeolite' });
+    const r: any = await agentService.run(UID, { agent_id: 1, goal: 'zeolite' });
     expect(r.answer).toContain('Answer in bullet points');
     expect(r.capability_limits).toEqual(expect.arrayContaining([expect.stringContaining('cannot guarantee')]));
   });
@@ -207,16 +211,16 @@ describe('P6 agent service — E1/E4/E5 config honesty + resume semantics', () =
   it('run reports no capability limits when model and instructions are empty', async () => {
     vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent(1, { model: '', instructions: '' }));
     runMocks();
-    const r: any = await agentService.run({ agent_id: 1, goal: 'zeolite' });
+    const r: any = await agentService.run(UID, { agent_id: 1, goal: 'zeolite' });
     expect(r.capability_limits).toBeUndefined();
   });
 
   // E4 — resume (Option A) reads a completed result; never re-runs.
   it('resume returns the saved result of a succeeded run without re-running', async () => {
-    vi.spyOn(agentRepository, 'findRunById').mockResolvedValue({ id: 'run_1', agent_id: 1, goal: 'zeolite', status: 'succeeded', steps: [{ step: 1, tool: 'retrieve' }], answer: 'saved answer', trace: {}, created_at: '', updated_at: '' });
+    vi.spyOn(agentRepository, 'findRunWithOwnerById').mockResolvedValue({ id: 'run_1', agent_id: 1, goal: 'zeolite', status: 'succeeded', steps: [{ step: 1, tool: 'retrieve' }], answer: 'saved answer', trace: {}, created_at: '', updated_at: '', created_by: UID });
     const createRun = vi.spyOn(agentRepository, 'createRun');
     const updateRun = vi.spyOn(agentRepository, 'updateRun');
-    const r: any = await agentService.resume({ run_id: 'run_1' });
+    const r: any = await agentService.resume(UID, { run_id: 'run_1' });
     expect(r.run_id).toBe('run_1');
     expect(r.status).toBe('succeeded');
     expect(r.answer).toBe('saved answer');
@@ -225,20 +229,20 @@ describe('P6 agent service — E1/E4/E5 config honesty + resume semantics', () =
   });
 
   it('resume rejects a failed run without re-running', async () => {
-    vi.spyOn(agentRepository, 'findRunById').mockResolvedValue({ id: 'run_1', agent_id: 1, goal: 'zeolite', status: 'failed', steps: [], answer: '', trace: {}, created_at: '', updated_at: '' });
+    vi.spyOn(agentRepository, 'findRunWithOwnerById').mockResolvedValue({ id: 'run_1', agent_id: 1, goal: 'zeolite', status: 'failed', steps: [], answer: '', trace: {}, created_at: '', updated_at: '', created_by: UID });
     const createRun = vi.spyOn(agentRepository, 'createRun');
-    await expect(agentService.resume({ run_id: 'run_1' })).rejects.toMatchObject({ kind: 'conflict' });
+    await expect(agentService.resume(UID, { run_id: 'run_1' })).rejects.toMatchObject({ kind: 'conflict' });
     expect(createRun).not.toHaveBeenCalled();
   });
 
   it('resume rejects a cancelled run', async () => {
-    vi.spyOn(agentRepository, 'findRunById').mockResolvedValue({ id: 'run_1', agent_id: 1, goal: 'zeolite', status: 'cancelled', steps: [], answer: '', trace: {}, created_at: '', updated_at: '' });
-    await expect(agentService.resume({ run_id: 'run_1' })).rejects.toMatchObject({ kind: 'conflict' });
+    vi.spyOn(agentRepository, 'findRunWithOwnerById').mockResolvedValue({ id: 'run_1', agent_id: 1, goal: 'zeolite', status: 'cancelled', steps: [], answer: '', trace: {}, created_at: '', updated_at: '', created_by: UID });
+    await expect(agentService.resume(UID, { run_id: 'run_1' })).rejects.toMatchObject({ kind: 'conflict' });
   });
 
   it('resume rejects a running run', async () => {
-    vi.spyOn(agentRepository, 'findRunById').mockResolvedValue({ id: 'run_1', agent_id: 1, goal: 'zeolite', status: 'running', steps: [], answer: '', trace: {}, created_at: '', updated_at: '' });
-    await expect(agentService.resume({ run_id: 'run_1' })).rejects.toMatchObject({ kind: 'conflict' });
+    vi.spyOn(agentRepository, 'findRunWithOwnerById').mockResolvedValue({ id: 'run_1', agent_id: 1, goal: 'zeolite', status: 'running', steps: [], answer: '', trace: {}, created_at: '', updated_at: '', created_by: UID });
+    await expect(agentService.resume(UID, { run_id: 'run_1' })).rejects.toMatchObject({ kind: 'conflict' });
   });
 
   // E5 — sandbox status honesty.

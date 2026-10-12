@@ -5,7 +5,7 @@
 // behavior is reproducible without an external LLM; `session.agent_ask` ties a
 // run to a chat session by persisting the Q&A as session messages.
 import { randomUUID } from 'node:crypto';
-import { agentRepository } from '../repositories/agent.repository.js';
+import { agentRepository, type AgentRunRow } from '../repositories/agent.repository.js';
 import { chatRepository } from '../repositories/chat.repository.js';
 import { retrievalService } from './retrieval.service.js';
 import { wikiService } from './wiki.service.js';
@@ -130,9 +130,18 @@ export class AgentService {
     }
   }
 
+  /** Resolve a run by id and enforce object-level ownership. A missing run, a
+   *  run whose owning user no longer exists (created_by null), or a run owned by
+   *  another user all surface as the same `resource_not_found` so existence is
+   *  never disclosed. */
+  private async requireOwnedRun(userId: number, runId: string): Promise<AgentRunRow & { created_by: number | null }> {
+    const run = await agentRepository.findRunWithOwnerById(runId);
+    if (!run || run.created_by !== userId) throw new ServiceError('resource_not_found', 'run not found');
+    return run;
+  }
+
   // ── A01: CRUD + run ────────────────────────────────────────────────────────
-  async create(input: { name?: string; description?: string; instructions?: string; model?: string; tools?: unknown[]; mcp_servers?: unknown[]; skills?: unknown[]; created_by?: number }) {
-    if (!input.name?.trim()) throw new ServiceError('validation_failed', 'name is required');
+  async create(input: { name?: string; description?: string; instructions?: string; model?: string; tools?: unknown[]; mcp_servers?: unknown[]; skills?: unknown[]; created_by?: number }) {    if (!input.name?.trim()) throw new ServiceError('validation_failed', 'name is required');
     return agentRepository.createAgent({
       name: input.name.trim(),
       description: input.description ?? '',
@@ -145,19 +154,19 @@ export class AgentService {
     });
   }
 
-  async list(input: { page?: number; page_size?: number }) {
-    const { items, total } = await agentRepository.listAgents({ page: input.page, pageSize: input.page_size });
+  async list(userId: number, input: { page?: number; page_size?: number }) {
+    const { items, total } = await agentRepository.listAgents(userId, { page: input.page, pageSize: input.page_size });
     return { items, total };
   }
 
-  async view(agentId: number) {
+  async view(userId: number, agentId: number) {
     const agent = await agentRepository.findAgentById(agentId);
-    if (!agent) throw new ServiceError('resource_not_found', 'agent not found');
+    if (!agent || agent.created_by !== userId) throw new ServiceError('resource_not_found', 'agent not found');
     return agent;
   }
 
-  async update(agentId: number, patch: { name?: string; description?: string; instructions?: string; model?: string; tools?: unknown[]; mcp_servers?: unknown[]; skills?: unknown[] }) {
-    await this.view(agentId);
+  async update(userId: number, agentId: number, patch: { name?: string; description?: string; instructions?: string; model?: string; tools?: unknown[]; mcp_servers?: unknown[]; skills?: unknown[] }) {
+    await this.view(userId, agentId);
     const updated = await agentRepository.updateAgent(agentId, {
       name: patch.name?.trim() || undefined,
       description: patch.description,
@@ -170,14 +179,14 @@ export class AgentService {
     return updated;
   }
 
-  async remove(agentId: number) {
-    await this.view(agentId);
+  async remove(userId: number, agentId: number) {
+    await this.view(userId, agentId);
     await agentRepository.softDeleteAgent(agentId);
     return { deleted: true, id: agentId };
   }
 
-  async run(input: { agent_id: number; goal?: string; kb_id?: number; top_k?: number; method?: 'vector' | 'lexical' | 'hybrid' }): Promise<AgentRunResult> {
-    const agent = await this.view(input.agent_id);
+  async run(userId: number, input: { agent_id: number; goal?: string; kb_id?: number; top_k?: number; method?: 'vector' | 'lexical' | 'hybrid' }): Promise<AgentRunResult> {
+    const agent = await this.view(userId, input.agent_id);
     const goal = (input.goal ?? '').trim();
     if (!goal) throw new ServiceError('validation_failed', 'goal is required');
 
@@ -224,10 +233,10 @@ export class AgentService {
   }
 
   // ── A02: tools ─────────────────────────────────────────────────────────────
-  async tools(agentId?: number) {
+  async tools(userId: number, agentId?: number) {
     let enabled = BUILTIN_TOOLS.map((t) => t.name);
     if (agentId !== undefined) {
-      const agent = await this.view(agentId);
+      const agent = await this.view(userId, agentId);
       const configured = agent.tools as string[];
       if (Array.isArray(configured) && configured.length > 0) enabled = configured;
     }
@@ -235,8 +244,8 @@ export class AgentService {
     return { tools, total: tools.length };
   }
 
-  async toolCall(input: { agent_id: number; tool?: string; input?: Record<string, unknown>; run_id?: string }) {
-    const agent = await this.view(input.agent_id);
+  async toolCall(userId: number, input: { agent_id: number; tool?: string; input?: Record<string, unknown>; run_id?: string }) {
+    const agent = await this.view(userId, input.agent_id);
     const tool = String(input.tool ?? '');
     if (!tool) throw new ServiceError('validation_failed', 'tool is required');
     if (!BUILTIN_TOOLS.some((t) => t.name === tool)) throw new ServiceError('validation_failed', `unknown tool: ${tool}`);
@@ -246,6 +255,9 @@ export class AgentService {
 
     const runId = input.run_id ?? `run_${randomUUID()}`;
     let run = await agentRepository.findRunById(runId);
+    // A caller may not append steps to a run that belongs to a different agent
+    // (and therefore a different owner) than the one they are authorized to act on.
+    if (run && run.agent_id !== agent.id) throw new ServiceError('resource_not_found', 'run not found');
     if (!run) {
       run = await agentRepository.createRun({ id: runId, agentId: agent.id, goal: String(input.input?.query ?? tool), status: 'running' });
     }
@@ -254,9 +266,8 @@ export class AgentService {
     return { run_id: runId, tool, result };
   }
 
-  async toolResult(input: { run_id: string; step_index?: number }) {
-    const run = await agentRepository.findRunById(input.run_id);
-    if (!run) throw new ServiceError('resource_not_found', 'run not found');
+  async toolResult(userId: number, input: { run_id: string; step_index?: number }) {
+    const run = await this.requireOwnedRun(userId, input.run_id);
     const steps = run.steps as unknown[];
     const idx = input.step_index ?? steps.length - 1;
     const step = steps[idx];
@@ -265,9 +276,9 @@ export class AgentService {
   }
 
   // ── A03: MCP ───────────────────────────────────────────────────────────────
-  async mcpList(agentId?: number) {
+  async mcpList(userId: number, agentId?: number) {
     if (agentId !== undefined) {
-      const agent = await this.view(agentId);
+      const agent = await this.view(userId, agentId);
       const servers = agent.mcp_servers as unknown[];
       return { servers, total: servers.length };
     }
@@ -311,8 +322,8 @@ export class AgentService {
     }
   }
 
-  async mcpCall(input: { agent_id: number; server?: string; tool?: string; arguments?: Record<string, unknown> }) {
-    const agent = await this.view(input.agent_id);
+  async mcpCall(userId: number, input: { agent_id: number; server?: string; tool?: string; arguments?: Record<string, unknown> }) {
+    const agent = await this.view(userId, input.agent_id);
     const tool = String(input.tool ?? '').trim();
     if (!tool) throw new ServiceError('validation_failed', 'tool is required');
     const serverName = (input.server ?? '').trim();
@@ -417,13 +428,13 @@ export class AgentService {
     };
   }
 
-  async sandboxRun(input: { agent_id?: number; task?: string; payload?: Record<string, unknown> }) {
+  async sandboxRun(userId: number, input: { agent_id?: number; task?: string; payload?: Record<string, unknown> }) {
     const task = (input.task ?? 'echo').trim();
     const payload = input.payload ?? {};
     const result = await this.runSandboxTask(task, payload);
     const runId = `run_${randomUUID()}`;
     if (input.agent_id !== undefined) {
-      await this.view(input.agent_id);
+      await this.view(userId, input.agent_id);
       await agentRepository.createRun({
         id: runId,
         agentId: input.agent_id,
@@ -437,12 +448,14 @@ export class AgentService {
     return { run_id: runId, task, artifact_id: artifact.id, result };
   }
 
-  async artifactList(input: { run_id?: string; agent_id?: number }) {
+  async artifactList(userId: number, input: { run_id?: string; agent_id?: number }) {
     if (input.run_id) {
+      await this.requireOwnedRun(userId, input.run_id);
       const items = await agentRepository.listArtifacts(input.run_id);
       return { items, total: items.length };
     }
     if (input.agent_id !== undefined) {
+      await this.view(userId, input.agent_id);
       const runs = await agentRepository.listRunsByAgent(input.agent_id);
       const items = await agentRepository.listArtifactsByRunIds(runs.map((r) => r.id));
       return { items, total: items.length };
@@ -451,8 +464,8 @@ export class AgentService {
   }
 
   // ── A06: runtime control + trace ───────────────────────────────────────────
-  async status(agentId: number) {
-    const agent = await this.view(agentId);
+  async status(userId: number, agentId: number) {
+    const agent = await this.view(userId, agentId);
     const latest = await agentRepository.findLatestRunByAgent(agentId);
     return {
       agent_id: agent.id,
@@ -461,8 +474,8 @@ export class AgentService {
     };
   }
 
-  async check(agentId: number) {
-    const agent = await this.view(agentId);
+  async check(userId: number, agentId: number) {
+    const agent = await this.view(userId, agentId);
     const checks = [
       { field: 'name', ok: !!agent.name.trim() },
       { field: 'instructions', ok: !!agent.instructions.trim() },
@@ -471,24 +484,22 @@ export class AgentService {
     return { agent_id: agent.id, ok: checks.every((c) => c.ok), checks };
   }
 
-  async stop(input: { agent_id?: number; run_id?: string }) {
+  async stop(userId: number, input: { agent_id?: number; run_id?: string }) {
     if (input.run_id) {
-      const run = await agentRepository.findRunById(input.run_id);
-      if (!run) throw new ServiceError('resource_not_found', 'run not found');
+      await this.requireOwnedRun(userId, input.run_id);
       await agentRepository.updateRun(input.run_id, { status: 'cancelled' });
       return { run_id: input.run_id, status: 'cancelled' };
     }
     if (input.agent_id !== undefined) {
-      await this.view(input.agent_id);
+      await this.view(userId, input.agent_id);
       await agentRepository.updateAgent(input.agent_id, { status: 'stopped' });
       return { agent_id: input.agent_id, status: 'stopped' };
     }
     throw new ServiceError('validation_failed', 'agent_id or run_id is required');
   }
 
-  async resume(input: { run_id: string }) {
-    const run = await agentRepository.findRunById(input.run_id);
-    if (!run) throw new ServiceError('resource_not_found', 'run not found');
+  async resume(userId: number, input: { run_id: string }) {
+    const run = await this.requireOwnedRun(userId, input.run_id);
 
     // E4 (Option A) — single-shot runs have no checkpoint. Resume only reads the
     // saved result of a completed run; it never re-creates a run or re-runs
@@ -507,15 +518,15 @@ export class AgentService {
     throw new ServiceError('conflict', `run '${run.id}' is '${run.status}'; single-shot runs cannot be resumed — start a new run instead`);
   }
 
-  async agentAsk(input: { agent_id: number; session_id?: string; question?: string; top_k?: number; method?: 'vector' | 'lexical' | 'hybrid'; user_id?: number }) {
+  async agentAsk(userId: number, input: { agent_id: number; session_id?: string; question?: string; top_k?: number; method?: 'vector' | 'lexical' | 'hybrid' }) {
     const question = (input.question ?? '').trim();
     if (!question) throw new ServiceError('validation_failed', 'question is required');
-    const result = await this.run({ agent_id: input.agent_id, goal: question, top_k: input.top_k, method: input.method });
+    const result = await this.run(userId, { agent_id: input.agent_id, goal: question, top_k: input.top_k, method: input.method });
 
     if (input.session_id) {
       const session = await chatRepository.findSessionById(input.session_id);
       if (!session) throw new ServiceError('resource_not_found', 'session not found');
-      if (input.user_id != null && session.user_id !== input.user_id) throw new ServiceError('resource_not_found', 'session not found');
+      if (session.user_id !== userId) throw new ServiceError('resource_not_found', 'session not found');
       await chatRepository.createMessage({ id: `msg_${randomUUID()}`, sessionId: session.id, role: 'user', content: question });
       await chatRepository.createMessage({ id: `msg_${randomUUID()}`, sessionId: session.id, role: 'assistant', content: result.answer, citations: [], trace: result.trace });
       await chatRepository.touchSession(session.id);
@@ -523,9 +534,8 @@ export class AgentService {
     return { ...result, session_id: input.session_id ?? null };
   }
 
-  async trace(input: { run_id: string }) {
-    const run = await agentRepository.findRunById(input.run_id);
-    if (!run) throw new ServiceError('resource_not_found', 'run not found');
+  async trace(userId: number, input: { run_id: string }) {
+    const run = await this.requireOwnedRun(userId, input.run_id);
     return { run_id: run.id, agent_id: run.agent_id, goal: run.goal, status: run.status, steps: run.steps, trace: run.trace };
   }
 }

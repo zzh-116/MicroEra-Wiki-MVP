@@ -1,6 +1,12 @@
 // Agent v2 operations — REST surface for the agent.* / skills.* /
 // session.agent_ask verbs (P6). Mirrors the other v2 routers: handlers resolve
 // a ServiceError onto the wire contract so CLI/MCP clients see identical JSON.
+//
+// Object-level authorization: every agent/run operation is scoped to the
+// authenticated user (`uid(req)` from the verified JWT). The service enforces
+// ownership and returns `resource_not_found` for resources owned by another user
+// (or with no owner), so resource existence is never disclosed. Skills are a
+// shared, ownerless catalog and remain unscoped.
 import { Router, Request, Response } from 'express';
 import { requireAuth } from '../middleware/auth.js';
 import { agentService } from '../../backend/services/agent.service.js';
@@ -69,14 +75,14 @@ agentV2Router.post('/agent/create', (req, res) =>
 
 agentV2Router.get('/agent/list', (req, res) =>
   handle('agent.list', req, res, () =>
-    agentService.list({ page: toInt(req.query.page), page_size: toInt(req.query.page_size) })));
+    agentService.list(uid(req), { page: toInt(req.query.page), page_size: toInt(req.query.page_size) })));
 
 agentV2Router.get('/agent/view', (req, res) =>
-  handle('agent.view', req, res, () => agentService.view(Number(idFrom(req, 'agent_id')))));
+  handle('agent.view', req, res, () => agentService.view(uid(req), Number(idFrom(req, 'agent_id')))));
 
 agentV2Router.patch('/agent/update', (req, res) =>
   handle('agent.update', req, res, () =>
-    agentService.update(Number(req.body?.agent_id), {
+    agentService.update(uid(req), Number(req.body?.agent_id), {
       name: req.body?.name,
       description: req.body?.description,
       instructions: req.body?.instructions,
@@ -87,11 +93,11 @@ agentV2Router.patch('/agent/update', (req, res) =>
     })));
 
 agentV2Router.delete('/agent/delete', (req, res) =>
-  handle('agent.delete', req, res, () => agentService.remove(Number(idFrom(req, 'agent_id')))));
+  handle('agent.delete', req, res, () => agentService.remove(uid(req), Number(idFrom(req, 'agent_id')))));
 
 agentV2Router.post('/agent/run', (req, res) =>
   handle('agent.run', req, res, () =>
-    agentService.run({
+    agentService.run(uid(req), {
       agent_id: Number(req.body?.agent_id),
       goal: req.body?.goal,
       kb_id: toInt(req.body?.kb_id),
@@ -101,11 +107,11 @@ agentV2Router.post('/agent/run', (req, res) =>
 
 // ── A02: tools ───────────────────────────────────────────────────────────────
 agentV2Router.get('/agent/tools', (req, res) =>
-  handle('agent.tools', req, res, () => agentService.tools(toInt(req.query.agent_id))));
+  handle('agent.tools', req, res, () => agentService.tools(uid(req), toInt(req.query.agent_id))));
 
 agentV2Router.post('/agent/tool_call', (req, res) =>
   handle('agent.tool_call', req, res, () =>
-    agentService.toolCall({
+    agentService.toolCall(uid(req), {
       agent_id: Number(req.body?.agent_id),
       tool: req.body?.tool,
       input: req.body?.input,
@@ -114,11 +120,11 @@ agentV2Router.post('/agent/tool_call', (req, res) =>
 
 agentV2Router.post('/agent/tool_result', (req, res) =>
   handle('agent.tool_result', req, res, () =>
-    agentService.toolResult({ run_id: String(req.body?.run_id ?? ''), step_index: toInt(req.body?.step_index) })));
+    agentService.toolResult(uid(req), { run_id: String(req.body?.run_id ?? ''), step_index: toInt(req.body?.step_index) })));
 
 // ── A03: MCP ─────────────────────────────────────────────────────────────────
 agentV2Router.get('/agent/mcp_list', (req, res) =>
-  handle('agent.mcp_list', req, res, () => agentService.mcpList(toInt(req.query.agent_id))));
+  handle('agent.mcp_list', req, res, () => agentService.mcpList(uid(req), toInt(req.query.agent_id))));
 
 agentV2Router.post('/agent/mcp_test', (req, res) =>
   handle('agent.mcp_test', req, res, () =>
@@ -126,7 +132,7 @@ agentV2Router.post('/agent/mcp_test', (req, res) =>
 
 agentV2Router.post('/agent/mcp_call', (req, res) =>
   handle('agent.mcp_call', req, res, () =>
-    agentService.mcpCall({
+    agentService.mcpCall(uid(req), {
       agent_id: Number(req.body?.agent_id),
       server: req.body?.server,
       tool: req.body?.tool,
@@ -155,36 +161,35 @@ agentV2Router.get('/agent/sandbox_status', (req, res) =>
 
 agentV2Router.post('/agent/sandbox_run', (req, res) =>
   handle('agent.sandbox_run', req, res, () =>
-    agentService.sandboxRun({ agent_id: toInt(req.body?.agent_id), task: req.body?.task, payload: req.body?.payload })));
+    agentService.sandboxRun(uid(req), { agent_id: toInt(req.body?.agent_id), task: req.body?.task, payload: req.body?.payload })));
 
 agentV2Router.get('/agent/artifact_list', (req, res) =>
   handle('agent.artifact_list', req, res, () =>
-    agentService.artifactList({ run_id: req.query.run_id ? String(req.query.run_id) : undefined, agent_id: toInt(req.query.agent_id) })));
+    agentService.artifactList(uid(req), { run_id: req.query.run_id ? String(req.query.run_id) : undefined, agent_id: toInt(req.query.agent_id) })));
 
 // ── A06: runtime control + trace ─────────────────────────────────────────────
 agentV2Router.get('/agent/status', (req, res) =>
-  handle('agent.status', req, res, () => agentService.status(Number(idFrom(req, 'agent_id')))));
+  handle('agent.status', req, res, () => agentService.status(uid(req), Number(idFrom(req, 'agent_id')))));
 
 agentV2Router.get('/agent/check', (req, res) =>
-  handle('agent.check', req, res, () => agentService.check(Number(idFrom(req, 'agent_id')))));
+  handle('agent.check', req, res, () => agentService.check(uid(req), Number(idFrom(req, 'agent_id')))));
 
 agentV2Router.post('/agent/stop', (req, res) =>
   handle('agent.stop', req, res, () =>
-    agentService.stop({ agent_id: toInt(req.body?.agent_id), run_id: req.body?.run_id })));
+    agentService.stop(uid(req), { agent_id: toInt(req.body?.agent_id), run_id: req.body?.run_id })));
 
 agentV2Router.post('/agent/resume', (req, res) =>
-  handle('agent.resume', req, res, () => agentService.resume({ run_id: String(req.body?.run_id ?? '') })));
+  handle('agent.resume', req, res, () => agentService.resume(uid(req), { run_id: String(req.body?.run_id ?? '') })));
 
 agentV2Router.post('/session/agent_ask', (req, res) =>
   handle('session.agent_ask', req, res, () =>
-    agentService.agentAsk({
+    agentService.agentAsk(uid(req), {
       agent_id: Number(req.body?.agent_id),
       session_id: req.body?.session_id,
       question: req.body?.question,
       top_k: toInt(req.body?.top_k),
       method: req.body?.method,
-      user_id: uid(req),
     })));
 
 agentV2Router.get('/agent/trace', (req, res) =>
-  handle('agent.trace', req, res, () => agentService.trace({ run_id: String(idFrom(req, 'run_id') ?? '') })));
+  handle('agent.trace', req, res, () => agentService.trace(uid(req), { run_id: String(idFrom(req, 'run_id') ?? '') })));
