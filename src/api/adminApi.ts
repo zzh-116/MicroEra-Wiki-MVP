@@ -48,6 +48,8 @@ export interface ImportJob {
   steps: ImportJobStep[];
   startedAt: string;
   entryId?: number;
+  /** Backend job id (`imp-…`), present for the text-import path. */
+  serverJobId?: string;
 }
 
 /** Backend async import job, as returned by /pipeline/jobs/:id */
@@ -101,8 +103,9 @@ function sampleContent(fileName: string): { data: string; isText: boolean } {
 }
 
 export const adminApi = {
-  async getImportJobs(): Promise<ImportJob[]> {
-    return Promise.resolve([...activeJobs]);
+  async getImportJobs(): Promise<ServerImportJob[]> {
+    const res = await get<{ jobs: ServerImportJob[] }>('/pipeline/jobs');
+    return res.jobs;
   },
 
   async startImportJob(
@@ -205,6 +208,7 @@ export const adminApi = {
       }
 
       const data = await result.json();
+      if (data?.jobId) job.serverJobId = data.jobId;
 
       // Map backend stages[] to frontend steps[]
       if (data.stages && Array.isArray(data.stages)) {

@@ -34,6 +34,8 @@ export interface ImportJob {
 }
 
 const MAX_CONCURRENT_IMPORTS = 2;
+/** Terminal jobs older than this are pruned to keep the in-memory history bounded. */
+const HISTORY_TTL_MS = 3 * 24 * 60 * 60 * 1000;
 
 class ImportJobService {
   private jobs = new Map<string, ImportJob>();
@@ -47,6 +49,8 @@ class ImportJobService {
       chunkConfig?: Partial<ChunkConfig>;
     } = {},
   ): ImportJob {
+    this.pruneHistory();
+
     const id = `imp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const now = new Date().toISOString();
 
@@ -76,6 +80,37 @@ class ImportJobService {
     this.schedule();
 
     logger.info(`Created job ${id} for ${file.originalname}`);
+    return job;
+  }
+
+  /** Record a finished import as a terminal job — no file, no queue. Used by the
+   *  synchronous text-import path so text imports also appear in the history
+   *  returned by `listJobs()` (and therefore survive page refreshes). */
+  createCompletedJob(
+    result: ImportResult,
+    fileName: string,
+    fileSize: number,
+    metadata?: ImportInput['entryMetadata'],
+  ): ImportJob {
+    this.pruneHistory();
+
+    const id = `imp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const now = new Date().toISOString();
+    const job: ImportJob = {
+      id,
+      status: result.success ? 'success' : 'failed',
+      filename: fileName,
+      fileSize,
+      filePath: '',
+      createdAt: now,
+      updatedAt: now,
+      result,
+      stages: result.stages ?? [],
+      error: result.errors?.length ? result.errors.join('; ') : undefined,
+      entryId: result.entryId > 0 ? result.entryId : undefined,
+      metadata,
+    };
+    this.jobs.set(id, job);
     return job;
   }
 
@@ -163,6 +198,16 @@ class ImportJobService {
     }
 
     return { ...job };
+  }
+
+  /** Drop terminal jobs older than HISTORY_TTL_MS so the in-memory Map doesn't
+   *  grow without bound on a long-running server. In-flight jobs are kept. */
+  private pruneHistory(): void {
+    const cutoff = Date.now() - HISTORY_TTL_MS;
+    for (const [id, job] of this.jobs) {
+      if (job.status === 'pending' || job.status === 'running') continue;
+      if (new Date(job.createdAt).getTime() < cutoff) this.jobs.delete(id);
+    }
   }
 
   private cleanupFile(filePath: string): void {

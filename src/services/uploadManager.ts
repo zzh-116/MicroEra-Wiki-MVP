@@ -75,6 +75,47 @@ class UploadManager {
       .map((j) => ({ ...j }));
   }
 
+  /** Hydrate history from the backend on init so the "最近导入" list survives
+   *  page switches and browser refreshes, and in-flight binary jobs resume
+   *  polling. Best-effort: a failure here must never break the import page. */
+  async hydrateFromServer(): Promise<void> {
+    try {
+      const serverJobs = await adminApi.getImportJobs();
+      for (const sj of serverJobs) {
+        // Merge, don't overwrite. A local job may already track this backend job
+        // under a different key (up-xxx) with serverJobId set, so dedup on both
+        // the id and the serverJobId to avoid duplicates on page switches.
+        const alreadyTracked =
+          this.jobs.has(sj.id) ||
+          Array.from(this.jobs.values()).some((j) => j.serverJobId === sj.id);
+        if (alreadyTracked) continue;
+
+        const job: UploadJob = {
+          id: sj.id,
+          filename: sj.filename,
+          fileSize: sj.fileSize,
+          targetSpaceId: '',
+          status: sj.status,
+          uploadProgress: null,
+          stages: this.adaptStages(sj.stages),
+          error: sj.error,
+          entryId: sj.entryId,
+          serverJobId: sj.id,
+          createdAt: sj.createdAt,
+          updatedAt: sj.updatedAt,
+        };
+        this.jobs.set(job.id, job);
+
+        if (job.status === 'pending' || job.status === 'running') {
+          this.startPolling(job.id, sj.id);
+        }
+      }
+      this.notify();
+    } catch (err) {
+      console.warn('[UploadManager] Failed to hydrate import history:', err);
+    }
+  }
+
   private update(id: string, patch: Partial<UploadJob>): void {
     const job = this.jobs.get(id);
     if (!job) return;
@@ -153,6 +194,7 @@ class UploadManager {
         status: success ? 'success' : 'failed',
         stages: this.adaptLegacySteps(result.steps),
         entryId: result.entryId,
+        serverJobId: result.serverJobId,
         error: success ? undefined : this.legacyError(result) || '导入失败',
       });
     } catch (err: any) {
