@@ -20,7 +20,10 @@ let upload: any = null;
 try {
   const tmpDir = './backend/data/uploads';
   fs.mkdirSync(tmpDir, { recursive: true });
-  upload = multer({ dest: tmpDir, limits: { fileSize: 50 * 1024 * 1024 } });
+  // defParamCharset tells busboy to decode multipart Content-Disposition params
+  // (e.g. filename) as UTF-8 instead of the Latin-1 default, so CJK filenames
+  // survive into job history instead of showing mojibake after a page refresh.
+  upload = multer({ dest: tmpDir, limits: { fileSize: 50 * 1024 * 1024 }, defParamCharset: 'utf8' });
 } catch { console.warn('[Pipeline] multer not available'); }
 
 // Health
