@@ -225,7 +225,15 @@ pipelineRouter.post('/import/string', async (req: Request, res: Response) => {
       const meta = metadata || (req.body as any)?.entryMetadata;
       if (!content) { res.status(400).json({ error: 'MISSING_INPUT' }); return; }
       const result = await importService.importFromApi(content, fileName || 'api_import.md', meta, { skipEmbedding, chunkConfig });
-    res.status(result.success ? 200 : 422).json(result);
+      // Record a terminal job so text imports also appear in GET /pipeline/jobs
+      // history (text imports are synchronous, so synthesize a completed job).
+      const job = importJobService.createCompletedJob(
+        result,
+        fileName || 'api_import.md',
+        typeof content === 'string' ? Buffer.byteLength(content, 'utf8') : 0,
+        meta,
+      );
+    res.status(result.success ? 200 : 422).json({ ...result, jobId: job.id });
   } catch (err: any) {
     console.error('[Pipeline] String import failed:', err.message, err.code, err.detail, err.constraint);
     res.status(500).json({

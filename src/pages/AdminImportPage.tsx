@@ -82,6 +82,23 @@ function fileTypeLabel(fileName: string): string {
   return map[ext] || `${ext} 文件`;
 }
 
+// ─── Helper: compact relative timestamp for the history list ────────────────
+function formatRelativeTime(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return iso;
+
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const startOfTarget = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+  const dayDiff = Math.round((startOfToday - startOfTarget) / 86_400_000);
+
+  const hhmm = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+  if (dayDiff <= 0) return hhmm;
+  if (dayDiff === 1) return `昨天 ${hhmm}`;
+  const mmdd = `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  return `${mmdd} ${hhmm}`;
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 export default function AdminImportPage() {
   const navigate = useNavigate();
@@ -99,27 +116,41 @@ export default function AdminImportPage() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const activeJobIdRef = useRef<string | null>(null);
-  const archivedRef = useRef<Set<string>>(new Set());
 
-  // ── Subscribe to the global upload manager ─────────────────────────────────
+  // -- Sync component state with the global upload manager -------------------
+  // The manager lives in module scope, so it survives React unmounts / page
+  // switches and keeps polling backend jobs. On mount (and on every update)
+  // we read its current snapshot so the "最近导入" list is never empty after
+  // the user navigates away and comes back.
   useEffect(() => {
-    return uploadManager.subscribe(() => {
-      if (!activeJobIdRef.current) return;
-      const job = uploadManager.getJob(activeJobIdRef.current);
-      if (!job) return;
+    const syncFromManager = () => {
+      const allJobs = uploadManager.getJobs();
+      const completed = allJobs.filter(
+        (j) => j.status === "success" || j.status === "failed" || j.status === "cancelled",
+      );
+      setHistoryJobs(completed.slice(0, 10));
 
-      // Spread into a new object — the manager mutates the source object in place,
-      // so passing the same reference would skip React re-render.
-      setActiveJob({ ...job });
-
-      if (
-        (job.status === 'success' || job.status === 'failed') &&
-        !archivedRef.current.has(job.id)
-      ) {
-        archivedRef.current.add(job.id);
-        setHistoryJobs((prev) => [job, ...prev]);
+      // If a job is still running, restore it as the active job so the progress
+      // UI continues to show after the user returns to this page.
+      const running = allJobs.find(
+        (j) => j.status === "uploading" || j.status === "pending" || j.status === "running",
+      );
+      if (running) {
+        activeJobIdRef.current = running.id;
+        setActiveJob({ ...running });
+      } else if (activeJobIdRef.current) {
+        // The active job reached a terminal state — reflect its final result so
+        // the success/failure view renders instead of hanging on "processing".
+        const done = allJobs.find((j) => j.id === activeJobIdRef.current);
+        if (done) setActiveJob({ ...done });
+      } else {
+        setActiveJob(null);
       }
-    });
+    };
+
+    syncFromManager();
+    void uploadManager.hydrateFromServer();
+    return uploadManager.subscribe(syncFromManager);
   }, []);
 
   // ── Auth guard ─────────────────────────────────────────────────────────────
@@ -772,8 +803,8 @@ export default function AdminImportPage() {
                 <p className="text-[11px] text-gray-300 mt-0.5">上传文件后将在此显示</p>
               </div>
             ) : (
-              <ul className="divide-y divide-gray-100" role="list">
-                {historyJobs.slice(0, 5).map((job) => {
+              <ul className="divide-y divide-gray-100 max-h-[320px] overflow-y-auto" role="list">
+                {historyJobs.slice(0, 10).map((job) => {
                   const isJobSuccess = job.status === 'success';
                   const isJobFailed = job.status === 'failed';
                   const isJobCancelled = job.status === 'cancelled';
@@ -800,7 +831,7 @@ export default function AdminImportPage() {
                             {job.filename}
                           </p>
                           <p className="text-[11px] text-gray-400 mt-0.5 font-mono">
-                            {job.createdAt}
+                            {formatRelativeTime(job.createdAt)}
                           </p>
 
                           {/* Failed detail */}
@@ -846,7 +877,7 @@ export default function AdminImportPage() {
             {/* Pipeline step legend */}
             {historyJobs.length > 0 && (
               <p className="text-[10px] text-gray-300 mt-2 pt-2 border-t border-gray-50 text-center">
-                最近 5 条导入记录
+                最近 10 条导入记录
               </p>
             )}
           </section>
