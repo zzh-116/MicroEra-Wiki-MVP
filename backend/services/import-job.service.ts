@@ -60,8 +60,18 @@ class ImportJobService {
     // Move the multer temp file to a stable, job-owned path so it survives the
     // request lifetime and can be read later by the background runner.
     const stablePath = path.join(jobsDir, `${id}.bin`);
-    fs.renameSync(file.path, stablePath);
-
+    // copy + unlink instead of renameSync because multer's temp directory and
+    // the jobs directory may live on different mounts inside Docker (EXDEV).
+    try {
+      fs.copyFileSync(file.path, stablePath);
+    } finally {
+      try {
+        fs.unlinkSync(file.path);
+      } catch {
+        /* ignore cleanup errors */
+      }
+    }
+    
     const job: ImportJob = {
       id,
       status: 'pending',
