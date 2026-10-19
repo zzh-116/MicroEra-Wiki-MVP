@@ -1,8 +1,8 @@
 # MicroEra Wiki MVP — Docker 镜像
-# Docling 不包含在镜像中（依赖链 ~500MB），文档导入由宿主机 Python 提供。
+# 把 Docling 打包进容器，避免依赖宿主机环境
 
 # ─── Stage 1: Build ──────────────────────────────────────────
-FROM node:22-alpine AS builder
+FROM node:22-slim AS builder
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
@@ -11,8 +11,16 @@ RUN npm run build
 RUN npm prune --production
 
 # ─── Stage 2: Runtime ────────────────────────────────────────
-FROM node:22-alpine
+FROM node:22-slim
 WORKDIR /app
+
+# 安装 Python、pip 和 Docling
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install docling --break-system-packages --no-cache-dir -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
