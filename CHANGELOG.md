@@ -101,3 +101,5 @@
 - 清理废弃的 `src/pages/KnowledgeGraphPage.tsx`（自 G6 探索器接管 `/graph` 与 `/knowledge-graph` 后未再使用）。
 - 清理 `.gitignore` 中误提交的本机绝对路径；新增 test-results 忽略规则与图谱预览图。
 - 清理 Sandbox HTTP 模式相关废弃文件（auth/client/sync/assets/detail/markdown）。
+- **mock 数据去重审计（2026-10-20）**：检查 `src/mock/mockData.ts` 五个 mock 集合（markdownFiles / references / papers / entries / QA），确认《Quantum Error Correction with Stabilizer Codes》多处出现均为跨集合结构性引用，同一集合内无真重复，无代码改动。
+- **内容清理任务状态（2026-10-20）**：清理类任务 1~4（测试污染、ID 9~40 恢复、109 无文件、135 未关联文件）因原 NUC 生产库（192.168.40.60）不可访问而阻塞；详见 `analysis-output/cleanup-decision-2026-10-20.md`。

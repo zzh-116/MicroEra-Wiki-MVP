@@ -86,11 +86,11 @@
 发现：2026-09-16|完成：2026-09-24|人员：szh
 
 #### 清理类（删除/归档过期或测试内容）
-- [ ] [清理] 删除数据库测试污染条目：`Wiki: approval-testXX`、`Friday Demo Upload Test`、`测试条目（已删除）`等 | 发现：2026-09-16
-- [ ] [清理] 处理 ID 9~40 早期 MOF 条目在 UCL 侧被测试数据覆盖的问题 | 发现：2026-09-16
-- [ ] [清理] 处理 109 个缺少本地文件的 entry | 发现：2026-09-16
-- [ ] [清理] 处理未关联历史文件：`no-entry-files-report` 中 135 个未关联文件 | 发现：2026-09-16
-- [ ] [清理] 处理 `src/mock/mockData.ts` 中《Quantum Error Correction with Stabilizer Codes》重复引用 | 发现：2026-09-16
+- [ ] [清理] 删除数据库测试污染条目：`Wiki: approval-testXX`、`Friday Demo Upload Test`、`测试条目（已删除）`等 | 发现：2026-09-16 | 状态：阻塞（2026-10-20，原 NUC 生产库 192.168.40.60 不可访问）
+- [ ] [清理] 处理 ID 9~40 早期 MOF 条目在 UCL 侧被测试数据覆盖的问题 | 发现：2026-09-16 | 状态：阻塞（2026-10-20，原 NUC 生产库不可访问）
+- [ ] [清理] 处理 109 个缺少本地文件的 entry | 发现：2026-09-16 | 状态：阻塞（2026-10-20，原 NUC 生产库不可访问）
+- [ ] [清理] 处理未关联历史文件：`no-entry-files-report` 中 135 个未关联文件 | 发现：2026-09-16 | 状态：阻塞（2026-10-20，原 NUC 生产库不可访问）
+- [x] [清理] 处理 `src/mock/mockData.ts` 中《Quantum Error Correction with Stabilizer Codes》重复引用 | 发现：2026-09-16 | 完成：2026-10-20 | 结论：5 个 mock 集合（mockMarkdownFiles / mockReferences / mockPapers / mockEntries / mockQAData）内部均无同一集合内真重复；该标题多处出现均为跨集合结构性引用（论文/条目/引用/正文/QA 各自指向同一篇文献），无需删除，无代码改动
 
 #### 文档/内容填充类
 - [ ] [文档] 统一对外条目数口径：统一使用 328 条有效条目，避免 331/328/345 混用 | 发现：2026-09-16
