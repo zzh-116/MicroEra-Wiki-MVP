@@ -27,6 +27,7 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/backend ./backend
 COPY --from=builder /app/server ./server
+COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/tsconfig.json ./
 COPY --from=builder /app/drizzle.config.ts ./
 

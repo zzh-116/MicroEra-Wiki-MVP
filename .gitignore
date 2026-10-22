@@ -22,3 +22,6 @@ __pycache__/
 
 # Test artifacts
 test-results/
+
+# Node.js compile cache (tsx / node --experimental-compile-cache)
+tmp/
