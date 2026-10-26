@@ -1,4 +1,4 @@
-# 微观纪元 Wiki (MicroEra Wiki MVP)
+# 微观纪元 Wiki (MiqroEra Wiki MVP)
 
 企业知识资产目录与 AI 知识平台，集成**企业数据源管道** + **Knowledge Parsing Layer** + **多轮 RAG 问答** + **学术文献检索导入**：多格式导入 → 统一解析 → 知识标准化 → 分块嵌入 → 混合检索 → 多轮 RAG 问答。
 
@@ -168,11 +168,17 @@ docker compose up -d postgres    # 仅数据库
 docker compose up -d             # 全栈（含 app 容器）
 ```
 
-- **Docling**（文档解析，可选）：
+- **Docling**（文档解析，可选）——需 Python 3.10–3.12：
 
 ```bash
-pip install docling              # PDF/Word/PPT/Excel/图片解析
+python -m pip install -r requirements.txt   # 固定 docling==2.111.0
+# 环境诊断（Python 版本 / Docling CLI / 模型缓存 / 实际解析）：
+npm run docling:doctor
 ```
+
+> 完整复现步骤、`DOCLING_CMD`/`DOCLING_PYTHON` 配置与常见错误见
+> `docs/handover/12_Docling_Environment.md`。`start.ps1` 自动探测
+> Python 3.12 + Docling，不依赖个人绝对安装路径。
 
 ## 快速开始
 
@@ -236,7 +242,7 @@ docker compose up -d   # PostgreSQL + App 容器 → http://localhost:3001
 
 ### NUC 自动部署
 
-NUC 服务器 (`192.168.40.60`) 已配置 GitLab 轮询自动部署 — `git push` 后 ≤2 分钟自动生效。
+NUC 服务器 (`<NUC_IP>`) 已配置 GitLab 轮询自动部署 — `git push` 后 ≤2 分钟自动生效。
 
 **架构：**
 ```
@@ -252,7 +258,7 @@ NUC 服务器 (`192.168.40.60`) 已配置 GitLab 轮询自动部署 — `git pus
 **当前配置：**
 | 项目 | 值 |
 |------|-----|
-| NUC IP | `192.168.40.60` |
+| NUC IP | `<NUC_IP>` |
 | Git Remote | `ssh://git@git.miqroera.com:12222/intership/microera-wiki-mvp.git` |
 | 部署目录 | `/data/code-project/microera-wiki` |
 | Timer | `auto-deploy.timer`（每 2 分钟） |
@@ -262,13 +268,13 @@ NUC 服务器 (`192.168.40.60`) 已配置 GitLab 轮询自动部署 — `git pus
 **运维命令：**
 ```bash
 # 查看部署日志
-ssh devops@192.168.40.60 journalctl -u auto-deploy.service -f
+ssh devops@<NUC_IP> journalctl -u auto-deploy.service -f
 
 # 手动立即部署
-ssh devops@192.168.40.60 sudo systemctl start auto-deploy.service
+ssh devops@<NUC_IP> sudo systemctl start auto-deploy.service
 
 # 查看 timer 状态
-ssh devops@192.168.40.60 systemctl status auto-deploy.timer
+ssh devops@<NUC_IP> systemctl status auto-deploy.timer
 ```
 
 详细配置步骤见 [NUC 部署指南 §11.7](docs/handover/11_NUC_Deployment.md#117-自动部署polling-auto-deploy)。
@@ -522,13 +528,13 @@ DEEPSEEK_CHAT_MODEL=deepseek-v4-flash
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/microera_wiki
 
 # Sandbox 数据源（HTTP 模式）
-SANDBOX_BASE_URL=http://139.196.211.120:6810
+SANDBOX_BASE_URL=http://<SANDBOX_HOST>:6810
 SANDBOX_USERNAME=admin
 SANDBOX_PASSWORD=123456
 
 # Sandbox 数据源（DB 直连模式 — 推荐）
 SANDBOX_DB_ENABLED=true             # 启用 MySQL 直连
-SANDBOX_DB_HOST=10.36.160.33        # MySQL 主机
+SANDBOX_DB_HOST=<SANDBOX_DB_HOST>        # MySQL 主机
 SANDBOX_DB_PORT=3306                # MySQL 端口
 SANDBOX_DB_NAME=miqroproject        # 数据库名
 SANDBOX_DB_USER=root                # 用户名

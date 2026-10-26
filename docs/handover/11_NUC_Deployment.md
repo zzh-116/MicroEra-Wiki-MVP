@@ -2,7 +2,7 @@
 
 > **目标读者**: DevOps / SRE
 > **阅读时间**: 20 分钟
-> **目标机器**: Intel NUC @ 192.168.40.60
+> **目标机器**: Intel NUC @ <NUC_IP>
 
 ---
 
@@ -23,7 +23,7 @@
 
 | 端口 | 服务 |
 |------|------|
-| 3001 | MicroEra Wiki MVP (Express API + 前端 SPA) |
+| 3001 | MiqroEra Wiki MVP (Express API + 前端 SPA) |
 | 5432 | PostgreSQL (Docker) |
 | 11434 | Ollama API |
 
@@ -45,7 +45,7 @@
 ### Step 1 — SSH 登录服务器
 
 ```bash
-ssh devops@192.168.40.60
+ssh devops@<NUC_IP>
 # 密码见 NUC.txt
 ```
 
@@ -197,7 +197,7 @@ npm run build
 
 ```bash
 npm run server
-# 访问 http://192.168.40.60:3001
+# 访问 http://<NUC_IP>:3001
 ```
 
 **方式 2：systemd 服务（推荐，后台自启动）**
@@ -206,7 +206,7 @@ npm run server
 
 ```ini
 [Unit]
-Description=MicroEra Wiki MVP
+Description=MiqroEra Wiki MVP
 After=network.target docker.service
 
 [Service]
@@ -246,7 +246,7 @@ curl http://localhost:3001/api/connectors
 curl "http://localhost:3001/api/connectors/arxiv/documents?keyword=quantum"
 
 # 访问前端
-# 浏览器打开: http://192.168.40.60:3001
+# 浏览器打开: http://<NUC_IP>:3001
 ```
 
 ---
@@ -308,9 +308,9 @@ crontab -e
 
 ## 11.5 外部访问（如需要）
 
-NUC 当前 IP 为 `192.168.40.60`（局域网地址）。如需外网访问：
+NUC 当前 IP 为 `<NUC_IP>`（局域网地址）。如需外网访问：
 
-1. **路由器端口转发**：将 WAN 端口 3001 转发到 `192.168.40.60:3001`
+1. **路由器端口转发**：将 WAN 端口 3001 转发到 `<NUC_IP>:3001`
 2. **Nginx 反向代理**（推荐）：
 
 ```nginx
@@ -336,10 +336,10 @@ server {
 
 ```bash
 #!/bin/bash
-# deploy-nuc.sh — MicroEra Wiki MVP NUC 一键部署
+# deploy-nuc.sh — MiqroEra Wiki MVP NUC 一键部署
 set -e
 
-echo "=== MicroEra Wiki MVP NUC Deployment ==="
+echo "=== MiqroEra Wiki MVP NUC Deployment ==="
 
 cd /data/code-project
 if [ ! -d microera-wiki ]; then
@@ -374,7 +374,7 @@ npm run build
 sudo systemctl restart microera-wiki || echo ">> systemd 服务未配置，手动启动: npm run server"
 
 echo "=== 部署完成 ==="
-echo "访问: http://192.168.40.60:3001"
+echo "访问: http://<NUC_IP>:3001"
 ```
 
 ---

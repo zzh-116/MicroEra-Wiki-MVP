@@ -7,7 +7,7 @@
 
 ## 1.1 项目介绍
 
-**MicroEra Wiki MVP** 是一个面向企业科研场景的智能知识库系统。
+**MiqroEra Wiki MVP** 是一个面向企业科研场景的智能知识库系统。
 它能够：
 
 - 导入多种格式的科研文档（PDF、DOCX、PPTX、Markdown、图片等）

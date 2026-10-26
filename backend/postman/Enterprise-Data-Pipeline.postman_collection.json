@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "MicroEra Wiki MVP — Enterprise Data Pipeline",
+    "name": "MiqroEra Wiki MVP — Enterprise Data Pipeline",
     "description": "# 企业数据源管道 API\n\n完整数据管道：**Upload → Parse → Document → Chunk → Embed → Vector → Retrieve → LLM**\n\n## 管道步骤\n\n1. **Upload** — 文件上传 (multipart) 或 API 提交\n2. **Parse** — MarkItDown 统一解析 (PDF/Word/Markdown/TXT/PNG → Markdown)\n3. **Document** — Markdown + 元数据管理\n4. **Chunk** — 智能分块 (fixed / paragraph / sentence / markdown-aware)\n5. **Embed** — BGE-M3 / nomic-embed-text 向量化 (Ollama)\n6. **Vector** — Milvus / 内存向量库存储\n7. **Retrieve** — 语义搜索 (Embedding → TopK → Context)\n8. **LLM** — Ollama Qwen/DeepSeek RAG 问答\n\n## 环境要求\n- Ollama: http://localhost:11434\n- Milvus: localhost:19530 (可选，自动降级到内存向量库)\n- Node.js >= 18",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "microera-wiki"
@@ -159,7 +159,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"content\": \"# 企业知识文档\\n\\n## 产品概述\\n\\nMicroEra 量子计算材料设计平台致力于推进量子材料与超分子结构的计算设计。\\n\\n### 核心特性\\n\\n- 高通量材料带隙逆向搜索\\n- 基于图神经网络（GNN）实现分子性质多层级预测\\n- DFT 算力自动化排班与交付系统\\n\\n## 技术架构\\n\\n平台采用微服务架构，前端使用 React，后端使用 Express，AI 服务基于 Ollama 本地部署。\",\n  \"fileName\": \"product_intro.md\",\n  \"metadata\": {\n    \"title\": \"产品技术介绍\",\n    \"entry_type\": \"product\",\n    \"summary\": \"MicroEra 量子计算材料设计平台产品与技术架构介绍\",\n    \"visibility\": \"public\",\n    \"tags\": [\"产品介绍\", \"技术架构\", \"材料计算\"]\n  },\n  \"skipEmbedding\": false,\n  \"chunkConfig\": {\n    \"strategy\": \"markdown\",\n    \"chunkSize\": 300\n  }\n}"
+              "raw": "{\n  \"content\": \"# 企业知识文档\\n\\n## 产品概述\\n\\nMiqroEra 量子计算材料设计平台致力于推进量子材料与超分子结构的计算设计。\\n\\n### 核心特性\\n\\n- 高通量材料带隙逆向搜索\\n- 基于图神经网络（GNN）实现分子性质多层级预测\\n- DFT 算力自动化排班与交付系统\\n\\n## 技术架构\\n\\n平台采用微服务架构，前端使用 React，后端使用 Express，AI 服务基于 Ollama 本地部署。\",\n  \"fileName\": \"product_intro.md\",\n  \"metadata\": {\n    \"title\": \"产品技术介绍\",\n    \"entry_type\": \"product\",\n    \"summary\": \"MiqroEra 量子计算材料设计平台产品与技术架构介绍\",\n    \"visibility\": \"public\",\n    \"tags\": [\"产品介绍\", \"技术架构\", \"材料计算\"]\n  },\n  \"skipEmbedding\": false,\n  \"chunkConfig\": {\n    \"strategy\": \"markdown\",\n    \"chunkSize\": 300\n  }\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/pipeline/import/string",

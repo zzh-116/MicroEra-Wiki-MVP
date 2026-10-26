@@ -1,11 +1,11 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "MicroEra Wiki MVP — Enterprise Data Pipeline API",
+    "title": "MiqroEra Wiki MVP — Enterprise Data Pipeline API",
     "version": "0.1.0",
     "description": "企业数据源管道 API：Upload → Parse → Document → Chunk → Embed → Vector → Retrieve → LLM\n\n支持 PDF / Word / Markdown / TXT / PNG 等多格式导入，MarkItDown 统一解析，BGE-M3 向量化，Milvus 向量检索，Ollama LLM 问答。",
     "contact": {
-      "name": "MicroEra Wiki Team"
+      "name": "MiqroEra Wiki Team"
     }
   },
   "servers": [

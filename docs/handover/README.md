@@ -1,4 +1,4 @@
-# MicroEra Wiki MVP — Handover 文档
+# MiqroEra Wiki MVP — Handover 文档
 
 > **文档版本**: v1.1
 > **生成日期**: 2026-07-24
@@ -29,6 +29,7 @@
 | 9 | [09_Operation_Guide](./09_Operation_Guide.md) | 日常运维操作 | SRE |
 | 10 | [10_Troubleshooting](./10_Troubleshooting.md) | 故障排查手册 | SRE / On-Call |
 | 11 | [11_NUC_Deployment](./11_NUC_Deployment.md) | 🆕 NUC 服务器部署 + 自动部署 | DevOps / SRE |
+| 12 | [12_Docling_Environment](./12_Docling_Environment.md) | 🆕 Docling 环境复现（Python 3.12 + 依赖 + 诊断） | DevOps / 开发 |
 
 ## 快速启动
 
@@ -67,7 +68,7 @@ npm run dev
 
 | 项目 | 详情 |
 |------|------|
-| 项目名称 | MicroEra Wiki MVP |
+| 项目名称 | MiqroEra Wiki MVP |
 | 服务端口 | `3001`（API），`3000`（前端 dev） |
 | 数据库 | PostgreSQL 16 + pgvector |
 | 向量维度 | 1024 |

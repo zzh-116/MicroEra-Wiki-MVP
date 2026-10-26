@@ -67,7 +67,7 @@
 
 | 变量 | 默认值 | 必填 | 说明 |
 |------|--------|------|------|
-| `SANDBOX_BASE_URL` | `http://139.196.211.120:6810` | 否 | Sandbox 数据平台 REST API 地址 |
+| `SANDBOX_BASE_URL` | `http://<SANDBOX_HOST>:6810` | 否 | Sandbox 数据平台 REST API 地址 |
 | `SANDBOX_USERNAME` | `admin` | 否 | Sandbox 登录用户名 |
 | `SANDBOX_PASSWORD` | `123456` | 否 | Sandbox 登录密码 |
 
@@ -78,7 +78,7 @@
 | 变量 | 默认值 | 必填 | 说明 |
 |------|--------|------|------|
 | `SANDBOX_DB_ENABLED` | `false` | 否 | 设为 `true` 启用 DB 直连模式（推荐） |
-| `SANDBOX_DB_HOST` | `10.36.160.33` | DB 模式必填 | Sandbox MySQL 主机 |
+| `SANDBOX_DB_HOST` | `<SANDBOX_DB_HOST>` | DB 模式必填 | Sandbox MySQL 主机 |
 | `SANDBOX_DB_PORT` | `3306` | 否 | MySQL 端口 |
 | `SANDBOX_DB_NAME` | `miqroproject` | 否 | 数据库名 |
 | `SANDBOX_DB_USER` | `root` | 否 | MySQL 用户名 |
@@ -97,6 +97,10 @@
 | 变量 | 默认值 | 必填 | 说明 |
 |------|--------|------|------|
 | `PARSER_PROVIDER` | `docling` | 否 | 文档解析器。当前仅 `docling` 实现。可注册自定义解析器。 |
+| `DOCLING_CMD` | 空 | 否 | Docling CLI 显式可执行路径或命令名（如 `C:\...\Python312\Scripts\docling.exe`）。置空时依次探测 PATH 上的 `docling`、再用 `DOCLING_PYTHON` 做导入探测。 |
+| `DOCLING_PYTHON` | `python` | 否 | 用于导入探测与版本检查的 Python 解释器。Docling 2.111.0 要求 3.10–3.12；解释器版本不符时会明确报错（`PYTHON_UNSUPPORTED`）而非静默当作解析成功。 |
+
+> 复现与诊断：`npm run docling:doctor`（或 `npx tsx scripts/docling-env-check.ts`）会验证 Python 版本、Docling CLI、模型缓存与实际解析能力。详见 `docs/handover/12_Docling_Environment.md`。
 
 ---
 
