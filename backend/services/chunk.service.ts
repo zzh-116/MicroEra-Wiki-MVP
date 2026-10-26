@@ -46,6 +46,14 @@ function toPreviewed(c: ChunkResult): PreviewedChunk {
 }
 
 export class KnowledgeChunkService {
+  /** Resolve through the KB-aware finder so a chunk of a document in a deleted
+   *  KB is unreachable (view/update/delete all call this first). */
+  private async requireDocument(documentId: number): Promise<void> {
+    if (!(await knowledgeRepository.findDocumentById(documentId))) {
+      throw new ServiceError('resource_not_found', `document ${documentId} not found`);
+    }
+  }
+
   /** Chunk a document's content in-memory without persisting (preview). */
   async preview(documentId: number, config: ChunkConfigInput = {}): Promise<{ doc_id: number; strategy: string; chunk_size: number; overlap: number; chunks: PreviewedChunk[] }> {
     const doc = await knowledgeRepository.findDocumentById(documentId);
@@ -82,6 +90,7 @@ export class KnowledgeChunkService {
   }
 
   async view(documentId: number, chunkId: string): Promise<KnowledgeChunkRow> {
+    await this.requireDocument(documentId);
     const chunk = await knowledgeChunkRepository.findById(chunkId);
     if (!chunk || chunk.document_id !== documentId) {
       throw new ServiceError('resource_not_found', `chunk ${chunkId} not found for document ${documentId}`);
@@ -91,6 +100,7 @@ export class KnowledgeChunkService {
 
   async update(documentId: number, chunkId: string, text: string): Promise<KnowledgeChunkRow> {
     if (!text?.trim()) throw new ServiceError('validation_failed', 'chunk text is required');
+    await this.requireDocument(documentId);
     const existing = await knowledgeChunkRepository.findById(chunkId);
     if (!existing || existing.document_id !== documentId) {
       throw new ServiceError('resource_not_found', `chunk ${chunkId} not found for document ${documentId}`);
@@ -102,6 +112,7 @@ export class KnowledgeChunkService {
   }
 
   async remove(documentId: number, chunkId: string): Promise<{ deleted: boolean; id: string }> {
+    await this.requireDocument(documentId);
     const existing = await knowledgeChunkRepository.findById(chunkId);
     if (!existing || existing.document_id !== documentId) {
       throw new ServiceError('resource_not_found', `chunk ${chunkId} not found for document ${documentId}`);

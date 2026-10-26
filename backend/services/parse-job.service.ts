@@ -85,6 +85,7 @@ export class ParseJobService {
     }
     const updated = await parseJobRepository.update(jobId, {
       status: 'pending',
+      attempt: 0,
       error: null,
       errorCode: null,
       stage: null,
@@ -100,12 +101,9 @@ export class ParseJobService {
     if (job.status === 'succeeded' || job.status === 'cancelled' || job.status === 'failed') {
       throw new ServiceError('conflict', `job ${jobId} is ${job.status}; only pending/running jobs can be cancelled`);
     }
-    const updated = await parseJobRepository.update(jobId, {
-      status: 'cancelled',
-      finishedAt: new Date(),
-    });
-    if (updated && job.status === 'running') await parseJobRepository.releaseLease(jobId);
-    return toStatusView(updated!);
+    const updated = await parseJobRepository.cancel(jobId);
+    if (!updated) throw new ServiceError('conflict', `job ${jobId} reached a terminal state concurrently; cancel is a no-op`);
+    return toStatusView(updated);
   }
 
   // ── Worker primitives ──────────────────────────────────────────────────
@@ -127,10 +125,11 @@ export class ParseJobService {
     if (job.status !== 'running' || job.lease_owner !== owner) {
       throw new ServiceError('conflict', `job ${jobId} is not leased by ${owner}`);
     }
-    const updated = await parseJobRepository.update(jobId, {
+    const updated = await parseJobRepository.guardedUpdate(jobId, owner, job.lease_version, {
       leaseExpiresAt: new Date(Date.now() + leaseSeconds * 1000),
     });
-    return toStatusView(updated!);
+    if (!updated) throw new ServiceError('conflict', `job ${jobId} lease was lost by ${owner}`);
+    return toStatusView(updated);
   }
 
   /** Persist a resumable checkpoint on a running job. */
@@ -140,8 +139,9 @@ export class ParseJobService {
     if (job.status !== 'running' || job.lease_owner !== owner) {
       throw new ServiceError('conflict', `job ${jobId} is not leased by ${owner}`);
     }
-    const updated = await parseJobRepository.update(jobId, { checkpoint });
-    return toStatusView(updated!);
+    const updated = await parseJobRepository.guardedUpdate(jobId, owner, job.lease_version, { checkpoint });
+    if (!updated) throw new ServiceError('conflict', `job ${jobId} lease was lost by ${owner}`);
+    return toStatusView(updated);
   }
 
   /** Mark a job succeeded. */
@@ -151,13 +151,16 @@ export class ParseJobService {
     if (job.status !== 'running' || job.lease_owner !== owner) {
       throw new ServiceError('conflict', `job ${jobId} is not leased by ${owner}`);
     }
-    const updated = await parseJobRepository.update(jobId, {
+    const updated = await parseJobRepository.guardedUpdate(jobId, owner, job.lease_version, {
       status: 'succeeded',
       progress: 100,
       stage: 'done',
       finishedAt: new Date(),
+      leaseOwner: null,
+      leaseExpiresAt: null,
     });
-    return toStatusView(updated!);
+    if (!updated) throw new ServiceError('conflict', `job ${jobId} lease was lost by ${owner}`);
+    return toStatusView(updated);
   }
 
   /** Mark a job failed; requeue below max_attempts, deadletter when exhausted. */
@@ -178,24 +181,54 @@ export class ParseJobService {
         attempts: attempt,
         payload: job.payload,
       });
-      const updated = await parseJobRepository.update(jobId, {
+      const updated = await parseJobRepository.guardedUpdate(jobId, owner, job.lease_version, {
         status: 'failed',
         attempt,
         error,
         errorCode: errorCode ?? null,
         finishedAt: new Date(),
+        leaseOwner: null,
+        leaseExpiresAt: null,
       });
-      await parseJobRepository.releaseLease(jobId);
-      return { job_id: jobId, status: updated!.status, attempt, deadlettered: true };
+      if (!updated) throw new ServiceError('conflict', `job ${jobId} lease was lost by ${owner}`);
+      return { job_id: jobId, status: updated.status, attempt, deadlettered: true };
     }
-    const updated = await parseJobRepository.update(jobId, {
+    const updated = await parseJobRepository.guardedUpdate(jobId, owner, job.lease_version, {
       status: 'pending',
       attempt,
       error,
       errorCode: errorCode ?? null,
+      leaseOwner: null,
+      leaseExpiresAt: null,
     });
-    await parseJobRepository.releaseLease(jobId);
-    return { job_id: jobId, status: updated!.status, attempt, deadlettered: false };
+    if (!updated) throw new ServiceError('conflict', `job ${jobId} lease was lost by ${owner}`);
+    return { job_id: jobId, status: updated.status, attempt, deadlettered: false };
+  }
+
+  /** Mark a job permanently failed — terminal without retry or deadletter.
+   *  Used for superseded/deleted-document attempts that must not be retried. */
+  async failPermanently(jobId: string, owner: string, error: string, errorCode: string): Promise<JobStatusView> {
+    const job = await parseJobRepository.findById(jobId);
+    if (!job) throw new ServiceError('resource_not_found', `job ${jobId} not found`);
+    if (job.status !== 'running' || job.lease_owner !== owner) {
+      throw new ServiceError('conflict', `job ${jobId} is not leased by ${owner}`);
+    }
+    const updated = await parseJobRepository.guardedUpdate(jobId, owner, job.lease_version, {
+      status: 'failed',
+      error,
+      errorCode,
+      finishedAt: new Date(),
+      leaseOwner: null,
+      leaseExpiresAt: null,
+    });
+    if (!updated) throw new ServiceError('conflict', `job ${jobId} lease was lost by ${owner}`);
+    return toStatusView(updated);
+  }
+
+  /** Reclaim running jobs whose lease expired (crashed worker), fencing out
+   *  the dead worker's in-flight writes by bumping each lease_version. */
+  async reclaimExpired(): Promise<ParseJobRow[]> {
+    return parseJobRepository.reclaimExpired(new Date());
   }
 
   // ── Deadletters ────────────────────────────────────────────────────────

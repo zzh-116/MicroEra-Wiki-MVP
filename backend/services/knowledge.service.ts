@@ -247,6 +247,12 @@ export class KnowledgeService {
     const deleted: number[] = [];
     const missing: number[] = [];
     for (const id of docIds) {
+      // A document whose parent KB is deleted must not be modified: treat it as
+      // unreachable (missing) rather than soft-deleting it.
+      if (!(await knowledgeRepository.findDocumentById(id))) {
+        missing.push(id);
+        continue;
+      }
       const ok = await knowledgeRepository.softDeleteDocument(id);
       if (ok) deleted.push(id);
       else missing.push(id);
@@ -276,6 +282,10 @@ export class KnowledgeService {
   }
 
   async viewRevision(docId: number, revisionNo: number): Promise<RevisionRow> {
+    // Resolve through the KB-aware finder first so a revision of a document in a
+    // deleted KB is unreachable by id (no content leak).
+    const doc = await knowledgeRepository.findDocumentById(docId);
+    if (!doc) throw new ServiceError('resource_not_found', `document ${docId} not found`);
     const rev = await knowledgeRepository.findRevision(docId, revisionNo);
     if (!rev) throw new ServiceError('resource_not_found', `revision ${revisionNo} not found for document ${docId}`);
     return rev;

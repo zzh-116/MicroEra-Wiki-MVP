@@ -44,6 +44,9 @@ export interface ParseResult {
   checksum: string;
   /** Document metadata */
   metadata: ParseMetadata;
+  /** Trusted image provenance (P1-B): names of images this parse wrote under
+   *  DATA_DIR/images, used to authorize /api/images access via document_images. */
+  savedImages?: string[];
   /** Structured properties extracted from tables (materials data) */
   properties?: import('../types.js').ParsedProperty[];
   /** Non-fatal warnings encountered during parsing */

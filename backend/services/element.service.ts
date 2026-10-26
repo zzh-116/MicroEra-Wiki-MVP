@@ -36,6 +36,14 @@ export interface OcrImageResult {
 }
 
 export class ElementService {
+  /** Resolve through the KB-aware finder so elements (images/tables) of a
+   *  document in a deleted KB are unreachable by document id. */
+  private async requireDocument(documentId: number): Promise<void> {
+    if (!(await knowledgeRepository.findDocumentById(documentId))) {
+      throw new ServiceError('resource_not_found', `document ${documentId} not found`);
+    }
+  }
+
   /** Extract layout elements from parsed markdown and persist them. */
   async extractAndSave(documentId: number, markdown: string): Promise<number> {
     const elements = extractElements(markdown);
@@ -44,6 +52,7 @@ export class ElementService {
   }
 
   async listImages(documentId: number): Promise<{ doc_id: number; items: ImageItem[] }> {
+    await this.requireDocument(documentId);
     const rows = await documentElementRepository.listByDocument(documentId, 'image');
     const items: ImageItem[] = rows.map((r) => ({
       src: String(r.content.src ?? ''),
@@ -57,6 +66,7 @@ export class ElementService {
   }
 
   async listTables(documentId: number): Promise<{ doc_id: number; items: TableItem[] }> {
+    await this.requireDocument(documentId);
     const rows = await documentElementRepository.listByDocument(documentId, 'table');
     const items: TableItem[] = rows.map((r) => ({
       headers: (r.content.headers as string[]) ?? [],
@@ -76,9 +86,7 @@ export class ElementService {
    * a missing Docling install yields per-image `unavailable` rather than a crash.
    */
   async ocr(documentId: number): Promise<{ doc_id: number; ocr_status: string; images: OcrImageResult[] }> {
-    if (!(await knowledgeRepository.findDocumentById(documentId))) {
-      throw new ServiceError('resource_not_found', `document ${documentId} not found`);
-    }
+    await this.requireDocument(documentId);
     const rows = await documentElementRepository.listByDocument(documentId, 'image');
     const images: OcrImageResult[] = [];
 

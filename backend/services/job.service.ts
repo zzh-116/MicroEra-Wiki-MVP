@@ -52,7 +52,8 @@ export class JobService {
     if (job.status === 'succeeded' || job.status === 'failed' || job.status === 'cancelled') {
       throw new ServiceError('conflict', `job ${jobId} is ${job.status}; only pending/running jobs can be cancelled`);
     }
-    await parseJobRepository.update(jobId, { status: 'cancelled', finishedAt: new Date() });
+    const updated = await parseJobRepository.cancel(jobId);
+    if (!updated) throw new ServiceError('conflict', `job ${jobId} reached a terminal state concurrently; cancel is a no-op`);
     return parseJobService.status(jobId);
   }
 

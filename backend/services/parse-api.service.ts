@@ -7,6 +7,12 @@ import { knowledgeRepository } from '../repositories/knowledge.repository.js';
 import { parseJobService } from './parse-job.service.js';
 import { sha256 } from '../utils/hash.js';
 import { ServiceError } from './knowledge.service.js';
+import { config } from '../config.js';
+import { createLogger } from '../utils/logger.js';
+import { writeSourceFile, removeSourceFile, SourceFileError } from '../storage/source-files.js';
+import { safeFetchText, SafeFetchError } from './ssrf-fetch.js';
+
+const logger = createLogger('parse-api');
 
 export interface UploadInput {
   kb_id: number;
@@ -24,6 +30,16 @@ export interface ImportUrlInput {
   title?: string;
   visibility?: 'public' | 'internal';
   folder_id?: number | null;
+}
+
+/** doc.upload-file — a binary source file (PDF/DOCX/MD/TXT), already read into
+ *  memory by the route (multer), to be stored under DATA_DIR/sources and enqueued. */
+export interface UploadFileInput {
+  kb_id: number;
+  title?: string;
+  visibility?: 'public' | 'internal';
+  folder_id?: number | null;
+  file: { name: string; mime: string; size: number; buffer: Buffer };
 }
 
 export interface JobHandle {
@@ -45,17 +61,25 @@ export class ParseApiService {
       visibility?: 'public' | 'internal';
       folder_id?: number | null;
       payload?: Record<string, unknown>;
+      /** Binary source-file reference (TB-1): relative `sources/<uuid>.<ext>`. */
+      uri?: string | null;
+      /** Precomputed source checksum (binary upload); text defaults to sha256(content). */
+      checksum?: string;
+      /** Precomputed source byte size (binary upload); text defaults to byteLength. */
+      fileSize?: number;
     },
   ): Promise<JobHandle> {
     const kb = await knowledgeRepository.findKbById(kbId);
     if (!kb) throw new ServiceError('resource_not_found', `kb ${kbId} not found`);
 
     const content = input.content ?? '';
-    const checksum = sha256(content);
+    const checksum = input.checksum ?? sha256(content);
+    const fileSize = input.fileSize ?? Buffer.byteLength(content, 'utf8');
     const source = await knowledgeRepository.createSource({
       kbId,
       type: input.sourceType,
       name: input.sourceName,
+      uri: input.uri ?? null,
       checksum,
     });
     const document = await knowledgeRepository.createDocument({
@@ -66,7 +90,7 @@ export class ParseApiService {
       content,
       visibility: input.visibility ?? 'internal',
       fileName: input.file_name ?? null,
-      fileSize: Buffer.byteLength(content, 'utf8'),
+      fileSize,
       fileHash: checksum,
       parseStatus: 'pending',
     });
@@ -82,6 +106,9 @@ export class ParseApiService {
       kb_id: kbId,
       payload: { action: 'parse', ...(input.payload ?? {}) },
     });
+    // Mark this job as the document's current task so a fenced commit can
+    // reject a stale (superseded) worker later.
+    await knowledgeRepository.setCurrentParseJob(document.id, job.job_id);
     return { document_id: document.id, job_id: job.job_id };
   }
 
@@ -100,7 +127,75 @@ export class ParseApiService {
     });
   }
 
-  /** doc.import_url — fetch a URL's text, create a document, enqueue a parse. */
+  /** doc.upload-file — validate + store a binary source file under
+   *  DATA_DIR/sources, then create the source/document/revision and enqueue a
+   *  parse job. On any DB/enqueue failure the just-written file is removed
+   *  (compensation); a failed cleanup is audited (persisted ERROR log). */
+  async uploadFile(input: UploadFileInput): Promise<JobHandle> {
+    const title = (input.title ?? input.file.name ?? 'Untitled').trim();
+    if (!title) throw new ServiceError('validation_failed', 'title is required');
+    if (input.visibility && !['public', 'internal'].includes(input.visibility)) {
+      throw new ServiceError('validation_failed', `invalid visibility "${input.visibility}"`);
+    }
+
+    // The KB must exist and be active BEFORE we write anything — a bad KB must
+    // not leave an orphan file on disk.
+    const kb = await knowledgeRepository.findKbById(input.kb_id);
+    if (!kb) throw new ServiceError('resource_not_found', `kb ${input.kb_id} not found`);
+
+    // Validate (extension + content feature + MIME, size, path) and write under
+    // DATA_DIR/sources. Any violation throws before the database is touched.
+    let written;
+    try {
+      written = writeSourceFile(config.dataDir, input.file.buffer, {
+        name: input.file.name,
+        mime: input.file.mime,
+      });
+    } catch (err) {
+      if (err instanceof SourceFileError) {
+        const kind =
+          err.code === 'WRITE_FAILED' || err.code === 'INVALID_STORED_NAME'
+            ? 'internal'
+            : 'validation_failed';
+        throw new ServiceError(kind, err.message);
+      }
+      throw err;
+    }
+
+    try {
+      return await this.createAndEnqueue(input.kb_id, {
+        title,
+        content: '',
+        sourceType: 'file',
+        sourceName: input.file.name,
+        file_name: input.file.name,
+        visibility: input.visibility,
+        folder_id: input.folder_id,
+        uri: written.uri,
+        checksum: written.checksum,
+        fileSize: written.size,
+        payload: { action: 'parse', format: written.format, source_file: written.uri },
+      });
+    } catch (err) {
+      // Compensation: the file is on disk but create/enqueue failed — remove it
+      // so no orphan file survives a DB failure. A cleanup failure is audited.
+      const removed = removeSourceFile(config.dataDir, written.storedName);
+      if (!removed) {
+        logger.error('source-file compensation cleanup failed', err as Error, {
+          storedName: written.storedName,
+          uri: written.uri,
+          absolutePath: written.absolutePath,
+        });
+      }
+      throw err;
+    }
+  }
+
+  /** doc.import_url — fetch a URL's text, create a document, enqueue a parse.
+   *  The fetch goes through the SSRF guard (ssrf-fetch.ts): scheme whitelist,
+   *  credential rejection, DNS validation against public ranges only, DNS
+   *  pinning (no rebinding), redirects denied, timeout + size cap. Errors are
+   *  surfaced without the URL or response body. */
   async importUrl(input: ImportUrlInput): Promise<JobHandle> {
     const url = input.url?.trim();
     if (!url) throw new ServiceError('validation_failed', 'url is required');
@@ -109,11 +204,22 @@ export class ParseApiService {
 
     let content: string;
     try {
-      const res = await fetch(url, { signal: AbortSignal.timeout(20000) });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      content = await res.text();
+      content = await safeFetchText(url);
     } catch (err) {
-      throw new ServiceError('internal', `failed to import URL: ${(err as Error).message}`);
+      if (err instanceof SafeFetchError) {
+        // Client-fixable (bad URL / non-public target) → 400; runtime failures → 500.
+        const clientKinds: SafeFetchError['kind'][] = [
+          'invalid_url',
+          'unsupported_scheme',
+          'ssrf_blocked',
+          'dns_error',
+        ];
+        const kind: 'validation_failed' | 'internal' = clientKinds.includes(err.kind)
+          ? 'validation_failed'
+          : 'internal';
+        throw new ServiceError(kind, err.message);
+      }
+      throw new ServiceError('internal', 'failed to import URL');
     }
 
     const title = (input.title ?? url).trim();
@@ -137,6 +243,7 @@ export class ParseApiService {
       kb_id: doc.kb_id,
       payload: { action: 'parse' },
     });
+    await knowledgeRepository.setCurrentParseJob(doc.id, job.job_id);
     return { document_id: doc.id, job_id: job.job_id };
   }
 
@@ -149,6 +256,7 @@ export class ParseApiService {
       kb_id: doc.kb_id,
       payload: { action: 'reparse', force: true },
     });
+    await knowledgeRepository.setCurrentParseJob(doc.id, job.job_id);
     return { document_id: doc.id, job_id: job.job_id };
   }
 

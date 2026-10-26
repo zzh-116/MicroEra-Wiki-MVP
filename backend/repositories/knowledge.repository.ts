@@ -8,7 +8,7 @@ import {
   documentRevisions,
   sources,
 } from '../db/schema.js';
-import { eq, and, inArray, desc, isNull, count, sql } from 'drizzle-orm';
+import { eq, and, inArray, desc, isNull, count, sql, exists, type SQLWrapper } from 'drizzle-orm';
 
 // ---- Domain shapes (plain objects, snake_case for the API) ----
 export interface KbRow {
@@ -152,6 +152,22 @@ function sourceToRow(r: typeof sources.$inferSelect): SourceRow {
 }
 
 export class KnowledgeRepository extends BaseRepository {
+  /**
+   * Unified access rule (deleted-KB leak fix): a document or source is reachable
+   * only while its parent knowledge base is not soft-deleted. Every document and
+   * source read path funnels through this predicate so the CRUD surface cannot
+   * diverge from the retrieval layer's ACL (which already joins `knowledge_bases`
+   * and filters `deleted_at`). Returns a correlated EXISTS over the parent KB.
+   */
+  private parentKbActive(kbId: SQLWrapper): ReturnType<typeof exists> {
+    return exists(
+      this.db
+        .select({ one: sql`1` })
+        .from(knowledgeBases)
+        .where(and(eq(knowledgeBases.id, kbId), isNull(knowledgeBases.deletedAt))),
+    );
+  }
+
   // ── Knowledge bases ─────────────────────────────────────────────────────
   async createKb(input: {
     name: string;
@@ -323,7 +339,7 @@ export class KnowledgeRepository extends BaseRepository {
   }): Promise<{ items: DocumentRow[]; total: number }> {
     const pg = params.page ?? 1;
     const ps = params.pageSize ?? 50;
-    const conditions = [isNull(documents.deletedAt)];
+    const conditions = [isNull(documents.deletedAt), this.parentKbActive(documents.kbId)];
     if (params.kbId !== undefined) conditions.push(eq(documents.kbId, params.kbId));
     if (params.folderId !== undefined) conditions.push(eq(documents.folderId, params.folderId));
     const where = and(...conditions);
@@ -342,13 +358,20 @@ export class KnowledgeRepository extends BaseRepository {
     const rows = await this.db
       .select()
       .from(documents)
-      .where(and(eq(documents.id, id), isNull(documents.deletedAt)))
+      .where(and(eq(documents.id, id), isNull(documents.deletedAt), this.parentKbActive(documents.kbId)))
       .limit(1);
     return rows[0] ? docToRow(rows[0]) : undefined;
   }
 
   async findDocumentByIdIncludingDeleted(id: number): Promise<DocumentRow | undefined> {
-    const rows = await this.db.select().from(documents).where(eq(documents.id, id)).limit(1);
+    // Includes the document's own soft-deleted rows (used by restore) but still
+    // requires the parent KB to be active, so a deleted KB's documents cannot be
+    // resurrected through the ordinary restore API.
+    const rows = await this.db
+      .select()
+      .from(documents)
+      .where(and(eq(documents.id, id), this.parentKbActive(documents.kbId)))
+      .limit(1);
     return rows[0] ? docToRow(rows[0]) : undefined;
   }
 
@@ -378,6 +401,15 @@ export class KnowledgeRepository extends BaseRepository {
       .where(and(eq(documents.id, id), isNull(documents.deletedAt)))
       .returning({ id: documents.id });
     return !!row;
+  }
+
+  /** Record the latest enqueued parse job for a document (current-task
+   *  ownership). `null` clears the token after a successful parse commit. */
+  async setCurrentParseJob(documentId: number, jobId: string | null): Promise<void> {
+    await this.db
+      .update(documents)
+      .set({ currentParseJobId: jobId, updatedAt: new Date() })
+      .where(eq(documents.id, documentId));
   }
 
   async restoreDocument(id: number): Promise<DocumentRow | undefined> {
@@ -425,7 +457,7 @@ export class KnowledgeRepository extends BaseRepository {
     const rows = await this.db
       .select()
       .from(sources)
-      .where(and(eq(sources.id, id), isNull(sources.deletedAt)))
+      .where(and(eq(sources.id, id), isNull(sources.deletedAt), this.parentKbActive(sources.kbId)))
       .limit(1);
     return rows[0] ? sourceToRow(rows[0]) : undefined;
   }
