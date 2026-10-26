@@ -85,8 +85,13 @@ export class AgentService {
       case 'lookup': {
         const chunk = await knowledgeChunkRepository.findById(String(input.chunk_id ?? ''));
         if (!chunk) throw new ServiceError('resource_not_found', 'chunk not found');
+        // Resolve the parent document through the KB-aware finder so a chunk of a
+        // document whose parent KB is soft-deleted never leaks its text. The
+        // undefined case is surfaced as "chunk not found" (not "document not
+        // found") to avoid disclosing that the document still exists.
         const doc = await knowledgeRepository.findDocumentById(chunk.document_id);
-        return { chunk_id: chunk.id, document_id: chunk.document_id, title: doc?.title ?? '', text: chunk.text };
+        if (!doc) throw new ServiceError('resource_not_found', 'chunk not found');
+        return { chunk_id: chunk.id, document_id: chunk.document_id, title: doc.title, text: chunk.text };
       }
       case 'summarize': {
         const text = String(input.text ?? '');

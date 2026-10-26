@@ -346,6 +346,10 @@ export const documents = pgTable(
     parseStatus: text('parse_status', { enum: ['pending', 'processing', 'completed', 'failed'] })
       .notNull()
       .default('pending'),
+    // Current-task ownership token: the id of the latest enqueued parse job.
+    // A fenced parse commit rejects the write when this points at a different
+    // (newer) job, preventing an old parse from overwriting a newer one.
+    currentParseJobId: text('current_parse_job_id'),
     metadata: jsonb('metadata').notNull().default({}),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
@@ -409,6 +413,29 @@ export const documentElements = pgTable(
   ],
 );
 
+// ---- Document Images (trusted parse provenance, P1-B) ----
+// The authoritative image ↔ document ownership table. A row exists ONLY when a
+// trusted parse pipeline extracted an image file from a document's source
+// bytes. It is never populated from user-editable `documents.content`, so
+// pasting `/api/images/<name>` into a body cannot grant access. `image_name`
+// is the UUID filename under DATA_DIR/images (single segment, collision-proof).
+export const documentImages = pgTable(
+  'document_images',
+  {
+    id: serial('id').primaryKey(),
+    documentId: integer('document_id')
+      .notNull()
+      .references(() => documents.id, { onDelete: 'cascade' }),
+    imageName: text('image_name').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('document_images_document_id_image_name_unique').on(table.documentId, table.imageName),
+    index('document_images_document_idx').on(table.documentId),
+    index('document_images_image_name_idx').on(table.imageName),
+  ],
+);
+
 // ---- Knowledge Chunks (P2-03) ----
 // A document's embeddable chunks, produced by the four chunking strategies
 // (fixed/paragraph/sentence/markdown). Editing or deleting a chunk invalidates
@@ -468,6 +495,7 @@ export const parseJobs = pgTable(
     progress: integer('progress').notNull().default(0),
     leaseOwner: text('lease_owner'),
     leaseExpiresAt: timestamp('lease_expires_at', { withTimezone: true }),
+    leaseVersion: integer('lease_version').notNull().default(0),
     checkpoint: jsonb('checkpoint').notNull().default({}),
     error: text('error'),
     errorCode: text('error_code'),

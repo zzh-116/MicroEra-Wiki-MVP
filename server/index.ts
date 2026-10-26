@@ -1,4 +1,4 @@
-// MicroEra Wiki — Single Canonical Entry Point
+// MiqroEra Wiki — Single Canonical Entry Point
 //
 // Development:
 //   npm run server:dev          # API only, hot reload (frontend runs via Vite :3000)
@@ -28,7 +28,7 @@ async function main() {
   app.listen(PORT, () => {
     console.log('');
     console.log('╔══════════════════════════════════════════════════════╗');
-    console.log('║   MicroEra Wiki MVP — Enterprise Data Pipeline API   ║');
+    console.log('║   MiqroEra Wiki MVP — Enterprise Data Pipeline API   ║');
     console.log('╠══════════════════════════════════════════════════════╣');
     console.log(`║   Server:    http://localhost:${PORT}                   ║`);
     console.log(`║   API Docs:  http://localhost:${PORT}/api/docs           ║`);

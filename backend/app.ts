@@ -57,6 +57,7 @@ export async function createApp(options: AppOptions = {}) {
   const { modelV2Router } = await import('../server/routes/model-v2.js');
   const { jobV2Router } = await import('../server/routes/job-v2.js');
   const { metaV2Router } = await import('../server/routes/meta-v2.js');
+  const { imagesRouter } = await import('../server/routes/images.js');
 
   app.use('/api/auth', authRouter);
   app.use('/api/categories', categoriesRouter);
@@ -72,6 +73,16 @@ export async function createApp(options: AppOptions = {}) {
   app.use('/api/connectors', connectorsRouter);
   app.use('/api/admin', adminRouter);
   app.use('/api/bookmarks', bookmarksRouter);
+
+  // Shared operation-level authorization for every /api/v2/ops route: one
+  // server-side role gate that CLI, HTTP MCP, stdio MCP, and raw REST all pass
+  // through. Mounted before the v2 routers so a viewer/editor cannot slip past a
+  // router's own requireAuth-only handlers; unknown operations are default-deny.
+  const { requireAuth } = await import('../server/middleware/auth.js');
+  const { requireOperationRole } = await import('../server/middleware/operation-auth.js');
+  app.use('/api/v2/ops', requireAuth);
+  app.use('/api/v2/ops', requireOperationRole);
+
   app.use('/api/v2/ops', knowledgeV2Router);
   app.use('/api/v2/ops', retrievalV2Router);
   app.use('/api/v2/ops', evalV2Router);
@@ -85,11 +96,12 @@ export async function createApp(options: AppOptions = {}) {
 
   for (const { path: p, router } of extraRoutes) app.use(p, router);
 
-  // Serve extracted document images. Don't swallow mkdir errors — they
-  // indicate DATA_DIR is misconfigured and image requests will silently 404.
+  // Serve extracted document images through an authenticated route that enforces
+  // the image is still cited by a reachable document (deleted-KB / traversal
+  // safe). This replaces the former unauthenticated `express.static` mount.
   const imagesDir = path.join(config.dataDir, 'images');
   fs.mkdirSync(imagesDir, { recursive: true });
-  app.use('/api/images', express.static(imagesDir));
+  app.use('/api/images', imagesRouter);
 
   // Static files (production)
   if (serveStatic) {
@@ -100,7 +112,7 @@ export async function createApp(options: AppOptions = {}) {
     app.get('*', (_req, res) => {
       const indexPath = path.join(distPath, 'index.html');
       if (fs.existsSync(indexPath)) res.sendFile(indexPath);
-      else res.json({ message: 'MicroEra Wiki API', version: '0.2.0', docs: '/api/docs' });
+      else res.json({ message: 'MiqroEra Wiki API', version: '0.2.0', docs: '/api/docs' });
     });
   }
 

@@ -7,8 +7,10 @@ export { listTools, listResources, listPrompts, readResource, callTool, MCP_PROT
 export async function runMcpServe(argv: string[]): Promise<number> {
   let transport: 'stdio' | 'http' = 'stdio';
   let port = 8765;
+  let host: string | undefined;
 
-  // Accept both `--transport http` and `--transport=http`, likewise `--port N`.
+  // Accept both `--transport http` and `--transport=http`, likewise `--port N`
+  // and `--host 127.0.0.1` / `--host=127.0.0.1`.
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     let name = a;
@@ -25,11 +27,15 @@ export async function runMcpServe(argv: string[]): Promise<number> {
       if (v === undefined && i + 1 < argv.length) v = argv[++i];
       const n = Number(v);
       if (Number.isFinite(n) && n > 0) port = n;
+    } else if (name === '--host') {
+      let v = inline;
+      if (v === undefined && i + 1 < argv.length) v = argv[++i];
+      if (v) host = v;
     }
   }
 
   if (transport === 'http') {
-    await runHttpServer(port);
+    await runHttpServer(port, { host });
     // Keep the process alive (the server keeps the event loop busy).
     return new Promise(() => {});
   }

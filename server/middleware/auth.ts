@@ -37,7 +37,10 @@ export function verifyToken(token: string): JwtPayload | null {
     if (parts.length !== 3) return null;
     const [h, b, sig] = parts;
     const expected = crypto.createHmac('sha256', JWT_SECRET).update(`${h}.${b}`).digest('base64url');
-    if (sig !== expected) return null;
+    // Constant-time comparison — a plain `!==` leaks how many leading bytes match.
+    const a = Buffer.from(sig);
+    const e = Buffer.from(expected);
+    if (a.length !== e.length || !crypto.timingSafeEqual(a, e)) return null;
     const payload = JSON.parse(Buffer.from(b, 'base64url').toString('utf-8')) as JwtPayload;
     if (payload.exp < Math.floor(Date.now() / 1000)) return null;
     return payload;

@@ -56,10 +56,10 @@ export const config = {
    *  Set SANDBOX_DB_ENABLED=true to use DB mode instead of HTTP connector. */
   sandboxDB: {
     enabled: process.env.SANDBOX_DB_ENABLED === 'true',
-    host: process.env.SANDBOX_DB_HOST || '10.36.160.33',
+    host: process.env.SANDBOX_DB_HOST || '',
     port: parseInt(process.env.SANDBOX_DB_PORT || '3306', 10),
-    database: process.env.SANDBOX_DB_NAME || 'miqroproject',
-    user: process.env.SANDBOX_DB_USER || 'root',
+    database: process.env.SANDBOX_DB_NAME || '',
+    user: process.env.SANDBOX_DB_USER || '',
     password: process.env.SANDBOX_DB_PASSWORD || '',
   },
 
@@ -84,6 +84,26 @@ export const config = {
   },
 
   databaseUrl: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/microera_wiki',
+
+  /** Parse job worker (2b) — the durable-queue consumer process. */
+  worker: {
+    owner: process.env.WORKER_OWNER || `worker-${process.pid}`,
+    concurrency: parseInt(process.env.WORKER_CONCURRENCY || '2', 10),
+    pollMs: parseInt(process.env.WORKER_POLL_MS || '2000', 10),
+    leaseSeconds: parseInt(process.env.WORKER_LEASE_SECONDS || '60', 10),
+    heartbeatMs: parseInt(process.env.WORKER_HEARTBEAT_MS || '15000', 10),
+  },
+
+  /** Docling CLI (document parser) — environment-reproducible, no per-user
+   *  absolute install path baked in. `command` is an explicit executable path or
+   *  bare command name (e.g. `C:\...\Python312\Scripts\docling.exe`); when empty
+   *  the parser probes `docling` on PATH, then verifies the module import via
+   *  `python`. `python` is the interpreter used for that import probe + version
+   *  check. Set either (or both) so a fresh checkout works without editing code. */
+  docling: {
+    command: process.env.DOCLING_CMD || '',
+    python: process.env.DOCLING_PYTHON || 'python',
+  },
 
   /** Runtime logging configuration */
   logging: {

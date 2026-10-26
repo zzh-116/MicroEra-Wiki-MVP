@@ -9,6 +9,7 @@
 //   To swap parsers, implement DocumentParser and register in factory.ts.
 import fs from 'node:fs';
 import path from 'node:path';
+import { randomUUID } from 'node:crypto';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { type DocumentParser } from './base.js';
@@ -101,15 +102,32 @@ const MIME_TO_EXT: Record<string, string> = {
 const DATA_URI_RE = /data:(image\/[a-z+-]+);base64,([A-Za-z0-9+/=]+)/g;
 
 /**
- * Extract base64 images from markdown, save them to disk, and replace the
- * data-URI references with /api/images/<filename> URLs.
+ * Generate a collision-resistant image filename: a v4 UUID plus the format
+ * extension. The 122-bit random namespace makes overwriting another image
+ * effectively impossible; the filesystem write below adds a no-overwrite
+ * (`wx`) guard as a second, independent layer (P1-B).
+ */
+export function newImageFileName(ext: string): string {
+  return `${randomUUID()}${ext}`;
+}
+
+/**
+ * Write image bytes to <imagesDir>/<fileName>, refusing to overwrite an
+ * existing file (throws EEXIST). Collision ⇒ the image is dropped rather than
+ * silently replacing another document's bytes.
+ */
+export function writeImageFile(imagesDir: string, fileName: string, buffer: Buffer): void {
+  fs.writeFileSync(path.join(imagesDir, fileName), buffer, { flag: 'wx' });
+}
+
+/**
+ * Extract base64 images from markdown, save them to disk under UUID names, and
+ * replace the data-URI references with /api/images/<filename> URLs.
  *
  * Returns the transformed markdown and a list of saved image file names.
  */
 function extractAndSaveImages(markdown: string, imagesDir: string): { markdown: string; savedImages: string[] } {
   const savedImages: string[] = [];
-  const now = Date.now();
-  let counter = 0;
 
   // Ensure the images directory exists. Don't swallow this error — a missing
   // imagesDir silently drops every image and ships broken /api/images/... URLs.
@@ -126,12 +144,11 @@ function extractAndSaveImages(markdown: string, imagesDir: string): { markdown: 
       const mimeType = match[1];
       const base64Data = match[2];
       const ext = MIME_TO_EXT[mimeType] || '.png';
-      const fileName = `img_${now}_${counter++}${ext}`;
-      const filePath = path.join(imagesDir, fileName);
+      const fileName = newImageFileName(ext);
 
       try {
         const buffer = Buffer.from(base64Data, 'base64');
-        fs.writeFileSync(filePath, buffer);
+        writeImageFile(imagesDir, fileName, buffer);
         savedImages.push(fileName);
         return `![${alt?.trim() || 'Image'}](/api/images/${fileName})`;
       } catch {
@@ -144,11 +161,10 @@ function extractAndSaveImages(markdown: string, imagesDir: string): { markdown: 
   markdown = markdown.replace(
     /data:image\/[a-z+-]+;base64,([A-Za-z0-9+/=]{100,})/g,
     (_full: string, base64Data: string) => {
-      const fileName = `img_${now}_${counter++}.png`;
-      const filePath = path.join(imagesDir, fileName);
+      const fileName = newImageFileName('.png');
       try {
         const buffer = Buffer.from(base64Data, 'base64');
-        fs.writeFileSync(filePath, buffer);
+        writeImageFile(imagesDir, fileName, buffer);
         savedImages.push(fileName);
         return `/api/images/${fileName}`;
       } catch {
@@ -198,43 +214,145 @@ let _doclingLastCheck = 0;
 /** Retry discovery every 60s after a failure so a mid-session `pip install` takes effect. */
 const DOCLING_RETRY_MS = 60_000;
 
-async function resolveDoclingCommand(): Promise<string> {
+/** Probe budget for Docling CLI / Python-import discovery. Docling 2.111.0
+ *  imports its full ML stack (torch/transformers) even for `--version`, so a
+ *  cold probe routinely takes ~18s. 60s gives cold-start headroom while still
+ *  failing fast enough to surface a genuinely missing dependency. */
+export const DOCLING_PROBE_TIMEOUT_MS = 60_000;
+
+/** Python minor versions Docling 2.111.0 runs on. Docling 2.x supports 3.10–3.12;
+ *  3.13+ and pre-release interpreters (e.g. 3.15.0b3) are NOT supported and are
+ *  reported explicitly rather than as a generic "not installed". 3.12 is the
+ *  verified target. */
+export const DOCLING_PYTHON_MINORS: ReadonlySet<number> = new Set([10, 11, 12]);
+
+/** True when a Python interpreter's major.minor is supported by Docling 2.x. */
+export function isDoclingSupportedPython(major: number, minor: number): boolean {
+  return major === 3 && DOCLING_PYTHON_MINORS.has(minor);
+}
+
+type DoclingUnavailableCode = 'NOT_INSTALLED' | 'PYTHON_UNSUPPORTED' | 'CLI_NOT_EXECUTABLE';
+
+/** Distinct, actionable Docling environment failure. Carried (not a generic
+ *  `Error`) so the parser surfaces the exact reason — dependency missing,
+ *  interpreter version mismatch, or CLI not executable — never a silent
+ *  "parse succeeded". */
+export class DoclingUnavailableError extends Error {
+  code: DoclingUnavailableCode;
+  hint: string;
+  constructor(code: DoclingUnavailableCode, message: string, hint: string) {
+    super(message);
+    this.code = code;
+    this.hint = hint;
+    this.name = 'DoclingUnavailableError';
+  }
+}
+
+/** Last resolution failure. Lets `isAvailable()` keep its boolean contract while
+ *  `parseFile` still reports the specific reason instead of a generic message. */
+let _doclingFailure: DoclingUnavailableError | null = null;
+export function lastDoclingFailure(): DoclingUnavailableError | null {
+  return _doclingFailure;
+}
+
+/** Run `<interpreter> --version` and return the (major, minor) tuple, or null. */
+async function readPythonVersion(python: string): Promise<{ major: number; minor: number } | null> {
+  try {
+    const { stdout } = await execFileAsync(python, ['--version'], { timeout: DOCLING_PROBE_TIMEOUT_MS, windowsHide: true });
+    const m = String(stdout).match(/Python\s+(\d+)\.(\d+)/);
+    if (!m) return null;
+    return { major: Number(m[1]), minor: Number(m[2]) };
+  } catch {
+    return null;
+  }
+}
+
+/** True when a candidate `docling` executable answers `--version`. */
+async function doclingRuns(cmd: string): Promise<boolean> {
+  try {
+    await execFileAsync(cmd, ['--version'], { timeout: DOCLING_PROBE_TIMEOUT_MS, windowsHide: true });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function resolveDoclingCommand(): Promise<string> {
   if (_doclingCommand) return _doclingCommand;
 
   const now = Date.now();
   if (_doclingLastCheck > 0 && now - _doclingLastCheck < DOCLING_RETRY_MS) {
-    throw new Error('Docling CLI not found. Install: pip install docling');
+    throw _doclingFailure ?? new DoclingUnavailableError(
+      'NOT_INSTALLED',
+      'Docling CLI not found. Install: pip install docling==2.111.0',
+      'python -m pip install docling==2.111.0',
+    );
   }
   _doclingLastCheck = now;
 
-  // Docling installs a console script 'docling' (pip install docling)
-  try {
-    await execFileAsync('docling', ['--version'], { timeout: 15000, windowsHide: true });
+  // 1. Explicit override (DOCLING_CMD) — absolute path or bare command name.
+  //    Verified first and reported distinctly if it cannot actually run.
+  if (config.docling.command) {
+    if (await doclingRuns(config.docling.command)) {
+      _doclingCommand = config.docling.command;
+      _doclingFailure = null;
+      console.log(`[Docling] Found: ${_doclingCommand} (DOCLING_CMD)`);
+      return _doclingCommand;
+    }
+    _doclingFailure = new DoclingUnavailableError(
+      'CLI_NOT_EXECUTABLE',
+      `Docling CLI configured via DOCLING_CMD is not executable: ${config.docling.command}`,
+      'Check DOCLING_CMD points at a runnable docling executable (e.g. ...\\Python312\\Scripts\\docling.exe).',
+    );
+    throw _doclingFailure;
+  }
+
+  // 2. 'docling' console script on PATH.
+  if (await doclingRuns('docling')) {
     _doclingCommand = 'docling';
+    _doclingFailure = null;
     console.log('[Docling] Found: docling CLI');
     return _doclingCommand;
-  } catch { /* continue */ }
+  }
 
-  // Fallback: try python -c to invoke docling (if PATH is incomplete)
+  // 3. Python import probe (DOCLING_PYTHON, default 'python'): verify the module
+  //    is importable — but first gate the interpreter version so an unsupported
+  //    Python (e.g. 3.15 beta) is reported explicitly, not as "not installed".
+  const python = config.docling.python;
+  const pyVer = await readPythonVersion(python);
+  if (pyVer && !isDoclingSupportedPython(pyVer.major, pyVer.minor)) {
+    _doclingFailure = new DoclingUnavailableError(
+      'PYTHON_UNSUPPORTED',
+      `Python interpreter "${python}" is ${pyVer.major}.${pyVer.minor}, which Docling 2.111.0 does not support (3.10–3.12 required)`,
+      `Install Python 3.12 and set DOCLING_PYTHON to its python.exe (e.g. ...\\Python312\\python.exe).`,
+    );
+    throw _doclingFailure;
+  }
   try {
-    await execFileAsync('python', ['-c', 'from docling.cli import main; import sys; sys.exit(0)'], { timeout: 15000, windowsHide: true });
-    _doclingCommand = 'docling'; // still use 'docling' — the python check was just to verify import works
-    console.log('[Docling] Found: docling (verified via Python import)');
+    await execFileAsync(python, ['-c', 'from docling.cli import main; import sys; sys.exit(0)'], { timeout: DOCLING_PROBE_TIMEOUT_MS, windowsHide: true });
+    _doclingCommand = 'docling'; // import verified; still invoke the console script
+    _doclingFailure = null;
+    console.log(`[Docling] Found: docling (verified via ${python} import)`);
     return _doclingCommand;
   } catch { /* continue */ }
 
-  throw new Error('Docling CLI not found. Install: pip install docling');
+  _doclingFailure = new DoclingUnavailableError(
+    'NOT_INSTALLED',
+    'Docling CLI not found. Install: pip install docling==2.111.0',
+    'python -m pip install docling==2.111.0',
+  );
+  throw _doclingFailure;
 }
 
-function buildDoclingArgs(filePath: string, outputDir: string, format: InputFormat): [string, string[]] {
+function buildDoclingArgs(filePath: string, outputDir: string, format: InputFormat): string[] {
   // Docling 2.x CLI: docling convert <source> --from <fmt> --to md --output <dir>
   // --from gives Docling an explicit format hint, improving backend selection
   // --abort-on-error prevents silent partial output on corrupt pages
   if (format !== 'auto' && format !== 'txt' && format !== 'md' && format !== 'csv') {
     const doclingFormat = IMAGE_FORMATS.has(format) ? 'image' : format;
-    return ['docling', ['convert', filePath, '--from', doclingFormat, '--to', 'md', '--output', outputDir]];
+    return ['convert', filePath, '--from', doclingFormat, '--to', 'md', '--output', outputDir];
   }
-  return ['docling', ['convert', filePath, '--to', 'md', '--output', outputDir]];
+  return ['convert', filePath, '--to', 'md', '--output', outputDir];
 }
 
 /** Generate a safe ASCII filename for temp files to avoid CLI encoding issues */
@@ -392,6 +510,7 @@ export class DoclingParser implements DocumentParser {
         sourceFormat: format,
         checksum: sourceChecksum,
         metadata,
+        savedImages: imgResult.savedImages,
         properties,
         warnings,
         timing: { detectMs: Math.round(detectMs * 100) / 100, parseMs, totalMs },
@@ -401,10 +520,11 @@ export class DoclingParser implements DocumentParser {
     // For HTML and binary formats, Docling CLI is required
     const available = await this.isAvailable();
     if (!available) {
+      const failure = lastDoclingFailure();
       throw new ParserError(
-        'Docling is not installed. Install: pip install docling',
+        failure?.message ?? 'Docling is not installed. Install: pip install docling',
         'DEPENDENCY_MISSING', fileName, format,
-        'Run: pip install docling',
+        failure?.hint ?? 'Run: pip install docling',
       );
     }
 
@@ -425,7 +545,7 @@ export class DoclingParser implements DocumentParser {
     }
 
     // Create temp output directory
-    const tmpDir = path.join('./backend/data/tmp', `docling_${Date.now()}`);
+    const tmpDir = path.join(config.dataDir, 'tmp', `docling_${Date.now()}`);
     fs.mkdirSync(tmpDir, { recursive: true });
 
     // Docling's Python tempfile handling mangles non-ASCII file names on
@@ -443,11 +563,12 @@ export class DoclingParser implements DocumentParser {
     let markdown = '';
 
     try {
-      // Resolve the docling command
-      await resolveDoclingCommand();
+      // Resolve the docling command (throws DoclingUnavailableError with the
+      // specific reason on failure — surfaced explicitly, never a silent parse).
+      const cmd = await resolveDoclingCommand();
 
       // Build and execute the docling command
-      const [cmd, args] = buildDoclingArgs(doclingSource, tmpDir, format);
+      const args = buildDoclingArgs(doclingSource, tmpDir, format);
 
       console.log(`[Docling] ${cmd} ${args.join(' ')} (format=${format}, size=${formatFileSize(stat.size)})`);
 
@@ -507,6 +628,12 @@ export class DoclingParser implements DocumentParser {
       }
     } catch (err: any) {
       if (err instanceof ParserError) throw err;
+
+      // Docling environment failure — surface the specific reason as a
+      // DEPENDENCY_MISSING so the worker maps it to DOCLING_DEPENDENCY_MISSING.
+      if (err instanceof DoclingUnavailableError) {
+        throw new ParserError(err.message, 'DEPENDENCY_MISSING', fileName, format, err.hint);
+      }
 
       // Handle docling CLI errors
       if (err.killed && err.signal === 'SIGTERM') {
@@ -627,6 +754,7 @@ export class DoclingParser implements DocumentParser {
       sourceFormat: format,
       checksum: sourceChecksum,
       metadata,
+      savedImages: imgResult.savedImages,
       properties,
       warnings,
       timing: { detectMs: Math.round(detectMs * 100) / 100, parseMs, totalMs },
@@ -671,7 +799,7 @@ export class DoclingParser implements DocumentParser {
 
     // For HTML, invoke Docling for better conversion
     if (format === 'html') {
-      const tmpDir = path.join('./backend/data/tmp', `docling_str_${Date.now()}`);
+      const tmpDir = path.join(config.dataDir, 'tmp', `docling_str_${Date.now()}`);
       const tmpFile = path.join(tmpDir, fileName);
       try {
         fs.mkdirSync(tmpDir, { recursive: true });
@@ -698,6 +826,7 @@ export class DoclingParser implements DocumentParser {
       markdown,
       sourceFormat: format,
       checksum: sha256(content),
+      savedImages: imgResult.savedImages,
       metadata: {
         fileName,
         fileSize: Buffer.byteLength(content, 'utf-8'),
@@ -724,7 +853,7 @@ export class DoclingParser implements DocumentParser {
     // Write buffer to temp file with a safe ASCII name.
     // Original filenames may contain Chinese, corrupted UTF-8, or other
     // non-ASCII characters that break CLI argument encoding on Windows.
-    const tmpDir = path.join('./backend/data/tmp', `docling_buf_${Date.now()}`);
+    const tmpDir = path.join(config.dataDir, 'tmp', `docling_buf_${Date.now()}`);
     const safeName = safeTempName(fileName);
     const tmpPath = path.join(tmpDir, safeName);
     try {

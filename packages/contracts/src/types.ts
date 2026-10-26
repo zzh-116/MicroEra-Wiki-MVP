@@ -1,4 +1,4 @@
-// MicroEra typed contracts — the single source of truth for operation I/O.
+// MiqroEra typed contracts — the single source of truth for operation I/O.
 // These are plain TypeScript types (no runtime validation library) so the
 // package stays dependency-free. JSON Schemas are authored alongside each
 // OperationDef in the registry.

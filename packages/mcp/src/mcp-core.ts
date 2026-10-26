@@ -8,7 +8,7 @@ import type { OperationContext } from '../../contracts/src/types.js';
 export const MCP_PROTOCOL_VERSION = '2025-03-26';
 
 export function serverInfo() {
-  return { name: 'microera', version: '0.1.0' };
+  return { name: 'miqroera', version: '0.1.0' };
 }
 
 export function listTools() {
@@ -25,12 +25,12 @@ export function listTools() {
 
 export function listResources() {
   return [
-    { uri: 'microera://schema/operations', name: 'Operation registry manifest', mimeType: 'application/json' },
-    { uri: 'microera://kb/{id}', name: 'Knowledge base', mimeType: 'application/json' },
-    { uri: 'microera://doc/{id}/revision/{n}', name: 'Document revision', mimeType: 'text/markdown' },
-    { uri: 'microera://chunk/{id}', name: 'Document chunk', mimeType: 'text/markdown' },
-    { uri: 'microera://wiki/{id}/{slug}', name: 'Wiki page', mimeType: 'text/markdown' },
-    { uri: 'microera://job/{id}', name: 'Job status', mimeType: 'application/json' },
+    { uri: 'miqroera://schema/operations', name: 'Operation registry manifest', mimeType: 'application/json' },
+    { uri: 'miqroera://kb/{id}', name: 'Knowledge base', mimeType: 'application/json' },
+    { uri: 'miqroera://doc/{id}/revision/{n}', name: 'Document revision', mimeType: 'text/markdown' },
+    { uri: 'miqroera://chunk/{id}', name: 'Document chunk', mimeType: 'text/markdown' },
+    { uri: 'miqroera://wiki/{id}/{slug}', name: 'Wiki page', mimeType: 'text/markdown' },
+    { uri: 'miqroera://job/{id}', name: 'Job status', mimeType: 'application/json' },
   ];
 }
 
@@ -46,7 +46,7 @@ export function listPrompts() {
 }
 
 export function readResource(uri: string): { contents: Array<{ uri: string; mimeType: string; text: string }> } {
-  if (uri === 'microera://schema/operations') {
+  if (uri === 'miqroera://schema/operations') {
     return { contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(operationRegistry.toManifest(), null, 2) }] };
   }
   return { contents: [{ uri, mimeType: 'application/json', text: JSON.stringify({ uri, note: 'dynamic resource content lands in a later phase' }, null, 2) }] };
@@ -58,7 +58,9 @@ export interface ToolCallResult {
 }
 
 export async function callTool(name: string, args: unknown, api: ApiClient): Promise<ToolCallResult> {
-  const def = operationRegistry.list().find((d) => d.mcp.toolName === name);
+  // `listTools` hides `transport === 'local'` tools; `callTool` must hide them
+  // too, or a local-only tool (e.g. auth.whoami) would be invocable over MCP.
+  const def = operationRegistry.list().find((d) => d.mcp.toolName === name && d.transport !== 'local');
   if (!def) {
     return { content: [{ type: 'text', text: JSON.stringify({ ok: false, error: { type: 'resource.not_found', code: 'NOT_FOUND', message: `Unknown tool: ${name}` } }) }], isError: true };
   }
@@ -73,7 +75,7 @@ export async function callTool(name: string, args: unknown, api: ApiClient): Pro
     const data = await def.handler(args ?? {}, ctx);
     return { content: [{ type: 'text', text: JSON.stringify(ok(def.id, data, ctx.traceId)) }], isError: false };
   } catch (err: any) {
-    const kind = err?.status === 401 ? 'unauthorized' : err?.status === 404 ? 'resource_not_found' : 'unavailable';
+    const kind = err?.status === 401 ? 'unauthorized' : err?.status === 403 ? 'forbidden' : err?.status === 404 ? 'resource_not_found' : 'unavailable';
     return { content: [{ type: 'text', text: JSON.stringify(fail(def.id, kind as any, err?.message ?? String(err), ctx.traceId)) }], isError: true };
   }
 }

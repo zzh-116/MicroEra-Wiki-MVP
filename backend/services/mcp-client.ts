@@ -3,13 +3,23 @@
 //
 // It speaks the same wire protocol our own server (packages/mcp/src/http.ts)
 // exposes: POST {jsonrpc, id, method, params} → {jsonrpc, id, result|error}.
-// Only HTTP(S) transport is supported (no stdio/spawn), and every URL passes
-// the SSRF guard in mcp-url-guard.ts before any bytes leave the process.
+// Only HTTP(S) transport is supported (no stdio/spawn), and every URL is
+// validated + connected through the SSRF-safe pinned transport in
+// ssrf-fetch.ts (`validateMcpUrl` → `requestPinned`): the hostname is resolved
+// once, every address is classified (loopback/private/link-local/metadata/
+// reserved/ULA/multicast are default-denied), and the socket is pinned to the
+// validated addresses with Host/SNI held at the hostname. No second DNS lookup
+// happens at connect time, so a DNS-rebinding swap between check and connect is
+// moot. Redirects are never followed.
+//
+// Loopback/private endpoints are only reachable when the operator names an
+// exact trusted endpoint (MCP_TRUSTED_HOSTS or the `trustedHosts` option);
+// there is no "open all of localhost" switch.
 //
 // Errors are typed (McpClientError.kind) so the service layer can map them onto
 // distinct results/statuses instead of silently swallowing or fabricating a
 // reachable/ok outcome.
-import { checkMcpUrl } from './mcp-url-guard.js';
+import { validateMcpUrl, requestPinned, SafeFetchError } from './ssrf-fetch.js';
 
 export interface McpServerRef {
   name?: string;
@@ -41,6 +51,7 @@ export type McpClientErrorKind =
   | 'unsupported_scheme'
   | 'invalid_url'
   | 'ssrf_blocked'
+  | 'redirect'
   | 'connection_failed'
   | 'timeout'
   | 'unauthorized'
@@ -62,22 +73,34 @@ export class McpClientError extends Error {
 
 const MCP_PROTOCOL_VERSION = '2025-03-26';
 
+/** Parse the MCP_TRUSTED_HOSTS env (comma-separated exact hostnames/IPs). */
+function envTrustedHosts(): string[] | undefined {
+  const raw = process.env.MCP_TRUSTED_HOSTS?.trim();
+  if (!raw) return undefined;
+  return raw.split(',').map((s) => s.trim()).filter(Boolean);
+}
+
 export interface McpHttpClientOptions {
   timeoutMs?: number;
-  fetchImpl?: typeof fetch;
   maxResponseBytes?: number;
+  /**
+   * Exact trusted endpoints (hostname or IP, optionally "host:port") that may be
+   * non-public. Defaults to MCP_TRUSTED_HOSTS; empty means loopback/private are
+   * all refused.
+   */
+  trustedHosts?: Iterable<string>;
 }
 
 export class McpHttpClient {
   private readonly timeoutMs: number;
-  private readonly fetchImpl: typeof fetch;
   private readonly maxResponseBytes: number;
+  private readonly trustedHosts?: Iterable<string>;
   private idCounter = 0;
 
   constructor(opts: McpHttpClientOptions = {}) {
     this.timeoutMs = opts.timeoutMs ?? 5000;
-    this.fetchImpl = opts.fetchImpl ?? fetch;
     this.maxResponseBytes = opts.maxResponseBytes ?? 2_000_000;
+    this.trustedHosts = opts.trustedHosts ?? envTrustedHosts();
   }
 
   private nextId(): number {
@@ -97,13 +120,15 @@ export class McpHttpClient {
   }
 
   private async rpc(ref: McpServerRef, method: string, params: unknown, timeoutMs = this.timeoutMs): Promise<unknown> {
-    const check = await checkMcpUrl(ref.url);
+    const check = await validateMcpUrl(ref.url, { trustedHosts: this.trustedHosts });
     if (!check.ok) throw new McpClientError(check.kind, check.reason);
 
-    let res: Response;
+    let res: { status: number; text: string };
     try {
-      res = await this.fetchImpl(ref.url, {
+      res = await requestPinned(ref.url, check.addrs, {
         method: 'POST',
+        timeoutMs,
+        maxBytes: this.maxResponseBytes,
         headers: {
           'content-type': 'application/json',
           accept: 'application/json, text/event-stream',
@@ -111,33 +136,28 @@ export class McpHttpClient {
           ...this.sanitizeHeaders(ref.headers),
         },
         body: JSON.stringify({ jsonrpc: '2.0', id: this.nextId(), method, params }),
-        signal: AbortSignal.timeout(timeoutMs),
       });
     } catch (err: any) {
-      const name = err?.name ?? '';
-      const msg = err?.cause?.message ?? err?.message ?? String(err);
-      if (name === 'AbortError' || name === 'TimeoutError' || /timeout|abort/i.test(msg)) {
-        throw new McpClientError('timeout', `MCP ${method} timed out after ${timeoutMs}ms`);
+      if (err instanceof SafeFetchError) {
+        if (err.kind === 'timeout') throw new McpClientError('timeout', `MCP ${method} timed out after ${timeoutMs}ms`);
+        if (err.kind === 'too_large') throw new McpClientError('invalid_response', `MCP response exceeded ${this.maxResponseBytes} bytes`);
+        throw new McpClientError('connection_failed', `could not connect to MCP server ${ref.url}: ${err.message}`);
       }
-      throw new McpClientError('connection_failed', `could not connect to MCP server ${ref.url}: ${msg}`);
+      throw new McpClientError('connection_failed', `could not connect to MCP server ${ref.url}: ${err?.message ?? String(err)}`);
     }
 
     if (res.status === 401 || res.status === 403) {
       throw new McpClientError('unauthorized', `MCP server rejected the request (HTTP ${res.status})`);
     }
-    if (!res.ok) {
+    // Redirects are never followed — the pinned transport does not chase 3xx.
+    if (res.status >= 300 && res.status < 400) {
+      throw new McpClientError('redirect', `MCP server returned a redirect (HTTP ${res.status}); refusing to follow it`);
+    }
+    if (res.status < 200 || res.status >= 300) {
       throw new McpClientError('http_error', `MCP server returned HTTP ${res.status}`);
     }
 
-    let text: string;
-    try {
-      text = await res.text();
-    } catch (err: any) {
-      throw new McpClientError('invalid_response', `could not read MCP response: ${err?.message ?? String(err)}`);
-    }
-    if (text.length > this.maxResponseBytes) {
-      throw new McpClientError('invalid_response', `MCP response exceeded ${this.maxResponseBytes} bytes`);
-    }
+    const text = res.text;
 
     let payload: any;
     try {
@@ -162,7 +182,7 @@ export class McpHttpClient {
     const result = (await this.rpc(ref, 'initialize', {
       protocolVersion: MCP_PROTOCOL_VERSION,
       capabilities: {},
-      clientInfo: { name: 'microera-agent', version: '0.1.0' },
+      clientInfo: { name: 'miqroera-agent', version: '0.1.0' },
     })) as any;
     if (!result?.protocolVersion || !result?.serverInfo) {
       throw new McpClientError('invalid_response', 'MCP initialize response missing protocolVersion/serverInfo');

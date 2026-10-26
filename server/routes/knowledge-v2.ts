@@ -1,13 +1,15 @@
 // Knowledge v2 operations — REST surface for the Operation Registry verbs
 // (kb.* / doc.* / folder.*). Each handler resolves a ServiceError onto the wire
 // contract (ok/fail) so CLI and MCP clients see identical JSON to the raw HTTP.
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
+import multer from 'multer';
 import { requireAuth } from '../middleware/auth.js';
 import { knowledgeService, ServiceError } from '../../backend/services/knowledge.service.js';
 import { elementService } from '../../backend/services/element.service.js';
 import { knowledgeChunkService } from '../../backend/services/chunk.service.js';
 import { parseJobService } from '../../backend/services/parse-job.service.js';
 import { parseApiService } from '../../backend/services/parse-api.service.js';
+import { MAX_SOURCE_FILE_BYTES } from '../../backend/storage/source-files.js';
 import { ok, fail, newTraceId } from '../../packages/contracts/src/wire.js';
 import type { ErrorKindKey } from '../../packages/contracts/src/wire.js';
 
@@ -54,6 +56,38 @@ async function handle(
     }
     res.status(500).json(fail(op, 'internal', err?.message ?? 'internal error', trace));
   }
+}
+
+// ── Binary source-file upload (TB-1) ───────────────────────────────────────
+// multipart with the file held in memory (validated + written by the service,
+// never to a client-supplied path). 50 MB cap matches the storage module's
+// MAX_SOURCE_FILE_BYTES; only the `file` field is accepted.
+const sourceUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: MAX_SOURCE_FILE_BYTES, files: 1 },
+});
+
+/** Map a MulterError onto a ServiceError so it lands in the wire contract. */
+function multerToServiceError(err: unknown): ServiceError {
+  const e = err as { code?: string; message?: string };
+  if (e?.code === 'LIMIT_FILE_SIZE') {
+    return new ServiceError('validation_failed', `file exceeds ${MAX_SOURCE_FILE_BYTES} bytes limit`);
+  }
+  if (e?.code === 'LIMIT_FILE_COUNT') {
+    return new ServiceError('validation_failed', 'exactly one file is required');
+  }
+  return new ServiceError('validation_failed', `upload rejected: ${e?.message ?? 'invalid multipart request'}`);
+}
+
+/** `sourceUpload.single('file')` as middleware, funneling MulterError into the
+ *  wire contract (otherwise multer would return a bare non-JSON error). */
+function singleSourceFile(req: Request, res: Response, next: NextFunction): void {
+  sourceUpload.single('file')(req, res, (err: unknown) => {
+    if (!err) return next();
+    void handle('doc.upload_file', req, res, async () => {
+      throw multerToServiceError(err);
+    });
+  });
 }
 
 // ── KB ─────────────────────────────────────────────────────────────────────
@@ -266,6 +300,25 @@ knowledgeV2Router.post('/doc/upload', (req, res) =>
       file_path: inputOf(req).file_path,
       visibility: inputOf(req).visibility,
       folder_id: toInt(inputOf(req).folder_id) ?? null,
+    });
+  }));
+
+// Binary source-file upload (PDF/DOCX/MD/TXT ≤50MB). `singleSourceFile` runs
+// before the handler so an oversized/malformed multipart is rejected as a
+// validation error, and the service then validates type + content + stores the
+// file under DATA_DIR/sources (never a client-supplied path).
+knowledgeV2Router.post('/doc/upload-file', singleSourceFile, (req, res) =>
+  handle('doc.upload_file', req, res, async () => {
+    const kbId = toInt(req.body?.kb_id);
+    if (!kbId) throw new ServiceError('validation_failed', 'kb_id is required');
+    const file = req.file;
+    if (!file) throw new ServiceError('validation_failed', 'file is required');
+    return parseApiService.uploadFile({
+      kb_id: kbId,
+      title: req.body?.title as string | undefined,
+      visibility: req.body?.visibility as 'public' | 'internal' | undefined,
+      folder_id: toInt(req.body?.folder_id) ?? null,
+      file: { name: file.originalname, mime: file.mimetype, size: file.size, buffer: file.buffer },
     });
   }));
 

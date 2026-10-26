@@ -1,6 +1,7 @@
-// Minimal HTTP client used by CLI and MCP to call the MicroEra API. The CLI and
+// Minimal HTTP client used by CLI and MCP to call the MiqroEra API. The CLI and
 // MCP are thin clients of the Core Service — they never talk to the database
 // directly.
+import { AsyncLocalStorage } from 'node:async_hooks';
 import type { OperationContext } from '../../contracts/src/types.js';
 
 export interface ApiClientOptions {
@@ -8,6 +9,27 @@ export interface ApiClientOptions {
   token?: string;
   timeoutMs?: number;
 }
+
+/**
+ * Per-request caller identity, carried across an async call chain without
+ * threading an extra argument through every operation handler.
+ *
+ * The stdio MCP and the CLI are local, operator-driven processes: they run with
+ * no identity in this store and therefore fall back to the operator-configured
+ * service token (`MICROERA_TOKEN`). The HTTP MCP is network-reachable, so its
+ * request handler runs inside `requestIdentity.run({ token, ... })` with the
+ * *caller's* verified token — never the shared service token — so the backend
+ * re-verifies and authorizes the actual caller rather than a privileged server
+ * principal.
+ */
+export interface RequestIdentity {
+  token?: string;
+  userId?: number;
+  username?: string;
+  role?: string;
+}
+
+export const requestIdentity = new AsyncLocalStorage<RequestIdentity>();
 
 export interface ApiError {
   status: number;
@@ -40,6 +62,10 @@ export class ApiClient {
     body?: unknown,
     ctx?: OperationContext,
   ): Promise<T> {
+    // A caller-scoped identity (HTTP MCP) takes precedence over the process-wide
+    // service token, so each request authenticates as its own caller.
+    const identity = requestIdentity.getStore();
+    const token = identity?.token ?? this.token;
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), this.timeoutMs);
     try {
@@ -47,7 +73,7 @@ export class ApiClient {
         method,
         headers: {
           'content-type': 'application/json',
-          ...(this.token ? { authorization: `Bearer ${this.token}` } : {}),
+          ...(token ? { authorization: `Bearer ${token}` } : {}),
         },
         body: body !== undefined ? JSON.stringify(body) : undefined,
         signal: controller.signal,

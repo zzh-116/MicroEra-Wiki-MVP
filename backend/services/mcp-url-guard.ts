@@ -1,21 +1,21 @@
-// MCP URL guard — SSRF protection for agent.mcp_test / agent.mcp_call.
+// MCP URL guard — the shared IP-range classification tables used by every SSRF
+// guard in the backend.
 //
-// The agent.* MCP operations accept a server URL that the backend will fetch.
-// Without a guard, an authenticated-but-low-privilege caller could point the
-// backend at cloud metadata (169.254.169.254), the local Postgres, or an
-// internal host. This module classifies a URL before any network I/O:
+// This module no longer performs the policy decision (loopback allowed vs
+// blocked, private allowed vs blocked). The two consumers apply their own policy
+// on top of `classifyIp`:
 //
-//   - scheme must be http/https (no file://, gopher://, etc.),
-//   - userinfo credentials are rejected,
-//   - the hostname is resolved and every address is classified,
-//   - loopback (127.0.0.0/8, ::1) is always allowed (self-hosted MCP + tests),
-//   - private/link-local/reserved/ULA/multicast ranges are blocked unless the
-//     operator explicitly opts in with MCP_ALLOW_PRIVATE=1.
+//   - `ssrf-fetch.ts` `validatePublicUrl` (doc.import_url) — loopback, private,
+//     link-local (incl. cloud metadata), reserved, ULA and multicast are ALL
+//     blocked; every address must be public.
+//   - `ssrf-fetch.ts` `validateMcpUrl` (agent.mcp_test / agent.mcp_call) — the
+//     same default-deny, except that an explicitly trusted endpoint (hostname or
+//     IP, optionally "host:port") may be non-public. There is no "open all of
+//     localhost" switch; loopback is refused by default.
 //
-// Only Streamable HTTP is supported; there is no stdio transport, so the URL
-// is never turned into a spawned command (no arbitrary command execution).
+// `classifyIp` is pure: it never performs DNS or any network I/O, so it is safe
+// to reuse before a socket is opened.
 import { BlockList } from 'node:net';
-import { lookup } from 'node:dns/promises';
 
 const blockedV4 = new BlockList();
 // 0.0.0.0/8 — "this network"
@@ -40,10 +40,23 @@ blockedV6.addSubnet('fe80::', 10, 'ipv6'); // link-local
 blockedV6.addSubnet('fc00::', 7, 'ipv6'); // unique local
 blockedV6.addSubnet('fec0::', 10, 'ipv6'); // site-local (deprecated)
 blockedV6.addSubnet('ff00::', 8, 'ipv6'); // multicast
+// IPv4-compatible IPv6 (::a.b.c.d, deprecated) — block the whole ::/96 range so
+// both dotted and hex spellings of an embedded IPv4 are caught (::1 is handled
+// as loopback before this check).
+blockedV6.addSubnet('::', 96, 'ipv6');
+// IPv4-mapped IPv6 in hex form (::ffff:xxxx:xxxx). The dotted ::ffff:a.b.c.d
+// form is extracted and re-classified by classifyIp; this catches the hex
+// spelling that otherwise falls through as "public".
+blockedV6.addSubnet('::ffff:0:0', 96, 'ipv6');
 
-type Classification = 'loopback' | 'blocked' | 'public';
+export type Classification = 'loopback' | 'blocked' | 'public';
 
-function classifyIp(address: string, family: 4 | 6): Classification {
+/**
+ * Classify a single resolved address. Shared by the doc.import_url guard
+ * (validatePublicUrl) and the Agent MCP guard (validateMcpUrl); both apply a
+ * default-deny policy on top of this classification.
+ */
+export function classifyIp(address: string, family: 4 | 6): Classification {
   if (family === 6) {
     // IPv4-mapped IPv6 (::ffff:a.b.c.d) — classify the embedded IPv4 address.
     const mapped = /^::ffff:(\d+\.\d+\.\d+\.\d+)$/.exec(address);
@@ -53,52 +66,4 @@ function classifyIp(address: string, family: 4 | 6): Classification {
   }
   if (address.startsWith('127.')) return 'loopback';
   return blockedV4.check(address, 'ipv4') ? 'blocked' : 'public';
-}
-
-export type McpUrlCheck =
-  | { ok: true; hostname: string; loopback: boolean }
-  | { ok: false; kind: 'unsupported_scheme' | 'invalid_url' | 'ssrf_blocked'; reason: string };
-
-export interface McpUrlGuardOptions {
-  /** Allow private/ULA ranges (defaults to MCP_ALLOW_PRIVATE env). */
-  allowPrivate?: boolean;
-}
-
-export async function checkMcpUrl(rawUrl: string, opts: McpUrlGuardOptions = {}): Promise<McpUrlCheck> {
-  let url: URL;
-  try {
-    url = new URL(rawUrl);
-  } catch {
-    return { ok: false, kind: 'invalid_url', reason: 'URL could not be parsed' };
-  }
-  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
-    return { ok: false, kind: 'unsupported_scheme', reason: `scheme '${url.protocol}' is not allowed (only http/https)` };
-  }
-  if (url.username || url.password) {
-    return { ok: false, kind: 'invalid_url', reason: 'URL must not embed credentials' };
-  }
-  const hostname = url.hostname;
-  if (!hostname) {
-    return { ok: false, kind: 'invalid_url', reason: 'URL has no hostname' };
-  }
-
-  const allowPrivate = opts.allowPrivate ?? (process.env.MCP_ALLOW_PRIVATE === '1' || process.env.MCP_ALLOW_PRIVATE === 'true');
-
-  let addrs: Array<{ address: string; family: number }>;
-  try {
-    addrs = await lookup(hostname, { all: true });
-  } catch {
-    return { ok: false, kind: 'invalid_url', reason: `hostname '${hostname}' could not be resolved` };
-  }
-
-  let loopback = false;
-  for (const a of addrs) {
-    const family: 4 | 6 = a.family === 6 ? 6 : 4;
-    const cls = classifyIp(a.address, family);
-    if (cls === 'blocked' && !allowPrivate) {
-      return { ok: false, kind: 'ssrf_blocked', reason: `host '${hostname}' resolves to a private/reserved address (${a.address}); refusing to connect` };
-    }
-    if (cls === 'loopback') loopback = true;
-  }
-  return { ok: true, hostname, loopback };
 }
