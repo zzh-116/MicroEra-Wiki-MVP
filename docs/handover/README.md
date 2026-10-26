@@ -1,11 +1,12 @@
 # MiqroEra Wiki MVP — Handover 文档
 
-> **文档版本**: v1.1
+> **文档版本**: v1.2
 > **生成日期**: 2026-07-24
 > **目标读者**: Platform Team / DevOps / SRE（平台组）
 > **项目移交方**: AI开发组 → 平台组
 >
 > **v1.1 更新**: 新增收藏功能（Bookmarks API + 数据库表）、NUC 自动部署（systemd timer）、Docling 错误报告修复
+> **v1.2 更新**: 新增 13 本地演示验收、14 最终交接备注（Git 历史清理 + 剩余事项）
 
 ---
 
@@ -30,6 +31,8 @@
 | 10 | [10_Troubleshooting](./10_Troubleshooting.md) | 故障排查手册 | SRE / On-Call |
 | 11 | [11_NUC_Deployment](./11_NUC_Deployment.md) | 🆕 NUC 服务器部署 + 自动部署 | DevOps / SRE |
 | 12 | [12_Docling_Environment](./12_Docling_Environment.md) | 🆕 Docling 环境复现（Python 3.12 + 依赖 + 诊断） | DevOps / 开发 |
+| 13 | [13_Local_Demo_Acceptance](./13_Local_Demo_Acceptance.md) | 🆕 本地交付演示验收（3002 单端口 SPA + 安全复审） | DevOps / 开发 / 验收人 |
+| 14 | [14_Final_Handover_Notes](./14_Final_Handover_Notes.md) | 🆕 最终交接备注（Git 清理结果 + 剩余事项） | 接手人 / Platform Lead |
 
 ## 快速启动
 
