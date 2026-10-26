@@ -8,6 +8,8 @@ import { agentService } from '../../backend/services/agent.service.js';
 import { agentRepository } from '../../backend/repositories/agent.repository.js';
 import { chatRepository } from '../../backend/repositories/chat.repository.js';
 import { retrievalService } from '../../backend/services/retrieval.service.js';
+import { knowledgeChunkRepository } from '../../backend/repositories/knowledge-chunk.repository.js';
+import { knowledgeRepository } from '../../backend/repositories/knowledge.repository.js';
 
 const UID = 7;
 
@@ -253,5 +255,50 @@ describe('P6 agent service — E1/E4/E5 config honesty + resume semantics', () =
     expect(s.isolated).toBe(false);
     expect(s.isolation).toBe('none');
     expect(s.capabilities).toEqual(['echo', 'count_tokens', 'checksum', 'sum']);
+  });
+});
+
+describe('P6 agent service — lookup access control (P1-1)', () => {
+  beforeEach(() => vi.restoreAllMocks());
+  afterEach(() => vi.restoreAllMocks());
+
+  function chunk(document_id: number, id = 'chunk_1'): any {
+    return { id, document_id, index: 0, text: 'SECRET chunk text', strategy: 'markdown', heading: 'H', start_char: 0, end_char: 10, metadata: {}, created_at: '', updated_at: '' };
+  }
+
+  it('lookup returns chunk text when the parent document is reachable', async () => {
+    vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent());
+    vi.spyOn(knowledgeChunkRepository, 'findById').mockResolvedValue(chunk(2));
+    vi.spyOn(knowledgeRepository, 'findDocumentById').mockResolvedValue({ id: 2, title: 'Doc 2' } as any);
+    // `toolCall` persists a run after the tool executes — mock all three so the
+    // test never reaches the real repository (and thus the dev database).
+    vi.spyOn(agentRepository, 'findRunById').mockResolvedValue(undefined);
+    vi.spyOn(agentRepository, 'createRun').mockImplementation(async (r: any) => ({
+      id: r.id, agent_id: r.agentId, goal: r.goal, status: 'running', steps: [], answer: '', trace: {}, created_at: '', updated_at: '',
+    }));
+    vi.spyOn(agentRepository, 'updateRun').mockResolvedValue(undefined);
+
+    const r: any = await agentService.toolCall(UID, { agent_id: 1, tool: 'lookup', input: { chunk_id: 'chunk_1' } });
+    expect(r.result.text).toBe('SECRET chunk text');
+    expect(r.result.title).toBe('Doc 2');
+  });
+
+  it('lookup throws resource_not_found (no leak) when the parent doc is in a deleted KB', async () => {
+    vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent());
+    vi.spyOn(knowledgeChunkRepository, 'findById').mockResolvedValue(chunk(2));
+    // KB-aware finder returns undefined → the chunk text must never be exposed.
+    vi.spyOn(knowledgeRepository, 'findDocumentById').mockResolvedValue(undefined);
+
+    await expect(agentService.toolCall(UID, { agent_id: 1, tool: 'lookup', input: { chunk_id: 'chunk_1' } }))
+      .rejects.toMatchObject({ kind: 'resource_not_found' });
+  });
+
+  it('mcpCall builtin lookup also blocks a deleted-KB chunk (no leak)', async () => {
+    vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent());
+    vi.spyOn(knowledgeChunkRepository, 'findById').mockResolvedValue(chunk(2));
+    vi.spyOn(knowledgeRepository, 'findDocumentById').mockResolvedValue(undefined);
+
+    await expect(agentService.mcpCall(UID, { agent_id: 1, tool: 'lookup', arguments: { chunk_id: 'chunk_1' } }))
+      .rejects.toMatchObject({ kind: 'resource_not_found' });
   });
 });

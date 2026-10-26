@@ -197,15 +197,21 @@ describe('P8 job dashboard — O01 (wait/cancel/retry/events/artifacts)', () => 
 
   it('cancel cancels a pending job', async () => {
     vi.spyOn(parseJobRepository, 'findById').mockResolvedValue(job({ status: 'pending' }));
-    const upd = vi.spyOn(parseJobRepository, 'update').mockResolvedValue(job({ status: 'cancelled' }));
+    const cnl = vi.spyOn(parseJobRepository, 'cancel').mockResolvedValue(job({ status: 'cancelled' }));
     vi.spyOn(parseJobService, 'status').mockResolvedValue(statusView({ status: 'cancelled' }));
     const r: any = await jobService.cancel('parse_x');
     expect(r.status).toBe('cancelled');
-    expect(upd).toHaveBeenCalledWith('parse_x', expect.objectContaining({ status: 'cancelled' }));
+    expect(cnl).toHaveBeenCalledWith('parse_x');
   });
 
   it('cancel rejects a terminal job', async () => {
     vi.spyOn(parseJobRepository, 'findById').mockResolvedValue(job({ status: 'succeeded' }));
+    await expect(jobService.cancel('parse_x')).rejects.toMatchObject({ kind: 'conflict' });
+  });
+
+  it('cancel is a no-op when the job turns terminal concurrently', async () => {
+    vi.spyOn(parseJobRepository, 'findById').mockResolvedValue(job({ status: 'running' }));
+    vi.spyOn(parseJobRepository, 'cancel').mockResolvedValue(undefined); // worker completed first
     await expect(jobService.cancel('parse_x')).rejects.toMatchObject({ kind: 'conflict' });
   });
 

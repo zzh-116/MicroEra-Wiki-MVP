@@ -57,7 +57,7 @@ describe('agent.mcp — real remote MCP (loopback stub)', () => {
   afterAll(async () => { await new Promise<void>((r) => server?.close(() => r())); });
 
   it('mcpTest performs a real handshake and reports reachable:true', async () => {
-    const svc = new AgentService(new McpHttpClient({ timeoutMs: 2000 }));
+    const svc = new AgentService(new McpHttpClient({ timeoutMs: 2000, trustedHosts: ['127.0.0.1'] }));
     const r: any = await svc.mcpTest({ name: 'stub', url });
     expect(r.reachable).toBe(true);
     expect(r.protocol_version).toBe('2025-03-26');
@@ -67,7 +67,7 @@ describe('agent.mcp — real remote MCP (loopback stub)', () => {
 
   it('mcpCall reaches the remote server and returns the target result', async () => {
     vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agent(1, { mcp_servers: [{ name: 'stub', url }] }));
-    const svc = new AgentService(new McpHttpClient({ timeoutMs: 2000 }));
+    const svc = new AgentService(new McpHttpClient({ timeoutMs: 2000, trustedHosts: ['127.0.0.1'] }));
     const r: any = await svc.mcpCall(7, { agent_id: 1, server: 'stub', tool: 'echo', arguments: { value: 'hi' } });
     expect(r.remote).toBe(true);
     expect(r.server).toBe('stub');

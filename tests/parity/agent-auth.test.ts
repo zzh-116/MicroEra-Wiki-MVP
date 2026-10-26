@@ -13,7 +13,7 @@ import { createApp } from '../../backend/app.js';
 import { signToken } from '../../server/middleware/auth.js';
 import { agentService } from '../../backend/services/agent.service.js';
 import { agentRepository } from '../../backend/repositories/agent.repository.js';
-import { registerOperations } from '../../packages/operation-registry/src/operations.js';
+import { ensureOperationsRegistered } from '../../packages/operation-registry/src/operations.js';
 import { operationRegistry } from '../../packages/operation-registry/src/registry.js';
 import { ApiClient } from '../../packages/operation-registry/src/http-client.js';
 
@@ -134,6 +134,12 @@ describe('agent object-level authorization — REST/CLI/MCP non-bypass', () => {
     baseUrl = `http://127.0.0.1:${port}`;
     tokenA = signToken({ userId: USER_A, username: 'a', role: 'admin' });
     tokenB = signToken({ userId: USER_B, username: 'b', role: 'admin' });
+
+    // Bind the registry's operation handlers to this server + tokenB once
+    // (idempotent), so the MCP test below exercises the same registry entry
+    // every transport shares instead of re-registering over an already-populated
+    // registry (which the operation-auth middleware now populates lazily).
+    ensureOperationsRegistered(new ApiClient({ baseUrl, token: tokenB }));
   });
 
   afterAll(async () => {
@@ -172,7 +178,6 @@ describe('agent object-level authorization — REST/CLI/MCP non-bypass', () => {
 
   it('MCP: the registered handler forwards the token and cannot bypass', async () => {
     vi.spyOn(agentRepository, 'findAgentById').mockResolvedValue(agentRow());
-    registerOperations(new ApiClient({ baseUrl, token: tokenB }));
     const def = operationRegistry.get('agent.view')!;
     await expect(def.handler!({ agent_id: 1 }, { requestId: 'r', traceId: 't', dryRun: false })).rejects.toMatchObject({ status: 404 });
   });

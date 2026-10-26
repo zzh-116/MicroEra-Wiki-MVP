@@ -6,16 +6,20 @@
 // database (`microera_wiki_test`), never the dev DB. It is fully self-provisioning:
 //   - creates the test DB if missing (via the `postgres` maintenance DB),
 //   - applies the additive migration chain (mirrors `runMigrations()` in app.ts),
-//   - truncates only the parse job tables so runs stay deterministic,
+//   - seeds UNIQUE rows and targeted-cleans them (NO TRUNCATE) so it cannot
+//     wipe another suite's in-flight jobs, and claims jobs by explicit id rather
+//     than the global `lease()` list, so it never picks up another suite's
+//     pending jobs (the same isolation pattern as `parse-worker.test.ts`),
 //   - re-points the real singletons at the test DB via `DATABASE_URL` + a fresh
 //     module graph, then runs the lifecycle end-to-end.
 // If Postgres is unreachable the whole suite skips (no hard failure on a fresh
 // checkout without a database).
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
-import fs from 'node:fs';
 import path from 'node:path';
 import pg from 'pg';
 import { fileURLToPath } from 'node:url';
+import { assertTestDatabase } from '../helpers/assert-test-db.js';
+import { applyMigrations } from '../helpers/apply-migrations.js';
 
 const TEST_DB_NAME = 'microera_wiki_test';
 const ADMIN_URL = 'postgresql://postgres:postgres@localhost:5433/postgres';
@@ -40,8 +44,14 @@ try {
 
 describe.skipIf(!dbAvailable)('F5 — parse-job worker lifecycle (isolated test DB)', () => {
   let parseJobService: typeof import('../../backend/services/parse-job.service.js')['parseJobService'];
+  let parseJobRepository: typeof import('../../backend/repositories/parse-job.repository.js')['parseJobRepository'];
   let pool: typeof import('../../backend/db/connection.js')['pool'];
   const envSnapshot: Record<string, string | undefined> = {};
+  const createdJobIds: string[] = [];
+
+  function track(jobId: string): void {
+    createdJobIds.push(jobId);
+  }
 
   beforeAll(async () => {
     envSnapshot.DATABASE_URL = process.env.DATABASE_URL;
@@ -55,33 +65,31 @@ describe.skipIf(!dbAvailable)('F5 — parse-job worker lifecycle (isolated test 
       await admin.end();
     }
 
-    // 2. Apply migrations to the test DB (additive; mirrors app.ts runMigrations).
+    // 2. Apply migrations to the test DB (additive; mirrors app.ts runMigrations),
+    //    serialized across concurrent suites via a Postgres advisory lock.
     const testPool = new pg.Pool({ connectionString: TEST_DB_URL });
-    await testPool.query('CREATE EXTENSION IF NOT EXISTS vector');
-    await testPool.query(
-      'CREATE TABLE IF NOT EXISTS _migrations (name TEXT PRIMARY KEY, applied_at TIMESTAMPTZ DEFAULT NOW())',
-    );
-    const files = fs.readdirSync(MIGRATIONS_DIR).filter((f) => f.endsWith('.sql')).sort();
-    for (const file of files) {
-      const { rows } = await testPool.query('SELECT 1 FROM _migrations WHERE name = $1', [file]);
-      if (rows.length > 0) continue;
-      const sql = fs.readFileSync(path.join(MIGRATIONS_DIR, file), 'utf-8');
-      const statements = sql.split('--> statement-breakpoint').map((s) => s.trim()).filter(Boolean);
-      for (const stmt of statements) await testPool.query(stmt);
-      await testPool.query('INSERT INTO _migrations (name) VALUES ($1)', [file]);
-    }
-    // Deterministic runs: clear only the parse-job tables in the test DB.
-    await testPool.query('TRUNCATE "parse_jobs", "parse_deadletters"');
+    await assertTestDatabase(testPool, TEST_DB_NAME);
+    await applyMigrations(TEST_DB_URL, MIGRATIONS_DIR);
     await testPool.end();
 
     // 3. Re-point the real singletons at the test DB and load them fresh.
     process.env.DATABASE_URL = TEST_DB_URL;
     vi.resetModules();
     ({ parseJobService } = await import('../../backend/services/parse-job.service.js'));
+    ({ parseJobRepository } = await import('../../backend/repositories/parse-job.repository.js'));
     ({ pool } = await import('../../backend/db/connection.js'));
+    await assertTestDatabase(pool, TEST_DB_NAME);
   }, 60000);
 
   afterAll(async () => {
+    if (pool && createdJobIds.length > 0) {
+      try {
+        await pool.query('DELETE FROM parse_deadletters WHERE job_id = ANY($1::text[])', [createdJobIds]);
+        await pool.query('DELETE FROM parse_jobs WHERE id = ANY($1::text[])', [createdJobIds]);
+      } catch {
+        /* best-effort cleanup */
+      }
+    }
     try {
       await pool.end();
     } catch {
@@ -92,13 +100,15 @@ describe.skipIf(!dbAvailable)('F5 — parse-job worker lifecycle (isolated test 
     vi.resetModules();
   });
 
-  it('enqueue → lease → heartbeat → checkpoint → complete transitions to succeeded', async () => {
+  it('enqueue → claim → heartbeat → checkpoint → complete transitions to succeeded', async () => {
     const enq = await parseJobService.enqueue({ type: 'parse' });
+    track(enq.job_id);
     expect(enq.status).toBe('pending');
     expect(enq.job_id).toMatch(/^parse_/);
 
-    const leased = await parseJobService.lease('worker-a', 5);
-    const mine = leased.find((j) => j.id === enq.job_id);
+    // Precise claim by id (not the global `lease()` list) so a concurrent suite's
+    // pending jobs can never crowd this one out or be stolen by this worker.
+    const mine = await parseJobRepository.claim(enq.job_id, 'worker-a', 60);
     expect(mine).toBeDefined();
     expect(mine!.status).toBe('running');
     expect(mine!.lease_owner).toBe('worker-a');
@@ -120,16 +130,17 @@ describe.skipIf(!dbAvailable)('F5 — parse-job worker lifecycle (isolated test 
 
   it('fail requeues below max_attempts, then deadletters when exhausted', async () => {
     const enq = await parseJobService.enqueue({ type: 'parse', max_attempts: 2 });
+    track(enq.job_id);
 
     // Attempt 1 (attempt 0→1 < 2) → requeue back to pending, no deadletter.
-    await parseJobService.lease('worker-b', 5);
+    await parseJobRepository.claim(enq.job_id, 'worker-b', 60);
     const f1 = await parseJobService.fail(enq.job_id, 'worker-b', 'boom', 'PARSE_ERR');
     expect(f1.status).toBe('pending');
     expect(f1.attempt).toBe(1);
     expect(f1.deadlettered).toBe(false);
 
     // Attempt 2 (attempt 1→2 >= 2) → deadlettered.
-    await parseJobService.lease('worker-b', 5);
+    await parseJobRepository.claim(enq.job_id, 'worker-b', 60);
     const f2 = await parseJobService.fail(enq.job_id, 'worker-b', 'boom again', 'PARSE_ERR');
     expect(f2.deadlettered).toBe(true);
 
@@ -139,7 +150,8 @@ describe.skipIf(!dbAvailable)('F5 — parse-job worker lifecycle (isolated test 
 
   it('replay_deadletter requeues the original job back to pending', async () => {
     const enq = await parseJobService.enqueue({ type: 'parse', max_attempts: 1 });
-    await parseJobService.lease('worker-c', 5);
+    track(enq.job_id);
+    await parseJobRepository.claim(enq.job_id, 'worker-c', 60);
     await parseJobService.fail(enq.job_id, 'worker-c', 'fatal', 'FATAL');
 
     const dls = await parseJobService.deadletters();

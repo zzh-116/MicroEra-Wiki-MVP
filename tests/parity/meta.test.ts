@@ -59,7 +59,7 @@ describe('P9 X02 — mcp.* introspection', () => {
   it('mcp.resources lists the host resources', () => {
     const r = metaService.resources();
     expect(r.total).toBeGreaterThan(0);
-    expect(r.resources.some((x: any) => x.uri === 'microera://schema/operations')).toBe(true);
+    expect(r.resources.some((x: any) => x.uri === 'miqroera://schema/operations')).toBe(true);
   });
 
   it('mcp.prompts lists the host prompts', () => {
@@ -71,7 +71,7 @@ describe('P9 X02 — mcp.* introspection', () => {
   it('mcp.health reports liveness', () => {
     const r: any = metaService.health();
     expect(r.ok).toBe(true);
-    expect(r.name).toBe('microera');
+    expect(r.name).toBe('miqroera');
     expect(r.tools).toBeGreaterThan(0);
   });
 });

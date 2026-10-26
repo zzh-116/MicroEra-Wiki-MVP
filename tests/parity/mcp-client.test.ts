@@ -9,43 +9,48 @@ import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from 'vitest
 import http from 'node:http';
 import type { Server } from 'node:http';
 import { McpHttpClient } from '../../backend/services/mcp-client.js';
-import { checkMcpUrl } from '../../backend/services/mcp-url-guard.js';
+import { validateMcpUrl } from '../../backend/services/ssrf-fetch.js';
 
-describe('mcp-url-guard (SSRF)', () => {
-  it('allows loopback http', async () => {
-    const r = await checkMcpUrl('http://127.0.0.1:8080/mcp');
+describe('mcp-url-guard → validateMcpUrl (SSRF)', () => {
+  it('denies loopback by default', async () => {
+    const r = await validateMcpUrl('http://127.0.0.1:8080/mcp');
+    expect(r.ok).toBe(false);
+    expect((r as any).kind).toBe('ssrf_blocked');
+  });
+
+  it('allows loopback only for an explicitly trusted host', async () => {
+    const r = await validateMcpUrl('http://127.0.0.1:8080/mcp', { trustedHosts: ['127.0.0.1'] });
     expect(r.ok).toBe(true);
-    expect((r as any).loopback).toBe(true);
   });
 
   it('blocks the cloud metadata address', async () => {
-    const r = await checkMcpUrl('http://169.254.169.254/latest/meta-data');
+    const r = await validateMcpUrl('http://169.254.169.254/latest/meta-data');
     expect(r.ok).toBe(false);
     expect((r as any).kind).toBe('ssrf_blocked');
   });
 
   it('blocks RFC1918 private ranges', async () => {
     for (const host of ['http://192.168.1.1', 'http://10.0.0.1', 'http://172.16.0.1']) {
-      const r = await checkMcpUrl(host);
+      const r = await validateMcpUrl(host);
       expect(r.ok).toBe(false);
       expect((r as any).kind).toBe('ssrf_blocked');
     }
   });
 
   it('rejects non-http(s) schemes', async () => {
-    const r = await checkMcpUrl('file:///etc/passwd');
+    const r = await validateMcpUrl('file:///etc/passwd');
     expect(r.ok).toBe(false);
     expect((r as any).kind).toBe('unsupported_scheme');
   });
 
   it('rejects embedded credentials', async () => {
-    const r = await checkMcpUrl('http://user:pass@127.0.0.1');
+    const r = await validateMcpUrl('http://user:pass@127.0.0.1');
     expect(r.ok).toBe(false);
     expect((r as any).kind).toBe('invalid_url');
   });
 
   it('rejects unparseable URLs', async () => {
-    const r = await checkMcpUrl('not a url');
+    const r = await validateMcpUrl('not a url');
     expect(r.ok).toBe(false);
     expect((r as any).kind).toBe('invalid_url');
   });
@@ -91,7 +96,7 @@ describe('McpHttpClient — real loopback JSON-RPC', () => {
   afterEach(() => { calls.length = 0; });
 
   it('initialize performs a real protocol handshake', async () => {
-    const client = new McpHttpClient({ timeoutMs: 2000 });
+    const client = new McpHttpClient({ timeoutMs: 2000, trustedHosts: ['127.0.0.1'] });
     const info = await client.initialize({ url });
     expect(info.protocolVersion).toBe('2025-03-26');
     expect(info.serverInfo.name).toBe('stub');
@@ -99,13 +104,13 @@ describe('McpHttpClient — real loopback JSON-RPC', () => {
   });
 
   it('listTools enumerates the remote tools', async () => {
-    const client = new McpHttpClient({ timeoutMs: 2000 });
+    const client = new McpHttpClient({ timeoutMs: 2000, trustedHosts: ['127.0.0.1'] });
     const tools = await client.listTools({ url });
     expect(tools.map((t) => t.name)).toContain('echo');
   });
 
   it('callTool reaches the target and returns the correct result', async () => {
-    const client = new McpHttpClient({ timeoutMs: 2000 });
+    const client = new McpHttpClient({ timeoutMs: 2000, trustedHosts: ['127.0.0.1'] });
     const r = await client.callTool({ url }, 'echo', { value: 'hello' });
     expect(r.isError).toBe(false);
     expect(r.content[0].text).toBe('hello');
@@ -113,12 +118,12 @@ describe('McpHttpClient — real loopback JSON-RPC', () => {
   });
 
   it('callTool maps -32601 to tool_not_found', async () => {
-    const client = new McpHttpClient({ timeoutMs: 2000 });
+    const client = new McpHttpClient({ timeoutMs: 2000, trustedHosts: ['127.0.0.1'] });
     await expect(client.callTool({ url }, 'missing', {})).rejects.toMatchObject({ kind: 'tool_not_found' });
   });
 
   it('refuses a private address before any request leaves the process', async () => {
-    const client = new McpHttpClient({ timeoutMs: 2000 });
+    const client = new McpHttpClient({ timeoutMs: 2000, trustedHosts: ['127.0.0.1'] });
     await expect(client.initialize({ url: 'http://169.254.169.254/latest/meta-data' })).rejects.toMatchObject({ kind: 'ssrf_blocked' });
   });
 
@@ -128,7 +133,7 @@ describe('McpHttpClient — real loopback JSON-RPC', () => {
     const deadUrl = `http://127.0.0.1:${(dead.address() as { port: number }).port}`;
     await new Promise<void>((r) => dead.close(() => r()));
 
-    const client = new McpHttpClient({ timeoutMs: 2000 });
+    const client = new McpHttpClient({ timeoutMs: 2000, trustedHosts: ['127.0.0.1'] });
     await expect(client.initialize({ url: deadUrl })).rejects.toMatchObject({ kind: 'connection_failed' });
   });
 
@@ -137,7 +142,7 @@ describe('McpHttpClient — real loopback JSON-RPC', () => {
     await new Promise<void>((r) => slow.listen(0, '127.0.0.1', () => r()));
     const slowUrl = `http://127.0.0.1:${(slow.address() as { port: number }).port}`;
 
-    const client = new McpHttpClient({ timeoutMs: 50 });
+    const client = new McpHttpClient({ timeoutMs: 50, trustedHosts: ['127.0.0.1'] });
     await expect(client.initialize({ url: slowUrl })).rejects.toMatchObject({ kind: 'timeout' });
 
     slow.closeAllConnections?.();

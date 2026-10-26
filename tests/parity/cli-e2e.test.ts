@@ -8,6 +8,7 @@ import { spawn, type ChildProcess } from 'node:child_process';
 import http from 'node:http';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { signToken } from '../../server/middleware/auth.js';
 
 const repoRoot = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const cliEntry = path.join(repoRoot, 'cli', 'src', 'main.ts');
@@ -106,14 +107,14 @@ describe('CLI MCP HTTP transport (A1)', () => {
     });
   }
 
-  async function listToolsOverHttp(port: number, timeoutMs = 15000): Promise<Array<{ name: string }>> {
+  async function listToolsOverHttp(port: number, token: string, timeoutMs = 15000): Promise<Array<{ name: string }>> {
     const deadline = Date.now() + timeoutMs;
     let lastErr: unknown;
     while (Date.now() < deadline) {
       try {
         const res = await fetch(`http://127.0.0.1:${port}/mcp`, {
           method: 'POST',
-          headers: { 'content-type': 'application/json' },
+          headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
           body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' }),
         });
         if (res.ok) {
@@ -128,15 +129,16 @@ describe('CLI MCP HTTP transport (A1)', () => {
     throw new Error(`MCP HTTP server not ready: ${String(lastErr)}`);
   }
 
-  it('mcp serve --transport http --port N starts an HTTP server listing tools', async () => {
+  it('mcp serve --transport http --port N starts an authenticated HTTP server listing tools', async () => {
     const port = await getFreePort();
+    const token = signToken({ userId: 1, username: 'admin', role: 'admin' });
     const child = spawn(process.execPath, ['--import', 'tsx', cliEntry, 'mcp', 'serve', '--transport', 'http', '--port', String(port)], {
       cwd: repoRoot,
       env: process.env,
       stdio: ['ignore', 'ignore', 'pipe'],
     });
     procs.push(child);
-    const tools = await listToolsOverHttp(port);
+    const tools = await listToolsOverHttp(port, token);
     expect(tools.length).toBeGreaterThan(150);
     expect(tools.map((t) => t.name)).toContain('search_hybrid');
     expect(tools.map((t) => t.name)).toContain('chat_ask');

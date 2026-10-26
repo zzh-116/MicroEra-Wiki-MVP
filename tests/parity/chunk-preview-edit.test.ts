@@ -124,4 +124,27 @@ describe('P2-03 chunk preview/edit', () => {
     expect(mocks.saveChunks).toHaveBeenCalledWith(7, expect.any(Array));
     expect(mocks.invalidateVectorsByDocument).toHaveBeenCalledWith(7);
   });
+
+  it('view throws resource_not_found for a document in a deleted KB', async () => {
+    mocks.findDocumentById.mockResolvedValue(undefined);
+    mocks.findById.mockResolvedValue(CHUNK);
+    await expect(knowledgeChunkService.view(7, 'doc_7_chunk_0')).rejects.toMatchObject({ kind: 'resource_not_found' });
+    expect(mocks.findById).not.toHaveBeenCalled();
+  });
+
+  it('update throws resource_not_found for a document in a deleted KB (no write)', async () => {
+    mocks.findDocumentById.mockResolvedValue(undefined);
+    mocks.findById.mockResolvedValue(CHUNK);
+    mocks.updateText.mockResolvedValue({ ...CHUNK, text: 'new' });
+    await expect(knowledgeChunkService.update(7, 'doc_7_chunk_0', 'new')).rejects.toMatchObject({ kind: 'resource_not_found' });
+    expect(mocks.updateText).not.toHaveBeenCalled();
+  });
+
+  it('remove throws resource_not_found for a document in a deleted KB (no write)', async () => {
+    mocks.findDocumentById.mockResolvedValue(undefined);
+    mocks.findById.mockResolvedValue(CHUNK);
+    mocks.deleteById.mockResolvedValue(true);
+    await expect(knowledgeChunkService.remove(7, 'doc_7_chunk_0')).rejects.toMatchObject({ kind: 'resource_not_found' });
+    expect(mocks.deleteById).not.toHaveBeenCalled();
+  });
 });

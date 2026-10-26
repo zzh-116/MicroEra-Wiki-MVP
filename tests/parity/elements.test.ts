@@ -1,7 +1,7 @@
 // P2-02 — Layout-aware parsed elements: heading/table/image/page coordinates
 // and blob refs. Covers the pure extractor and the element service (images,
 // tables, OCR) with the repository mocked.
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const { extractElements } = await import('../../backend/parser/elements.js');
 
@@ -28,6 +28,10 @@ vi.mock('../../backend/parser/factory.js', () => ({
 }));
 
 const { elementService } = await import('../../backend/services/element.service.js');
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
 
 // ---- Extractor (pure) ----
 describe('P2-02 element extractor', () => {
@@ -94,6 +98,7 @@ describe('P2-02 element service', () => {
   });
 
   it('listImages maps image elements to items', async () => {
+    mocks.findDocumentById.mockResolvedValue({ id: 1 });
     mocks.listByDocument.mockResolvedValue([
       { id: 1, document_id: 1, element_type: 'image', position: 0, content: { src: '/api/images/a.png', alt: 'A' }, start_char: 0, end_char: 10, start_line: 1, end_line: 1, created_at: 'x' },
     ]);
@@ -103,12 +108,31 @@ describe('P2-02 element service', () => {
     expect(mocks.listByDocument).toHaveBeenCalledWith(1, 'image');
   });
 
+  it('listImages rejects a document in a deleted KB (no leak)', async () => {
+    mocks.findDocumentById.mockResolvedValue(undefined);
+    mocks.listByDocument.mockResolvedValue([
+      { id: 1, document_id: 999, element_type: 'image', position: 0, content: { src: '/api/images/a.png', alt: 'A' }, start_char: 0, end_char: 10, start_line: 1, end_line: 1, created_at: 'x' },
+    ]);
+    await expect(elementService.listImages(999)).rejects.toMatchObject({ kind: 'resource_not_found' });
+    expect(mocks.listByDocument).not.toHaveBeenCalled();
+  });
+
   it('listTables maps table elements to structured rows', async () => {
+    mocks.findDocumentById.mockResolvedValue({ id: 1 });
     mocks.listByDocument.mockResolvedValue([
       { id: 1, document_id: 1, element_type: 'table', position: 0, content: { headers: ['A'], rows: [['1']], raw: '| A |' }, start_char: 0, end_char: 5, start_line: 1, end_line: 1, created_at: 'x' },
     ]);
     const result = await elementService.listTables(1);
     expect(result.items[0]).toMatchObject({ headers: ['A'], rows: [['1']] });
+  });
+
+  it('listTables rejects a document in a deleted KB (no leak)', async () => {
+    mocks.findDocumentById.mockResolvedValue(undefined);
+    mocks.listByDocument.mockResolvedValue([
+      { id: 1, document_id: 999, element_type: 'table', position: 0, content: { headers: ['A'], rows: [['1']], raw: '| A |' }, start_char: 0, end_char: 5, start_line: 1, end_line: 1, created_at: 'x' },
+    ]);
+    await expect(elementService.listTables(999)).rejects.toMatchObject({ kind: 'resource_not_found' });
+    expect(mocks.listByDocument).not.toHaveBeenCalled();
   });
 
   it('ocr returns no_images when the document has none', async () => {

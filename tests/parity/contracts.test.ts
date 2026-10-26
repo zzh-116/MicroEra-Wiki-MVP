@@ -98,7 +98,7 @@ describe('MCP surface (from registry)', () => {
 
   it('lists the schema resource and known prompts', () => {
     const resources = listResources();
-    expect(resources.some((r) => r.uri === 'microera://schema/operations')).toBe(true);
+    expect(resources.some((r) => r.uri === 'miqroera://schema/operations')).toBe(true);
     const prompts = listPrompts();
     expect(prompts.some((p) => p.name === 'research-grounded-answer')).toBe(true);
   });

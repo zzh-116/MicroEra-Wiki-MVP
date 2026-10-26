@@ -223,10 +223,19 @@ describe('documents', () => {
     await expect(knowledgeService.batchDeleteDocuments([])).rejects.toMatchObject({ kind: 'validation_failed' });
   });
   it('batch-deletes existing ids and reports missing ones', async () => {
+    repo.findDocumentById.mockImplementation(async (id: number) => (id === 1 ? doc({ id: 1 }) : undefined));
     repo.softDeleteDocument.mockImplementation(async (id: number) => id === 1);
     const out = await knowledgeService.batchDeleteDocuments([1, 2]);
     expect(out.deleted).toBe(1);
     expect(out.missing).toEqual([2]);
+  });
+  it('batch-delete treats a document in a deleted KB as missing (no write)', async () => {
+    repo.findDocumentById.mockResolvedValue(undefined);
+    repo.softDeleteDocument.mockResolvedValue(true);
+    const out = await knowledgeService.batchDeleteDocuments([100]);
+    expect(out.deleted).toBe(0);
+    expect(out.missing).toEqual([100]);
+    expect(repo.softDeleteDocument).not.toHaveBeenCalled();
   });
 });
 
@@ -238,12 +247,20 @@ describe('revisions', () => {
     expect(out.items).toHaveLength(1);
   });
   it('views a revision', async () => {
+    repo.findDocumentById.mockResolvedValue(doc());
     repo.findRevision.mockResolvedValue(rev());
     expect((await knowledgeService.viewRevision(100, 1)).revision_no).toBe(1);
   });
   it('404s a missing revision', async () => {
+    repo.findDocumentById.mockResolvedValue(doc());
     repo.findRevision.mockResolvedValue(undefined);
     await expect(knowledgeService.viewRevision(100, 99)).rejects.toMatchObject({ kind: 'resource_not_found' });
+  });
+  it('404s a revision whose document is in a deleted KB', async () => {
+    repo.findDocumentById.mockResolvedValue(undefined);
+    repo.findRevision.mockResolvedValue(rev());
+    await expect(knowledgeService.viewRevision(100, 1)).rejects.toMatchObject({ kind: 'resource_not_found' });
+    expect(repo.findRevision).not.toHaveBeenCalled();
   });
   it('restores a revision and appends a new one', async () => {
     repo.findDocumentById.mockResolvedValueOnce(doc());
