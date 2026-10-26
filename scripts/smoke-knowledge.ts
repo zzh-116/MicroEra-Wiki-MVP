@@ -12,6 +12,9 @@ import { knowledgeService } from '../backend/services/knowledge.service.js';
 
 const BASE = (process.env.MICROERA_HOST || 'http://localhost:3001').replace(/\/$/, '');
 
+const adminPassword = process.env.ADMIN_PASSWORD;
+if (!adminPassword) { console.error('ADMIN_PASSWORD env var is required (set it to the local admin password)'); process.exit(1); }
+
 let pass = 0;
 let fail = 0;
 const failures: string[] = [];
@@ -46,7 +49,7 @@ async function v2(method: string, path: string, token: string, input?: Record<st
 
 async function main() {
   // 1. Authenticate.
-  const login = await raw('POST', '/api/auth/login', undefined, { username: 'admin', password: 'admin123' });
+  const login = await raw('POST', '/api/auth/login', undefined, { username: 'admin', password: adminPassword });
   const token = login?.token ?? login?.data?.token;
   check(!!token, 'auth: admin login returns a token');
   if (!token) { console.error('Cannot continue without a token.'); process.exit(1); }

@@ -3,13 +3,13 @@
 # Run this ONCE on the NUC server to install the auto-deploy timer.
 #
 # Usage:
-#   ssh devops@192.168.40.60
+#   ssh devops@<NUC_IP>
 #   cd /data/code-project/microera-wiki
 #   bash scripts/nuc-auto-deploy-setup.sh
 set -e
 
 echo "============================================================"
-echo " MicroEra Wiki — NUC Auto-Deploy Setup"
+echo " MiqroEra Wiki — NUC Auto-Deploy Setup"
 echo "============================================================"
 echo ""
 

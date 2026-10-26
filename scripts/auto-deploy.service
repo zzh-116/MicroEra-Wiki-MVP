@@ -1,5 +1,5 @@
 [Unit]
-Description=MicroEra Wiki Auto Deploy
+Description=MiqroEra Wiki Auto Deploy
 After=network.target
 
 [Service]

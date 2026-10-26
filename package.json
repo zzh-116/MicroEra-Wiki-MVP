@@ -37,6 +37,8 @@
     "smoke:model": "tsx scripts/smoke-model.ts",
     "smoke:meta": "tsx scripts/smoke-meta.ts",
     "cli": "tsx cli/src/main.ts",
+    "worker": "tsx server/worker.ts",
+    "docling:doctor": "tsx scripts/docling-env-check.ts",
     "mcp:stdio": "tsx cli/src/main.ts mcp serve --transport stdio",
     "mcp:http": "tsx cli/src/main.ts mcp serve --transport http"
   },

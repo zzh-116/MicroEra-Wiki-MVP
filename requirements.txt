@@ -1,0 +1,25 @@
+# MiqroEra Wiki — Docling parser environment (Windows, Python 3.12)
+#
+# Minimal reproducible dependency set. This is NOT a `pip freeze` dump of one
+# machine; it pins only the parser and its direct constraints, and lets pip
+# resolve the transitive graph (docling-slim, docling-core, docling-parse,
+# docling-ibm-models, pydantic, …) to the versions Docling 2.111.0 declares.
+#
+# Requirements:
+#   Python 3.10 – 3.12  (3.12 verified; 3.13+ and pre-release 3.15 are NOT
+#                        supported by Docling 2.x and are rejected explicitly).
+#
+# Install (do NOT use a pre-release interpreter, e.g. 3.15.0b3):
+#   python -m pip install -r requirements.txt
+#
+# The verified working environment (CPython 3.12.9) resolves to:
+#   docling 2.111.0, docling-core 2.86.0, docling-parse 7.7.0,
+#   docling-ibm-models 3.13.3.
+docling==2.111.0
+
+# Scanned PDFs / image OCR (the default working environment includes the OCR
+# engines below). For OCR, install the extra instead of the line above:
+#   docling[ocr]==2.111.0
+# which pulls in: rapidocr-onnxruntime (~1.4.4), rapidocr (~3.9.1),
+# onnxruntime (~1.27.0). Plain PDF/DOCX text + embedded-image extraction does
+# NOT need OCR.

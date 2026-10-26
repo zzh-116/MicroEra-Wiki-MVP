@@ -3,9 +3,10 @@ import json
 import urllib.request
 import urllib.error
 import sys
+import os
 
-WIKI_URL = "http://192.168.40.60:3001"
-ENTRIES_FILE = r"C:\Users\Intership004\zzh\MicroEra-Wiki-MVP\backend\data\metadata\entries.json"
+WIKI_URL = os.environ.get('MICROERA_HOST', 'http://localhost:3001')
+ENTRIES_FILE = os.environ.get('ENTRIES_FILE', '')
 
 def api_call(method, path, data=None, token=None):
     url = f"{WIKI_URL}{path}"
@@ -22,7 +23,10 @@ def api_call(method, path, data=None, token=None):
         return None
 
 def login():
-    result = api_call('POST', '/api/auth/login', {'username': 'admin', 'password': 'admin123'})
+    admin_password = os.environ.get('ADMIN_PASSWORD', '')
+    if not admin_password:
+        raise SystemExit('ADMIN_PASSWORD env var is required')
+    result = api_call('POST', '/api/auth/login', {'username': 'admin', 'password': admin_password})
     if result and result.get('token'):
         return result['token']
     print(f"Login failed: {result}")
@@ -36,6 +40,8 @@ def get_existing_entries(token):
     return []
 
 def main():
+    if not ENTRIES_FILE:
+        raise SystemExit('ENTRIES_FILE env var is required')
     with open(ENTRIES_FILE, encoding='utf-8') as f:
         local_entries = json.load(f)
 

@@ -72,7 +72,7 @@ writeFileSync(join(OUT, 'operation-parity.json'), JSON.stringify({ generatedAt: 
 const log = execSync('git log --oneline -40', { cwd: ROOT }).toString().trim();
 const head = execSync('git rev-parse HEAD', { cwd: ROOT }).toString().trim();
 const ledger = [
-  '# MicroEra Wiki — 本地提交清单（commit ledger）',
+  '# MiqroEra Wiki — 本地提交清单（commit ledger）',
   '',
   `> 生成时间：${new Date().toISOString()} ｜ 当前 HEAD：\`${head}\``,
   '> 说明：本清单由 `git log` 直接生成，仅本地提交，未推送 GitHub。',

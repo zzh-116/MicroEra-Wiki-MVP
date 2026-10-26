@@ -2,13 +2,15 @@
 import paramiko
 import os
 
-HOST = "192.168.40.60"
-USER = "devops"
-PASSWORD = "devops1234"
-LOCAL = r"C:\Users\Intership004\zzh\MicroEra-Wiki-MVP\backend\connectors\sandbox"
+HOST = os.environ.get('NUC_HOST', '')
+USER = os.environ.get('NUC_USER', '')
+PASSWORD = os.environ.get('NUC_PASSWORD', '')
+LOCAL = os.environ.get('LOCAL_DIR', '')
 REMOTE = "/data/code-project/microera-wiki/backend/connectors/sandbox"
 
 def main():
+    if not (HOST and USER and PASSWORD and LOCAL):
+        raise SystemExit('NUC_HOST, NUC_USER, NUC_PASSWORD and LOCAL_DIR env vars are required')
     transport = paramiko.Transport((HOST, 22))
     transport.connect(username=USER, password=PASSWORD)
     sftp = paramiko.SFTPClient.from_transport(transport)

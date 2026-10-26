@@ -11,6 +11,9 @@ import { ingestService } from '../backend/services/ingest.service.js';
 
 const BASE = (process.env.MICROERA_HOST || 'http://localhost:3001').replace(/\/$/, '');
 
+const adminPassword = process.env.ADMIN_PASSWORD;
+if (!adminPassword) { console.error('ADMIN_PASSWORD env var is required (set it to the local admin password)'); process.exit(1); }
+
 const CONTENT = 'This document discusses zeolite catalysis and its applications in green chemistry and sustainable materials synthesis.';
 const QUERY = 'What is zeolite catalysis used for?';
 
@@ -51,7 +54,7 @@ async function v2(method: string, path: string, token: string, input?: Record<st
 }
 
 async function main() {
-  const login = await raw('POST', '/api/auth/login', undefined, { username: 'admin', password: 'admin123' });
+  const login = await raw('POST', '/api/auth/login', undefined, { username: 'admin', password: adminPassword });
   const token = login?.token ?? login?.data?.token;
   check(!!token, 'auth: admin login returns a token');
   if (!token) { console.error('Cannot continue without a token.'); process.exit(1); }

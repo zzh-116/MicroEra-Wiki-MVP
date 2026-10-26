@@ -1,12 +1,15 @@
 """NUC SSH helper — runs commands on the NUC server via password auth."""
+import os
 import sys
 import paramiko
 
-HOST = "192.168.40.60"
-USER = "devops"
-PASSWORD = "devops1234"
+HOST = os.environ.get('NUC_HOST', '')
+USER = os.environ.get('NUC_USER', '')
+PASSWORD = os.environ.get('NUC_PASSWORD', '')
 
 def run(cmd: str, timeout: int = 60) -> tuple[int, str, str]:
+    if not (HOST and USER and PASSWORD):
+        raise SystemExit('NUC_HOST, NUC_USER and NUC_PASSWORD env vars are required')
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     client.connect(HOST, username=USER, password=PASSWORD, timeout=10)

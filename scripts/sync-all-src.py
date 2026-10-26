@@ -2,15 +2,17 @@
 import paramiko
 import os
 
-HOST = "192.168.40.60"
-USER = "devops"
-PASSWORD = "devops1234"
-LOCAL_ROOT = r"C:\Users\Intership004\zzh\MicroEra-Wiki-MVP"
+HOST = os.environ.get('NUC_HOST', '')
+USER = os.environ.get('NUC_USER', '')
+PASSWORD = os.environ.get('NUC_PASSWORD', '')
+LOCAL_ROOT = os.environ.get('LOCAL_ROOT', '')
 REMOTE_ROOT = "/data/code-project/microera-wiki"
 
 DIRS_TO_SYNC = ["backend", "server", "src"]
 
 def main():
+    if not (HOST and USER and PASSWORD and LOCAL_ROOT):
+        raise SystemExit('NUC_HOST, NUC_USER, NUC_PASSWORD and LOCAL_ROOT env vars are required')
     transport = paramiko.Transport((HOST, 22))
     transport.connect(username=USER, password=PASSWORD)
     sftp = paramiko.SFTPClient.from_transport(transport)

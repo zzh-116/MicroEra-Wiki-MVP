@@ -1,5 +1,5 @@
 [Unit]
-Description=MicroEra Wiki Auto Deploy Timer (every 2 min)
+Description=MiqroEra Wiki Auto Deploy Timer (every 2 min)
 Requires=auto-deploy.service
 
 [Timer]

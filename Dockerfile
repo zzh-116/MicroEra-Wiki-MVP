@@ -1,4 +1,4 @@
-# MicroEra Wiki MVP — Docker 镜像
+# MiqroEra Wiki MVP — Docker 镜像
 # Docling 不包含在镜像中（依赖链 ~500MB），文档导入由宿主机 Python 提供。
 
 # ─── Stage 1: Build ──────────────────────────────────────────

@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "miqroera": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "tsx",
+        "cli/src/main.ts",
+        "mcp",
+        "serve",
+        "--transport",
+        "stdio"
+      ],
+      "env": {}
+    }
+  }
+}

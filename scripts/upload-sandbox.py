@@ -3,10 +3,10 @@ import paramiko
 import os
 import sys
 
-HOST = "192.168.40.60"
-USER = "devops"
-PASSWORD = "devops1234"
-LOCAL_DIR = r"C:\Users\Intership004\zzh\sandbox"
+HOST = os.environ.get('NUC_HOST', '')
+USER = os.environ.get('NUC_USER', '')
+PASSWORD = os.environ.get('NUC_PASSWORD', '')
+LOCAL_DIR = os.environ.get('LOCAL_DIR', '')
 REMOTE_DIR = "/data/archive-hot/sandbox"
 
 def connect_sftp():
@@ -31,6 +31,8 @@ def upload_file(sftp, local_path, remote_path):
     print("OK")
 
 def main():
+    if not (HOST and USER and PASSWORD and LOCAL_DIR):
+        raise SystemExit('NUC_HOST, NUC_USER, NUC_PASSWORD and LOCAL_DIR env vars are required')
     sftp, transport = connect_sftp()
 
     # Create remote dir

@@ -1,4 +1,4 @@
-// MicroEra acceptance-evidence generator.
+// MiqroEra acceptance-evidence generator.
 // Produces the plan's required acceptance artifacts from REAL files only:
 //   docs/parity/operations/<oid>.json   (162 required ops)
 //   docs/parity/schemas/<oid>.json      (162 — materialized from the live registry)

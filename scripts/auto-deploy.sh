@@ -1,5 +1,5 @@
 #!/bin/bash
-# auto-deploy.sh - Polling-based auto deploy for MicroEra Wiki MVP.
+# auto-deploy.sh - Polling-based auto deploy for MiqroEra Wiki MVP.
 # Runs via systemd timer every 2 min. Fetches GitLab, deploys if new commits.
 # PDFs are managed by Git LFS; the deploy fails closed if LFS is missing,
 # objects cannot be pulled, or the PDF tree does not pass verification.
