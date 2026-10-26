@@ -95,6 +95,14 @@
 - 修复 findMany() 返回类型变更、TagList `[object Object]`、AI 多轮 conversationId 丢失、SSE 缓存跨页、分页截断。
 - 修复文献导入假成功与 entry_type 映射（preprint / academic_paper → tech）。
 
+### Security
+
+- **2026-10-26** 堵死匿名删库链（P0.1 安全整改）
+  - 删除 `POST /api/ai/reset` 与 `POST /api/ai/import`：两者均无认证、直接读取请求体 `filePath`；`reset` 还会硬删 `id > 8` 的全部条目并清空 chunk/向量（不可逆写操作），`import` 可读取任意服务器文件并批量写库。
+  - `/api/pipeline/search` 挂 `optionalAuth`；`isInternal` 不再信任请求体，改由服务端 `req.isInternal` 派生，未登录只能检索公开条目。
+  - `/api/entries/stats` 挂 `optionalAuth`，未登录仅返回公开条目统计。
+  - 同步清理 `backend/swagger/openapi.json`、Postman 集合与 `docs/handover/08_API_Documentation.md` 中已删除接口的定义与示例。
+
 
 ### Maintenance
 

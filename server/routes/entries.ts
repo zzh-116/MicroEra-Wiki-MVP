@@ -36,8 +36,8 @@ entriesRouter.get('/', optionalAuth, async (req: Request, res: Response) => {
   }
 });
 
-entriesRouter.get('/stats', async (_req: Request, res: Response) => {
-  res.json(await entryRepository.countByType(true));
+entriesRouter.get('/stats', optionalAuth, async (req: Request, res: Response) => {
+  res.json(await entryRepository.countByType(req.isInternal === true));
 });
 
 entriesRouter.get('/:id', optionalAuth, async (req: Request, res: Response) => {

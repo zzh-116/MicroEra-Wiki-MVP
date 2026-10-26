@@ -366,8 +366,7 @@
                 "required": ["query"],
                 "properties": {
                   "query": { "type": "string", "description": "自然语言查询" },
-                  "topK": { "type": "integer", "default": 10 },
-                  "isInternal": { "type": "boolean", "default": false }
+                  "topK": { "type": "integer", "default": 10 }
                 }
               },
               "examples": {
@@ -514,54 +513,6 @@
         "responses": {
           "200": {
             "description": "AI 生成的摘要"
-          }
-        }
-      }
-    },
-    "/api/ai/import": {
-      "post": {
-        "tags": ["AI"],
-        "summary": "从 Markdown 文件导入材料性质元数据",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "filePath": { "type": "string" },
-                  "content": { "type": "string" }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "导入结果"
-          }
-        }
-      }
-    },
-    "/api/ai/reset": {
-      "post": {
-        "tags": ["AI"],
-        "summary": "重置并重新导入",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "filePath": { "type": "string" }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "重置结果"
           }
         }
       }

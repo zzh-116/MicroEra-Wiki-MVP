@@ -512,13 +512,12 @@ field: metadata (JSON string, 可选)
 管道语义搜索（同 Search 服务，格式略有不同）。
 
 - **Method**: `POST`
-- **Auth**: 无
+- **Auth**: Optional
 
 ```json
 {
   "query": "MOF材料",
-  "topK": 10,
-  "isInternal": true
+  "topK": 10
 }
 ```
 

@@ -12,6 +12,7 @@ import { entryRepository } from '../../backend/repositories/entry.repository.js'
 import { vectorRepository } from '../../backend/repositories/vector.repository.js';
 import { ollamaEmbedder } from '../../backend/embedding/ollama.js';
 import { config } from '../../backend/config.js';
+import { optionalAuth } from '../middleware/auth.js';
 
 export const pipelineRouter = Router();
 
@@ -256,12 +257,12 @@ pipelineRouter.post('/import/batch', async (req: Request, res: Response) => {
 });
 
 // Semantic search
-pipelineRouter.post('/search', async (req: Request, res: Response) => {
+pipelineRouter.post('/search', optionalAuth, async (req: Request, res: Response) => {
   try {
-    const { query, topK, isInternal } = req.body || {};
+    const { query, topK } = req.body || {};
     if (!query?.trim()) { res.json({ results: [], source: 'pgvector', queryTimeMs: 0 }); return; }
     const start = Date.now();
-    const results = await searchService.semanticSearch(query.trim(), isInternal || false, topK || 10);
+    const results = await searchService.semanticSearch(query.trim(), req.isInternal === true, topK || 10);
     res.json({ query: query.trim(), totalResults: results.length, queryTimeMs: Date.now() - start, source: 'pgvector',
       results: results.map((r) => ({ entryId: r.entry.id, title: r.entry.title, entryType: r.entry.entry_type, summary: r.entry.summary, score: Math.round(r.score * 1000) / 1000, tags: r.entry.tags.slice(0, 5), visibility: r.entry.visibility })) });
   } catch (err: any) { res.status(503).json({ error: 'SEARCH_FAILED', message: err.message }); }
