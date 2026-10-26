@@ -12,7 +12,7 @@
 
 截至 2026-10-26，工作区已从「未 commit / 未 push」状态收尾为**本地交付就绪**：
 
-1. **工作区提交**：全部源码/迁移/测试/文档变更已按逻辑拆分为 8 个提交，落在新分支 **`handover/final`**（HEAD `ea7fad4`）。`wiki-audit/` 目录按要求**保持未跟踪**（不入库）。
+1. **工作区提交**：全部源码/迁移/测试/文档变更已按逻辑拆分为多个提交，落在新分支 **`handover/final`**（HEAD 以 `git log` 为准）。`wiki-audit/` 目录按要求**保持未跟踪**（不入库）。
 2. **Git 历史敏感数据清理**：`git filter-repo` 重写全量历史，删除核心敏感路径 **`backend/data/`**（含其下 `zaozhi/`、`laiguanxue/`、`sources/`、`reports/`、`images/`、`paper2/` 等客户研究资料）、**`BOOT-INF/`**（Spring Boot 编译产物/配置）、**`.understand-anything/`**（AI 工具状态）。
 3. **孤儿 LFS 对象清理**：`backend/data/**` 的 PDF/DOCX/PPTX/XLS/XLSX 原经 Git LFS 提交；filter-repo 只删了历史里的指针，真实文件仍留在 `.git/lfs/objects/`（417 对象 / 1.2G）。已用 `git lfs prune --force` 全部清除，并删除失效的 `.gitattributes` LFS 规则。
 4. **pre-filter 备份 bundle 已删除**（内含敏感历史的 908M bundle，按「清 git 侧冗余、留原件」决定移除）。
@@ -24,8 +24,8 @@
 
 | 影响 | 说明 |
 |------|------|
-| **提交数** | 全量历史 345 → **207** 提交（139 个「仅改动敏感路径」的提交被裁空） |
-| **分支 SHA 全部变化** | `main`→`3f19b8d`、`handover/final`→`ea7fad4`、`release/v1.0`→`a11e5cd`、`fix/graph-node-label-toggle`→`3cb12ba`、`backup-before-filter`→`8020b24`（以上均为重写后新 SHA） |
+| **提交数** | 全量历史 345 → **约 208** 提交（139 个「仅改动敏感路径」的提交被裁空；另有后续交接文档提交，以 `git rev-list --count --all` 为准） |
+| **分支 SHA 全部变化** | `main`→`3f19b8d`、`release/v1.0`→`a11e5cd`、`fix/graph-node-label-toggle`→`3cb12ba`、`backup-before-filter`→`8020b24`（以上为重写后新 SHA）；`handover/final` 为交付分支，tip 以 `git log` 为准 |
 | **验收证据 commitSha 失效** | `docs/parity/` 下 `state.json`、`report.json`、`capability-report.json`、`final-report.md` 等记录的 `local_repo_sha` / `last_verified_commit` / 头部注释引用的是重写前 SHA（如 `d2e0f30`、`67d76a6`） |
 | **commit-ledger.md 失效** | 全部 46 条旧 SHA 清单需按新历史重新生成（`git log` 重导出即可） |
 | **remotes 已移除** | filter-repo 会删除远程引用。push 前必须重加 remote 并 **force-push**（见 §5） |
@@ -54,6 +54,9 @@ API 层已全部验收通过，但**浏览器 UI 尚未实际点按**。需在 `
 
 ### 4.2 前端 bundle 重建确认
 图片鉴权等前端改动需确认 `dist/` 已通过 `npm run build` 重建并反映最新代码。
+
+### 4.3 Git 历史仍含 `analysis-output/`（push 前必须处理）
+⚠️ `analysis-output/`（80M）**仍被 git 跟踪**，已确认含客户数据：`mirror-ucl-sync*.sql`（2×38M，105 条 INSERT 写入 entries/document_chunks/vectors/tags）+ 审计 JSON。本轮历史清理**未纳入**该路径。**用户决定：暂不清理**——push 前必须另行 `git filter-repo` 移除，否则泄露客户数据。
 
 ## 5. 部署 / 远程状态
 
@@ -103,8 +106,9 @@ Feishu 连接器已实现，但**无真实 app_id/app_secret**，外部集成记
 3. **决定 `backend/data/`（1.4G）去留**——当前保留且 gitignored；如需彻底删除另行执行。
 4. **补 feishu 凭据** + 真实集成 E2E（§7.3）。
 5. **F2 Job 后端统一**（§7.2，需授权实施迁移）。
-6. **push 交付**（§5）：重加 remotes → force-push → NUC 重新 clone。
-7. 补齐 10 项 stretch 能力（§7.1，按需排期）。
+6. **处理 `analysis-output/`**（§4.3，push 前必须）——连同历史清理，否则泄露客户数据。
+7. **push 交付**（§5）：重加 remotes → force-push → NUC 重新 clone。
+8. 补齐 10 项 stretch 能力（§7.1，按需排期）。
 
 ---
 

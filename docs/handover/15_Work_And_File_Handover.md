@@ -66,7 +66,7 @@
 ### 3.1 仓库位置
 
 - 本机：`C:\Users\CAIHUI\MiqroEra-Wiki-MVP-new`
-- 分支：`handover/final`（交付分支，HEAD `d1b197a`）、`main`、`release/v1.0`、`fix/graph-node-label-toggle`、`backup-before-filter`
+- 分支：`handover/final`（交付分支）、`main`、`release/v1.0`、`fix/graph-node-label-toggle`、`backup-before-filter`（HEAD 以 `git log` 为准）
 - 远程（已移除，待重加）：`origin` = `https://github.com/zzh-116/MicroEra-Wiki-MVP.git`；`gitlab` = `git.miqroera.com`（NUC 轮询源）
 
 ### 3.2 目录结构
@@ -120,7 +120,7 @@
 
 | 项 | 现状 | 建议 |
 |----|------|------|
-| **`analysis-output/`（80M）** | ⚠️ **仍被 git 跟踪**，含 `mirror-ucl-sync*.sql`（2×38M，疑似 UCL 客户数据镜像）+ 审计 JSON（audit-local/ucl、local-vs-ucl、entry-file-audit）。本轮历史清理**未纳入**该路径，push 时会一并上传 | **建议**：连同历史一并清理（`git filter-repo` 追加该路径），或确认其中无客户数据后保留 |
+| **`analysis-output/`（80M）** | ⚠️ **仍被 git 跟踪**，已确认含客户数据：`mirror-ucl-sync*.sql`（2×38M，105 条 INSERT 写入 entries/document_chunks/vectors/tags）+ 审计 JSON（audit-local/ucl、local-vs-ucl、entry-file-audit）。本轮历史清理**未纳入**，push 时会一并泄露 | **本轮决定：暂不清理**。push 前必须连同历史清理，否则泄露客户数据 |
 | `backend/data/`（1.4G） | 客户研究原件，已 gitignore、保留在磁盘 | 按需保留（供接手/演示）或删除 |
 | `BOOT-INF/`、`META-INF/` | Spring Boot 遗留；BOOT-INF 已 ignore，META-INF 仍 1 文件入库 | 可删磁盘残留；META-INF 一并移出 git |
 | `api/`（17 文件） | 遗留目录，用途待确认（Vercel 相关） | 确认是否仍需，否则清理 |
