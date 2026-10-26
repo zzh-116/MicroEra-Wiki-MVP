@@ -8,6 +8,7 @@ import type { ContentBlock } from '../utils/contentParser';
 import { paginateContent, findPageByHeading } from '../utils/contentPaginator';
 import type { Page } from '../utils/contentPaginator';
 import { findKeywordLinks, type KeywordIndex } from '../utils/keywordLinker';
+import AuthImage from './AuthImage';
 
 // Internal BlockRenderer (same as ContentRenderer but standalone here for self-containment)
 function renderInline(text: string, keywordIndex?: KeywordIndex, currentEntryId?: string) {
@@ -59,7 +60,7 @@ function PageBlockRenderer({
     );
     case 'image': return (
       <figure className="my-6">
-        <img src={block.src} alt={block.alt} className="max-w-full rounded-lg border border-gray-100 cursor-pointer hover:shadow-md transition-shadow" loading="lazy" onClick={(e) => { const el = e.currentTarget; el.classList.toggle('max-w-full'); el.classList.toggle('max-w-[200%]'); }} />
+        <AuthImage src={block.src} alt={block.alt} className="max-w-full rounded-lg border border-gray-100 cursor-pointer hover:shadow-md transition-shadow" loading="lazy" onClick={(e) => { const el = e.currentTarget; el.classList.toggle('max-w-full'); el.classList.toggle('max-w-[200%]'); }} />
         {block.alt && block.alt !== 'Image' && <figcaption className="text-xs text-gray-400 text-center mt-2">{block.alt}</figcaption>}
       </figure>
     );

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import type { ContentBlock } from '../utils/contentParser';
 import { parseContent } from '../utils/contentParser';
+import AuthImage from './AuthImage';
 
 interface ContentRendererProps {
   content: string;
@@ -108,7 +109,7 @@ function BlockRenderer({ block }: { block: ContentBlock }) {
     case 'image':
       return (
         <figure className="my-3">
-          <img
+          <AuthImage
             src={block.src}
             alt={block.alt}
             className="max-w-full rounded-lg border border-gray-200"

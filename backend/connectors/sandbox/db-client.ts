@@ -12,9 +12,9 @@ function getPool(): mysql.Pool {
     // Use env vars directly to avoid import-order issues with dotenv/config
     const host = process.env.SANDBOX_DB_HOST || config.sandboxDB?.host || 'localhost';
     const port = parseInt(process.env.SANDBOX_DB_PORT || '3307', 10);
-    const database = process.env.SANDBOX_DB_NAME || config.sandboxDB?.database || 'miqroproject';
-    const user = process.env.SANDBOX_DB_USER || config.sandboxDB?.user || 'root';
-    const password = process.env.SANDBOX_DB_PASSWORD || config.sandboxDB?.password || 'root';
+    const database = process.env.SANDBOX_DB_NAME || config.sandboxDB?.database || '';
+    const user = process.env.SANDBOX_DB_USER || config.sandboxDB?.user || '';
+    const password = process.env.SANDBOX_DB_PASSWORD || config.sandboxDB?.password || '';
     console.log(`[Sandbox:DB] Connecting to MySQL at ${host}:${port}/${database}`);
     pool = mysql.createPool({
       host,
@@ -42,7 +42,7 @@ export async function closePool(): Promise<void> {
 
 /**
  * Execute a read-only query against the sandbox database.
- * All queries are run on the miqroproject schema.
+ * All queries are run on the configured sandbox schema.
  */
 export async function query<T = any>(sql: string, params?: unknown[]): Promise<T[]> {
   const p = getPool();

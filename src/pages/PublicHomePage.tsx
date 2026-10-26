@@ -424,7 +424,7 @@ export default function PublicHomePage() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════════════
-          MORE ON MICROERA WIKI
+          MORE ON MIQROERA WIKI
           ═══════════════════════════════════════════════════════════════════════ */}
       <section
         className="py-12 sm:py-16 bg-cream/10"
@@ -438,7 +438,7 @@ export default function PublicHomePage() {
             </h2>
           </div>
           <p className="text-lg font-bold text-ink font-display mb-6">
-            探索 MicroEra Wiki
+            探索 MiqroEra Wiki
           </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">

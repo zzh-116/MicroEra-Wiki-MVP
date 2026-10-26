@@ -16,7 +16,7 @@ const DOCS: Document[] = [
     attachments: [],
     source: 'local',
     tags: ['sample', 'material'],
-    author: 'MicroEra',
+    author: 'MiqroEra',
     metadata: { source: 'local', kind: 'datasheet' },
   },
   {
@@ -29,7 +29,7 @@ const DOCS: Document[] = [
     attachments: [],
     source: 'local',
     tags: ['sample', 'research'],
-    author: 'MicroEra',
+    author: 'MiqroEra',
     metadata: { source: 'local', kind: 'paper' },
   },
   {
@@ -42,7 +42,7 @@ const DOCS: Document[] = [
     attachments: [],
     source: 'local',
     tags: ['sample', 'wiki'],
-    author: 'MicroEra',
+    author: 'MiqroEra',
     metadata: { source: 'local', kind: 'wiki' },
   },
 ];

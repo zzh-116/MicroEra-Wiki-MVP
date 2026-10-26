@@ -12,7 +12,7 @@ export function buildChatSystemPrompt(
 ): string {
   const kb = chunks.map((c) => formatChunkForChat(c.chunkText, c.entryTitle, c.chunkId)).join('\n\n---\n\n');
 
-  return `你是微观纪元（MicroEra Wiki）的企业知识助手。基于以下知识库片段回答用户问题。
+  return `你是微观纪元（MiqroEra Wiki）的企业知识助手。基于以下知识库片段回答用户问题。
 
 ===== 知识库（与查询最相关的段落）=====
 ${kb}

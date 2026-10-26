@@ -6,7 +6,7 @@ const BASE = 'https://api.crossref.org';
 export async function fetchByDOI(doi: string): Promise<CrossRefWork | null> {
   try {
     const res = await fetch(`${BASE}/works/${encodeURIComponent(doi)}`, {
-      headers: { 'User-Agent': 'MicroEraWiki/1.0' }
+      headers: { 'User-Agent': 'MiqroEraWiki/1.0' }
     });
     if (!res.ok) return null;
     const data = await res.json();
@@ -17,7 +17,7 @@ export async function fetchByDOI(doi: string): Promise<CrossRefWork | null> {
 export async function searchByTitle(title: string): Promise<CrossRefWork[]> {
   try {
     const res = await fetch(`${BASE}/works?query=${encodeURIComponent(title)}&rows=20`, {
-      headers: { 'User-Agent': 'MicroEraWiki/1.0' }
+      headers: { 'User-Agent': 'MiqroEraWiki/1.0' }
     });
     if (!res.ok) return [];
     const data = await res.json();

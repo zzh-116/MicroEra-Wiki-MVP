@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// microera CLI — thin client of the MicroEra Core Service.
+// microera CLI — thin client of the MiqroEra Core Service.
 // Global flags: --format json|ndjson|text, --profile, --timeout, --trace,
 //               --dry-run, --yes, --idempotency-key.
 // Wire contract: success → stdout {"ok":true,...}; error → stderr {"ok":false,...}.

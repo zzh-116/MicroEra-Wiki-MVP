@@ -59,7 +59,7 @@ export async function fetchById(id: string): Promise<ArxivPaper | null> {
 /** Fetch and parse Atom XML response from arXiv */
 async function fetchAndParse(url: string): Promise<ArxivPaper[]> {
   const res = await fetch(url, {
-    headers: { "User-Agent": "MicroEraWiki/1.0 (mailto:admin@microera.com)" },
+    headers: { "User-Agent": "MiqroEraWiki/1.0 (mailto:admin@microera.com)" },
   });
 
   if (!res.ok) {

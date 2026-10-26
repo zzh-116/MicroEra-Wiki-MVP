@@ -57,7 +57,7 @@ function buildGroundedMessages(question: string, citations: Citation[]): ChatMes
     {
       role: 'system',
       content:
-        'You are the MicroEra Wiki enterprise knowledge assistant. Answer using ONLY the provided context passages. ' +
+        'You are the MiqroEra Wiki enterprise knowledge assistant. Answer using ONLY the provided context passages. ' +
         'Cite each factual claim with [n] referencing the passage number. If the context is insufficient, say so ' +
         'honestly. Do not invent information.',
     },
