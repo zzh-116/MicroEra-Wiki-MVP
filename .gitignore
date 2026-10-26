@@ -14,6 +14,23 @@ backend/data/vectors.json
 backend/data/documents/
 backend/data/metadata/
 backend/data/imports/
+backend/data/images/
+backend/data/sources/
+backend/data/reports/
+backend/data/jobs/
+
+# Real business/customer data roots (defensive — never commit customer data)
+backend/data/zaozhi/
+backend/data/laiguanxue/
+
+# Demo acceptance environment (isolated DB credentials + runtime) — never commit
+backend/data-demo/
+
+# Unpacked legacy app bundle (real DB/SMTP credentials in configs) — never commit
+BOOT-INF/
+
+# Local AI tool working state (personal paths in intermediate/tmp) — never commit
+.understand-anything/
 
 # Python bytecode
 __pycache__/
@@ -21,3 +38,7 @@ __pycache__/
 
 # Test artifacts
 test-results/
+
+# Generated parity/test artifacts — bulk evidence JSON + raw logs (not this delivery)
+docs/parity/testlogs/
+docs/parity/history/
