@@ -116,3 +116,31 @@
 
 ```markdown
 - [x] [代码] 修复运行日志筛选结果展示异常 | 发现：2026-09-16 | 完成：2026-09-18
+---
+
+## 2026-10-27
+
+> 来源：`MiqroEra-Wiki-工作交接.md`（交接包内文档）整理出的接手人行动清单。
+> 完成顺序建议：先验收 → 再补安全修复 → 最后清理并 push。
+
+### 高优先级（验收 / 安全前置）
+- [x] [代码] 浏览器 UI 全流程人工验收：登录、创建知识库、上传文档、查看正文、查看图片、搜索 | 来源：2026-10-27
+  - 验收地址：`http://localhost:3002/`
+- [ ] [代码] 前端 bundle 重建确认：运行 `npm run build`，确认 `dist/` 反映最新代码 | 来源：2026-10-27
+- [ ] [代码] 同步本地安全修复 `01b92c2`：删除匿名 `/api/ai/reset` 与 `/api/ai/import`，调整 `/api/pipeline/search` 与 `/api/entries/stats` 鉴权 | 来源：2026-10-27
+
+### 交付 / push 前必须完成
+- [ ] [代码] 清理 `analysis-output/` 中的客户数据：用 `git filter-repo` 移除 `mirror-ucl-sync*.sql` 及审计 JSON 的历史记录 | 来源：2026-10-27
+- [ ] [文档] 重新生成 / 校准验收证据 SHA：`docs/parity/` 下 `state.json`、`report.json`、`final-report.md`、`commit-ledger.md` 因历史重写失效 | 来源：2026-10-27
+- [ ] [代码] 重加 remote 并 force-push：`origin`（GitHub）与 `gitlab`（NUC 轮询源），NUC 需重新 clone | 来源：2026-10-27
+
+### 配置 / 集成类
+- [ ] [代码] 补齐 Feishu 连接器真实凭据：`app_id` / `app_secret`，并完成真实集成 E2E | 来源：2026-10-27
+- [ ] [确认] 环境检查：Docker `microera-postgres`（PG16+pgvector @ 5433）、Ollama `bge-m3` + `qwen2.5:7b`、Docling 2.111.0（Python 3.12） | 来源：2026-10-27
+
+### 需要决策
+- [ ] [确认] 决定 `backend/data/`（1.4 GB 客户研究原件）去留：当前已 `.gitignore` 排除，保留或彻底删除 | 来源：2026-10-27
+
+### 可选 / 后续按需排期
+- [ ] [代码] F2 Job 后端统一：`job.*` 命名空间当前指向三个后端，语义不同步 | 来源：2026-10-27
+- [ ] [代码] 补齐 10 项 stretch 能力：`K05 / P05 / R05 / R07 / C06 / A07 / W05 / D03 / M02 / O02`（权重合计 14） | 来源：2026-10-27
