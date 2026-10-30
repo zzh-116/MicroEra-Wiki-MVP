@@ -71,6 +71,11 @@
 
 ### Fixed
 
+- **2026-09-22**
+- **运行日志筛选与搜索失效修复**
+  - `src/pages/AdminLogsPage.tsx`：把时间范围 `startDate` / `endDate` 传给后端；搜索框改为 400ms 防抖输入触发，回车立即触发。
+  - `src/api/adminApi.ts`：`getLogs` 增加 `startDate`、`endDate` 查询参数。
+  - `backend/repositories/log.repository.ts`：关键词搜索扩展为同时匹配 `message`、`module`、`stack`。
 - **2026-09-08** 
 - RAG语义检索召回: 移除按标题去重逻辑，补全类型白名单（7 种扩展至 12 种），修复排序按字母序而非相关性错乱的问题。
 - 知识索引搜索框: 同一文档出现多条重复结果，改为按 entry.id 去重，每个文档只显示一条。
@@ -91,8 +96,24 @@
 - 修复文献导入假成功与 entry_type 映射（preprint / academic_paper → tech）。
 
 
+### Security
+
+- **2026-10-26** 堵死匿名删库链（P0.1 安全整改）
+### Security
+
+- **2026-10-26** 堵死匿名删库链（P0.1 安全整改）
+  - 删除 `POST /api/ai/reset` 与 `POST /api/ai/import`：两者均无认证、直接读取请求体 `filePath`；`reset` 还会硬删 `id > 8` 的全部条目并清空 chunk/向量（不可逆写操作），`import` 可读取任意服务器文件并批量写库。
+  - `/api/pipeline/search` 挂 `optionalAuth`；`isInternal` 不再信任请求体，改由服务端 `req.isInternal` 派生，未登录只能检索公开条目。
+  - `/api/entries/stats` 挂 `optionalAuth`，未登录仅返回公开条目统计。
+  - 同步清理 `backend/swagger/openapi.json`、Postman 集合与 `docs/handover/08_API_Documentation.md` 中已删除接口的定义与示例。
+
+
 ### Maintenance
 
 - 清理废弃的 `src/pages/KnowledgeGraphPage.tsx`（自 G6 探索器接管 `/graph` 与 `/knowledge-graph` 后未再使用）。
 - 清理 `.gitignore` 中误提交的本机绝对路径；新增 test-results 忽略规则与图谱预览图。
 - 清理 Sandbox HTTP 模式相关废弃文件（auth/client/sync/assets/detail/markdown）。
+
+- **mock 数据去重审计（2026-10-20）**：检查 `src/mock/mockData.ts` 五个 mock 集合（markdownFiles / references / papers / entries / QA），确认《Quantum Error Correction with Stabilizer Codes》多处出现均为跨集合结构性引用，同一集合内无真重复，无代码改动。
+- **内容清理任务状态（2026-10-20）**：清理类任务 1~4（测试污染、ID 9~40 恢复、109 无文件、135 未关联文件）因原 NUC 生产库（192.168.40.60）不可访问而阻塞；详见 `analysis-output/cleanup-decision-2026-10-20.md`。
+
