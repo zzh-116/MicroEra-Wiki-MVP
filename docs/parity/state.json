@@ -3,6 +3,7 @@
   "reference_sha": "602d0c388bf17d894f467fe0cd65d1d62c73d303",
   "baseline_target_sha": "4bd5bf417df090351b91de205e6b34a457eb47a2",
   "local_repo_sha": "d2e0f30",
+  "local_repo_sha": "5797e7f",
   "current_phase": "P10",
   "accepted_points": 86,
   "required_ops_total": 162,
@@ -11,6 +12,7 @@
   "ok": true,
   "fully_verified_ops": 162,
   "last_verified_commit": "d2e0f30",
+  "last_verified_commit": "5797e7f",
   "evaluation_report": "docs/parity/report.json",
   "accepted_capabilities": [
     "K01",

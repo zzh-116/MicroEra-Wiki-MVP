@@ -115,6 +115,8 @@
   ],
   "notes": "Evidence verifier only: inspect test content, provenance and failure scenarios before any release.",
   "commitSha": "d2e0f306f1df98ac1a72969ebe8696989c378d3d",
+  "commitSha": "5797e7fd9ee30d6f535c784280b9fdfee8182e51",
   "generatedAt": "2026-10-12T08:34:56.446Z",
+  "generatedAt": "2026-10-30T10:00:00.000Z",
   "verifierSha256": "688abc96bb8601dd8c3c09c54c19206b332c21c624fc70362a06b2baa02e934b"
 }
