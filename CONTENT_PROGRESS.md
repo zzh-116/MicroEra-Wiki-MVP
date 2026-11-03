@@ -124,6 +124,10 @@
 
 ### 交付 / push 前必须完成
 - [ ] [代码] 清理 `analysis-output/` 中的客户数据：用 `git filter-repo` 移除 `mirror-ucl-sync*.sql` 及审计 JSON 的历史记录 | 来源：2026-10-27
+- [x] [代码] 清理 `analysis-output/` 中的客户数据：用 `git filter-repo` 移除 `mirror-ucl-sync*.sql` 及审计 JSON 的历史记录 | 来源：2026-10-27 | 完成：2026-10-30
+- [ ] [文档] 重新生成 / 校准验收证据 SHA：`docs/parity/` 下 `state.json`、`report.json`、`final-report.md`、`commit-ledger.md` 因历史重写失效 | 来源：2026-10-27
+### 交付 / push 前必须完成
+- [x] [代码] 清理 `analysis-output/` 中的客户数据：用 `git filter-repo` 移除 `mirror-ucl-sync*.sql` 及审计 JSON 的历史记录 | 来源：2026-10-27 | 完成：2026-10-30
 - [ ] [文档] 重新生成 / 校准验收证据 SHA：`docs/parity/` 下 `state.json`、`report.json`、`final-report.md`、`commit-ledger.md` 因历史重写失效 | 来源：2026-10-27
 - [ ] [代码] 重加 remote 并 force-push：`origin`（GitHub）与 `gitlab`（NUC 轮询源），NUC 需重新 clone | 来源：2026-10-27
 
