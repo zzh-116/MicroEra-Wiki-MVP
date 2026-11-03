@@ -1,4 +1,7 @@
-﻿node_modules/
+﻿backend/data/
+.claude/
+
+node_modules/
 build/
 dist/
 coverage/
