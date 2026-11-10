@@ -1,7 +1,6 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Home, ChevronRight } from 'lucide-react';
 import KnowledgeEntryPage from './KnowledgeEntryPage';
-import SandboxProjectPage from './SandboxProjectPage';
 
 export default function EntryDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -49,10 +48,6 @@ export default function EntryDetailPage() {
       </nav>
 
       {/* Detail Page Content */}
-      {id === 'e-stabilizer-project' ? (
-        <SandboxProjectPage entryId={id} />
-      ) : (
-        <KnowledgeEntryPage entryId={id} />
-      )}
+      <KnowledgeEntryPage entryId={id} />
     </div>
   )}

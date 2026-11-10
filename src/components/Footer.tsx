@@ -16,7 +16,7 @@ export default function Footer() {
             <ul className="space-y-2 text-[11px] text-gray-300">
               <li><Link to="/search" className="hover:underline hover:text-white">公开知识 (Public Knowledge)</Link></li>
               <li><Link to="/search" className="hover:underline hover:text-white">内部知识 (Internal Directory)</Link></li>
-              <li><Link to="/entry/e-stabilizer-project" className="hover:underline hover:text-white">Sandbox 项目 (Sandbox Process)</Link></li>
+              <li><Link to="/search?type=sandbox_project" className="hover:underline hover:text-white">Sandbox 项目 (Sandbox Process)</Link></li>
               <li><Link to="/papers" className="hover:underline hover:text-white">论文知识库 (Papers Archive)</Link></li>
               <li><Link to="/data-items" className="hover:underline hover:text-white">数据条目 (Data Items)</Link></li>
               <li><Link to="/templates" className="hover:underline hover:text-white">模板库 (Template Library)</Link></li>

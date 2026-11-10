@@ -10,7 +10,7 @@ import { entriesApi } from '../api/entriesApi';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const FEATURED_LINKS = [
-  { label: '稳定子算法 Sandbox 项目', route: '/entry/e-stabilizer-project' },
+  { label: '稳定子算法 Sandbox 项目', route: '/search?type=sandbox_project' },
   { label: '量子计算论文库', route: '/papers' },
   { label: '数据条目与标准', route: '/data-items' },
   { label: 'AI 知识查询服务', route: '/ai-query' },
@@ -260,7 +260,7 @@ export default function PublicHomePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Card 1: Sandbox Project */}
             <button
-              onClick={() => navigate('/entry/e-stabilizer-project')}
+              onClick={() => navigate('/search?type=sandbox_project')}
               className="group bg-white border border-gray-200 rounded-lg p-5 text-left
                          hover:border-ink/20 hover:shadow-md hover:-translate-y-0.5
                          focus:outline-none focus:ring-2 focus:ring-brand/30
@@ -478,7 +478,7 @@ export default function PublicHomePage() {
               {
                 date: '2026-07-02',
                 entry: '稳定子算法 Sandbox 计算项目',
-                route: '/entry/e-stabilizer-project',
+                route: '/search?type=sandbox_project',
                 detail: '更新了结果文件及 Monte Carlo 仿真伪阈值折线图',
                 isLatest: true,
               },

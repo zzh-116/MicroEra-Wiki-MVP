@@ -31,7 +31,7 @@ const WORKSPACE_CARDS = [
     title: 'Sandbox 物理项目库',
     description: '记录和对比 Sandbox 多项多项式仿真过程与实验结果',
     type: 'sandbox_project' as const,
-    route: '/entry/e-stabilizer-project',
+    route: '/search?type=sandbox_project',
     action: '进入项目',
   },
   {
