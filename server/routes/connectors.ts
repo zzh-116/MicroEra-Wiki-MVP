@@ -3,7 +3,8 @@
 // Confluence, GitLab Wiki, Notion) into the Wiki pipeline without going through
 // the document parser.
 
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
+import { requireAuth, optionalAuth } from '../middleware/auth.js';
 import { ConnectorRegistry } from '../../backend/connectors/index.js';
 import { importService } from '../../backend/services/import.service.js';
 import { sandboxConnector, SandboxDBConnector } from '../../backend/connectors/sandbox/index.js';
@@ -19,6 +20,18 @@ export const connectorsRouter = Router();
 ConnectorRegistry.register('sandbox', () => sandboxConnector);
 ConnectorRegistry.register('sandbox-db', () => sandboxConnector);
 console.log('[Connectors] Sandbox DB connector registered');
+
+// Connector names whose data is internal-only: reading their documents/spaces
+// needs a valid token. Public sources (arXiv/CrossRef) stay guest-readable.
+const INTERNAL_CONNECTOR_NAMES = ['sandbox', 'sandbox-db', 'feishu'];
+
+function connectorReadAuth(req: Request, res: Response, next: NextFunction): void {
+  if (INTERNAL_CONNECTOR_NAMES.includes(req.params.name)) {
+    requireAuth(req, res, next);
+    return;
+  }
+  optionalAuth(req, res, next);
+}
 
 // ---- Health / Status ----
 
@@ -43,7 +56,7 @@ connectorsRouter.get('/', (_req: Request, res: Response) => {
 
 // ---- Connect ----
 
-connectorsRouter.post('/:name/connect', async (req: Request, res: Response) => {
+connectorsRouter.post('/:name/connect', requireAuth, async (req: Request, res: Response) => {
   try {
     const connector = ConnectorRegistry.get(req.params.name);
     await connector.connect();
@@ -55,7 +68,7 @@ connectorsRouter.post('/:name/connect', async (req: Request, res: Response) => {
 
 // ---- List Documents ----
 
-connectorsRouter.get('/:name/documents', async (req: Request, res: Response) => {
+connectorsRouter.get('/:name/documents', connectorReadAuth, async (req: Request, res: Response) => {
   try {
     const connector = ConnectorRegistry.get(req.params.name);
     const { projectId, keyword, type, status, author, since } = req.query;
@@ -75,7 +88,7 @@ connectorsRouter.get('/:name/documents', async (req: Request, res: Response) => 
 
 // ---- Document Detail ----
 
-connectorsRouter.get('/:name/documents/:id', async (req: Request, res: Response) => {
+connectorsRouter.get('/:name/documents/:id', connectorReadAuth, async (req: Request, res: Response) => {
   try {
     const connector = ConnectorRegistry.get(req.params.name);
     const doc = await connector.detail(req.params.id);
@@ -87,7 +100,7 @@ connectorsRouter.get('/:name/documents/:id', async (req: Request, res: Response)
 
 // ---- Sync (dry-run) ----
 
-connectorsRouter.post('/:name/sync/preview', async (req: Request, res: Response) => {
+connectorsRouter.post('/:name/sync/preview', requireAuth, async (req: Request, res: Response) => {
   try {
     const connector = ConnectorRegistry.get(req.params.name);
     await connector.connect();
@@ -101,7 +114,7 @@ connectorsRouter.post('/:name/sync/preview', async (req: Request, res: Response)
 
 // ---- Sync (execute) — full pipeline: connector → Document → import → chunk → embed ----
 
-connectorsRouter.post('/:name/sync', async (req: Request, res: Response) => {
+connectorsRouter.post('/:name/sync', requireAuth, async (req: Request, res: Response) => {
   const t0 = Date.now();
   try {
     const connector = ConnectorRegistry.get(req.params.name);
@@ -184,7 +197,7 @@ connectorsRouter.post('/:name/sync', async (req: Request, res: Response) => {
 
 // ---- Feishu-specific: list spaces ----
 
-connectorsRouter.get('/feishu/spaces', async (_req: Request, res: Response) => {
+connectorsRouter.get('/feishu/spaces', requireAuth, async (_req: Request, res: Response) => {
   try {
     const { listSpaces } = await import('../../backend/connectors/feishu/client.js');
     const spaces = await listSpaces();
@@ -196,7 +209,7 @@ connectorsRouter.get('/feishu/spaces', async (_req: Request, res: Response) => {
 
 // ---- Sandbox-specific: list projects ----
 
-connectorsRouter.get('/sandbox/projects', async (_req: Request, res: Response) => {
+connectorsRouter.get('/sandbox/projects', requireAuth, async (_req: Request, res: Response) => {
   try {
     await sandboxConnector.connect();
     const projects = await sandboxConnector.listProjects();
@@ -208,13 +221,13 @@ connectorsRouter.get('/sandbox/projects', async (_req: Request, res: Response) =
 
 // ---- Sandbox-specific: last sync time ----
 
-connectorsRouter.get('/sandbox/last-sync', (_req: Request, res: Response) => {
+connectorsRouter.get('/sandbox/last-sync', requireAuth, (_req: Request, res: Response) => {
   res.json({ lastSync: sandboxConnector.getLastSync() });
 });
 
 // ---- Sandbox DB: test connection ----
 
-connectorsRouter.get('/sandbox/db-test', async (_req: Request, res: Response) => {
+connectorsRouter.get('/sandbox/db-test', requireAuth, async (_req: Request, res: Response) => {
   try {
     if (!config.sandboxDB.enabled) {
       res.json({ enabled: false, message: 'DB mode is disabled. Set SANDBOX_DB_ENABLED=true' });
@@ -230,7 +243,7 @@ connectorsRouter.get('/sandbox/db-test', async (_req: Request, res: Response) =>
 
 // ---- Sandbox DB: list project wikis ----
 
-connectorsRouter.get('/sandbox/wikis', async (req: Request, res: Response) => {
+connectorsRouter.get('/sandbox/wikis', requireAuth, async (req: Request, res: Response) => {
   try {
     if (!config.sandboxDB.enabled) {
       res.status(400).json({ error: 'WIKIS_REQUIRE_DB_MODE', message: 'Project wikis are only available in DB mode' });
@@ -250,7 +263,7 @@ connectorsRouter.get('/sandbox/wikis', async (req: Request, res: Response) => {
 
 // ---- Sandbox DB: fetch single wiki ----
 
-connectorsRouter.get('/sandbox/wikis/:projectId', async (req: Request, res: Response) => {
+connectorsRouter.get('/sandbox/wikis/:projectId', requireAuth, async (req: Request, res: Response) => {
   try {
     if (!config.sandboxDB.enabled) {
       res.status(400).json({ error: 'WIKIS_REQUIRE_DB_MODE' });
@@ -266,7 +279,7 @@ connectorsRouter.get('/sandbox/wikis/:projectId', async (req: Request, res: Resp
 
 // ---- Sandbox DB: sync wiki ----
 
-connectorsRouter.post('/sandbox/wikis/:projectId/sync', async (req: Request, res: Response) => {
+connectorsRouter.post('/sandbox/wikis/:projectId/sync', requireAuth, async (req: Request, res: Response) => {
   try {
     if (!config.sandboxDB.enabled) {
       res.status(400).json({ error: 'WIKIS_REQUIRE_DB_MODE' });
@@ -283,7 +296,7 @@ connectorsRouter.post('/sandbox/wikis/:projectId/sync', async (req: Request, res
 
 // ---- Sandbox DB: list project tasks ----
 
-connectorsRouter.get('/sandbox/tasks', async (req: Request, res: Response) => {
+connectorsRouter.get('/sandbox/tasks', requireAuth, async (req: Request, res: Response) => {
   try {
     if (!config.sandboxDB.enabled) {
       res.status(400).json({ error: 'TASKS_REQUIRE_DB_MODE' });
@@ -303,7 +316,7 @@ connectorsRouter.get('/sandbox/tasks', async (req: Request, res: Response) => {
 
 // ---- Sandbox DB: fetch single task ----
 
-connectorsRouter.get('/sandbox/tasks/:taskId', async (req: Request, res: Response) => {
+connectorsRouter.get('/sandbox/tasks/:taskId', requireAuth, async (req: Request, res: Response) => {
   try {
     if (!config.sandboxDB.enabled) {
       res.status(400).json({ error: 'TASKS_REQUIRE_DB_MODE' });

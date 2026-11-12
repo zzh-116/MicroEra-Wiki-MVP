@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import { aiService } from '../../backend/services/ai.service.js';
 import { conversationRepository } from '../../backend/repositories/conversation.repository.js';
 import { sseStart, sseStartEvent, sseToken, sseDone, sseError } from '../../backend/llm/sse.js';
-import { requireAuth, requireRole, optionalAuth } from '../middleware/auth.js';
+import { requireAuth, optionalAuth } from '../middleware/auth.js';
 
 export const aiRouter = Router();
 

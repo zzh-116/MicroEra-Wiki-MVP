@@ -6,6 +6,8 @@ import {
   Database, Cpu, Brain, ArrowRight, Bookmark, Users, Calendar
 } from 'lucide-react';
 import { literatureApi, LiteraturePaper, LiteratureDocument } from '../api/literatureApi';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -95,6 +97,17 @@ function extractYear(paper: LiteraturePaper): string {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function LiteratureSearchPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { isLoggedIn } = useAuth();
+
+  // Import/sync writes require a valid token; redirect guests to login.
+  const requireLogin = useCallback((): boolean => {
+    if (isLoggedIn) return true;
+    navigate('/login', { state: { from: location } });
+    return false;
+  }, [isLoggedIn, navigate, location]);
+
   // ── Search state ──────────────────────────────────────────────────────────
   const [keyword, setKeyword] = useState('');
   const [source, setSource] = useState<'all' | 'arxiv' | 'crossref'>('all');
@@ -202,6 +215,7 @@ export default function LiteratureSearchPage() {
 
   // ── Import review ─────────────────────────────────────────────────────────
   const handleOpenReview = (paper: PaperResult) => {
+    if (!requireLogin()) return;
     setReviewPaper(paper);
     setReviewVisibility('internal');
     setReviewSpace('s-papers');
@@ -268,6 +282,7 @@ export default function LiteratureSearchPage() {
 
   // ── Batch import ──────────────────────────────────────────────────────────
   const handleBatchImport = useCallback(async () => {
+    if (!requireLogin()) return;
     const unimported = results.filter((r) => !r._imported && !r._importing);
     if (unimported.length === 0) return;
     const arxivIds = unimported.filter((r) => (r.metadata?.source || 'arxiv') === 'arxiv').map((r) => r.id);
@@ -290,7 +305,7 @@ export default function LiteratureSearchPage() {
         ),
       );
     }
-  }, [results]);
+  }, [results, requireLogin]);
 
   const unimportedCount = results.filter((r) => !r._imported && !r._importing).length;
   const importedCount = results.filter((r) => r._imported).length;
