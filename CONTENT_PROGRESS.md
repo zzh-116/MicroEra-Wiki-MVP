@@ -120,12 +120,8 @@
 - [x] [代码] 浏览器 UI 全流程人工验收：登录、创建知识库、上传文档、查看正文、查看图片、搜索 | 来源：2026-10-27
   - 验收地址：`http://localhost:3002/`
 - [ ] [代码] 前端 bundle 重建确认：运行 `npm run build`，确认 `dist/` 反映最新代码 | 来源：2026-10-27
-- [ ] [代码] 同步本地安全修复 `01b92c2`：删除匿名 `/api/ai/reset` 与 `/api/ai/import`，调整 `/api/pipeline/search` 与 `/api/entries/stats` 鉴权 | 来源：2026-10-27
+- [x] [代码] 同步本地安全修复 `01b92c2`：删除匿名 `/api/ai/reset` 与 `/api/ai/import`，调整 `/api/pipeline/search` 与 `/api/entries/stats` 鉴权 | 来源：2026-10-27 | 完成：2026-10-26（commit cf7e996）
 
-### 交付 / push 前必须完成
-- [ ] [代码] 清理 `analysis-output/` 中的客户数据：用 `git filter-repo` 移除 `mirror-ucl-sync*.sql` 及审计 JSON 的历史记录 | 来源：2026-10-27
-- [x] [代码] 清理 `analysis-output/` 中的客户数据：用 `git filter-repo` 移除 `mirror-ucl-sync*.sql` 及审计 JSON 的历史记录 | 来源：2026-10-27 | 完成：2026-10-30
-- [ ] [文档] 重新生成 / 校准验收证据 SHA：`docs/parity/` 下 `state.json`、`report.json`、`final-report.md`、`commit-ledger.md` 因历史重写失效 | 来源：2026-10-27
 ### 交付 / push 前必须完成
 - [x] [代码] 清理 `analysis-output/` 中的客户数据：用 `git filter-repo` 移除 `mirror-ucl-sync*.sql` 及审计 JSON 的历史记录 | 来源：2026-10-27 | 完成：2026-10-30
 - [ ] [文档] 重新生成 / 校准验收证据 SHA：`docs/parity/` 下 `state.json`、`report.json`、`final-report.md`、`commit-ledger.md` 因历史重写失效 | 来源：2026-10-27
@@ -142,6 +138,19 @@
 - [ ] [代码] F2 Job 后端统一：`job.*` 命名空间当前指向三个后端，语义不同步 | 来源：2026-10-27
 - [ ] [代码] 补齐 10 项 stretch 能力：`K05 / P05 / R05 / R07 / C06 / A07 / W05 / D03 / M02 / O02`（权重合计 14） | 来源：2026-10-27
 
+
+## 2026-11（11/9–11/12）
+
+### 已完成（权限与安全收尾）
+- [x] [代码] 后端路由鉴权补齐：`connectors.ts` 分级认证、`ai.ts` isInternal 链路、`pipeline.ts` 写入 requireAuth、conversations 防越权、JWT 单源 + timingSafeEqual | 完成：2026-11
+- [x] [代码] 未登录访问 internal 条目显示引导卡片（`ApiError` + `Unauthorized` 修复） | 完成：2026-11
+- [x] [代码] 文献检索导入按钮未登录引导登录 | 完成：2026-11
+
+### 已完成（数据层治理）
+- [x] [代码] `entry_type` 新旧值统一（seed/types/import.service + migration 0008），修复知识索引类型筛选 0 结果 | 完成：2026-11
+
+### 已完成（前端体验）
+- [x] [代码] 清理 `e-stabilizer-project` mock 特判，删除 `SandboxProjectPage.tsx`，入口改稳定路由 | 完成：2026-11
 
 ## 使用说明
 

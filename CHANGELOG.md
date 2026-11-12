@@ -69,6 +69,9 @@
 - **Sandbox 精简**：移除 HTTP 模式，仅保留 DB 直连；清理相关废弃文件。
 - **AI 模型切换**：AI 从本地 Ollama 切换为 DeepSeek API（Vercel demo）。
 
+- **2026-11** 清理 `e-stabilizer-project` mock 条目特判：删除 `EntryDetailPage` 硬编码分支与 `SandboxProjectPage.tsx`，首页/Footer 入口改指稳定路由 `/search?type=sandbox_project`。
+- **2026-11** `entry_type` 新旧值统一：`seed.ts` / `backend/types.ts` / `import.service.ts` 改用新枚举（`product→sandbox_project`、`tech→tech_doc`、`asset→business_material`、`data_item→data_standard`、文献导入走 `academic_paper`），新增 migration `0008_merge_legacy_entry_types.sql`。
+
 ### Fixed
 
 - **2026-09-22**
@@ -95,10 +98,11 @@
 - 修复 findMany() 返回类型变更、TagList `[object Object]`、AI 多轮 conversationId 丢失、SSE 缓存跨页、分页截断。
 - 修复文献导入假成功与 entry_type 映射（preprint / academic_paper → tech）。
 
+- **2026-11** 未登录访问 internal 条目显示引导卡片：`client.ts` 新增 `ApiError`（携带 HTTP 状态码与错误码），`KnowledgeEntryPage` 修复 `FORBIDDEN_INTERNAL_ACCESS` 死判断改按 `status === 403` 识别，`Unauthorized` 卡片登录按钮携带 `state.from` 返回原页面。
+- **2026-11** 知识索引类型筛选 0 结果修复：统一 `entry_type` 新旧值（见 Changed），筛选计数与结果一致。
+- **2026-11** 文献检索导入按钮未登录时引导登录（`/literature` 搜索/详情仍游客可用，导入跳 `/login` 并返回原页）。
 
-### Security
 
-- **2026-10-26** 堵死匿名删库链（P0.1 安全整改）
 ### Security
 
 - **2026-10-26** 堵死匿名删库链（P0.1 安全整改）
@@ -106,6 +110,12 @@
   - `/api/pipeline/search` 挂 `optionalAuth`；`isInternal` 不再信任请求体，改由服务端 `req.isInternal` 派生，未登录只能检索公开条目。
   - `/api/entries/stats` 挂 `optionalAuth`，未登录仅返回公开条目统计。
   - 同步清理 `backend/swagger/openapi.json`、Postman 集合与 `docs/handover/08_API_Documentation.md` 中已删除接口的定义与示例。
+
+- **2026-11** 后端路由鉴权补齐（P0.2 收尾）
+  - `connectors.ts` 14 条路由分级认证：`/health`、`/` 公开；arXiv/CrossRef 读 `optionalAuth`；写入与 Sandbox/Feishu 内部源 `requireAuth`。
+  - `ai.ts` 挂 `optionalAuth`/`requireAuth`，`req.isInternal` 传入 AI 服务（未登录仅检索 public，登录后可检索 internal）；`/conversations` 列表与详情防越权（owner 或 admin）。
+  - `pipeline.ts` 写入操作挂 `requireAuth`，`/import/batch` 限 `admin`，`/search` 挂 `optionalAuth`。
+  - JWT 密钥改单源 `config.jwtSecret`，`verifyToken` 用 `timingSafeEqual`；新增 `requireRole` 中间件。
 
 
 ### Maintenance
