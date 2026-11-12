@@ -316,22 +316,21 @@ export class ImportService {
       return { ...result, success: true };
     }
 
-    // Map connector document types to Wiki entry types
-    // Frontend filter mapping: paper → tech, project → product, data_item → data_item
+    // Map connector document types to canonical Wiki entry types.
+    // Sandbox → sandbox_project; literature → academic_paper.
     const entryTypeMap: Record<string, string> = {
-      // Sandbox asset types → product (shows as "Sandbox 项目")
-      operator: 'product',
-      dot: 'product',
-      dataset: 'product',
-      post: 'product',
-      // Sandbox wiki/task → product
-      wiki: 'product',
-      task: 'product',
-      // Literature import types → tech (shows as "学术论文")
-      preprint: 'tech',        // arXiv
-      academic_paper: 'tech',  // CrossRef
+      // Sandbox asset/wiki/task types → sandbox_project (shows as "Sandbox 项目")
+      operator: 'sandbox_project',
+      dot: 'sandbox_project',
+      dataset: 'sandbox_project',
+      post: 'sandbox_project',
+      wiki: 'sandbox_project',
+      task: 'sandbox_project',
+      // Literature import types → academic_paper (shows as "学术论文")
+      preprint: 'academic_paper',        // arXiv
+      academic_paper: 'academic_paper',  // CrossRef
     };
-    const entryType = (entryTypeMap[doc.type] || 'product') as Entry['entry_type'];
+    const entryType = (entryTypeMap[doc.type] || 'sandbox_project') as Entry['entry_type'];
 
     // Map Sandbox project → Wiki category.
     // TODO: Populate this map from config or DB so each Sandbox project lands in its

@@ -2,7 +2,10 @@
 
 // ---- Metadata ----
 
-export type EntryType = 'asset' | 'product' | 'tech' | 'patent' | 'data_item';
+export type EntryType =
+  | 'asset' | 'product' | 'tech' | 'patent' | 'data_item'
+  | 'sandbox_project' | 'academic_paper' | 'data_standard' | 'tech_doc'
+  | 'template' | 'business_material' | 'handwritten_note';
 export type VisibilityType = 'public' | 'internal';
 
 export interface Entry {
