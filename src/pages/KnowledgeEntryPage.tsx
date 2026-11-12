@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { ApiError } from '../api/client';
 import { entriesApi } from '../api/entriesApi';
 import { bookmarksApi } from '../api/bookmarksApi';
 import { filesApi } from '../api/filesApi';
@@ -118,7 +119,7 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
         );
         setRelatedEntries(related);
       } catch (err: any) {
-        if (err.message === 'FORBIDDEN_INTERNAL_ACCESS') {
+        if (err instanceof ApiError && err.status === 403) {
           setErrorState('FORBIDDEN');
         } else {
           setErrorState(err.message || '加载错误');

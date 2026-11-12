@@ -20,6 +20,19 @@ export function clearToken(): void {
   storage.removeToken();
 }
 
+/** Error carrying the HTTP status + machine code, so callers can branch on
+ *  401/403/404 instead of matching message strings. */
+export class ApiError extends Error {
+  status: number;
+  code?: string;
+  constructor(status: number, message: string, code?: string) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.code = code;
+  }
+}
+
 /** Build headers with optional auth */
 export function getAuthHeaders(): Record<string, string> {
   const headers: Record<string, string> = {};
@@ -48,8 +61,11 @@ export async function request<T>(
 
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
-    const message = body?.message || body?.error || response.statusText;
-    throw new Error(message);
+    throw new ApiError(
+      response.status,
+      body?.message || body?.error || response.statusText,
+      body?.error,
+    );
   }
 
   return response.json() as Promise<T>;

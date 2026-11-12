@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ShieldAlert, Lock, ArrowRight } from 'lucide-react';
 
 interface UnauthorizedProps {
@@ -7,6 +7,7 @@ interface UnauthorizedProps {
 
 export default function Unauthorized({ requiredRole = 'internal' }: UnauthorizedProps) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <div
@@ -35,7 +36,7 @@ export default function Unauthorized({ requiredRole = 'internal' }: Unauthorized
       </div>
 
       <button
-        onClick={() => navigate('/login')}
+        onClick={() => navigate('/login', { state: { from: location } })}
         className="w-full py-2 bg-ink hover:bg-ink/95 text-white font-bold rounded-lg text-xs transition-all flex items-center justify-center space-x-1.5"
       >
         <span>前往企业登录控制台</span>
