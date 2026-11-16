@@ -193,7 +193,7 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
 
   const breadcrumbPaths = [
     { label: '首页', to: '/' },
-    { label: entry.entryType === 'project' ? 'Sandbox 项目知识库' : '学术文献库', to: '/search' },
+    { label: entry.entryType === 'sandbox_project' ? 'Sandbox 项目知识库' : '学术文献库', to: '/search' },
     { label: viewModel.title },
   ];
 
@@ -443,7 +443,7 @@ export default function KnowledgeEntryPage({ entryId }: { entryId: string }) {
           )}
 
           {/* Services (for project type) */}
-          {viewModel.entryType === 'project' && (
+          {viewModel.entryType === 'sandbox_project' && (
             <section id="services" aria-label="AI 服务">
               <div className="flex items-center gap-2 mb-4">
                 <Cpu className="w-4 h-4 text-brand" aria-hidden="true" />

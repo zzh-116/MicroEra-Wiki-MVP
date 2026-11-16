@@ -81,7 +81,7 @@ export function mapSpaceToEntryType(spaceId: string): string {
     's-patent': 'patent',
     's-handwritten': 'handwritten_note',
   };
-  return map[spaceId] || 'tech';
+  return map[spaceId] || 'tech_doc';
 }
 
 /** Generate non-empty sample content for quick-upload files */

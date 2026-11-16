@@ -125,10 +125,10 @@ export async function seedDatabase(force = false): Promise<void> {
     }
   }
 
-  // Reset sequences
-  await db.execute(sql`SELECT setval('entries_id_seq', 8)`);
-  await db.execute(sql`SELECT setval('categories_id_seq', 6)`);
-  await db.execute(sql`SELECT setval('tags_id_seq', 26)`);
+  // Reset sequences to the current max id so future inserts don't collide.
+  await db.execute(sql`SELECT setval('entries_id_seq', COALESCE((SELECT MAX(id) FROM entries), 1))`);
+  await db.execute(sql`SELECT setval('categories_id_seq', COALESCE((SELECT MAX(id) FROM categories), 1))`);
+  await db.execute(sql`SELECT setval('tags_id_seq', COALESCE((SELECT MAX(id) FROM tags), 1))`);
   console.log('[Seed] Database seeded successfully');
 }
 
